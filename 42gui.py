@@ -19,205 +19,11 @@ from PyQt5.QtWidgets import QVBoxLayout # verticle stack layout
 from PyQt5.QtWidgets import QHBoxLayout # Horizontal stack layout
 from PyQt5.QtWidgets import QRadioButton
 
-# Create Classes for Secondary Windows------------------------------------------
-    # Q: Can this be a class of "sub-menus" and create and each menu instance of the class
-class OrbitWindow(QWidget):
-    def __init__(OrbitWindow):
-        super().__init__()
-        OrbitWindow.setWindowTitle('Orbit Parameters') # sets the window’s title
-        OrbitWindow.setFixedSize(500, 500) # gives window a fixed size
-        OrbLayout = QGridLayout()
-        OrbitWindow.Label = QLabel("List of Orbital Parameter Inputs/Options")
-        OrbLayout.addWidget(OrbitWindow.Label)
-        OrbitWindow.setLayout(OrbLayout)
-
-class CmdWindow(QWidget):
-    def __init__(CmdWindow):
-        super().__init__()
-        CmdWindow.setWindowTitle('Orbit Parameters') # sets the window’s title
-        CmdWindow.setFixedSize(500, 500) # gives window a fixed size
-        CmdLayout = QGridLayout()
-        CmdWindow.Label = QLabel("List of Command Inputs")
-        CmdLayout.addWidget(CmdWindow.Label)
-        CmdWindow.setLayout(CmdLayout)
-
-class SC_Window(QWidget):
-    def __init__(SC_Window):
-        super().__init__()
-        SC_Window.setWindowTitle('Spacecraft Parameters') # sets the window’s title
-        SC_Window.setFixedSize(500, 500) # gives window a fixed size
-        SC_Layout = QGridLayout()
-        SC_Window.Label = QLabel("List of Spacecraft Input Parameters")
-        SC_Layout.addWidget(SC_Window.Label)
-        SC_Window.setLayout(SC_Layout)
-
-class GraphicsWindow(QWidget):
-    def __init__(GraphicsWindow):
-        super().__init__()
-        GraphicsWindow.setWindowTitle('Graphics Settings') # sets the window’s title
-        GraphicsWindow.setFixedSize(500, 500) # gives window a fixed size
-        GraphicsLayout = QGridLayout()
-        GraphicsWindow.Label = QLabel("List of Graphics Input Parameters")
-        GraphicsLayout.addWidget(GraphicsWindow.Label)
-        GraphicsWindow.setLayout(GraphicsLayout)
-
-class SimWindow(QWidget):
-    def __init__(SimWindow):
-        # Set Up Window
-        super().__init__()
-        SimWindow.setWindowTitle('Simulation Parameters') # sets the window’s title
-        SimWindow.setFixedSize(500, 500) # gives window a fixed size
-        SimLayout = QGridLayout()
-
-        # Load Data from Inp_Sim.txt
-        ReadFile = open('InOut/Inp_Sim.txt', 'r')
-        Inp_Sim_data = ReadFile.readlines()
-        Label = [0]*10 # Initialize
-
-        # Make Widgets for Simulation Window------------------------------------
-        # Heading Label---------------------------------------------------------
-        Label[0] = QLabel("Simulation Control")
-        Label[0].setAlignment(Qt.AlignCenter)
-        Label[0].setStyleSheet('font-size: 20px')
-        SimLayout.addWidget(Label[0], 0, 0, 1, 2)
-
-        # Time Mode-------------------------------------------------------------
-        Label[1] = QLabel("Time Mode:")
-        Label[1].setAlignment(Qt.AlignLeft)
-        Label[1].setStyleSheet('font-size: 15px')
-        SimLayout.addWidget(Label[1], 1, 0)
-
-        TimeMode = QComboBox()
-        TimeMode.addItems(["FAST", "REAL", "EXTERNAL", "NOS3"])
-        SimLayout.addWidget(TimeMode, 1, 1)
-
-        # Sim Duration, Step size-----------------------------------------------
-        Label[2] = QLabel("Sim Duration (sec):")
-        Label[2].setAlignment(Qt.AlignLeft)
-        Label[2].setStyleSheet('font-size: 15px')
-        SimLayout.addWidget(Label[2], 2, 0)
-
-        SimDuration = QLineEdit('30000.0')
-        SimLayout.addWidget(SimDuration, 2, 1)
-
-        Label[3] = QLabel("Step Size (sec):")
-        Label[3].setAlignment(Qt.AlignLeft)
-        Label[3].setStyleSheet('font-size: 15px')
-        SimLayout.addWidget(Label[3], 3, 0)
-
-        StepSize = QLineEdit('0.1')
-        SimLayout.addWidget(StepSize, 3, 1)
-
-        # Front end Graphics----------------------------------------------------
-        Label[4] = QLabel("Front End Graphics:")
-        Label[4].setAlignment(Qt.AlignLeft)
-        Label[4].setStyleSheet('font-size: 15px')
-        SimLayout.addWidget(Label[4], 4, 0)
-
-        SimWindow.GraphicsOn = QRadioButton('On')
-        SimWindow.GraphicsOn.setChecked(False)
-        SimWindow.GraphicsOff = QRadioButton('Off')
-        SimWindow.GraphicsOff.setChecked(True)
-
-        #if GraphicsOn.isChecked():
-        #    Inp_Sim_data[5] = "1234                            !  Graphics Front End? \n"
-        #elif GraphicsOff.isChecked():
-        #    Inp_Sim_data[5] = "FALSE                           !  Graphics Front End?"
-
-
-
-        SubLayout = QHBoxLayout()
-        SubLayout.addWidget(SimWindow.GraphicsOn)
-        SubLayout.addWidget(SimWindow.GraphicsOff)
-
-        SimLayout.addLayout(SubLayout,4,1)
-
-        SimWindow.GraphicsOn.toggled.connect(lambda:SimWindow.GraphicsOn.GraphicsOnSlot)
-        SimWindow.GraphicsOff.toggled.connect(lambda:SimWindow.GraphicsOff.GraphicsOffSlot)
-
-    # Slot Functions
-    def GraphicsOnSlot(SimWindow):
-        if SimWindow.GraphicsOn.clicked():
-            Inp_Sim_data[5] = "TRUE                            !  Graphics Front End? \n"
-    def GraphicsOffSlot(SimWindow):
-        if SimWindow.GraphicsOff.clicked():
-            Inp_Sim_data[5] = "FALSE                           !  Graphics Front End?"
-
-
-
-
-
-
-
-
-
-        #Inp_Sim_data[2] = 'REAL                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)'
-        #print(Inp_Sim_data[2])
-
-
-
-
-
-        # Write inputs to txt Write File----------------------------------------
-        WriteFile = open('InOut/TestWrite.txt', 'w')
-        WriteFile.writelines(Inp_Sim_data)
-
-        # Finialize Simulation window
-        SimWindow.setLayout(SimLayout)
-
-
-
-class FOV_Window(QWidget):
-    def __init__(FOV_Window):
-        super().__init__()
-        FOV_Window.setWindowTitle('Simulation Parameters') # sets the window’s title
-        FOV_Window.setFixedSize(500, 500) # gives window a fixed size
-        FOV_Layout = QGridLayout()
-        FOV_Window.Label = QLabel("List of FOV Input Parameters")
-        FOV_Layout.addWidget(FOV_Window.Label)
-        FOV_Window.setLayout(FOV_Layout)
-
-class NOS3_Window(QWidget):
-    def __init__(NOS3_Window):
-        super().__init__()
-        NOS3_Window.setWindowTitle('NOS3 Parameters') # sets the window’s title
-        NOS3_Window.setFixedSize(500, 500) # gives window a fixed size
-        NOS3_Layout = QGridLayout()
-        NOS3_Window.Label = QLabel("List of NOS3 Input Parameters")
-        NOS3_Layout.addWidget(NOS3_Window.Label)
-        NOS3_Window.setLayout(NOS3_Layout)
-
-class RegionWindow(QWidget):
-    def __init__(RegionWindow):
-        super().__init__()
-        RegionWindow.setWindowTitle('Region Parameters') # sets the window’s title
-        RegionWindow.setFixedSize(500, 500) # gives window a fixed size
-        RegionLayout = QGridLayout()
-        RegionWindow.Label = QLabel("List of Region Input Parameters")
-        RegionLayout.addWidget(RegionWindow.Label)
-        RegionWindow.setLayout(RegionLayout)
-
-class IPC_Window(QWidget):
-    def __init__(IPC_Window):
-        super().__init__()
-        IPC_Window.setWindowTitle('IPC Parameters') # sets the window’s title
-        IPC_Window.setFixedSize(500, 500) # gives window a fixed size
-        IPC_Layout = QGridLayout()
-        IPC_Window.Label = QLabel("List of IPC Input Parameters")
-        IPC_Layout.addWidget(IPC_Window.Label)
-        IPC_Window.setLayout(IPC_Layout)
-
-class TDRS_Window(QWidget):
-    def __init__(TDRS_Window):
-        super().__init__()
-        TDRS_Window.setWindowTitle('TDRS Parameters') # sets the window’s title
-        TDRS_Window.setFixedSize(500, 500) # gives window a fixed size
-        TDRS_Layout = QGridLayout()
-        TDRS_Window.Label = QLabel("List of TDRS Input Parameters")
-        TDRS_Layout.addWidget(TDRS_Window.Label)
-        TDRS_Window.setLayout(TDRS_Layout)
+# Import Other files from repo
+import FOV, SIM, CMD, SC, NOS3, TDRS, IPC, ORB, Region, Graphics
 
 # Create Main window Class------------------------------------------------------
+#-------------------------------------------------------------------------------
 class MainWindow(QWidget):
     # Methods
     def __init__(MainWindow):
@@ -357,55 +163,55 @@ class MainWindow(QWidget):
         # Set Layout for Main Window--------------------------------------------
         MainWindow.setLayout(MainLayout)
 
-    #---------not sure what this is called but do that stuff--------------------
+    #---------Call all of the sub windows---------------------------------------
     def OrbSubWindow(MainWindow):
         if MainWindow.OrbitMenu == []:
-            MainWindow.OrbitMenu = OrbitWindow()
+            MainWindow.OrbitMenu = ORB.OrbitWindow()
         MainWindow.OrbitMenu.show()
 
     def CmdSubWindow(MainWindow):
         if MainWindow.CmdMenu == []:
-            MainWindow.CmdMenu = CmdWindow()
+            MainWindow.CmdMenu = CMD.CmdWindow()
         MainWindow.CmdMenu.show()
 
     def SCSubWindow(MainWindow):
         if MainWindow.SCMenu == []:
-            MainWindow.SCMenu = SC_Window()
+            MainWindow.SCMenu = SC.SC_Window()
         MainWindow.SCMenu.show()
 
     def GraphicsSubWindow(MainWindow):
         if MainWindow.GraphicsMenu == []:
-            MainWindow.GraphicsMenu = GraphicsWindow()
+            MainWindow.GraphicsMenu = Graphics.GraphicsWindow()
         MainWindow.GraphicsMenu.show()
 
     def SimSubWindow(MainWindow):
         if MainWindow.SimulationMenu == []:
-            MainWindow.SimulationMenu = SimWindow()
+            MainWindow.SimulationMenu = SIM.SimWindow()
         MainWindow.SimulationMenu.show()
 
     def FOV_SubWindow(MainWindow):
         if MainWindow.FOV_Menu == []:
-            MainWindow.FOV_Menu = FOV_Window()
+            MainWindow.FOV_Menu = FOV.FOV_Window()
         MainWindow.FOV_Menu.show()
 
     def NOS3_SubWindow(MainWindow):
         if MainWindow.NOS3_Menu == []:
-            MainWindow.NOS3_Menu = NOS3_Window()
+            MainWindow.NOS3_Menu = NOS3.NOS3_Window()
         MainWindow.NOS3_Menu.show()
 
     def RegionSubWindow(MainWindow):
         if MainWindow.RegionMenu == []:
-            MainWindow.RegionMenu = RegionWindow()
+            MainWindow.RegionMenu = Region.RegionWindow()
         MainWindow.RegionMenu.show()
 
     def IPC_SubWindow(MainWindow):
         if MainWindow.IPC_Menu == []:
-            MainWindow.IPC_Menu = IPC_Window()
+            MainWindow.IPC_Menu = IPC.IPC_Window()
         MainWindow.IPC_Menu.show()
 
     def TDRS_SubWindow(MainWindow):
         if MainWindow.TDRS_Menu == []:
-            MainWindow.TDRS_Menu = TDRS_Window()
+            MainWindow.TDRS_Menu = TDRS.TDRS_Window()
         MainWindow.TDRS_Menu.show()
 
 
