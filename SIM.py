@@ -27,11 +27,13 @@ class SimWindow(QWidget):
         SimLayout = QGridLayout()
 
         # Load Data from Inp_Sim.txt
-        ReadFile = open('InOut/Inp_Sim.txt', 'r')
-        Inp_Sim_data = ReadFile.readlines()
-        Label = [0]*10 # Initialize
+        ReadFile = open('InOut/Inp_Sim_Default.txt', 'r')
+        SimWindow.WriteFile = open('InOut/Inp_Sim.txt', 'w')
+        SimWindow.Inp_Sim_data = ReadFile.readlines()
 
         # Make Widgets for Simulation Window------------------------------------
+        Label = [0]*10 # Initialize array of labels
+
         # Heading Label---------------------------------------------------------
         Label[0] = QLabel("Simulation Control")
         Label[0].setAlignment(Qt.AlignCenter)
@@ -72,52 +74,27 @@ class SimWindow(QWidget):
         SimLayout.addWidget(Label[4], 4, 0)
 
         SimWindow.GraphicsOn = QRadioButton('On')
-        SimWindow.GraphicsOn.setChecked(False)
+        SimWindow.GraphicsOn.setChecked(True)
+        SimWindow.GraphicsOn.toggled.connect(SimWindow.GraphicsOnSlot)
+
         SimWindow.GraphicsOff = QRadioButton('Off')
-        SimWindow.GraphicsOff.setChecked(True)
-
-        #if GraphicsOn.isChecked():
-        #    Inp_Sim_data[5] = "1234                            !  Graphics Front End? \n"
-        #elif GraphicsOff.isChecked():
-        #    Inp_Sim_data[5] = "FALSE                           !  Graphics Front End?"
-
-
+        SimWindow.GraphicsOff.setChecked(False)
+        SimWindow.GraphicsOff.toggled.connect(SimWindow.GraphicsOffSlot)
 
         SubLayout = QHBoxLayout()
         SubLayout.addWidget(SimWindow.GraphicsOn)
         SubLayout.addWidget(SimWindow.GraphicsOff)
-
         SimLayout.addLayout(SubLayout,4,1)
-
-        SimWindow.GraphicsOn.toggled.connect(lambda:SimWindow.GraphicsOn.GraphicsOnSlot)
-        SimWindow.GraphicsOff.toggled.connect(lambda:SimWindow.GraphicsOff.GraphicsOffSlot)
-
-    # Slot Functions------------------------------------------------------------
-    def GraphicsOnSlot(SimWindow):
-        if SimWindow.GraphicsOn.clicked():
-            Inp_Sim_data[5] = "TRUE                            !  Graphics Front End? \n"
-    def GraphicsOffSlot(SimWindow):
-        if SimWindow.GraphicsOff.clicked():
-            Inp_Sim_data[5] = "FALSE                           !  Graphics Front End?"
-
-
-
-
-
-
-
-
-
-        #Inp_Sim_data[2] = 'REAL                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)'
-        #print(Inp_Sim_data[2])
-
-
-
-
-
-        # Write inputs to txt Write File----------------------------------------
-        WriteFile = open('InOut/TestWrite.txt', 'w')
-        WriteFile.writelines(Inp_Sim_data)
 
         # Finialize Simulation window
         SimWindow.setLayout(SimLayout)
+
+    # Slot Functions------------------------------------------------------------
+    def GraphicsOnSlot(SimWindow):
+        if SimWindow.GraphicsOn.isChecked():
+            SimWindow.Inp_Sim_data[5] = "TRUE                            !  Graphics Front End? \n"
+            SimWindow.WriteFile.writelines(SimWindow.Inp_Sim_data) # Write inputs to txt Write File
+    def GraphicsOffSlot(SimWindow):
+        if SimWindow.GraphicsOff.isChecked():
+            SimWindow.Inp_Sim_data[5] = "FALSE                           !  Graphics Front End? \n"
+            SimWindow.WriteFile.writelines(SimWindow.Inp_Sim_data) # Write inputs to txt Write File
