@@ -47,7 +47,6 @@ class SimWindow(QWidget):
 
         SimWindow.TimeMode = QComboBox()
         SimWindow.TimeMode.addItems(["FAST", "REAL", "EXTERNAL", "NOS3"])
-        #SimWindow.TimeMode.activated.connect(SimWindow.TimeModeSlot)
         SimLayout.addWidget(SimWindow.TimeMode, 1, 1)
 
         # Sim Duration, Step size-----------------------------------------------
@@ -56,16 +55,16 @@ class SimWindow(QWidget):
         Label[2].setStyleSheet('font-size: 15px')
         SimLayout.addWidget(Label[2], 2, 0)
 
-        SimDuration = QLineEdit('30000.0')
-        SimLayout.addWidget(SimDuration, 2, 1)
+        SimWindow.SimDuration = QLineEdit('30000.0')
+        SimLayout.addWidget(SimWindow.SimDuration, 2, 1)
 
         Label[3] = QLabel("Step Size (sec):")
         Label[3].setAlignment(Qt.AlignLeft)
         Label[3].setStyleSheet('font-size: 15px')
         SimLayout.addWidget(Label[3], 3, 0)
 
-        StepSize = QLineEdit('0.1')
-        SimLayout.addWidget(StepSize, 3, 1)
+        SimWindow.StepSize = QLineEdit('0.1')
+        SimLayout.addWidget(SimWindow.StepSize, 3, 1)
 
         # Front end Graphics----------------------------------------------------
         Label[4] = QLabel("Front End Graphics:")
@@ -75,11 +74,9 @@ class SimWindow(QWidget):
 
         SimWindow.GraphicsOn = QRadioButton('On')
         SimWindow.GraphicsOn.setChecked(True)
-        #SimWindow.GraphicsOn.toggled.connect(SimWindow.GraphicsSlot)
 
         SimWindow.GraphicsOff = QRadioButton('Off')
         SimWindow.GraphicsOff.setChecked(False)
-        #SimWindow.GraphicsOff.toggled.connect(SimWindow.GraphicsSlot)
 
         SubLayout = QHBoxLayout()
         SubLayout.addWidget(SimWindow.GraphicsOn)
@@ -91,6 +88,7 @@ class SimWindow(QWidget):
         ApplyBtn.clicked.connect(SimWindow.close)
         ApplyBtn.clicked.connect(SimWindow.GraphicsSlot)
         ApplyBtn.clicked.connect(SimWindow.TimeModeSlot)
+        ApplyBtn.clicked.connect(SimWindow.SimDurationSlot)
         ApplyBtn.clicked.connect(SimWindow.WriteFileSlot) # Last Slot
         SimLayout.addWidget(ApplyBtn, 6, 3)
 
@@ -99,7 +97,6 @@ class SimWindow(QWidget):
         SimLayout.addWidget(CancelBtn, 6, 2)
 
         ResetBtn = QPushButton('Reset to Default')
-        ResetBtn.clicked.connect(SimWindow.close)
         ResetBtn.clicked.connect(SimWindow.DefaultWriteSlot)
         SimLayout.addWidget(ResetBtn, 6, 1)
 
@@ -110,19 +107,19 @@ class SimWindow(QWidget):
     # Slot Functions------------------------------------------------------------
     def GraphicsSlot(SimWindow):
         if SimWindow.GraphicsOn.isChecked():
-            SimWindow.Inp_Sim_data[5] = "TRUE                            !  Graphics Front End? \n"
+            SimWindow.Inp_Sim_data[5] = "TRUE                            !  Graphics Front End?\n"
         elif SimWindow.GraphicsOff.isChecked():
-            SimWindow.Inp_Sim_data[5] = "FALSE                           !  Graphics Front End? \n"
+            SimWindow.Inp_Sim_data[5] = "FALSE                           !  Graphics Front End?\n"
 
     def TimeModeSlot(SimWindow):
         if SimWindow.TimeMode.currentText() == "FAST":
-            SimWindow.Inp_Sim_data[2] = "FAST                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)"
+            SimWindow.Inp_Sim_data[2] = "FAST                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
         elif SimWindow.TimeMode.currentText() == "REAL":
-            SimWindow.Inp_Sim_data[2] = "REAL                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)"
+            SimWindow.Inp_Sim_data[2] = "REAL                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
         elif SimWindow.TimeMode.currentText() == "EXTERNAL":
-            SimWindow.Inp_Sim_data[2] = "EXTERNAL                        !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)"
+            SimWindow.Inp_Sim_data[2] = "EXTERNAL                        !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
         elif SimWindow.TimeMode.currentText() == "NOS3":
-            SimWindow.Inp_Sim_data[2] = "NOS3                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)"
+            SimWindow.Inp_Sim_data[2] = "NOS3                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
 
     def WriteFileSlot(SimWindow):
         # Write inputs to txt Write File
@@ -131,10 +128,16 @@ class SimWindow(QWidget):
 
     def DefaultWriteSlot(SimWindow):
         # Reset Write File to Default/readfile
+        SimWindow.ReadFile = open('InOut/Inp_Sim_Default.txt', 'r')
         SimWindow.Inp_Sim_data = SimWindow.ReadFile.readlines()
 
         # Reset GUI selections
         SimWindow.GraphicsOn.setChecked(True)
         SimWindow.GraphicsOff.setChecked(False)
-        #SimWindow.SimDuration.setText(30000.0)
+        SimWindow.SimDuration.setText("30000.0")
+        SimWindow.StepSize.setText("0.1")
+        SimWindow.TimeMode.setCurrentIndex(0)
         # To be continued
+
+    def SimDurationSlot(SimWindow):
+        SimWindow.Inp_Sim_data[3] = SimWindow.SimDuration.text() + "   " + SimWindow.StepSize.text() + "                   !  Sim Duration, Step Size [sec]\n"
