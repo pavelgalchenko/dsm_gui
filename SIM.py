@@ -86,9 +86,7 @@ class SimWindow(QWidget):
         # Apply / Cancel / Reset Default Button---------------------------------
         ApplyBtn = QPushButton('Apply')
         ApplyBtn.clicked.connect(SimWindow.close)
-        ApplyBtn.clicked.connect(SimWindow.GraphicsSlot)
-        ApplyBtn.clicked.connect(SimWindow.TimeModeSlot)
-        ApplyBtn.clicked.connect(SimWindow.SimDurationSlot)
+        ApplyBtn.clicked.connect(SimWindow.WidgetsSlot)
         ApplyBtn.clicked.connect(SimWindow.WriteFileSlot) # Last Slot
         SimLayout.addWidget(ApplyBtn, 6, 3)
 
@@ -105,28 +103,12 @@ class SimWindow(QWidget):
         SimWindow.setLayout(SimLayout)
 
     # Slot Functions------------------------------------------------------------
-    def GraphicsSlot(SimWindow):
-        if SimWindow.GraphicsOn.isChecked():
-            SimWindow.Inp_Sim_data[5] = "TRUE                            !  Graphics Front End?\n"
-        elif SimWindow.GraphicsOff.isChecked():
-            SimWindow.Inp_Sim_data[5] = "FALSE                           !  Graphics Front End?\n"
-
-    def TimeModeSlot(SimWindow):
-        if SimWindow.TimeMode.currentText() == "FAST":
-            SimWindow.Inp_Sim_data[2] = "FAST                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
-        elif SimWindow.TimeMode.currentText() == "REAL":
-            SimWindow.Inp_Sim_data[2] = "REAL                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
-        elif SimWindow.TimeMode.currentText() == "EXTERNAL":
-            SimWindow.Inp_Sim_data[2] = "EXTERNAL                        !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
-        elif SimWindow.TimeMode.currentText() == "NOS3":
-            SimWindow.Inp_Sim_data[2] = "NOS3                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
-
-    def WriteFileSlot(SimWindow):
+    def WriteFileSlot(SimWindow): # Write edited input txt data to output txt file
         # Write inputs to txt Write File
         SimWindow.WriteFile = open('InOut/Inp_Sim.txt', 'w')
         SimWindow.WriteFile.writelines(SimWindow.Inp_Sim_data)
 
-    def DefaultWriteSlot(SimWindow):
+    def DefaultWriteSlot(SimWindow): # Resets gui options and input txt data to default
         # Reset Write File to Default/readfile
         SimWindow.ReadFile = open('InOut/Inp_Sim_Default.txt', 'r')
         SimWindow.Inp_Sim_data = SimWindow.ReadFile.readlines()
@@ -139,5 +121,22 @@ class SimWindow(QWidget):
         SimWindow.TimeMode.setCurrentIndex(0)
         # To be continued
 
-    def SimDurationSlot(SimWindow):
+    def WidgetsSlot(SimWindow): # Take GUI inputs from widgets and write to Inp_sim.txt
+        # GraphicsSlot
+        if SimWindow.GraphicsOn.isChecked():
+            SimWindow.Inp_Sim_data[5] = "TRUE                            !  Graphics Front End?\n"
+        elif SimWindow.GraphicsOff.isChecked():
+            SimWindow.Inp_Sim_data[5] = "FALSE                           !  Graphics Front End?\n"
+
+        # SimDurationSlot
         SimWindow.Inp_Sim_data[3] = SimWindow.SimDuration.text() + "   " + SimWindow.StepSize.text() + "                   !  Sim Duration, Step Size [sec]\n"
+
+        # TimeModeSlot
+        if SimWindow.TimeMode.currentText() == "FAST":
+            SimWindow.Inp_Sim_data[2] = "FAST                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
+        elif SimWindow.TimeMode.currentText() == "REAL":
+            SimWindow.Inp_Sim_data[2] = "REAL                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
+        elif SimWindow.TimeMode.currentText() == "EXTERNAL":
+            SimWindow.Inp_Sim_data[2] = "EXTERNAL                        !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
+        elif SimWindow.TimeMode.currentText() == "NOS3":
+            SimWindow.Inp_Sim_data[2] = "NOS3                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
