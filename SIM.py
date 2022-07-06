@@ -16,6 +16,8 @@ from PyQt5.QtWidgets import QComboBox # drop down box
 from PyQt5.QtWidgets import QVBoxLayout # verticle stack layout
 from PyQt5.QtWidgets import QHBoxLayout # Horizontal stack layout
 from PyQt5.QtWidgets import QRadioButton
+from PyQt5.QtWidgets import QListWidget
+
 
 
 class SimWindow(QWidget):
@@ -94,7 +96,7 @@ class SimWindow(QWidget):
         SimLayout.addWidget(SimWindow.OutputInterval, 5, 1)
 
         # Cmd File Name---------------------------------------------------------
-        Label[6] = QLabel("Command Script File Name:")
+        Label[6] = QLabel("Cmd. Script File Name:")
         Label[6].setAlignment(Qt.AlignLeft)
         Label[6].setStyleSheet('font-size: 15px')
         SimLayout.addWidget(Label[6], 6, 0)
@@ -107,26 +109,47 @@ class SimWindow(QWidget):
         Label[7] = QLabel("Reference Orbits")
         Label[7].setAlignment(Qt.AlignCenter)
         Label[7].setStyleSheet('font-size: 20px')
-        SimLayout.addWidget(Label[0], 7, 0, 1, 2)
+        SimLayout.addWidget(Label[7], 7, 0, 1, 2)
 
-        # Number of Ref Orbits--------------------------------------------------
-        Label[8] = QLabel("Number of Reference Orbits:")
+        # Stacked Widgets-------------------------------------------------------
+        # Ref Orbit Status------------------------------------------------------
+        Label[8] = QLabel("Reference Orbit Status:")
         Label[8].setAlignment(Qt.AlignLeft)
         Label[8].setStyleSheet('font-size: 15px')
-        SimLayout.addWidget(Label[8], 8, 0)
-        SimWindow.RefOrbs = QLineEdit("1")
-        SimLayout.addWidget(SimWindow.RefOrbs, 8, 1)
+        SimLayout.addWidget(Label[8], 8, 1)
+        SimWindow.RefOrbOn = QRadioButton('On')
+        SimWindow.RefOrbOn.setChecked(True)
+        SimWindow.RefOrbOff = QRadioButton('Off')
+        SimWindow.RefOrbOff.setChecked(False)
+
+        SubLayout = QHBoxLayout()
+        SubLayout.addWidget(SimWindow.RefOrbOn)
+        SubLayout.addWidget(SimWindow.RefOrbOff)
+        SimLayout.addLayout(SubLayout,8,2)
 
         # Orbit Input File Name-------------------------------------------------
-        Label[9] = QLabel("Number of Reference Orbits:")
+        Label[9] = QLabel("Orbit Input File Name:")
         Label[9].setAlignment(Qt.AlignLeft)
         Label[9].setStyleSheet('font-size: 15px')
-        SimLayout.addWidget(Label[9], 9, 0)
-        SimWindow.RefOrbs = QLineEdit("1")
-        SimLayout.addWidget(SimWindow.RefOrbs, 9, 1)
+        SimLayout.addWidget(Label[9], 9, 1)
+        SimWindow.RefOrbs = QLineEdit("Orb_LEO.txt")
+        SimLayout.addWidget(SimWindow.RefOrbs, 9, 2)
+
+        AddOrbBtn = QPushButton('Add an Orbit')
+        SimLayout.addWidget(AddOrbBtn, 10, 2)
+        AddOrbBtn.clicked.connect(SimWindow.AddRefOrbSlot)
+
 
         # need to make X number of Input file name slots for X number of SC
         # idea: add orbit button for adding num ref orbits?
+
+        SimWindow.ListRefOrb = QListWidget()
+        SimWindow.ListRefOrb.insertItem(0, "Ref. Orb. 1")
+        SimLayout.addWidget(SimWindow.ListRefOrb, 8, 0, 3, 1)
+
+        SimWindow.RefOrbStack = QStackedWidget()
+        
+
 
 
 
@@ -197,3 +220,7 @@ class SimWindow(QWidget):
 
         # RefOrbsSlot
         SimWindow.Inp_Sim_data[6] = SimWindow.RefOrbs.text() + "                               !  Number of Reference Orbits\n"
+
+    def AddRefOrbSlot(SimWindow):
+        ItemIndex = SimWindow.ListRefOrb.count() + 1
+        SimWindow.ListRefOrb.insertItem(int(ItemIndex), "Ref. Orb. %s"%ItemIndex)
