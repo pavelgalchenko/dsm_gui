@@ -17,15 +17,15 @@ from PyQt5.QtWidgets import QVBoxLayout # verticle stack layout
 from PyQt5.QtWidgets import QHBoxLayout # Horizontal stack layout
 from PyQt5.QtWidgets import QRadioButton
 from PyQt5.QtWidgets import QListWidget
-
-
+from PyQt5.QtWidgets import QStackedWidget
 
 class SimWindow(QWidget):
     def __init__(SimWindow):
         # Set Up Window
         super().__init__()
         SimWindow.setWindowTitle('Simulation Parameters') # sets the window’s title
-        SimWindow.setFixedSize(600, 400) # gives window a fixed size
+        #SimWindow.setFixedSize(600, 400) # gives window a fixed size
+        SimWindow.setGeometry(600, 400, 10, 10)
         SimLayout = QGridLayout()
 
         # Load Data from Inp_Sim.txt
@@ -109,49 +109,36 @@ class SimWindow(QWidget):
         Label[7] = QLabel("Reference Orbits")
         Label[7].setAlignment(Qt.AlignCenter)
         Label[7].setStyleSheet('font-size: 20px')
-        SimLayout.addWidget(Label[7], 7, 0, 1, 2)
+        SimLayout.addWidget(Label[7], 7, 0, 1, 3)
 
-        # Stacked Widgets-------------------------------------------------------
         # Ref Orbit Status------------------------------------------------------
         Label[8] = QLabel("Reference Orbit Status:")
         Label[8].setAlignment(Qt.AlignLeft)
         Label[8].setStyleSheet('font-size: 15px')
         SimLayout.addWidget(Label[8], 8, 1)
-        SimWindow.RefOrbOn = QRadioButton('On')
-        SimWindow.RefOrbOn.setChecked(True)
-        SimWindow.RefOrbOff = QRadioButton('Off')
-        SimWindow.RefOrbOff.setChecked(False)
-
-        SubLayout = QHBoxLayout()
-        SubLayout.addWidget(SimWindow.RefOrbOn)
-        SubLayout.addWidget(SimWindow.RefOrbOff)
-        SimLayout.addLayout(SubLayout,8,2)
 
         # Orbit Input File Name-------------------------------------------------
         Label[9] = QLabel("Orbit Input File Name:")
         Label[9].setAlignment(Qt.AlignLeft)
         Label[9].setStyleSheet('font-size: 15px')
         SimLayout.addWidget(Label[9], 9, 1)
-        SimWindow.RefOrbs = QLineEdit("Orb_LEO.txt")
-        SimLayout.addWidget(SimWindow.RefOrbs, 9, 2)
+        #SimWindow.RefOrbs = QLineEdit("Orb_LEO.txt")
+        #SimLayout.addWidget(SimWindow.RefOrbs, 9, 2)
 
         AddOrbBtn = QPushButton('Add an Orbit')
         SimLayout.addWidget(AddOrbBtn, 10, 2)
         AddOrbBtn.clicked.connect(SimWindow.AddRefOrbSlot)
 
+        # Stacked Widgets-------------------------------------------------------
+        SimWindow.RefOrbStack = QStackedWidget()
+        SimWindow.AddRefOrbStack()
+        SimLayout.addWidget(SimWindow.RefOrbStack,8,2,2,1)
 
-        # need to make X number of Input file name slots for X number of SC
-        # idea: add orbit button for adding num ref orbits?
-
+        # List of Reference Orbits----------------------------------------------
         SimWindow.ListRefOrb = QListWidget()
         SimWindow.ListRefOrb.insertItem(0, "Ref. Orb. 1")
         SimLayout.addWidget(SimWindow.ListRefOrb, 8, 0, 3, 1)
-
-        SimWindow.RefOrbStack = QStackedWidget()
-        
-
-
-
+        SimWindow.ListRefOrb.currentRowChanged.connect(SimWindow.DisplayRefOrbStackSlot)
 
         # Apply / Cancel / Reset Default Button---------------------------------
         ApplyBtn = QPushButton('Apply')
@@ -224,3 +211,29 @@ class SimWindow(QWidget):
     def AddRefOrbSlot(SimWindow):
         ItemIndex = SimWindow.ListRefOrb.count() + 1
         SimWindow.ListRefOrb.insertItem(int(ItemIndex), "Ref. Orb. %s"%ItemIndex)
+        SimWindow.AddRefOrbStack()
+
+
+    def AddRefOrbStack(SimWindow):
+        SimWindow.RefOrbPage = QWidget() # Create widget to become a Page in stack
+        StackLayout = QGridLayout()
+        SubLayout = QHBoxLayout() # for the radio buttons
+
+        # Ref Orbit Status------------------------------------------------------
+        SimWindow.RefOrbOn = QRadioButton('On')
+        SimWindow.RefOrbOn.setChecked(True)
+        SimWindow.RefOrbOff = QRadioButton('Off')
+        SimWindow.RefOrbOff.setChecked(False)
+        SubLayout.addWidget(SimWindow.RefOrbOn)
+        SubLayout.addWidget(SimWindow.RefOrbOff)
+        StackLayout.addLayout(SubLayout, 0, 0)
+
+        # Ref Orbit txt File------------------------------------------------------
+        SimWindow.RefOrbs = QLineEdit("Orb_LEO.txt")
+        StackLayout.addWidget(SimWindow.RefOrbs, 1, 0)
+
+        SimWindow.RefOrbPage.setLayout(StackLayout)
+        SimWindow.RefOrbStack.addWidget(SimWindow.RefOrbPage) # maybe can replace with addlayout
+
+    def DisplayRefOrbStackSlot(SimWindow, i):
+        SimWindow.RefOrbStack.setCurrentIndex(i)

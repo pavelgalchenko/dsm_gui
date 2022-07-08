@@ -14,18 +14,10 @@ class stackedExample(QWidget):
       self.leftlist.insertItem (1, 'Personal' )
       self.leftlist.insertItem (2, 'Educational' )
 
-      self.stack1 = QWidget()
-      self.stack2 = QWidget()
-      self.stack3 = QWidget()
-
+      self.Stack = QStackedWidget (self)
       self.stack1UI()
       self.stack2UI()
       self.stack3UI()
-
-      self.Stack = QStackedWidget (self)
-      self.Stack.addWidget (self.stack1)
-      self.Stack.addWidget (self.stack2)
-      self.Stack.addWidget (self.stack3)
 
       hbox = QHBoxLayout(self)
       hbox.addWidget(self.leftlist)
@@ -38,13 +30,16 @@ class stackedExample(QWidget):
       self.show()
 
    def stack1UI(self):
+      self.stack1 = QWidget()
       layout = QFormLayout()
       layout.addRow("Name",QLineEdit())
       layout.addRow("Address",QLineEdit())
       #self.setTabText(0,"Contact Details")
       self.stack1.setLayout(layout)
+      self.Stack.addWidget (self.stack1)
 
    def stack2UI(self):
+      self.stack2 = QWidget()
       layout = QFormLayout()
       sex = QHBoxLayout()
       sex.addWidget(QRadioButton("Male"))
@@ -53,13 +48,16 @@ class stackedExample(QWidget):
       layout.addRow("Date of Birth",QLineEdit())
 
       self.stack2.setLayout(layout)
+      self.Stack.addWidget (self.stack2)
 
    def stack3UI(self):
+      self.stack3 = QWidget()
       layout = QHBoxLayout()
       layout.addWidget(QLabel("subjects"))
       layout.addWidget(QCheckBox("Physics"))
       layout.addWidget(QCheckBox("Maths"))
       self.stack3.setLayout(layout)
+      self.Stack.addWidget (self.stack3)
 
    def display(self,i):
       self.Stack.setCurrentIndex(i)
