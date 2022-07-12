@@ -16,14 +16,16 @@ from PyQt5.QtWidgets import QComboBox # drop down box
 from PyQt5.QtWidgets import QVBoxLayout # verticle stack layout
 from PyQt5.QtWidgets import QHBoxLayout # Horizontal stack layout
 from PyQt5.QtWidgets import QRadioButton
-
+from PyQt5.QtWidgets import QListWidget
+from PyQt5.QtWidgets import QStackedWidget
 
 class SimWindow(QWidget):
     def __init__(SimWindow):
         # Set Up Window
         super().__init__()
         SimWindow.setWindowTitle('Simulation Parameters') # sets the window’s title
-        SimWindow.setFixedSize(500, 500) # gives window a fixed size
+        #SimWindow.setFixedSize(600, 400) # gives window a fixed size
+        SimWindow.setGeometry(600, 400, 10, 10)
         SimLayout = QGridLayout()
 
         # Load Data from Inp_Sim.txt
@@ -33,6 +35,8 @@ class SimWindow(QWidget):
         # Make Widgets for Simulation Window------------------------------------
         Label = [0]*10 # Initialize array of labels
 
+#-------------------------------------------------------------------------------
+# Simulation Control Section----------------------------------------------------
         # Heading Label---------------------------------------------------------
         Label[0] = QLabel("Simulation Control")
         Label[0].setAlignment(Qt.AlignCenter)
@@ -86,28 +90,81 @@ class SimWindow(QWidget):
         SubLayout.addWidget(SimWindow.GraphicsOff)
         SimLayout.addLayout(SubLayout,4,1)
 
+        # File Output Interval--------------------------------------------------
+        Label[5] = QLabel("File Output Interval (sec):")
+        Label[5].setAlignment(Qt.AlignLeft)
+        Label[5].setStyleSheet('font-size: 15px')
+        SimLayout.addWidget(Label[5], 5, 0)
+        SimWindow.OutputInterval = QLineEdit("10.0")
+        SimLayout.addWidget(SimWindow.OutputInterval, 5, 1)
+
+        # Cmd File Name---------------------------------------------------------
+        Label[6] = QLabel("Cmd. Script File Name:")
+        Label[6].setAlignment(Qt.AlignLeft)
+        Label[6].setStyleSheet('font-size: 15px')
+        SimLayout.addWidget(Label[6], 6, 0)
+        SimWindow.CmdFileName = QLineEdit("Inp_Cmd.txt")
+        SimLayout.addWidget(SimWindow.CmdFileName, 6, 1)
+
+#-------------------------------------------------------------------------------
+# Reference Orbits Section------------------------------------------------------
+        # Heading Label---------------------------------------------------------
+        Label[7] = QLabel("Reference Orbits")
+        Label[7].setAlignment(Qt.AlignCenter)
+        Label[7].setStyleSheet('font-size: 20px')
+        SimLayout.addWidget(Label[7], 7, 0, 1, 3)
+
+        # Ref Orbit Status------------------------------------------------------
+        Label[8] = QLabel("Reference Orbit Status:")
+        Label[8].setAlignment(Qt.AlignLeft)
+        Label[8].setStyleSheet('font-size: 15px')
+        SimLayout.addWidget(Label[8], 8, 1)
+
+        # Orbit Input File Name-------------------------------------------------
+        Label[9] = QLabel("Orbit Input File Name:")
+        Label[9].setAlignment(Qt.AlignLeft)
+        Label[9].setStyleSheet('font-size: 15px')
+        SimLayout.addWidget(Label[9], 9, 1)
+        #SimWindow.RefOrbs = QLineEdit("Orb_LEO.txt")
+        #SimLayout.addWidget(SimWindow.RefOrbs, 9, 2)
+
+        AddOrbBtn = QPushButton('Add an Orbit')
+        SimLayout.addWidget(AddOrbBtn, 10, 2)
+        AddOrbBtn.clicked.connect(SimWindow.AddRefOrbSlot)
+
+        # Stacked Widgets-------------------------------------------------------
+        SimWindow.RefOrbStack = QStackedWidget()
+        SimWindow.AddRefOrbStack()
+        SimLayout.addWidget(SimWindow.RefOrbStack,8,2,2,1)
+
+        # List of Reference Orbits----------------------------------------------
+        SimWindow.ListRefOrb = QListWidget()
+        SimWindow.ListRefOrb.insertItem(0, "Ref. Orb. 1")
+        SimLayout.addWidget(SimWindow.ListRefOrb, 8, 0, 3, 1)
+        SimWindow.ListRefOrb.currentRowChanged.connect(SimWindow.DisplayRefOrbStackSlot)
+
         # Apply / Cancel / Reset Default Button---------------------------------
         ApplyBtn = QPushButton('Apply')
         ApplyBtn.clicked.connect(SimWindow.close)
         ApplyBtn.clicked.connect(SimWindow.GraphicsSlot)
         ApplyBtn.clicked.connect(SimWindow.TimeModeSlot)
         ApplyBtn.clicked.connect(SimWindow.WriteFileSlot) # Last Slot
-        SimLayout.addWidget(ApplyBtn, 6, 3)
+        SimLayout.addWidget(ApplyBtn, 12, 3)
 
         CancelBtn = QPushButton('Cancel')
         CancelBtn.clicked.connect(SimWindow.close)
-        SimLayout.addWidget(CancelBtn, 6, 2)
+        SimLayout.addWidget(CancelBtn, 12, 2)
 
         ResetBtn = QPushButton('Reset to Default')
         ResetBtn.clicked.connect(SimWindow.close)
         ResetBtn.clicked.connect(SimWindow.DefaultWriteSlot)
-        SimLayout.addWidget(ResetBtn, 6, 1)
-
+        SimLayout.addWidget(ResetBtn, 12, 1)
 
         # Finialize Simulation window
         SimWindow.setLayout(SimLayout)
 
     # Slot Functions------------------------------------------------------------
+<<<<<<< HEAD
     def GraphicsSlot(SimWindow):
         if SimWindow.GraphicsOn.isChecked():
             SimWindow.Inp_Sim_data[5] = "TRUE                            !  Graphics Front End? \n"
@@ -125,6 +182,10 @@ class SimWindow(QWidget):
             SimWindow.Inp_Sim_data[2] = "NOS3                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)"
 
     def WriteFileSlot(SimWindow):
+=======
+    #---------------------------------------------------------------------------
+    def WriteFileSlot(SimWindow): # Write edited input txt data to output txt file
+>>>>>>> 27e48cdf69a2e57334bb63b31cf81fbf4b04b9fd
         # Write inputs to txt Write File
         SimWindow.WriteFile = open('InOut/Inp_Sim.txt', 'w')
         SimWindow.WriteFile.writelines(SimWindow.Inp_Sim_data)
@@ -134,7 +195,76 @@ class SimWindow(QWidget):
         SimWindow.Inp_Sim_data = SimWindow.ReadFile.readlines()
 
         # Reset GUI selections
+<<<<<<< HEAD
         SimWindow.GraphicsOn.setChecked(True)
         SimWindow.GraphicsOff.setChecked(False)
         #SimWindow.SimDuration.setText(30000.0)
         # To be continued
+=======
+        SimWindow.TimeMode.setCurrentIndex(0)
+        SimWindow.SimDuration.setText("30000.0")
+        SimWindow.StepSize.setText("0.1")
+        SimWindow.OutputInterval.setText("10.0")
+        SimWindow.GraphicsOn.setChecked(True)
+        SimWindow.GraphicsOff.setChecked(False)
+        SimWindow.CmdFileName.setText("Inp_Cmd.txt")
+
+    def WidgetsSlot(SimWindow): # Take GUI inputs from widgets and write to Inp_sim.txt
+        # TimeModeSlot
+        if SimWindow.TimeMode.currentText() == "FAST":
+            SimWindow.Inp_Sim_data[2] = "FAST                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
+        elif SimWindow.TimeMode.currentText() == "REAL":
+            SimWindow.Inp_Sim_data[2] = "REAL                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
+        elif SimWindow.TimeMode.currentText() == "EXTERNAL":
+            SimWindow.Inp_Sim_data[2] = "EXTERNAL                        !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
+        elif SimWindow.TimeMode.currentText() == "NOS3":
+            SimWindow.Inp_Sim_data[2] = "NOS3                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)\n"
+
+        # SimDurationSlot
+        SimWindow.Inp_Sim_data[3] = SimWindow.SimDuration.text() + "   " + SimWindow.StepSize.text() + "                   !  Sim Duration, Step Size [sec]\n"
+
+        # OutputIntervalSlot
+        SimWindow.Inp_Sim_data[4] = SimWindow.OutputInterval.text() + "                            !  File Output Interval [sec]\n"
+
+        # GraphicsSlot
+        if SimWindow.GraphicsOn.isChecked():
+            SimWindow.Inp_Sim_data[5] = "TRUE                            !  Graphics Front End?\n"
+        elif SimWindow.GraphicsOff.isChecked():
+            SimWindow.Inp_Sim_data[5] = "FALSE                           !  Graphics Front End?\n"
+
+        # CmdFileNameSlot
+        SimWindow.Inp_Sim_data[6] = SimWindow.CmdFileName.text() + "                     !  Command Script File Name\n"
+
+        # RefOrbsSlot
+        SimWindow.Inp_Sim_data[6] = SimWindow.RefOrbs.text() + "                               !  Number of Reference Orbits\n"
+
+    def AddRefOrbSlot(SimWindow):
+        ItemIndex = SimWindow.ListRefOrb.count() + 1
+        SimWindow.ListRefOrb.insertItem(int(ItemIndex), "Ref. Orb. %s"%ItemIndex)
+        SimWindow.AddRefOrbStack()
+
+
+    def AddRefOrbStack(SimWindow):
+        SimWindow.RefOrbPage = QWidget() # Create widget to become a Page in stack
+        StackLayout = QGridLayout()
+        SubLayout = QHBoxLayout() # for the radio buttons
+
+        # Ref Orbit Status------------------------------------------------------
+        SimWindow.RefOrbOn = QRadioButton('On')
+        SimWindow.RefOrbOn.setChecked(True)
+        SimWindow.RefOrbOff = QRadioButton('Off')
+        SimWindow.RefOrbOff.setChecked(False)
+        SubLayout.addWidget(SimWindow.RefOrbOn)
+        SubLayout.addWidget(SimWindow.RefOrbOff)
+        StackLayout.addLayout(SubLayout, 0, 0)
+
+        # Ref Orbit txt File------------------------------------------------------
+        SimWindow.RefOrbs = QLineEdit("Orb_LEO.txt")
+        StackLayout.addWidget(SimWindow.RefOrbs, 1, 0)
+
+        SimWindow.RefOrbPage.setLayout(StackLayout)
+        SimWindow.RefOrbStack.addWidget(SimWindow.RefOrbPage) # maybe can replace with addlayout
+
+    def DisplayRefOrbStackSlot(SimWindow, i):
+        SimWindow.RefOrbStack.setCurrentIndex(i)
+>>>>>>> 27e48cdf69a2e57334bb63b31cf81fbf4b04b9fd
