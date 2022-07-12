@@ -2,6 +2,7 @@
 
 # Import Packages---------------------------------------------------------------
 import sys
+import re
 import numpy as numpy
 # Import QApplication and the required widgets from PyQt5.QtWidgets
 from PyQt5.QtWidgets import QApplication
@@ -41,7 +42,7 @@ class FOV_Window(QWidget):
         Label[0].setStyleSheet('font-size: 15px')
         # FOV_Layout.addWidget(Label[0],0,0)
 
-        FOV_Window.NumFOV = QLineEdit('4')
+        FOV_Window.NumFOV = QLineEdit('3')
         # FOV_Layout.addWidget(FOV_Window.NumFOV,1,0)
 
         # FOV List -------------------------------------------------------------
@@ -253,7 +254,24 @@ class FOV_Window(QWidget):
         # set Layout
         FOV_Window.Stack.widget(indexStack).setLayout(FOV_Layout)
 
-    # def DefaultWriteSlot(FOV_Window):
+    # def DefaultWriteSlot(FOV_Window,stackIndex):
+    #
+    # dataStr = []
+    # dataNum = []
+    # dataBool = []
+    #
+    # patternLabel = re.compile('"(.*?)"')
+    # patternFloat = re.compile('[+-]?([0-9]*[.])?[0-9]+')
+    # patternBool = re.compile ('(TRUE|FALSE)+')
+    #
+    # for i, line in enumerate(open('../InOut/Inp_FOV.txt')):
+    #     for match in re.finditer(patternLabel, line):
+    #         dataStr.append(match.group(0)) # 1 per FOV
+    #     for match in re.finditer(patternFloat, line):
+    #         dataNum.append(match.group(0)) # 17 per FOV
+    #     for match in re.finditer(patternBool, line):
+    #         dataBool.append(match.group(1)) # 2 per FOV
+    #
     #     FOV_Window.Inp_Sim_data = FOV_Window.ReadFile.readlines()
     #     FOV_Window.LabelFOV.currentText() = FOV_Window.Inp_Sim_data[3]
     #     FOV_Window.NumSide.currentText() = FOV_Window.Inp_Sim_data[3]
