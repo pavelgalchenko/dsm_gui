@@ -51,6 +51,7 @@ class SimWindow(QWidget):
 
         SimWindow.TimeMode = QComboBox()
         SimWindow.TimeMode.addItems(["FAST", "REAL", "EXTERNAL", "NOS3"])
+        #SimWindow.TimeMode.activated.connect(SimWindow.TimeModeSlot)
         SimLayout.addWidget(SimWindow.TimeMode, 1, 1)
 
         # Sim Duration, Step size-----------------------------------------------
@@ -59,16 +60,16 @@ class SimWindow(QWidget):
         Label[2].setStyleSheet('font-size: 15px')
         SimLayout.addWidget(Label[2], 2, 0)
 
-        SimWindow.SimDuration = QLineEdit('30000.0')
-        SimLayout.addWidget(SimWindow.SimDuration, 2, 1)
+        SimDuration = QLineEdit('30000.0')
+        SimLayout.addWidget(SimDuration, 2, 1)
 
         Label[3] = QLabel("Step Size (sec):")
         Label[3].setAlignment(Qt.AlignLeft)
         Label[3].setStyleSheet('font-size: 15px')
         SimLayout.addWidget(Label[3], 3, 0)
 
-        SimWindow.StepSize = QLineEdit('0.1')
-        SimLayout.addWidget(SimWindow.StepSize, 3, 1)
+        StepSize = QLineEdit('0.1')
+        SimLayout.addWidget(StepSize, 3, 1)
 
         # Front end Graphics----------------------------------------------------
         Label[4] = QLabel("Front End Graphics:")
@@ -78,9 +79,11 @@ class SimWindow(QWidget):
 
         SimWindow.GraphicsOn = QRadioButton('On')
         SimWindow.GraphicsOn.setChecked(True)
+        #SimWindow.GraphicsOn.toggled.connect(SimWindow.GraphicsSlot)
 
         SimWindow.GraphicsOff = QRadioButton('Off')
         SimWindow.GraphicsOff.setChecked(False)
+        #SimWindow.GraphicsOff.toggled.connect(SimWindow.GraphicsSlot)
 
         SubLayout = QHBoxLayout()
         SubLayout.addWidget(SimWindow.GraphicsOn)
@@ -145,7 +148,8 @@ class SimWindow(QWidget):
 # Apply / Cancel / Reset Default Button-----------------------------------------
         ApplyBtn = QPushButton('Apply')
         ApplyBtn.clicked.connect(SimWindow.close)
-        ApplyBtn.clicked.connect(SimWindow.WidgetsSlot)
+        ApplyBtn.clicked.connect(SimWindow.GraphicsSlot)
+        ApplyBtn.clicked.connect(SimWindow.TimeModeSlot)
         ApplyBtn.clicked.connect(SimWindow.WriteFileSlot) # Last Slot
         SimLayout.addWidget(ApplyBtn, 16, 3)
 
@@ -154,6 +158,7 @@ class SimWindow(QWidget):
         SimLayout.addWidget(CancelBtn, 16, 2)
 
         ResetBtn = QPushButton('Reset to Default')
+        ResetBtn.clicked.connect(SimWindow.close)
         ResetBtn.clicked.connect(SimWindow.DefaultWriteSlot)
         SimLayout.addWidget(ResetBtn, 16, 1)
 
@@ -167,9 +172,8 @@ class SimWindow(QWidget):
         SimWindow.WriteFile = open('InOut/Inp_Sim.txt', 'w')
         SimWindow.WriteFile.writelines(SimWindow.Inp_Sim_data)
 
-    def DefaultWriteSlot(SimWindow): # Resets gui options and input txt data to default
+    def DefaultWriteSlot(SimWindow):
         # Reset Write File to Default/readfile
-        SimWindow.ReadFile = open('InOut/Inp_Sim_Default.txt', 'r')
         SimWindow.Inp_Sim_data = SimWindow.ReadFile.readlines()
 
         # Reset GUI selections
