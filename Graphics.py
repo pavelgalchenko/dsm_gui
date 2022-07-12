@@ -17,8 +17,6 @@ class GraphicsWindow(QMainWindow):
         GraphicsWindow.table_widget = GraphicsTableWidget(GraphicsWindow)
         GraphicsWindow.setCentralWidget(GraphicsWindow.table_widget)
 
-
-
 class GraphicsTableWidget(QWidget):
     def __init__(GraphicsTableWidget, parent):
         super(QWidget, GraphicsTableWidget).__init__(parent)
@@ -112,10 +110,64 @@ class GraphicsTableWidget(QWidget):
         Label[6] = QLabel("POV Mode:")
         Label[6].setAlignment(Qt.AlignLeft)
         Label[6].setStyleSheet('font-size: 15px')
-        FOV_Layout.ModeFOV = QComboBox()
-        FOV_Layout.ModeFOV.addItems(["TRACK_HOST", "TRACK_TARGET", "FIXED_IN_HOST"])
-        FOV_Layout.addWidget(FOV_Layout.ModeFOV,4,2)
+        tab2_layout.addWidget(Label[6],1,0)
+        GraphicsTableWidget.ModePOV = QComboBox()
+        GraphicsTableWidget.ModePOV.addItems(["TRACK_HOST", "TRACK_TARGET", "FIXED_IN_HOST"])
+        tab2_layout.addWidget(GraphicsTableWidget.ModePOV,1,1)
+
+        Label[7] = QLabel("Host Type:")
+        Label[7].setAlignment(Qt.AlignLeft)
+        Label[7].setStyleSheet('font-size: 15px')
+        tab2_layout.addWidget(Label[7],2,0)
+        GraphicsTableWidget.HostType = QComboBox()
+        GraphicsTableWidget.HostType.addItems(["WORLD", "REFORB", "FRM", "SC", "BODY"])
+        tab2_layout.addWidget(GraphicsTableWidget.HostType,2,1)
+
+        # Possible addition: connect #SC and #body to initial host/Target
+        # QComboBox for POV Frame of initial host/target
+        Label[8] = QLabel("Initial Host (SC, Body, POV Frame):")
+        Label[8].setAlignment(Qt.AlignLeft)
+        Label[8].setStyleSheet('font-size: 15px')
+        tab2_layout.addWidget(Label[8],3,0)
+        GraphicsTableWidget.InitialHostSC = QLineEdit()
+        GraphicsTableWidget.InitialHostBody = QLineEdit()
+        GraphicsTableWidget.InitialHostPOVFrame = QLineEdit()
+        SubLayout = QHBoxLayout()
+        SubLayout.addWidget(GraphicsTableWidget.InitialHostSC)
+        SubLayout.addWidget(GraphicsTableWidget.InitialHostBody)
+        SubLayout.addWidget(GraphicsTableWidget.InitialHostPOVFrame)
+        tab2_layout.addLayout(SubLayout,3,1)
+
+        Label[9] = QLabel("Host Type:")
+        Label[9].setAlignment(Qt.AlignLeft)
+        Label[9].setStyleSheet('font-size: 15px')
+        tab2_layout.addWidget(Label[9],4,0)
+        GraphicsTableWidget.TargetType = QComboBox()
+        GraphicsTableWidget.TargetType.addItems(["WORLD", "REFORB", "FRM", "SC", "BODY"])
+        tab2_layout.addWidget(GraphicsTableWidget.TargetType,4,1)
+
+        Label[9] = QLabel("Initial Target (SC, Body, POV Frame):")
+        Label[9].setAlignment(Qt.AlignLeft)
+        Label[9].setStyleSheet('font-size: 15px')
+        tab2_layout.addWidget(Label[9],5,0)
+        GraphicsTableWidget.InitialTargetSC = QLineEdit()
+        GraphicsTableWidget.InitialTargetBody = QLineEdit()
+        GraphicsTableWidget.InitialTargetPOVFrame = QLineEdit()
+        SubLayout = QHBoxLayout()
+        SubLayout.addWidget(GraphicsTableWidget.InitialTargetSC)
+        SubLayout.addWidget(GraphicsTableWidget.InitialTargetBody)
+        SubLayout.addWidget(GraphicsTableWidget.InitialTargetPOVFrame)
+        tab2_layout.addLayout(SubLayout,5,1)
+
+        Label[10] = QLabel("Boresight Axis:")
+        Label[10].setAlignment(Qt.AlignLeft)
+        Label[10].setStyleSheet('font-size: 15px')
+        tab2_layout.addWidget(Label[10],6,0)
+        GraphicsTableWidget.BoresightAxis = QLineEdit()
+        tab2_layout.addWidget(GraphicsTableWidget.BoresightAxis,6,1)
+
         GraphicsTableWidget.tab2.setLayout(tab2_layout)
+
 
         # CAM tab --------------------------------------------------------------
         GraphicsTableWidget.tab3.layout = QVBoxLayout(GraphicsTableWidget)
@@ -134,11 +186,11 @@ class GraphicsTableWidget(QWidget):
         GraphicsTableWidget.layout.addWidget(GraphicsTableWidget.tabs)
         GraphicsTableWidget.setLayout(GraphicsTableWidget.layout)
 
-    @pyqtSlot()
-    def on_click(self):
-        print("\n")
-        for currentQTableWidgetItem in self.tableWidget.selectedItems():
-            print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(), currentQTableWidgetItem.text())
+    # @pyqtSlot()
+    # def on_click(self):
+    #     print("\n")
+    #     for currentQTableWidgetItem in self.tableWidget.selectedItems():
+    #         print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(), currentQTableWidgetItem.text())
         # GraphicsWindow.Label = QLabel("List of Graphics Input Parameters")
         # GraphicsLayout.addWidget(GraphicsWindow.Label)
         # GraphicsWindow.setLayout(GraphicsLayout)

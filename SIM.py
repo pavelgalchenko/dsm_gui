@@ -164,28 +164,7 @@ class SimWindow(QWidget):
         SimWindow.setLayout(SimLayout)
 
     # Slot Functions------------------------------------------------------------
-<<<<<<< HEAD
-    def GraphicsSlot(SimWindow):
-        if SimWindow.GraphicsOn.isChecked():
-            SimWindow.Inp_Sim_data[5] = "TRUE                            !  Graphics Front End? \n"
-        elif SimWindow.GraphicsOff.isChecked():
-            SimWindow.Inp_Sim_data[5] = "FALSE                           !  Graphics Front End? \n"
-
-    def TimeModeSlot(SimWindow):
-        if SimWindow.TimeMode.currentText() == "FAST":
-            SimWindow.Inp_Sim_data[2] = "FAST                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)"
-        elif SimWindow.TimeMode.currentText() == "REAL":
-            SimWindow.Inp_Sim_data[2] = "REAL                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)"
-        elif SimWindow.TimeMode.currentText() == "EXTERNAL":
-            SimWindow.Inp_Sim_data[2] = "EXTERNAL                        !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)"
-        elif SimWindow.TimeMode.currentText() == "NOS3":
-            SimWindow.Inp_Sim_data[2] = "NOS3                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)"
-
-    def WriteFileSlot(SimWindow):
-=======
-    #---------------------------------------------------------------------------
     def WriteFileSlot(SimWindow): # Write edited input txt data to output txt file
->>>>>>> 27e48cdf69a2e57334bb63b31cf81fbf4b04b9fd
         # Write inputs to txt Write File
         SimWindow.WriteFile = open('InOut/Inp_Sim.txt', 'w')
         SimWindow.WriteFile.writelines(SimWindow.Inp_Sim_data)
@@ -195,12 +174,6 @@ class SimWindow(QWidget):
         SimWindow.Inp_Sim_data = SimWindow.ReadFile.readlines()
 
         # Reset GUI selections
-<<<<<<< HEAD
-        SimWindow.GraphicsOn.setChecked(True)
-        SimWindow.GraphicsOff.setChecked(False)
-        #SimWindow.SimDuration.setText(30000.0)
-        # To be continued
-=======
         SimWindow.TimeMode.setCurrentIndex(0)
         SimWindow.SimDuration.setText("30000.0")
         SimWindow.StepSize.setText("0.1")
@@ -267,4 +240,3 @@ class SimWindow(QWidget):
 
     def DisplayRefOrbStackSlot(SimWindow, i):
         SimWindow.RefOrbStack.setCurrentIndex(i)
->>>>>>> 27e48cdf69a2e57334bb63b31cf81fbf4b04b9fd
