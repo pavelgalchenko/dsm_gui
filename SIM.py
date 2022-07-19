@@ -51,7 +51,6 @@ class SimWindow(QWidget):
 
         SimWindow.TimeMode = QComboBox()
         SimWindow.TimeMode.addItems(["FAST", "REAL", "EXTERNAL", "NOS3"])
-        #SimWindow.TimeMode.activated.connect(SimWindow.TimeModeSlot)
         SimLayout.addWidget(SimWindow.TimeMode, 1, 1)
 
         # Sim Duration, Step size-----------------------------------------------
@@ -60,16 +59,16 @@ class SimWindow(QWidget):
         Label[2].setStyleSheet('font-size: 15px')
         SimLayout.addWidget(Label[2], 2, 0)
 
-        SimDuration = QLineEdit('30000.0')
-        SimLayout.addWidget(SimDuration, 2, 1)
+        SimWindow.SimDuration = QLineEdit('30000.0')
+        SimLayout.addWidget(SimWindow.SimDuration, 2, 1)
 
         Label[3] = QLabel("Step Size (sec):")
         Label[3].setAlignment(Qt.AlignLeft)
         Label[3].setStyleSheet('font-size: 15px')
         SimLayout.addWidget(Label[3], 3, 0)
 
-        StepSize = QLineEdit('0.1')
-        SimLayout.addWidget(StepSize, 3, 1)
+        SimWindow.StepSize = QLineEdit('0.1')
+        SimLayout.addWidget(SimWindow.StepSize, 3, 1)
 
         # Front end Graphics----------------------------------------------------
         Label[4] = QLabel("Front End Graphics:")
@@ -79,11 +78,9 @@ class SimWindow(QWidget):
 
         SimWindow.GraphicsOn = QRadioButton('On')
         SimWindow.GraphicsOn.setChecked(True)
-        #SimWindow.GraphicsOn.toggled.connect(SimWindow.GraphicsSlot)
 
         SimWindow.GraphicsOff = QRadioButton('Off')
         SimWindow.GraphicsOff.setChecked(False)
-        #SimWindow.GraphicsOff.toggled.connect(SimWindow.GraphicsSlot)
 
         SubLayout = QHBoxLayout()
         SubLayout.addWidget(SimWindow.GraphicsOn)
@@ -148,8 +145,7 @@ class SimWindow(QWidget):
 # Apply / Cancel / Reset Default Button-----------------------------------------
         ApplyBtn = QPushButton('Apply')
         ApplyBtn.clicked.connect(SimWindow.close)
-        ApplyBtn.clicked.connect(SimWindow.GraphicsSlot)
-        ApplyBtn.clicked.connect(SimWindow.TimeModeSlot)
+        ApplyBtn.clicked.connect(SimWindow.WidgetsSlot)
         ApplyBtn.clicked.connect(SimWindow.WriteFileSlot) # Last Slot
         SimLayout.addWidget(ApplyBtn, 16, 3)
 
@@ -158,7 +154,6 @@ class SimWindow(QWidget):
         SimLayout.addWidget(CancelBtn, 16, 2)
 
         ResetBtn = QPushButton('Reset to Default')
-        ResetBtn.clicked.connect(SimWindow.close)
         ResetBtn.clicked.connect(SimWindow.DefaultWriteSlot)
         SimLayout.addWidget(ResetBtn, 16, 1)
 
@@ -166,13 +161,15 @@ class SimWindow(QWidget):
         SimWindow.setLayout(SimLayout)
 
     # Slot Functions------------------------------------------------------------
+    #---------------------------------------------------------------------------
     def WriteFileSlot(SimWindow): # Write edited input txt data to output txt file
         # Write inputs to txt Write File
         SimWindow.WriteFile = open('InOut/Inp_Sim.txt', 'w')
         SimWindow.WriteFile.writelines(SimWindow.Inp_Sim_data)
 
-    def DefaultWriteSlot(SimWindow):
+    def DefaultWriteSlot(SimWindow): # Resets gui options and input txt data to default
         # Reset Write File to Default/readfile
+        SimWindow.ReadFile = open('InOut/Inp_Sim_Default.txt', 'r')
         SimWindow.Inp_Sim_data = SimWindow.ReadFile.readlines()
 
         # Reset GUI selections
@@ -258,3 +255,72 @@ class SimWindow(QWidget):
 
     def DisplayRefOrbStackSlot(SimWindow, i): # Displayes current page in stack when selected in the RefOrb list
         SimWindow.RefOrbStack.setCurrentIndex(i)
+
+    def AddSCStack(SimWindow): # Adds a new page to the SC stack with the same layout as previous pages
+        Label = [0]*3 # Initialize array of labels
+        SimWindow.SCPage = QWidget() # Create widget to become a Page in stack
+        StackLayout = QGridLayout()
+        SubLayout = QHBoxLayout() # for the radio buttons
+
+        # Spacecraft Status------------------------------------------------------
+        Label[0] = QLabel("Spacecraft Status:")
+        Label[0].setAlignment(Qt.AlignLeft)
+        Label[0].setStyleSheet('font-size: 15px')
+        StackLayout.addWidget(Label[0], 0, 0)
+
+        SimWindow.SpacecraftOn = QRadioButton('On')
+        SimWindow.SpacecraftOn.setChecked(True)
+        SubLayout.addWidget(SimWindow.SpacecraftOn)
+        SimWindow.SpacecraftOff = QRadioButton('Off')
+        SimWindow.SpacecraftOff.setChecked(False)
+        SubLayout.addWidget(SimWindow.SpacecraftOff)
+        StackLayout.addLayout(SubLayout, 0, 1)
+
+        # SC File Label---------------------------------------------------------
+        Label[1] = QLabel("Spacecraft Input File:")
+        Label[1].setAlignment(Qt.AlignLeft)
+        Label[1].setStyleSheet('font-size: 15px')
+        StackLayout.addWidget(Label[1], 1, 0)
+
+        SimWindow.SCFile = QLineEdit("SC_Simple.txt")
+        StackLayout.addWidget(SimWindow.SCFile, 1, 1)
+
+        # Pair SC with Ref Orb--------------------------------------------------
+        Label[2] = QLabel("Reference Orbit:")
+        Label[2].setAlignment(Qt.AlignLeft)
+        Label[2].setStyleSheet('font-size: 15px')
+        StackLayout.addWidget(Label[2], 2, 0)
+
+        SimWindow.SCRefOrb = QComboBox()
+        SimWindow.SCRefOrb.addItem("Ref. Orb. 1")
+        StackLayout.addWidget(SimWindow.SCRefOrb, 2, 1)
+
+        # Add Spacecraft Button--------------------------------------------------
+        AddSCBtn = QPushButton('Add a Spacecraft')
+        StackLayout.addWidget(AddSCBtn, 3, 1)
+        AddSCBtn.clicked.connect(SimWindow.AddSpacecraftSlot)
+
+        # Remove Spacecraft btn
+        RmvSCBtn = QPushButton('Remove a Spacecraft')
+        StackLayout.addWidget(RmvSCBtn, 3, 0)
+        RmvSCBtn.clicked.connect(SimWindow.RmvSCSlot)
+
+        SimWindow.SCPage.setLayout(StackLayout)
+        SimWindow.SCStack.addWidget(SimWindow.SCPage)
+
+    def DisplaySCStackSlot(SimWindow, i): # Displayes current page in stack when selected in the SC list
+        SimWindow.SCStack.setCurrentIndex(i)
+
+    def AddSpacecraftSlot(SimWindow): # Adds a spacecraft to SC list and SC stack
+        ItemIndex = SimWindow.ListSC.count() + 1
+        SimWindow.ListSC.insertItem(int(ItemIndex), "Spacecraft %s"%ItemIndex)
+        SimWindow.AddSCStack()
+
+    # This does not yet work
+    def RmvSCSlot(SimWindow): # Removes the last SC added to the SC List
+        RmvIndex = int(SimWindow.ListSC.count())
+        print(RmvIndex)
+        if RmvIndex > 1:
+            print("HELLO")
+            SimWindow.ListSC.takeItem(RmvIndex)
+            SimWindow.SCStack.removeWidget(SimWindow.SCStack.widget(RmvIndex))
