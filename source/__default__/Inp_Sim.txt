@@ -1,8 +1,9 @@
 <<<<<<<<<<<<<<<<<  42: The Mostly Harmless Simulator  >>>>>>>>>>>>>>>>>
 ************************** Simulation Control **************************
 FAST                            !  Time Mode (FAST, REAL, EXTERNAL, or NOS3)
-30000.0   0.1                   !  Sim Duration, Step Size [sec]
-10.0                            !  File Output Interval [sec]
+5000.0   0.1                    !  Sim Duration, Step Size [sec]
+5.0                             !  File Output Interval [sec]
+0                               !  RNG Seed
 TRUE                            !  Graphics Front End?
 Inp_Cmd.txt                     !  Command Script File Name
 **************************  Reference Orbits  **************************
@@ -17,7 +18,7 @@ TRUE  0 SC_Simple.txt           !  Existence, RefOrb, Input file for SC 0
 37.0                            !  Leap Seconds (sec)
 USER                            !  F10.7, Ap (USER, NOMINAL or TWOSIGMA)
 230.0                           !  USER-provided F10.7
-100.0                           !  USER-provided Ap
+100.0                           !  USER-provided Ap 
 IGRF                            !  Magfield (NONE,DIPOLE,IGRF)
 8   8                           !  IGRF Degree and Order (<=10)
 8   8                           !  Earth Gravity Model N and M (<=18)
@@ -26,16 +27,15 @@ IGRF                            !  Magfield (NONE,DIPOLE,IGRF)
 FALSE   FALSE                   !  Aerodynamic Forces & Torques (Shadows)
 FALSE                           !  Gravity Gradient Torques
 FALSE   FALSE                   !  Solar Pressure Forces & Torques (Shadows)
+FALSE                           !  Residual Magnetic Moment Torques
 FALSE                           !  Gravity Perturbation Forces
-FALSE                           !  Passive Joint Forces & Torques
 FALSE                           !  Thruster Plume Forces & Torques
-FALSE                           !  RWA Imbalance Forces and Torques
 FALSE                           !  Contact Forces and Torques
 FALSE                           !  CFD Slosh Forces and Torques
 FALSE                           !  Albedo Effect on CSS Measurements
 FALSE                           !  Output Environmental Torques to Files
 ********************* Celestial Bodies of Interest *********************
-MEAN                           !  Ephem Option (MEAN or DE430)
+MEAN                            !  Ephem Option (MEAN, DE430, DE440)
 TRUE                            !  Mercury
 TRUE                            !  Venus
 TRUE                            !  Earth and Luna

@@ -1,10 +1,17 @@
-# Matthew Zaffram
-
 # This is a test file to click a button to launch a secondary window
 
 # Import Packages---------------------------------------------------------------
 import sys
 import numpy as numpy
+import os
+import shutil
+import subprocess as sub
+from os.path import expanduser
+from pathlib import Path
+import functions
+from PyQt5 import QtCore
+
+# from subprocess import call
 # Import QApplication and the required widgets from PyQt5.QtWidgets
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMainWindow
@@ -18,9 +25,13 @@ from PyQt5.QtWidgets import QComboBox # drop down box
 from PyQt5.QtWidgets import QVBoxLayout # verticle stack layout
 from PyQt5.QtWidgets import QHBoxLayout # Horizontal stack layout
 from PyQt5.QtWidgets import QRadioButton
+from PyQt5.QtWidgets import QFormLayout
+from PyQt5.QtWidgets import QButtonGroup
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QMessageBox
 
 # Import Other files from repo
-import FOV, SIM, CMD, SC, NOS3, TDRS, IPC, ORB, Region, Graphics
+import FOV, SIM, CMD, SC, NOS3, TDRS, IPC, ORB, Region, Graphics, DSM, loadPathWindow
 
 # Create Main window Class------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -30,71 +41,42 @@ class MainWindow(QWidget):
         super().__init__()
         #---------------------Main Window---------------------------------------
         MainWindow.setWindowTitle('42 GUI') # sets the window’s title
-        MainWindow.setFixedSize(700, 400) # gives window a fixed size
+        MainWindow.setFixedSize(350, 300) # gives window a fixed size (width, height)
         MainLayout = QGridLayout()
 
         #-----------------------Widgets-----------------------------------------
         # Make Label for array of Buttons
-        Label = QLabel("Sub Menus")
+        Label = QLabel("42 Sub-Menus")
         Label.setAlignment(Qt.AlignCenter)
         Label.setStyleSheet('font-size: 20px')
         MainLayout.addWidget(Label, 0, 0, 1, 2)
+
+        btn7 = QPushButton('DSM')
+        btn7.clicked.connect(MainWindow.DSM_SubWindow)
+        btn7.setFixedSize(310, 40)
+        MainLayout.addWidget(btn7, 1, 0, 1, 2)
+        MainWindow.DSM_Menu = []
 
         # Make Button for Orbits Menu
         btn1 = QPushButton('Orbits')
         btn1.clicked.connect(MainWindow.OrbSubWindow)
         btn1.setFixedSize(150, 40)
-        MainLayout.addWidget(btn1, 1, 0)
+        MainLayout.addWidget(btn1, 2, 0)
         MainWindow.OrbitMenu = []
-
-        # Make Button for Command Menu
-        btn2 = QPushButton('Command')
-        btn2.clicked.connect(MainWindow.CmdSubWindow)
-        btn2.setFixedSize(150, 40)
-        MainLayout.addWidget(btn2, 1, 1)
-        MainWindow.CmdMenu = []
 
         # Make Button for Spacecraft Menu
         btn3 = QPushButton('Spacecraft')
         btn3.clicked.connect(MainWindow.SCSubWindow)
         btn3.setFixedSize(150, 40)
-        MainLayout.addWidget(btn3, 2, 0)
+        MainLayout.addWidget(btn3, 3, 0)
         MainWindow.SCMenu = []
-
-        # Make Button for Graphics Menu
-        btn4 = QPushButton('Graphics')
-        btn4.clicked.connect(MainWindow.GraphicsSubWindow)
-        btn4.setFixedSize(150, 40)
-        MainLayout.addWidget(btn4, 2, 1)
-        MainWindow.GraphicsMenu = []
 
         # Make Button for Simulation Menu
         btn5 = QPushButton('Simulation')
         btn5.clicked.connect(MainWindow.SimSubWindow)
         btn5.setFixedSize(150, 40)
-        MainLayout.addWidget(btn5, 3, 0)
+        MainLayout.addWidget(btn5, 4, 0)
         MainWindow.SimulationMenu = []
-
-        # Make Button for FOV Menu
-        btn6 = QPushButton('FOV')
-        btn6.clicked.connect(MainWindow.FOV_SubWindow)
-        btn6.setFixedSize(150, 40)
-        MainLayout.addWidget(btn6, 3, 1)
-        MainWindow.FOV_Menu = []
-
-        # Make Button for NOS3 Menu
-        btn7 = QPushButton('NOS3')
-        btn7.clicked.connect(MainWindow.NOS3_SubWindow)
-        btn7.setFixedSize(150, 40)
-        MainLayout.addWidget(btn7, 4, 0)
-        MainWindow.NOS3_Menu = []
-
-        # Make Button for Region Menu
-        btn8 = QPushButton('Region')
-        btn8.clicked.connect(MainWindow.RegionSubWindow)
-        btn8.setFixedSize(150, 40)
-        MainLayout.addWidget(btn8, 4, 1)
-        MainWindow.RegionMenu = []
 
         # Make Button for IPC Menu
         btn9 = QPushButton('IPC')
@@ -103,6 +85,27 @@ class MainWindow(QWidget):
         MainLayout.addWidget(btn9, 5, 0)
         MainWindow.IPC_Menu = []
 
+        # Make Button for Graphics Menu
+        btn4 = QPushButton('Graphics')
+        btn4.clicked.connect(MainWindow.GraphicsSubWindow)
+        btn4.setFixedSize(150, 40)
+        MainLayout.addWidget(btn4, 2, 1)
+        MainWindow.GraphicsMenu = []
+
+        # Make Button for FOV Menu
+        btn6 = QPushButton('FOV')
+        btn6.clicked.connect(MainWindow.FOV_SubWindow)
+        btn6.setFixedSize(150, 40)
+        MainLayout.addWidget(btn6, 3, 1)
+        MainWindow.FOV_Menu = []
+
+        # Make Button for Region Menu
+        btn8 = QPushButton('Region')
+        btn8.clicked.connect(MainWindow.RegionSubWindow)
+        btn8.setFixedSize(150, 40)
+        MainLayout.addWidget(btn8, 4, 1)
+        MainWindow.RegionMenu = []
+
         # Make Button for TDRS Menu
         btn10 = QPushButton('TDRS')
         btn10.clicked.connect(MainWindow.TDRS_SubWindow)
@@ -110,55 +113,23 @@ class MainWindow(QWidget):
         MainLayout.addWidget(btn10, 5, 1)
         MainWindow.TDRS_Menu = []
 
-        # Labels
-        Label2 = QLabel("Number of Satellites:")
-        Label2.setAlignment(Qt.AlignLeft)
-        Label2.setStyleSheet('font-size: 15px')
-        MainLayout.addWidget(Label2, 1, 2)
+        SubLayout = QHBoxLayout()
+        loadBtn = QPushButton('Load')
+        loadBtn.clicked.connect(MainWindow.loadMissionWindow)
+        SubLayout.addWidget(loadBtn)
+        MainWindow.loadMissionMenu = []
 
-        Label3 = QLabel("Central Body:")
-        Label3.setAlignment(Qt.AlignLeft)
-        Label3.setStyleSheet('font-size: 15px')
-        MainLayout.addWidget(Label3, 2, 2)
+        loadPath42Btn = QPushButton('42 Path')
+        loadPath42Btn.clicked.connect(MainWindow.loadPathWindow42)
+        SubLayout.addWidget(loadPath42Btn)
+        MainWindow.loadPathMenu42 = []
 
-        Label4 = QLabel("Type of Simulation:")
-        Label4.setAlignment(Qt.AlignLeft)
-        Label4.setStyleSheet('font-size: 15px')
-        MainLayout.addWidget(Label4, 3, 2)
-
-        # Make Edit Line
-        NumSats = QLineEdit("Insert Num. Spacecraft")
-        # NumSats.returnPressed.connect(MainWindow.PopUp) # Not sure what to do with this yet - maybe color change?
-
-        # Write to Txt file
-        file = open('InOut/Test.txt', 'w')
-        file.write(NumSats.text())
-        file.write('\n')
-        file.writelines('\n'.join([NumSats.text(), NumSats.text()]))
-        MainLayout.addWidget(NumSats, 1, 3)
-
-        # Make Combo box
-        CentralBody = QComboBox()
-        CentralBody.addItems(["Choose", "Earth", "Luna", "Sun", "Mars", "Jupiter"])
-        MainLayout.addWidget(CentralBody, 2, 3)
-
-        # Make Combo box
-        SimMode = QComboBox()
-        SimMode.addItems(["Choose", "Keplarian", "3-Body", "Formation Flying", "Constellation"])
-        MainLayout.addWidget(SimMode, 3, 3)
-
-        # Apply / Cancel / Reset Default Button
-        ApplyBtn = QPushButton('Apply')
+        ApplyBtn = QPushButton('Run')
         ApplyBtn.clicked.connect(MainWindow.close)
-        MainLayout.addWidget(ApplyBtn, 6, 3)
-
-        CancelBtn = QPushButton('Cancel')
-        CancelBtn.clicked.connect(MainWindow.close)
-        MainLayout.addWidget(CancelBtn, 6, 2)
-
-        ResetBtn = QPushButton('Reset to Default')
-        ResetBtn.clicked.connect(MainWindow.close)
-        MainLayout.addWidget(ResetBtn, 6, 1)
+        ApplyBtn.clicked.connect(MainWindow.run_sim)
+        # Connect to run 42 with applied inputs
+        SubLayout.addWidget(ApplyBtn)
+        MainLayout.addLayout(SubLayout, 6, 0, 1, 2)
 
         # Set Layout for Main Window--------------------------------------------
         MainWindow.setLayout(MainLayout)
@@ -194,10 +165,10 @@ class MainWindow(QWidget):
             MainWindow.FOV_Menu = FOV.FOV_Window()
         MainWindow.FOV_Menu.show()
 
-    def NOS3_SubWindow(MainWindow):
-        if MainWindow.NOS3_Menu == []:
-            MainWindow.NOS3_Menu = NOS3.NOS3_Window()
-        MainWindow.NOS3_Menu.show()
+    def DSM_SubWindow(MainWindow):
+        if MainWindow.DSM_Menu == []:
+            MainWindow.DSM_Menu = DSM.DSM_Window()
+        MainWindow.DSM_Menu.show()
 
     def RegionSubWindow(MainWindow):
         if MainWindow.RegionMenu == []:
@@ -214,13 +185,56 @@ class MainWindow(QWidget):
             MainWindow.TDRS_Menu = TDRS.TDRS_Window()
         MainWindow.TDRS_Menu.show()
 
+    def loadMissionWindow(MainWindow):
+        if MainWindow.loadMissionMenu == []:
+            MainWindow.loadMissionMenu = loadPathWindow.loadMissionWindow()
+
+        MainWindow.loadMissionMenu.show()
+
+    def loadPathWindow42(MainWindow):
+        if MainWindow.loadPathMenu42 == []:
+            MainWindow.loadPathMenu42 = loadPathWindow.loadPathWindow42()
+        MainWindow.loadPathMenu42.show()
+
+    def run_sim(self):
+        try:
+            functions.overwrite_directory(self,self.destinationDir,self.loadPathMenu42.dir42)
+            os.chdir(self.loadPathMenu42.dir42)
+            os.system("make clean")
+            os.system("make -j12")
+
+        except:
+            errorMsg = functions.create_notice(self,"Error: Invalid 42 Path.")
+            errorMsg.exec_()
+        # os.system("./run.sh + " Blah 0")
+
+class StartUpWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('42 GUI: Start-up')
+
+        self.loadMissionWindow = loadPathWindow.loadMissionWindow()
+        self.setCentralWidget(self.loadMissionWindow)
+
+        self.loadMissionWindow.loadFileTrue.connect(self.start_main_menu)
+
+    def start_main_menu(self):
+        self.mainMenuWindow = MainWindow()
+        self.mainMenuWindow.show()
+        self.hide()
 
 # Launch GUI -------------------------------------------------------------------
 def main():
     app = QApplication(sys.argv) # Create an instance of QApplication
-    Window = MainWindow()
-    Window.show()
-    sys.exit(app.exec_()) # Execute the calculator's main loop
+
+    # startUpWindow = StartUpWindow()
+    # startUpWindow.show()
+
+    mainMenuWindow = MainWindow()
+    mainMenuWindow.show()
+
+
+    sys.exit(app.exec_())
 
 if __name__ == '__main__':
     main()
