@@ -332,217 +332,163 @@ class OrbitWindow(QWidget):
             self.writeFile.close()
 
     def save_data_slot(self,stackIndex):
-        empty_space = '                              '
         stack = self.stackedWidget.widget(stackIndex)
         self.saveData = [""]*300
 
-        txt_idx = 0
-        self.saveData[txt_idx] = '<<<<<<<<<<<<<<<<<  42: Orbit Description File   >>>>>>>>>>>>>>>>>\n'
+        self.saveData[0] = '<<<<<<<<<<<<<<<<<  42: Orbit Description File   >>>>>>>>>>>>>>>>>\n'
 
-        txt_idx += 1
         data_inp = stack.general_input_0.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Description\n'
+        self.saveData[1] = functions.whitespace(data_inp) + '! Description\n'
 
-        txt_idx += 1
         data_inp = stack.general_input_1.currentText()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Orbit Type (ZERO, FLIGHT, CENTRAL, THREE_BODY)\n'
+        self.saveData[2] = functions.whitespace(data_inp) + '! Orbit Type (ZERO, FLIGHT, CENTRAL, THREE_BODY)\n'
 
-        txt_idx += 1
-        self.saveData[txt_idx] = '::::::::::::::  Use these lines if ZERO           :::::::::::::::::\n'
+        self.saveData[3] = '::::::::::::::  Use these lines if ZERO           :::::::::::::::::\n'
 
-        txt_idx += 1
         data_inp = stack.zero_input_0.currentText()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! World\n'
+        self.saveData[4] = functions.whitespace(data_inp) + '! World\n'
 
-        txt_idx += 1
         if stack.zero_input_1_ON.isChecked() == True:
             data = 'TRUE'
         else:
             data = 'FALSE'
         data_inp = data
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Use Polyhedron Gravity\n'
+        self.saveData[5] = functions.whitespace(data_inp) + '! Use Polyhedron Gravity\n'
 
-        txt_idx += 1
-        self.saveData[txt_idx] = '::::::::::::::  Use these lines if FLIGHT         :::::::::::::::::\n'
+        self.saveData[6] = '::::::::::::::  Use these lines if FLIGHT         :::::::::::::::::\n'
 
-        txt_idx += 1
         data_inp = stack.flight_input_0.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Region Number\n'
+        self.saveData[7] = functions.whitespace(data_inp) + '! Region Number\n'
 
-        txt_idx += 1
         if stack.flight_input_1_ON.isChecked() == True:
             data = 'TRUE'
         else:
             data = 'FALSE'
         data_inp = data
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Use Polyhedron Gravity\n'
+        self.saveData[8] = functions.whitespace(data_inp) + '! Use Polyhedron Gravity\n'
 
-        txt_idx += 1
-        self.saveData[txt_idx] = '::::::::::::::  Use these lines if CENTRAL        :::::::::::::::::\n'
+        self.saveData[9] = '::::::::::::::  Use these lines if CENTRAL        :::::::::::::::::\n'
 
-        txt_idx += 1
         data_inp = stack.central_input_0.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Orbit Center\n'
+        self.saveData[10] = functions.whitespace(data_inp) + '! Orbit Center\n'
 
-        txt_idx += 1
         if stack.central_input_1_ON.isChecked() == True:
             data = 'TRUE'
         else:
             data = 'FALSE'
         data_inp = data
-        data_len = len(empty_space)-len(data_inp)
-        if data_len < 1: data_len = 1
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Secular Orbit Drift Due to J2\n'
+        self.saveData[11] = functions.whitespace(data_inp) + '! Secular Orbit Drift Due to J2\n'
 
-        txt_idx += 1
         data_inp = stack.central_input_2.currentText()
-        self.saveData[txt_idx] =  functions.whitespace(data_inp) + '! Use Keplerian elements (KEP) or (RV) or FILE\n'
+        self.saveData[12] =  functions.whitespace(data_inp) + '! Use Keplerian elements (KEP) or (RV) or FILE\n'
 
-        txt_idx += 1
         data_inp = stack.central_input_3.currentText()
-        self.saveData[txt_idx] =  functions.whitespace(data_inp) + '! Use Peri/Apoapsis (PA) or min alt/ecc (AE)\n'
+        self.saveData[13] =  functions.whitespace(data_inp) + '! Use Peri/Apoapsis (PA) or min alt/ecc (AE)\n'
 
-        txt_idx += 1
         data_inp = stack.central_input_4.text() + '  ' + stack.central_input_5.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Periapsis & Apoapsis Altitude, km\n'
+        self.saveData[14] = functions.whitespace(data_inp) + '! Periapsis & Apoapsis Altitude, km\n'
 
-        txt_idx += 1
         data_inp = stack.central_input_6.text() + '  ' + stack.central_input_7.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Min Altitude (km), Eccentricity\n'
+        self.saveData[15] = functions.whitespace(data_inp) + '! Min Altitude (km), Eccentricity\n'
 
-        txt_idx += 1
         data_inp = stack.central_input_8.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Inclination (deg)\n'
+        self.saveData[16] = functions.whitespace(data_inp) + '! Inclination (deg)\n'
 
-        txt_idx += 1
         data_inp = stack.central_input_9.text()
-        data_len = len(empty_space)-len(data_inp)
-        if data_len < 1: data_len = 1
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Right Ascension of Ascending Node (deg)\n'
+        self.saveData[17] = functions.whitespace(data_inp) + '! Right Ascension of Ascending Node (deg)\n'
 
-        txt_idx += 1
         data_inp = stack.central_input_10.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Argument of Periapsis (deg)\n'
+        self.saveData[18] = functions.whitespace(data_inp) + '! Argument of Periapsis (deg)\n'
 
-        txt_idx += 1
         data_inp = stack.central_input_11.text()
-        self.saveData[txt_idx] =  functions.whitespace(data_inp) + '! True Anomaly (deg)\n'
+        self.saveData[19] =  functions.whitespace(data_inp) + '! True Anomaly (deg)\n'
 
-        txt_idx += 1
         data_inp = stack.central_input_12.text() + '  ' + stack.central_input_13.text() + '  ' + stack.central_input_14.text()
-        self.saveData[txt_idx] =  functions.whitespace(data_inp) + '! RV Initial Position (km)\n'
+        self.saveData[20] =  functions.whitespace(data_inp) + '! RV Initial Position (km)\n'
 
-        txt_idx += 1
         data_inp = stack.central_input_15.text() + '  ' + stack.central_input_16.text() + '  ' + stack.central_input_17.text()
-        self.saveData[txt_idx] =  functions.whitespace(data_inp) + '! RV Initial Velocity (km/sec)\n'
+        self.saveData[21] =  functions.whitespace(data_inp) + '! RV Initial Velocity (km/sec)\n'
 
-        txt_idx += 1
         data_inp = stack.central_input_18.currentText()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! TLE, TRV, or SPLINE file format\n'
+        self.saveData[22] = functions.whitespace(data_inp) + '! TLE, TRV, or SPLINE file format\n'
 
-        txt_idx += 1
         data_inp = '"' + stack.central_input_19.text() + '"'
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! File name\n'
+        self.saveData[23] = functions.whitespace(data_inp) + '! File name\n'
 
-        txt_idx += 1
         data_inp = '"' + stack.central_input_20.text() + '"'
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Label to find in TLE or TRV file\n'
+        self.saveData[24] = functions.whitespace(data_inp) + '! Label to find in TLE or TRV file\n'
 
-        txt_idx += 1
-        self.saveData[txt_idx] = ':::::::::::::  Use these lines if THREE_BODY      ::::::::::::::::\n'
+        self.saveData[25] = ':::::::::::::  Use these lines if THREE_BODY      ::::::::::::::::\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_0.currentText()
-        data_len = len(empty_space)-len(data_inp)
-        if data_len < 1: data_len = 1
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Lagrange system\n'
+        self.saveData[26] = functions.whitespace(data_inp) + '! Lagrange system\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_1.currentText()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Propagate using LAGDOF_MODES or LAGDOF_COWELL or LAGDOF_SPLINE\n'
+        self.saveData[27] = functions.whitespace(data_inp) + '! Propagate using LAGDOF_MODES or LAGDOF_COWELL or LAGDOF_SPLINE\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_2.currentText()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Initialize with MODES or XYZ or FILE\n'
+        self.saveData[28] = functions.whitespace(data_inp) + '! Initialize with MODES or XYZ or FILE\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_3.currentText()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Libration point (L1, L2, L3, L4, L5)\n'
+        self.saveData[29] = functions.whitespace(data_inp) + '! Libration point (L1, L2, L3, L4, L5)\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_4.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! XY Semi-major axis, km\n'
+        self.saveData[30] = functions.whitespace(data_inp) + '! XY Semi-major axis, km\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_5.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Initial XY Phase, deg  (CCW from -Y)\n'
+        self.saveData[31] = functions.whitespace(data_inp) + '! Initial XY Phase, deg  (CCW from -Y)\n'
 
-        txt_idx += 1
         if stack.threeBody_input_6_CW.isChecked() == True:
             data = 'CW'
         else:
             data = 'CCW'
         data_inp = data
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Sense (CW, CCW), viewed from +Z\n'
+        self.saveData[32] = functions.whitespace(data_inp) + '! Sense (CW, CCW), viewed from +Z\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_7.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Second XY Mode Semi-major Axis, km (L4, L5 only)\n'
+        self.saveData[33] = functions.whitespace(data_inp) + '! Second XY Mode Semi-major Axis, km (L4, L5 only)\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_8.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Second XY Mode Initial Phase, deg (L4, L5 only)\n'
+        self.saveData[34] = functions.whitespace(data_inp) + '! Second XY Mode Initial Phase, deg (L4, L5 only)\n'
 
-        txt_idx += 1
         if stack.threeBody_input_9_CW.isChecked() == True:
             data = 'CW'
         else:
             data = 'CCW'
         data_inp = data
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Sense (CW, CCW), viewed from +Z (L4, L5 only)\n'
+        self.saveData[35] = functions.whitespace(data_inp) + '! Sense (CW, CCW), viewed from +Z (L4, L5 only)\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_10.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Z Semi-axis, km\n'
+        self.saveData[36] = functions.whitespace(data_inp) + '! Z Semi-axis, km\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_11.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Initial Z Phase, deg\n'
+        self.saveData[37] = functions.whitespace(data_inp) + '! Initial Z Phase, deg\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_12.text() +  '  ' + stack.threeBody_input_13.text() +  '  ' + stack.threeBody_input_14.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Initial X, Y, Z (Non-dimensional)\n'
+        self.saveData[38] = functions.whitespace(data_inp) + '! Initial X, Y, Z (Non-dimensional)\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_15.text() +  '  ' + stack.threeBody_input_16.text() +  '  ' + stack.threeBody_input_17.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Initial Xdot, Ydot, Zdot (Non-dimensional)\n'
+        self.saveData[39] = functions.whitespace(data_inp) + '! Initial Xdot, Ydot, Zdot (Non-dimensional)\n'
 
-        txt_idx += 1
         data_inp = stack.threeBody_input_18.currentText() + '  ' + '"' + stack.threeBody_input_19.text() + '"'
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! TLE, TRV or SPLINE format, Label to find in file\n'
+        self.saveData[40] = functions.whitespace(data_inp) + '! TLE, TRV or SPLINE format, Label to find in file\n'
 
-        txt_idx += 1
         data_inp = '"' + stack.threeBody_input_20.text() + '"'
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! File name\n'
+        self.saveData[41] = functions.whitespace(data_inp) + '! File name\n'
 
-        txt_idx += 1
-        self.saveData[txt_idx] = '******************* Formation Frame Parameters ************************\n'
+        self.saveData[42] = '******************* Formation Frame Parameters ************************\n'
 
-        txt_idx += 1
         data_inp = stack.formation_input_0.currentText()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Formation Frame Fixed in [NL]\n'
+        self.saveData[43] = functions.whitespace(data_inp) + '! Formation Frame Fixed in [NL]\n'
 
-        txt_idx += 1
         data_inp = stack.formation_input_1.text() + '  ' + stack.formation_input_2.text() + '  ' + stack.formation_input_3.text() + '  ' + stack.formation_input_4.currentText()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Euler Angles (deg) and Sequence\n'
+        self.saveData[44] = functions.whitespace(data_inp) + '! Euler Angles (deg) and Sequence\n'
 
-        txt_idx += 1
         data_inp = stack.formation_input_5.currentText()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Formation Origin expressed in [NL]\n'
+        self.saveData[45] = functions.whitespace(data_inp) + '! Formation Origin expressed in [NL]\n'
 
-        txt_idx += 1
         data_inp = stack.formation_input_6.text() + '  ' + stack.formation_input_7.text() + '  ' + stack.formation_input_8.text()
-        self.saveData[txt_idx] = functions.whitespace(data_inp) + '! Formation Origin wrt Ref Orbit (m)\n'
+        self.saveData[46] = functions.whitespace(data_inp) + '! Formation Origin wrt Ref Orbit (m)\n'
 
     def signal_to_slot(self):
         self.orbitList.currentRowChanged.connect(lambda:functions.display_stack_slot(self.stackedWidget, self.orbitList.currentRow()))

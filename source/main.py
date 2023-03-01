@@ -1,10 +1,11 @@
 # This Python file uses the following encoding: utf-8
 import sys
 
+# Import QApplication and the required widgets from PySide6
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication
 from PySide6.QtWidgets import QMainWindow
 from PySide6.QtWidgets import QWidget
-from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLabel
 from PySide6.QtWidgets import QGridLayout # to arrange the buttons
 from PySide6.QtWidgets import QPushButton # for the butons

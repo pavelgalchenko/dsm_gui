@@ -8,6 +8,7 @@ import shutil
 
 # Import QApplication and the required widgets from PySide6
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QMainWindow
 from PySide6.QtWidgets import QWidget
 from PySide6.QtWidgets import QLabel
 from PySide6.QtWidgets import QGridLayout # to arrange the buttons
@@ -86,7 +87,6 @@ class GraphicsTable(QWidget):
         self.UnitSphereWindowBtnGroup.addButton(self.UnitSphereWindowOn)
         self.UnitSphereWindowBtnGroup.addButton(self.UnitSphereWindowOff)
 
-        SubLayout = QHBoxLayout()
         MapWindowSubLayout = QHBoxLayout()
         OrreryWindowSubLayout = QHBoxLayout()
         UnitSphereSubLayout = QHBoxLayout()
@@ -223,12 +223,15 @@ class GraphicsTable(QWidget):
         ]
         CamShowMenuLabels = [
         'N Axes','L Axes','F Axes','B Axes','N Grid','L Grid','F Grid','B Grid',
-        'B Grid','Field of View','Prov Ops','TDRS Satellites','Shadows',
-        'Astro Labels','Truth Vectors','FSW Vectors','Milky Way','Fermi Skye'
+        'G Grid','Field of View','Prov Ops','TDRS Satellites','Shadows',
+        'Astro Labels','Truth Vectors','FSW Vectors','Milky Way','Fermi Sky'
         ]
 
         CamShowMenuExistInputs = self.inputData[21:39]
         CamShowMenuNameInputs = self.inputString[1:19]
+
+        print(CamShowMenuExistInputs)
+        print(CamShowMenuNameInputs)
 
         tab3_layout.addLayout(self.generate_label_widgets(CamLabelList),0,0,4,1)
         tab3_layout.addWidget(self.CamTitle,0,1)
@@ -264,7 +267,7 @@ class GraphicsTable(QWidget):
         widgetLayout.addLayout(MapDimSubLayout)
 
         MapLabelList = ['Map Title:','Width, Height [pixels]:']
-        MapShowMenuLabels = ['Clock','Clock','Credits','Night']
+        MapShowMenuLabels = ['Clock','Tlm Clock','Credits','Night']
 
         MapShowMenuExistInputs = self.inputData[41:45]
         MapShowMenuNameInputs = self.inputString[20:24]
@@ -390,6 +393,9 @@ class GraphicsTable(QWidget):
             itemOffLabel = label.replace(" ","") + "Off"
             itemBtnGroupLabel = itemLabel + "BtnGroup"
 
+            print(label)
+            print(showInputName[row])
+
             setattr(self,itemLabel,QLineEdit())
             setattr(self,itemOnLabel,QRadioButton('On'))
             setattr(self,itemOffLabel,QRadioButton('Off'))
@@ -409,10 +415,6 @@ class GraphicsTable(QWidget):
                 getItemOn.setChecked(True)
             if (showMenuData[row][0].lower() == 'false'):
                 getItemOff.setChecked(True)
-
-            getItemLabel.textEdited.connect(lambda:self.display_menu_slot(row,label,getItemLabel,getItemOn))
-            getItemOn.toggled.connect(lambda:self.display_menu_slot(row,label,getItemLabel,getItemOn))
-            getItemOff.toggled.connect(lambda:self.display_menu_slot(row,label,getItemLabel,getItemOn))
 
             SubLayout = QHBoxLayout()
             SubLayout.addWidget(getItemOn)
@@ -555,149 +557,178 @@ class GraphicsTable(QWidget):
             self.MinorConsOff.setChecked(True)
 
     def signal_to_slot(self):
-        self.GlOutInterval.textEdited.connect(self.gl_output_interval_slot)
         self.ApplyBtn.clicked.connect(self.write_file_slot)
-        self.StarCatalogName.textEdited.connect(self.star_catalog_file_name_slot)
-        self.MapWindowOn.toggled.connect(self.map_window_exist_slot)
-        self.MapWindowOff.toggled.connect(self.map_window_exist_slot)
-        self.OrreryWindowOn.toggled.connect(self.orrery_window_exist_slot)
-        self.OrreryWindowOff.toggled.connect(self.orrery_window_exist_slot)
-        self.UnitSphereWindowOn.toggled.connect(self.unit_sphere_window_exist_slot)
-        self.UnitSphereWindowOff.toggled.connect(self.unit_sphere_window_exist_slot)
-        self.PauseStartupOn.toggled.connect(self.pause_startup_slot)
-        self.PauseStartupOff.toggled.connect(self.pause_startup_slot)
-        self.ModePOV.currentTextChanged.connect(self.track_host_slot)
-        self.HostType.currentTextChanged.connect(self.host_type_slot)
-        self.InitialHostSC.textEdited.connect(self.initial_host_slot)
-        self.InitialHostBody.textEdited.connect(self.initial_host_slot)
-        self.InitialHostPOVFrame.textEdited.connect(self.initial_host_slot)
-        self.TargetType.currentTextChanged.connect(self.target_type_slot)
-        self.InitialTargetSC.textEdited.connect(self.initial_target_slot)
-        self.InitialTargetBody.textEdited.connect(self.initial_target_slot)
-        self.InitialTargetPOVFrame.textEdited.connect(self.initial_target_slot)
-        self.BoresightAxis.textEdited.connect(self.boresight_axis_slot)
-        self.UpAxis.textEdited.connect(self.up_axis_slot)
-        self.InitPovRange.textEdited.connect(self.initial_pov_range_slot)
-        self.VPovAngle.textEdited.connect(self.pov_angle_slot)
-        self.PovPosHostFirstEntry.textEdited.connect(self.initial_host_position_slot)
-        self.PovPosHostSecondEntry.textEdited.connect(self.initial_host_position_slot)
-        self.PovPosHostThirdEntry.textEdited.connect(self.initial_host_position_slot)
-        self.InitPovView.currentTextChanged.connect(self.initial_pov_slot)
-        self.CamTitle.textEdited.connect(self.cam_title_slot)
-        self.CamWidth.textEdited.connect(self.cam_dimensions_slot)
-        self.CamHeight.textEdited.connect(self.cam_dimensions_slot)
-        self.MouseScaleFactor.textEdited.connect(self.mouse_scale_factor_slot)
-        self.DisplayGammaExponent.textEdited.connect(self.display_gamma_slot)
 # ------------------------------------------------------------------------------
 # Slot Functions----------------------------------------------------------------
     def write_file_slot(self): # Write edited input txt data to output txt file
         # Write inputs to txt Write File
+        self.save_data_slot()
         self.WriteFile = open(self.inputFile, 'w+')
         self.WriteFile.writelines(self.InpGraphicsData)
         self.WriteFile.close()
-        self.close
 
-    def gl_output_interval_slot(self):
-        self.InpGraphicsData[1] = self.GlOutInterval.text() + "                                !  GL Output Interval [sec]\n"
+    def save_data_slot(self):
 
-    def star_catalog_file_name_slot(self):
-        self.InpGraphicsData[2] = self.StarCatalogName.text() + "                       !  Star Catalog File Name\n"
+        self.InpGraphicsData[0] = '<<<<<<<<<<<<<<<<  42 Graphics Configuration File  >>>>>>>>>>>>>>>>>>>\n'
 
-    def map_window_exist_slot(self):
+        data_inp = self.GlOutInterval.text()
+        self.InpGraphicsData[1] = functions.whitespace(data_inp) + ' ! GL Output Interval [sec]\n'
+
+        data_inp = self.StarCatalogName.text()
+        self.InpGraphicsData[2] = functions.whitespace(data_inp) + ' ! Star Catalog File Name\n'
+
         if self.MapWindowOn.isChecked():
             boolValue = "TRUE"
         else:
             boolValue = "FALSE"
-        self.InpGraphicsData[3] = boolValue + "                        !  Draw Near Field, Draw Far Field\n"
+        data_inp = boolValue
+        self.InpGraphicsData[3] = functions.whitespace(data_inp) + ' ! Draw Near Field, Draw Far Field\n'
 
-    def orrery_window_exist_slot(self):
         if self.OrreryWindowOn.isChecked():
             boolValue = "TRUE"
         else:
             boolValue = "FALSE"
-        self.InpGraphicsData[4] = boolValue + "                               !  Orrery Window Exists\n"
+        data_inp = boolValue
+        self.InpGraphicsData[4] = functions.whitespace(data_inp) + ' ! Orrery Window Exists\n'
 
-    def unit_sphere_window_exist_slot(self):
         if self.UnitSphereWindowOn.isChecked():
             boolValue = "TRUE"
         else:
             boolValue = "FALSE"
-        self.InpGraphicsData[5] = boolValue + "                               !  Unit Sphere Window Exists\n"
+        data_inp = boolValue
+        self.InpGraphicsData[5] = functions.whitespace(data_inp) + ' ! Unit Sphere Window Exists\n'
 
-    def pause_startup_slot(self):
+        self.InpGraphicsData[6] = '******************************* POV *********************************\n'
+
         if self.PauseStartupOn.isChecked():
             boolValue = "TRUE"
         else:
             boolValue = "FALSE"
-        self.InpGraphicsData[7] = boolValue + "                               !  Pause at Startup\n"
+        data_inp = boolValue
+        self.InpGraphicsData[7] = functions.whitespace(data_inp) + ' ! Pause at Startup\n'
 
-    def track_host_slot(self):
-        self.InpGraphicsData[8] = self.ModePOV.currentText() + "                         !  POV Mode (TRACK_HOST, TRACK_TARGET, FIXED_IN_HOST)\n"
+        data_inp = self.ModePOV.currentText()
+        self.InpGraphicsData[8] = functions.whitespace(data_inp) + ' ! POV Mode (TRACK_HOST, TRACK_TARGET, FIXED_IN_HOST)\n'
 
-    def host_type_slot(self):
-        self.InpGraphicsData[9] = self.HostType.currentText() + "                              !  Host Type (WORLD, REFORB, FRM, SC, BODY)\n"
+        data_inp = self.HostType.currentText()
+        self.InpGraphicsData[9] = functions.whitespace(data_inp) + ' ! Host Type (WORLD, REFORB, FRM, SC, BODY)\n'
 
-    def initial_host_slot(self):
-        firstString = self.InitialHostSC.text()
-        secondString = self.InitialHostBody.text()
-        thirdString = self.InitialHostPOVFrame.text()
+        data_inp = self.InitialHostSC.text() + "  " + self.InitialHostBody.text() + "  " + self.InitialHostPOVFrame.text()
+        self.InpGraphicsData[10] = functions.whitespace(data_inp) + ' ! Initial Host SC, Body, POV Frame\n'
 
-        self.InpGraphicsData[10] = firstString + "  " + secondString + "  " + thirdString + "                            !  Initial Host SC, Body, POV Frame\n"
+        data_inp = self.TargetType.currentText()
+        self.InpGraphicsData[11] = functions.whitespace(data_inp) + ' ! Target Type (WORLD, REFORB, FRM, SC, BODY)\n'
 
-    def target_type_slot(self):
-        self.InpGraphicsData[11] = self.TargetType.currentText() + "                               !  Target Type (WORLD, REFORB, FRM, SC, BODY)\n"
+        data_inp = self.InitialTargetSC.text() + "  " + self.InitialTargetBody.text() + "  " + self.InitialTargetPOVFrame.text()
+        self.InpGraphicsData[12] = functions.whitespace(data_inp) + ' ! Initial Target SC, Body, POV Frame\n'
 
-    def initial_target_slot(self):
-        firstString = self.InitialTargetSC.text()
-        secondString = self.InitialTargetBody.text()
-        thirdString = self.InitialTargetPOVFrame.text()
+        data_inp = self.BoresightAxis.text()
+        self.InpGraphicsData[13] = functions.whitespace(data_inp) + ' ! Boresight Axis\n'
 
-        self.InpGraphicsData[12] = firstString + "  " + secondString + "  " + thirdString + "                            !  Initial Target SC, Body, POV Frame\n"
+        data_inp = self.UpAxis.text()
+        self.InpGraphicsData[14] = functions.whitespace(data_inp) + ' ! Up Axis\n'
 
-    def boresight_axis_slot(self):
-        self.InpGraphicsData[13] = self.BoresightAxis.text() + "                              !  Boresight Axis\n"
+        data_inp = self.InitPovRange.text()
+        self.InpGraphicsData[15] = functions.whitespace(data_inp) + ' ! Initial POV Range from Target [m]\n'
 
-    def up_axis_slot(self):
-        self.InpGraphicsData[14] = self.UpAxis.text() + "                              !  Up Axis\n"
+        data_inp = self.VPovAngle.text()
+        self.InpGraphicsData[16] = functions.whitespace(data_inp) + ' ! POV Angle (Vertical) [deg]\n'
 
-    def initial_pov_range_slot(self):
-        self.InpGraphicsData[15] = self.InitPovRange.text() + "                               !  Initial POV Range from Target [m]\n"
+        data_inp = self.PovPosHostFirstEntry.text() + "  " + self.PovPosHostSecondEntry.text() + "  " + self.PovPosHostThirdEntry.text()
+        self.InpGraphicsData[17] = functions.whitespace(data_inp) + ' ! POV Position in Host [m]\n'
 
-    def pov_angle_slot(self):
-        self.InpGraphicsData[16] = self.VPovAngle.text() + "                               !  POV Angle (Vertical) [deg]\n"
+        data_inp = self.InitPovView.currentText()
+        self.InpGraphicsData[18] = functions.whitespace(data_inp) + ' ! Initial POV View (FRONT, FRONT_RIGHT, etc)\n'
 
-    def initial_host_position_slot(self):
-        firstString = self.PovPosHostFirstEntry.text()
-        secondString = self.PovPosHostSecondEntry.text()
-        thirdString = self.PovPosHostThirdEntry.text()
+        self.InpGraphicsData[19] = '******************************* CAM *********************************\n'
 
-        self.InpGraphicsData[17] = firstString + "  " + secondString + "  " + thirdString + "                      !  POV Position in Host [m]\n"
+        data_inp = '"' + self.CamTitle.text()  + '"'
+        self.InpGraphicsData[20] = functions.whitespace(data_inp) + ' ! Cam Title \n'
 
-    def initial_pov_slot(self):
-        self.InpGraphicsData[18] = self.InitPovView.currentText() + "                              !  Initial POV View (FRONT, FRONT_RIGHT, etc)\n"
+        data_inp = self.CamWidth.text() + "  " + self.CamHeight.text()
+        self.InpGraphicsData[21] = functions.whitespace(data_inp) + ' ! Width, Height [pixels]\n'
 
-    def cam_title_slot(self):
-        self.InpGraphicsData[20] = '"' + self.CamTitle.text()  + '"                           ! Cam Title [delimited by "]\n'
+        data_inp = self.MouseScaleFactor.text()
+        self.InpGraphicsData[22] = functions.whitespace(data_inp) + ' ! Mouse Scale Factor\n'
 
-    def cam_dimensions_slot(self):
-        firstString = self.CamWidth.text()
-        secondString = self.CamHeight.text()
+        data_inp = self.DisplayGammaExponent.text()
+        self.InpGraphicsData[23] = functions.whitespace(data_inp) + ' ! Display Gamma Exponent (1.8-4.0)\n'
 
-        self.InpGraphicsData[21] = firstString + "  " + secondString + "                           !  Width, Height [pixels]\n"
+        self.InpGraphicsData[24] = '************************** CAM Show Menu ****************************\n'
 
-    def mouse_scale_factor_slot(self):
-        self.InpGraphicsData[22] = self.MouseScaleFactor.text()  + "                             !  Mouse Scale Factor\n"
+        CamShowMenuLabels = [
+        'N Axes','L Axes','F Axes','B Axes','N Grid','L Grid','F Grid','B Grid',
+        'G Grid','Field of View','Prov Ops','TDRS Satellites','Shadows',
+        'Astro Labels','Truth Vectors','FSW Vectors','Milky Way','Fermi Sky']
+        CamShowMenuExistInputs = self.inputData[21:39]
+        CamShowMenuNameInputs = self.inputString[1:19]
+        line_start = 25
+        self.save_data2_slot(line_start,CamShowMenuLabels,CamShowMenuExistInputs,CamShowMenuNameInputs)
 
-    def display_gamma_slot(self):
-        self.InpGraphicsData[23] = self.DisplayGammaExponent.text()  + "                                !  Display's Gamma Exponent (1.8-4.0)\n"
+        self.InpGraphicsData[43] = '******************************* MAP *********************************\n'
 
-    def display_menu_slot(self,row,label,getItemLabel,getItemOn):
-        print(getItemOn)
-        if getItemOn.isChecked():
+        data_inp = '"' + self.MapName.text() + '"'
+        self.InpGraphicsData[44] = functions.whitespace(data_inp) + ' ! Map Title [delimited by "]\n'
+
+        data_inp = self.MapWidth.text() + '  ' + self.MapHeight.text()
+        self.InpGraphicsData[45] = functions.whitespace(data_inp) + ' ! Width, Height [pixels]\n'
+
+        self.InpGraphicsData[46] = '************************** MAP Show Menu ****************************\n'
+
+        MapShowMenuLabels = ['Clock','Tlm Clock','Credits','Night']
+        MapShowMenuExistInputs = self.inputData[41:45]
+        MapShowMenuNameInputs = self.inputString[20:24]
+        line_start = 47
+        self.save_data2_slot(line_start,MapShowMenuLabels,MapShowMenuExistInputs,MapShowMenuNameInputs)
+
+        self.InpGraphicsData[51] = '********************* Unit Sphere Show Menu *************************\n'
+
+        if self.MajorConsOn.isChecked():
             boolValue = "TRUE"
         else:
             boolValue = "FALSE"
+        data_inp = boolValue
+        self.InpGraphicsData[52] = functions.whitespace(data_inp) + ' ! Show Major Constellations\n'
 
-        print(boolValue)
-        print(getItemLabel.text())
-        self.InpGraphicsData[25 + row] = boolValue + ' "' + getItemLabel.text() + '"                      !  ' + label + "\n"
+        if self.ZodiacConsOn.isChecked():
+            boolValue = "TRUE"
+        else:
+            boolValue = "FALSE"
+        data_inp = boolValue
+        self.InpGraphicsData[53] = functions.whitespace(data_inp) + ' ! Show Zodiac Constellations\n'
+
+        if self.MinorConsOn.isChecked():
+            boolValue = "TRUE"
+        else:
+            boolValue = "FALSE"
+        data_inp = boolValue
+        self.InpGraphicsData[54] = functions.whitespace(data_inp) + ' ! Show Minor Constellations\n'
+
+    def save_data2_slot(self,line_start,labels,showMenuData,showInputName):
+        row = 0
+
+        for label in labels:
+
+            itemLabel = label.replace(" ","")
+            itemOnLabel = label.replace(" ","") + "On"
+
+            print(label)
+            print(showInputName[row])
+
+            getItemLabel = getattr(self,itemLabel)
+            getItemOn = getattr(self,itemOnLabel)
+
+            print(row)
+            print(label)
+            print(getItemLabel.text())
+            if getItemOn.isChecked():
+                boolValue = "TRUE"
+            else:
+                boolValue = "FALSE"
+
+            print(boolValue)
+
+            data_inp = boolValue + ' "' + getItemLabel.text() + '"'
+            self.InpGraphicsData[line_start + row] = functions.whitespace(data_inp) + ' ! Show ' + label + '\n'
+
+            row += 1

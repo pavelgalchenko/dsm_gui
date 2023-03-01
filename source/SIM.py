@@ -6,9 +6,9 @@ import re
 import os
 import shutil
 
-# Import QApplication and the required widgets from PyQt5.QtWidgets
-from PySide6.QtWidgets import QWidget
+# Import QApplication and the required widgets from PySide6
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QWidget
 from PySide6.QtWidgets import QLabel
 from PySide6.QtWidgets import QGridLayout # to arrange the buttons
 from PySide6.QtWidgets import QLineEdit # for the display
