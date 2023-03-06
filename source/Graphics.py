@@ -19,13 +19,13 @@ from PySide6.QtWidgets import QHBoxLayout # Horizontal stack layout
 from PySide6.QtWidgets import QRadioButton
 from PySide6.QtWidgets import QButtonGroup
 from PySide6.QtWidgets import QTabWidget
-from PySide6.QtWidgets import QPushButton
+from PySide6.QtWidgets import QMessageBox
 
 class GraphicsWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('42 Graphics Configuration') # sets the window’s title
-        self.setFixedSize(525, 700) # gives window a fixed size
+        self.setFixedSize(600, 800) # gives window a fixed size
 
         self.table_widget = GraphicsTable(self)
         self.setCentralWidget(self.table_widget)
@@ -98,18 +98,6 @@ class GraphicsTable(QWidget):
         UnitSphereSubLayout.addWidget(self.UnitSphereWindowOn)
         UnitSphereSubLayout.addWidget(self.UnitSphereWindowOff)
 
-        TabWriteBtns = QHBoxLayout()
-        self.ApplyBtn = QPushButton('Apply')
-        self.CancelBtn = QPushButton('Cancel')
-        self.ResetBtn = QPushButton('Reset to Default')
-        self.ApplyBtn.clicked.connect(parent.close)
-        self.CancelBtn.clicked.connect(parent.close)
-        # self.ResetBtn.clicked.connect(self.SetDefaultGuiFields())
-
-        TabWriteBtns.addWidget(self.ResetBtn)
-        TabWriteBtns.addWidget(self.CancelBtn)
-        TabWriteBtns.addWidget(self.ApplyBtn)
-
         # add layout in order of label list
         widgetLayout = QVBoxLayout()
         widgetLayout.addWidget(self.GlOutInterval)
@@ -119,7 +107,6 @@ class GraphicsTable(QWidget):
         widgetLayout.addLayout(UnitSphereSubLayout)
 
         tab1_layout.addLayout(widgetLayout,0,1)
-        tab1_layout.addLayout(TabWriteBtns,1,0,1,3)
 
         self.tab1.setLayout(tab1_layout)
 
@@ -142,13 +129,13 @@ class GraphicsTable(QWidget):
         self.HostType = QComboBox()
         self.InitialHostSC = QLineEdit()
         self.InitialHostBody = QLineEdit()
-        self.InitialHostPOVFrame = QLineEdit()
+        self.InitialHostPOVFrame = QComboBox()
         self.TargetType = QComboBox()
         self.InitialTargetSC = QLineEdit()
         self.InitialTargetBody = QLineEdit()
-        self.InitialTargetPOVFrame = QLineEdit()
-        self.BoresightAxis = QLineEdit()
-        self.UpAxis = QLineEdit()
+        self.InitialTargetPOVFrame = QComboBox()
+        self.BoresightAxis = QComboBox()
+        self.UpAxis = QComboBox()
         self.InitPovRange = QLineEdit()
         self.VPovAngle = QLineEdit()
         self.PovPosHostFirstEntry = QLineEdit()
@@ -160,6 +147,10 @@ class GraphicsTable(QWidget):
         self.HostType.addItems(['WORLD', 'REFORB', 'FRM', 'SC', 'BODY'])
         self.TargetType.addItems(['WORLD', 'REFORB', 'FRM', 'SC', 'BODY'])
         self.InitPovView.addItems(['FRONT', 'FRONT_RIGHT','FRONT_LEFT','REAR','REAR_LEFT','REAR_RIGHT','UP','DOWN','LEFT','RIGHT'])
+        self.InitialHostPOVFrame.addItems(['N','L','F','S','B'])
+        self.InitialTargetPOVFrame.addItems(['N','L','F','S','B'])
+        self.BoresightAxis.addItems(['POS_X','POS_Y','POS_Z','NEG_X','NEG_Y','NEG_Z'])
+        self.UpAxis.addItems(['POS_X','POS_Y','POS_Z','NEG_X','NEG_Y','NEG_Z'])
 
         PauseStartSubLayout = QHBoxLayout()
         InitialHostSubLayout = QHBoxLayout()
@@ -202,11 +193,18 @@ class GraphicsTable(QWidget):
         tab3_layout = QGridLayout(self)
 
         SubLayout = QHBoxLayout()
-        for label in ['CAM Label','CAM Name','Enabled']:
-            Label = QLabel(label)
-            Label.setAlignment(Qt.AlignLeft)
-            Label.setStyleSheet('font-size: 15px')
-            SubLayout.addWidget(Label)
+        Label = QLabel('CAM Label')
+        Label.setAlignment(Qt.AlignLeft)
+        Label.setStyleSheet('font-size: 16px')
+        SubLayout.addWidget(Label)
+        Label = QLabel('CAM Name')
+        Label.setAlignment(Qt.AlignHCenter)
+        Label.setStyleSheet('font-size: 16px')
+        SubLayout.addWidget(Label)
+        Label = QLabel('Enabled')
+        Label.setAlignment(Qt.AlignRight)
+        Label.setStyleSheet('font-size: 16px')
+        SubLayout.addWidget(Label)
 
         self.CamTitle = QLineEdit()
         self.CamWidth = QLineEdit()
@@ -230,15 +228,12 @@ class GraphicsTable(QWidget):
         CamShowMenuExistInputs = self.inputData[21:39]
         CamShowMenuNameInputs = self.inputString[1:19]
 
-        print(CamShowMenuExistInputs)
-        print(CamShowMenuNameInputs)
-
         tab3_layout.addLayout(self.generate_label_widgets(CamLabelList),0,0,4,1)
         tab3_layout.addWidget(self.CamTitle,0,1)
         tab3_layout.addLayout(CamDimSubLayout,1,1)
         tab3_layout.addWidget(self.MouseScaleFactor,2,1)
         tab3_layout.addWidget(self.DisplayGammaExponent,3,1)
-        tab3_layout.addLayout(SubLayout,5,0,1,4)
+        tab3_layout.addLayout(SubLayout,5,0,1,2)
         tab3_layout.addLayout(self.init_show_menu(CamShowMenuLabels,CamShowMenuExistInputs,CamShowMenuNameInputs),6,0,19,2)
 
         self.tab3.setLayout(tab3_layout)
@@ -248,11 +243,18 @@ class GraphicsTable(QWidget):
         tab4_layout = QGridLayout(self)
 
         SubLayout = QHBoxLayout()
-        for label in ['Map Label','Map Name','Enabled']:
-            Label = QLabel(label)
-            Label.setAlignment(Qt.AlignLeft)
-            Label.setStyleSheet('font-size: 15px')
-            SubLayout.addWidget(Label)
+        Label = QLabel('Map Label')
+        Label.setAlignment(Qt.AlignLeft)
+        Label.setStyleSheet('font-size: 16px')
+        SubLayout.addWidget(Label)
+        Label = QLabel('Map Name')
+        Label.setAlignment(Qt.AlignHCenter)
+        Label.setStyleSheet('font-size: 16px')
+        SubLayout.addWidget(Label)
+        Label = QLabel('Enabled')
+        Label.setAlignment(Qt.AlignRight)
+        Label.setStyleSheet('font-size: 16px')
+        SubLayout.addWidget(Label)
 
         self.MapName = QLineEdit()
         self.MapWidth = QLineEdit()
@@ -327,12 +329,15 @@ class GraphicsTable(QWidget):
         self.tab5.setLayout(tab5_layout)
 
         # Finalize Tabs --------------------------------------------------------
+        # Buttons for all tabs
         self.layout.addWidget(self.tabs)
+        self.defaultCancelApplyLayout = functions.default_cancel_apply_btns(self,['defaultBtn','upddefaultBtn','cancelBtn','applyBtn'])
+        self.layout.addLayout(self.defaultCancelApplyLayout)
         self.setLayout(self.layout)
 
         self.init_widget_field()
 
-        self.signal_to_slot()
+        self.signal_to_slot(parent)
 
 # ------------------------------------------------------------------------------
 # GraphicsTable Functions-------------------------------------------------------
@@ -475,7 +480,16 @@ class GraphicsTable(QWidget):
 
         self.InitialHostSC.setText(self.inputData[8][0])
         self.InitialHostBody.setText(self.inputData[8][1])
-        self.InitialHostPOVFrame.setText(self.inputData[8][2])
+        if (self.inputData[8][2].lower() == "N"):
+            self.InitialHostPOVFrame.setCurrentIndex(0)
+        elif (self.inputData[8][2].lower() == "L"):
+            self.InitialHostPOVFrame.setCurrentIndex(1)
+        elif (self.inputData[8][2].lower() == "F"):
+            self.InitialHostPOVFrame.setCurrentIndex(2)
+        elif (self.inputData[8][2].lower() == "S"):
+            self.InitialHostPOVFrame.setCurrentIndex(3)
+        elif (self.inputData[8][2].lower() == "B"):
+            self.InitialHostPOVFrame.setCurrentIndex(4)
 
         if (self.inputData[9][0].lower() == "world"):
             self.TargetType.setCurrentIndex(0)
@@ -490,11 +504,42 @@ class GraphicsTable(QWidget):
 
         self.InitialTargetSC.setText(self.inputData[10][0])
         self.InitialTargetBody.setText(self.inputData[10][1])
-        self.InitialTargetPOVFrame.setText(self.inputData[10][2])
+        if (self.inputData[10][2].lower() == "N"):
+            self.InitialTargetPOVFrame.setCurrentIndex(0)
+        elif (self.inputData[10][2].lower() == "L"):
+            self.InitialTargetPOVFrame.setCurrentIndex(1)
+        elif (self.inputData[10][2].lower() == "F"):
+            self.InitialTargetPOVFrame.setCurrentIndex(2)
+        elif (self.inputData[10][2].lower() == "S"):
+            self.InitialTargetPOVFrame.setCurrentIndex(3)
+        elif (self.inputData[10][2].lower() == "B"):
+            self.InitialTargetPOVFrame.setCurrentIndex(4)
 
-        self.BoresightAxis.setText(self.inputData[11][0])
+        if (self.inputData[11][0].lower() == "POS_X"):
+            self.BoresightAxis.setCurrentIndex(0)
+        elif (self.inputData[11][0].lower() == "POS_Y"):
+            self.BoresightAxis.setCurrentIndex(1)
+        elif (self.inputData[11][0].lower() == "POS_Z"):
+            self.BoresightAxis.setCurrentIndex(2)
+        elif (self.inputData[11][0].lower() == "NEG_X"):
+            self.BoresightAxis.setCurrentIndex(3)
+        elif (self.inputData[11][0].lower() == "NEG_Y"):
+            self.BoresightAxis.setCurrentIndex(4)
+        elif (self.inputData[11][0].lower() == "NEG_Z"):
+            self.BoresightAxis.setCurrentIndex(5)
 
-        self.UpAxis.setText(self.inputData[12][0])
+        if (self.inputData[12][0].lower() == "POS_X"):
+            self.UpAxis.setCurrentIndex(0)
+        elif (self.inputData[12][0].lower() == "POS_Y"):
+            self.UpAxis.setCurrentIndex(1)
+        elif (self.inputData[12][0].lower() == "POS_Z"):
+            self.UpAxis.setCurrentIndex(2)
+        elif (self.inputData[12][0].lower() == "NEG_X"):
+            self.UpAxis.setCurrentIndex(3)
+        elif (self.inputData[12][0].lower() == "NEG_Y"):
+            self.UpAxis.setCurrentIndex(4)
+        elif (self.inputData[12][0].lower() == "NEG_Z"):
+            self.UpAxis.setCurrentIndex(5)
 
         self.InitPovRange.setText(self.inputData[13][0])
 
@@ -556,8 +601,11 @@ class GraphicsTable(QWidget):
         if (self.inputData[43][0].lower() == 'false'):
             self.MinorConsOff.setChecked(True)
 
-    def signal_to_slot(self):
-        self.ApplyBtn.clicked.connect(self.write_file_slot)
+    def signal_to_slot(self,parent):
+        self.applyBtn.clicked.connect(self.write_file_slot)
+        self.cancelBtn.clicked.connect(parent.close)
+        self.defaultBtn.clicked.connect(self.default_graphics_slot)
+        self.upddefaultBtn.clicked.connect(self.upddefault_graphics_slot)
 # ------------------------------------------------------------------------------
 # Slot Functions----------------------------------------------------------------
     def write_file_slot(self): # Write edited input txt data to output txt file
@@ -566,6 +614,36 @@ class GraphicsTable(QWidget):
         self.WriteFile = open(self.inputFile, 'w+')
         self.WriteFile.writelines(self.InpGraphicsData)
         self.WriteFile.close()
+
+    def default_graphics_slot(self):
+        response = functions.create_warning_message(self,"Overwrite Graphics file?")
+        if response == QMessageBox.Ok:
+            source = self.missionDir + '/InOut/__default__/'
+            file_list = os.listdir(source)
+            destination = self.missionDir + '/InOut/'
+            for files in file_list:
+                if files.startswith("Inp_Graphics") and files.endswith(".txt"):
+                    shutil.copy(source+'/'+files,destination)
+            overwriteNotice = functions.create_notice(self,"Overwrite successful.")
+            self.read_input(self.inputFile)
+            self.get_input_data(self.inputFile)
+            self.init_widget_field()
+            overwriteNotice.exec_()
+
+    def upddefault_graphics_slot(self):
+        response = functions.create_warning_message(self,"Overwrite original Graphics file?")
+        if response == QMessageBox.Ok:
+            source = self.missionDir + '/InOut/'
+            file_list = os.listdir(source)
+            destination = self.missionDir + '/InOut/__default__/'
+            for files in file_list:
+                if files.startswith("Inp_Graphics") and files.endswith(".txt"):
+                    shutil.copy(source+'/'+files,destination)
+            overwriteNotice = functions.create_notice(self,"Default update successful.")
+            self.read_input(self.inputFile)
+            self.get_input_data(self.inputFile)
+            self.init_widget_field()
+            overwriteNotice.exec_()
 
     def save_data_slot(self):
 
@@ -613,19 +691,19 @@ class GraphicsTable(QWidget):
         data_inp = self.HostType.currentText()
         self.InpGraphicsData[9] = functions.whitespace(data_inp) + ' ! Host Type (WORLD, REFORB, FRM, SC, BODY)\n'
 
-        data_inp = self.InitialHostSC.text() + "  " + self.InitialHostBody.text() + "  " + self.InitialHostPOVFrame.text()
+        data_inp = self.InitialHostSC.text() + "  " + self.InitialHostBody.text() + "  " + self.InitialHostPOVFrame.currentText()
         self.InpGraphicsData[10] = functions.whitespace(data_inp) + ' ! Initial Host SC, Body, POV Frame\n'
 
         data_inp = self.TargetType.currentText()
         self.InpGraphicsData[11] = functions.whitespace(data_inp) + ' ! Target Type (WORLD, REFORB, FRM, SC, BODY)\n'
 
-        data_inp = self.InitialTargetSC.text() + "  " + self.InitialTargetBody.text() + "  " + self.InitialTargetPOVFrame.text()
+        data_inp = self.InitialTargetSC.text() + "  " + self.InitialTargetBody.text() + "  " + self.InitialTargetPOVFrame.currentText()
         self.InpGraphicsData[12] = functions.whitespace(data_inp) + ' ! Initial Target SC, Body, POV Frame\n'
 
-        data_inp = self.BoresightAxis.text()
+        data_inp = self.BoresightAxis.currentText()
         self.InpGraphicsData[13] = functions.whitespace(data_inp) + ' ! Boresight Axis\n'
 
-        data_inp = self.UpAxis.text()
+        data_inp = self.UpAxis.currentText()
         self.InpGraphicsData[14] = functions.whitespace(data_inp) + ' ! Up Axis\n'
 
         data_inp = self.InitPovRange.text()
@@ -718,15 +796,11 @@ class GraphicsTable(QWidget):
             getItemLabel = getattr(self,itemLabel)
             getItemOn = getattr(self,itemOnLabel)
 
-            print(row)
-            print(label)
-            print(getItemLabel.text())
             if getItemOn.isChecked():
                 boolValue = "TRUE"
             else:
                 boolValue = "FALSE"
 
-            print(boolValue)
 
             data_inp = boolValue + ' "' + getItemLabel.text() + '"'
             self.InpGraphicsData[line_start + row] = functions.whitespace(data_inp) + ' ! Show ' + label + '\n'
