@@ -21,6 +21,8 @@ signals:
 
 private slots:
 
+    int warning_message(QString);
+
     void on_new_mission_clicked();
 
     void on_GRH_Menu_clicked();

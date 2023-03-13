@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QDir>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,11 +32,19 @@ void MainWindow::on_new_mission_clicked()
     QDir dir(path);
 
     if (dir.exists()) {
-        dir.removeRecursively();
-        dir.mkpath(".");
+        int response = warning_message("Overwrite InOut in Selected Directory?");
+        if (response == QMessageBox::Ok) {
+            dir.removeRecursively();
+            dir.mkpath(".");
+            dir.mkpath("./__default__/");
+        }
+        else {
+            return;
+        }
     }
     else {
         dir.mkpath(".");
+        dir.mkpath("./__default__/");
     }
 
     ui->mission_path->setText(path);
@@ -56,6 +65,22 @@ void MainWindow::on_new_mission_clicked()
     QFile::copy(":/data/__default__/TRV.txt", path+"TRV.txt");
     QFile::copy(":/data/__default__/Whl_Simple.txt", path+"Whl_Simple.txt");
 
+    QFile::copy(":/data/__default__/Flex_Simple.txt", path+"__default__/Flex_Simple.txt");
+    QFile::copy(":/data/__default__/Inp_Cmd.txt", path+"__default__/Inp_Cmd.txt");
+    QFile::copy(":/data/__default__/Inp_FOV.txt", path+"__default__/Inp_FOV.txt");
+    QFile::copy(":/data/__default__/Inp_Graphics.txt", path+"__default__/Inp_Graphics.txt");
+    QFile::copy(":/data/__default__/Inp_IPC.txt", path+"__default__/Inp_IPC.txt");
+    QFile::copy(":/data/__default__/Inp_NOS3.txt", path+"__default__/Inp_NOS3.txt");
+    QFile::copy(":/data/__default__/Inp_Region.txt", path+"__default__/Inp_Region.txt");
+    QFile::copy(":/data/__default__/Inp_Sim.txt", path+"__default__/Inp_Sim.txt");
+    QFile::copy(":/data/__default__/Inp_TDRS.txt", path+"__default__/Inp_TDRS.txt");
+    QFile::copy(":/data/__default__/Nodes_Simple.txt", path+"__default__/Nodes_Simple.txt");
+    QFile::copy(":/data/__default__/Orb_LEO.txt", path+"__default__/Orb_LEO.txt");
+    QFile::copy(":/data/__default__/SC_Simple.txt", path+"__default__/SC_Simple.txt");
+    QFile::copy(":/data/__default__/Shaker_Simple.txt", path+"__default__/Shaker_Simple.txt");
+    QFile::copy(":/data/__default__/TRV.txt", path+"__default__/TRV.txt");
+    QFile::copy(":/data/__default__/Whl_Simple.txt", path+"__default__/Whl_Simple.txt");
+
     ui->GRH_Menu->setEnabled(true);
 }
 
@@ -70,3 +95,12 @@ void MainWindow::on_GRH_Menu_clicked()
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 
+int MainWindow::warning_message(QString warningText)
+{
+    QMessageBox warningMsg;
+    warningMsg.setIcon(QMessageBox::Warning);
+    warningMsg.setText(warningText);
+    warningMsg.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    int ret = warningMsg.exec();
+    return ret;
+}
