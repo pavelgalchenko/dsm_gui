@@ -58,6 +58,7 @@ void GRH_Menu::receive_path(QString path)
 void GRH_Menu::receive_data()
 {
     grh_data.clear();
+    grh_string.clear();
     static QRegularExpression rx1("(.*?)*!");
     static QRegularExpression rx2("\"(.*?)\"");
 

@@ -20,16 +20,15 @@ private slots:
     void set_validators();
     void receive_path(QString);
     void receive_data();
-    void write_data();
     void apply_data();
-    QString whitespace(QString);
+    void write_data();
     int warning_message(QString);
+    QString whitespace(QString);
 
     void on_boresightaxis_activated(int index);
     void on_loaddefaultButton_clicked();
     void on_savedefaultButton_clicked();
     void on_closeButton_clicked();
-
     void on_applyButton_clicked();
 
 private:

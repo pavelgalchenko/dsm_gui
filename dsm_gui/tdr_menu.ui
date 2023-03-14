@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TDR_Menu</class>
+ <widget class="QDialog" name="TDR_Menu">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>480</width>
+    <height>640</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>480</width>
+    <height>640</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>480</width>
+    <height>640</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>590</y>
+     <width>451</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <widget class="QPushButton" name="loaddefaultButton">
+      <property name="text">
+       <string>Load Default</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="savedefaultButton">
+      <property name="text">
+       <string>Save Default</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="closeButton">
+      <property name="text">
+       <string>Close</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="applyButton">
+      <property name="text">
+       <string>Apply</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="gridLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>29</x>
+     <y>30</y>
+     <width>421</width>
+     <height>401</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0,0,0,0">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
+    </property>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>TDRS-6:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_9">
+      <property name="text">
+       <string>TDRS-8:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>TDRS-1:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="text">
+       <string>TDRS-3:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="label_11">
+      <property name="text">
+       <string>TDRS-10:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>TDRS Name</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_8">
+      <property name="text">
+       <string>TDRS-7:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_10">
+      <property name="text">
+       <string>TDRS-9:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_6">
+      <property name="text">
+       <string>TDRS-5:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>TDRS-4:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>TDRS-2:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLineEdit" name="tdrs01_name"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_13">
+        <item>
+         <widget class="QRadioButton" name="tdrs01_on">
+          <property name="text">
+           <string>On</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs01_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="tdrs01_off">
+          <property name="text">
+           <string>Off</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs01_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLineEdit" name="tdrs02_name"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_14">
+        <item>
+         <widget class="QRadioButton" name="tdrs02_on">
+          <property name="text">
+           <string>On</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs02_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="tdrs02_off">
+          <property name="text">
+           <string>Off</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs02_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QLabel" name="label_13">
+        <property name="text">
+         <string>TDRS Designation</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>Enabled</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="3" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QLineEdit" name="tdrs03_name"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_16">
+        <item>
+         <widget class="QRadioButton" name="tdrs03_on">
+          <property name="text">
+           <string>On</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs03_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="tdrs03_off">
+          <property name="text">
+           <string>Off</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs03_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="4" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <item>
+       <widget class="QLineEdit" name="tdrs04_name"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_18">
+        <item>
+         <widget class="QRadioButton" name="tdrs04_on">
+          <property name="text">
+           <string>On</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs04_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="tdrs04_off">
+          <property name="text">
+           <string>Off</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs04_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="5" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
+      <item>
+       <widget class="QLineEdit" name="tdrs05_name"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_19">
+        <item>
+         <widget class="QRadioButton" name="tdrs05_on">
+          <property name="text">
+           <string>On</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs05_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="tdrs05_off">
+          <property name="text">
+           <string>Off</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs05_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="6" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <item>
+       <widget class="QLineEdit" name="tdrs06_name"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_20">
+        <item>
+         <widget class="QRadioButton" name="tdrs06_on">
+          <property name="text">
+           <string>On</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs06_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="tdrs06_off">
+          <property name="text">
+           <string>Off</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs06_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="7" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
+      <item>
+       <widget class="QLineEdit" name="tdrs07_name"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_21">
+        <item>
+         <widget class="QRadioButton" name="tdrs07_on">
+          <property name="text">
+           <string>On</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs07_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="tdrs07_off">
+          <property name="text">
+           <string>Off</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs07_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="8" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_10">
+      <item>
+       <widget class="QLineEdit" name="tdrs08_name"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_22">
+        <item>
+         <widget class="QRadioButton" name="tdrs08_on">
+          <property name="text">
+           <string>On</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs08_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="tdrs08_off">
+          <property name="text">
+           <string>Off</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs08_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="9" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_11">
+      <item>
+       <widget class="QLineEdit" name="tdrs09_name"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_23">
+        <item>
+         <widget class="QRadioButton" name="tdrs09_on">
+          <property name="text">
+           <string>On</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs09_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="tdrs09_off">
+          <property name="text">
+           <string>Off</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs09_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item row="10" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_12">
+      <item>
+       <widget class="QLineEdit" name="tdrs10_name"/>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_24">
+        <item>
+         <widget class="QRadioButton" name="tdrs10_on">
+          <property name="text">
+           <string>On</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs10_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="tdrs10_off">
+          <property name="text">
+           <string>Off</string>
+          </property>
+          <attribute name="buttonGroup">
+           <string notr="true">tdrs10_toggle</string>
+          </attribute>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="tdrs01_toggle"/>
+  <buttongroup name="tdrs02_toggle"/>
+  <buttongroup name="tdrs03_toggle"/>
+  <buttongroup name="tdrs04_toggle"/>
+  <buttongroup name="tdrs05_toggle"/>
+  <buttongroup name="tdrs06_toggle"/>
+  <buttongroup name="tdrs07_toggle"/>
+  <buttongroup name="tdrs08_toggle"/>
+  <buttongroup name="tdrs09_toggle"/>
+  <buttongroup name="tdrs10_toggle"/>
+ </buttongroups>
+</ui>

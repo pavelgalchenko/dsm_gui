@@ -82,6 +82,17 @@ void MainWindow::on_new_mission_clicked()
     QFile::copy(":/data/__default__/Whl_Simple.txt", path+"__default__/Whl_Simple.txt");
 
     ui->GRH_Menu->setEnabled(true);
+    ui->TDR_Menu->setEnabled(true);
+}
+
+int MainWindow::warning_message(QString warningText)
+{
+    QMessageBox warningMsg;
+    warningMsg.setIcon(QMessageBox::Warning);
+    warningMsg.setText(warningText);
+    warningMsg.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    int ret = warningMsg.exec();
+    return ret;
 }
 
 void MainWindow::on_GRH_Menu_clicked()
@@ -95,12 +106,14 @@ void MainWindow::on_GRH_Menu_clicked()
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 
-int MainWindow::warning_message(QString warningText)
+void MainWindow::on_TDR_Menu_clicked()
 {
-    QMessageBox warningMsg;
-    warningMsg.setIcon(QMessageBox::Warning);
-    warningMsg.setText(warningText);
-    warningMsg.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    int ret = warningMsg.exec();
-    return ret;
+    tdr_menu = new TDR_Menu(this);
+    tdr_menu->setModal(true);
+    tdr_menu->show();
+
+    connect(this, SIGNAL(send_data(QString)), tdr_menu, SLOT(receive_path(QString)));
+    emit send_data(path);
+    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
+

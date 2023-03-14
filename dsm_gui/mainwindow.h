@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "grh_menu.h"
+#include "tdr_menu.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -27,10 +28,13 @@ private slots:
 
     void on_GRH_Menu_clicked();
 
+    void on_TDR_Menu_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     GRH_Menu *grh_menu;
+    TDR_Menu *tdr_menu;
     QString path;
 };
 #endif // MAINWINDOW_H

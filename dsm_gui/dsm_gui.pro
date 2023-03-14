@@ -14,15 +14,18 @@ QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 SOURCES += \
     grh_menu.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    tdr_menu.cpp
 
 HEADERS += \
     grh_menu.h \
-    mainwindow.h
+    mainwindow.h \
+    tdr_menu.h
 
 FORMS += \
     grh_menu.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    tdr_menu.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
