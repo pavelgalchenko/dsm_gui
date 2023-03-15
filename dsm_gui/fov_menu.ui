@@ -76,7 +76,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="bluevalue">
+       <widget class="QDoubleSpinBox" name="greenvalue">
         <property name="maximum">
          <double>1.000000000000000</double>
         </property>
@@ -86,7 +86,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="greenvalue">
+       <widget class="QDoubleSpinBox" name="bluevalue">
         <property name="maximum">
          <double>1.000000000000000</double>
         </property>
@@ -108,7 +108,7 @@
       <item>
        <widget class="QPushButton" name="pickcolor">
         <property name="text">
-         <string>Color Picker</string>
+         <string>Select Color</string>
         </property>
        </widget>
       </item>

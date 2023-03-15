@@ -127,6 +127,38 @@ void FOV_Menu::populate_list()
     ui->fovlist->addItems(fov_names);
 }
 
+void FOV_Menu::on_pickcolor_clicked()
+{
+    color_menu = new COLOR_Select(this);
+    color_menu->setModal(true);
+    color_menu->show();
+
+    QStringList rgbavalues;
+    rgbavalues.append(ui->redvalue->text());
+    rgbavalues.append(ui->greenvalue->text());
+    rgbavalues.append(ui->bluevalue->text());
+    rgbavalues.append(ui->alphavalue->text());
+
+    connect(this, SIGNAL(send_rgbavalues(QStringList)), color_menu, SLOT(receive_rgbavalues(QStringList)));
+    connect(color_menu, SIGNAL(send_newrgbavalues(QStringList)), this, SLOT(receive_newrgbavalues(QStringList)));
+    emit send_rgbavalues(rgbavalues);
+    disconnect(this, SIGNAL(send_rgbavalues(QStringList)), 0, 0);
+}
+
+void FOV_Menu::receive_newrgbavalues(QStringList newrgbavalues)
+{
+    QString color;;
+
+    color = newrgbavalues[0];
+    ui->redvalue->setValue(color.toDouble());
+    color = newrgbavalues[1];
+    ui->greenvalue->setValue(color.toDouble());
+    color = newrgbavalues[2];
+    ui->bluevalue->setValue(color.toDouble());
+    color = newrgbavalues[3];
+    ui->alphavalue->setValue(color.toDouble());
+}
+
 void FOV_Menu::on_fov_remove_clicked()
 {
     int removeitem = ui->fovlist->currentRow();
@@ -228,9 +260,9 @@ void FOV_Menu::on_fovlist_itemClicked(QListWidgetItem *item)
         line_item = line_items[0];
         ui->redvalue->setValue(line_item.toDouble());
         line_item = line_items[1];
-        ui->bluevalue->setValue(line_item.toDouble());
-        line_item = line_items[2];
         ui->greenvalue->setValue(line_item.toDouble());
+        line_item = line_items[2];
+        ui->bluevalue->setValue(line_item.toDouble());
         line_item = line_items[3];
         ui->alphavalue->setValue(line_item.toDouble());
 
@@ -345,7 +377,7 @@ void FOV_Menu::on_applyButton_clicked()
     data_inp = ui->horizontal_width->text() + "  " + ui->vertical_height->text();
     fov_update[data_index+1] = whitespace(data_inp) + " ! H Width, V Height [deg]\n";
 
-    data_inp = ui->redvalue->text() + "  " + ui->bluevalue->text()+ "  " + ui->greenvalue->text()+ "  " + ui->alphavalue->text();
+    data_inp = ui->redvalue->text() + "  " + ui->greenvalue->text()+ "  " + ui->bluevalue->text()+ "  " + ui->alphavalue->text();
     fov_update[data_index+2] = whitespace(data_inp) + " ! Color RGB+Alpha\n";
 
     data_inp = ui->fov_type->currentText();
@@ -384,3 +416,4 @@ QString FOV_Menu::whitespace(QString data)
     }
     return data;
 }
+

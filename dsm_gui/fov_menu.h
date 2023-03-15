@@ -1,6 +1,8 @@
 #ifndef FOV_MENU_H
 #define FOV_MENU_H
 
+#include "color_select.h"
+
 #include <QDialog>
 #include <QListWidgetItem>
 
@@ -16,9 +18,13 @@ public:
     explicit FOV_Menu(QWidget *parent = nullptr);
     ~FOV_Menu();
 
+signals:
+    void send_rgbavalues(QStringList);
+
 private slots:
     void set_validators();
     void receive_fovpath(QString);
+    void receive_newrgbavalues(QStringList);
     void receive_data();
     void apply_data();
     void populate_list();
@@ -34,8 +40,12 @@ private slots:
     void on_closeButton_clicked();
     void on_applyButton_clicked();
 
+    void on_pickcolor_clicked();
+
 private:
     Ui::FOV_Menu *ui;
+
+    COLOR_Select *color_menu;
 
     int global_fov_index = -1;
 
