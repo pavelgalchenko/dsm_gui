@@ -12,17 +12,20 @@ QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    fov_menu.cpp \
     grh_menu.cpp \
     main.cpp \
     mainwindow.cpp \
     tdr_menu.cpp
 
 HEADERS += \
+    fov_menu.h \
     grh_menu.h \
     mainwindow.h \
     tdr_menu.h
 
 FORMS += \
+    fov_menu.ui \
     grh_menu.ui \
     mainwindow.ui \
     tdr_menu.ui

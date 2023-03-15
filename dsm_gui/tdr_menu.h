@@ -16,7 +16,7 @@ public:
     ~TDR_Menu();
 
 private slots:
-    void receive_path(QString);
+    void receive_tdrpath(QString);
     void receive_data();
     void apply_data();
     void write_data();

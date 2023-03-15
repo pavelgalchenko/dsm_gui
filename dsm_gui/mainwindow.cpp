@@ -83,6 +83,7 @@ void MainWindow::on_new_mission_clicked()
 
     ui->GRH_Menu->setEnabled(true);
     ui->TDR_Menu->setEnabled(true);
+    ui->FOV_Menu->setEnabled(true);
 }
 
 int MainWindow::warning_message(QString warningText)
@@ -101,7 +102,7 @@ void MainWindow::on_GRH_Menu_clicked()
     grh_menu->setModal(true);
     grh_menu->show();
 
-    connect(this, SIGNAL(send_data(QString)), grh_menu, SLOT(receive_path(QString)));
+    connect(this, SIGNAL(send_data(QString)), grh_menu, SLOT(receive_grhpath(QString)));
     emit send_data(path);
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
@@ -112,7 +113,19 @@ void MainWindow::on_TDR_Menu_clicked()
     tdr_menu->setModal(true);
     tdr_menu->show();
 
-    connect(this, SIGNAL(send_data(QString)), tdr_menu, SLOT(receive_path(QString)));
+    connect(this, SIGNAL(send_data(QString)), tdr_menu, SLOT(receive_tdrpath(QString)));
+    emit send_data(path);
+    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+}
+
+
+void MainWindow::on_FOV_Menu_clicked()
+{
+    fov_menu = new FOV_Menu(this);
+    fov_menu->setModal(true);
+    fov_menu->show();
+
+    connect(this, SIGNAL(send_data(QString)), fov_menu, SLOT(receive_fovpath(QString)));
     emit send_data(path);
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }

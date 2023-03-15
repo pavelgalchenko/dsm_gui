@@ -47,7 +47,7 @@ void GRH_Menu::set_validators()
     ui->mapheight->setValidator(new QIntValidator);
 }
 
-void GRH_Menu::receive_path(QString path)
+void GRH_Menu::receive_grhpath(QString path)
 {
     inout_path = path;
     graphics_path = path+"Inp_Graphics.txt";

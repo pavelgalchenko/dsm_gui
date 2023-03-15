@@ -19,7 +19,7 @@ TDR_Menu::~TDR_Menu()
     delete ui;
 }
 
-void TDR_Menu::receive_path(QString path)
+void TDR_Menu::receive_tdrpath(QString path)
 {
     inout_path = path;
     file_path = path+"Inp_TDRS.txt";

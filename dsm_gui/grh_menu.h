@@ -2,7 +2,6 @@
 #define GRH_MENU_H
 
 #include <QDialog>
-#include <QTableWidget>
 
 namespace Ui {
 class GRH_Menu;
@@ -18,7 +17,7 @@ public:
 
 private slots:
     void set_validators();
-    void receive_path(QString);
+    void receive_grhpath(QString);
     void receive_data();
     void apply_data();
     void write_data();
