@@ -1,7 +1,6 @@
 #include "tdr_menu.h"
 #include "ui_tdr_menu.h"
 
-#include <QDebug>
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>

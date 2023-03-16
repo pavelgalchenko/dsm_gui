@@ -1,23 +1,23 @@
-#ifndef TDR_MENU_H
-#define TDR_MENU_H
+#ifndef NOS_MENU_H
+#define NOS_MENU_H
 
 #include <QDialog>
 #include <QDebug>
 
 namespace Ui {
-class TDR_Menu;
+class NOS_Menu;
 }
 
-class TDR_Menu : public QDialog
+class NOS_Menu : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit TDR_Menu(QWidget *parent = nullptr);
-    ~TDR_Menu();
+    explicit NOS_Menu(QWidget *parent = nullptr);
+    ~NOS_Menu();
 
 private slots:
-    void receive_tdrpath(QString);
+    void receive_nospath(QString);
     void receive_data();
     void apply_data();
     void write_data();
@@ -30,13 +30,12 @@ private slots:
     void on_applyButton_clicked();
 
 private:
-    Ui::TDR_Menu *ui;
+    Ui::NOS_Menu *ui;
 
     QString inout_path;
     QString file_path;
-    QStringList tdr_data;
-    QStringList tdr_update;
-    QStringList tdr_string;
+    QStringList nos_data;
+    QStringList nos_update;
 };
 
-#endif // TDR_MENU_H
+#endif // NOS_MENU_H

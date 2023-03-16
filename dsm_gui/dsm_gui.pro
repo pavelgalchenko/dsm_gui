@@ -17,6 +17,7 @@ SOURCES += \
     grh_menu.cpp \
     main.cpp \
     mainwindow.cpp \
+    nos_menu.cpp \
     tdr_menu.cpp
 
 HEADERS += \
@@ -24,6 +25,7 @@ HEADERS += \
     fov_menu.h \
     grh_menu.h \
     mainwindow.h \
+    nos_menu.h \
     tdr_menu.h
 
 FORMS += \
@@ -31,6 +33,7 @@ FORMS += \
     fov_menu.ui \
     grh_menu.ui \
     mainwindow.ui \
+    nos_menu.ui \
     tdr_menu.ui
 
 # Default rules for deployment.

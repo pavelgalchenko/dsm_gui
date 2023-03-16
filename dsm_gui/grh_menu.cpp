@@ -1,7 +1,6 @@
 #include "grh_menu.h"
 #include "ui_grh_menu.h"
 
-#include <QDebug>
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>

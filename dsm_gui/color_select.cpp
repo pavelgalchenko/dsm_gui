@@ -1,7 +1,6 @@
 #include "color_select.h"
 #include "ui_color_select.h"
 
-#include <QDebug>
 #include <QColor>
 
 COLOR_Select::COLOR_Select(QWidget *parent) :

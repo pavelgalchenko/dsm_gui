@@ -5,7 +5,6 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QDir>
-#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -84,6 +83,7 @@ void MainWindow::on_new_mission_clicked()
     ui->GRH_Menu->setEnabled(true);
     ui->TDR_Menu->setEnabled(true);
     ui->FOV_Menu->setEnabled(true);
+    ui->NOS_Menu->setEnabled(true);
 }
 
 int MainWindow::warning_message(QString warningText)
@@ -126,6 +126,18 @@ void MainWindow::on_FOV_Menu_clicked()
     fov_menu->show();
 
     connect(this, SIGNAL(send_data(QString)), fov_menu, SLOT(receive_fovpath(QString)));
+    emit send_data(path);
+    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+}
+
+
+void MainWindow::on_NOS_Menu_clicked()
+{
+    nos_menu = new NOS_Menu(this);
+    nos_menu->setModal(true);
+    nos_menu->show();
+
+    connect(this, SIGNAL(send_data(QString)), nos_menu, SLOT(receive_nospath(QString)));
     emit send_data(path);
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }

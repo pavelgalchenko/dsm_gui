@@ -2,6 +2,7 @@
 #define GRH_MENU_H
 
 #include <QDialog>
+#include <QDebug>
 
 namespace Ui {
 class GRH_Menu;

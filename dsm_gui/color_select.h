@@ -2,6 +2,7 @@
 #define COLOR_SELECT_H
 
 #include <QDialog>
+#include <QDebug>
 
 namespace Ui {
 class COLOR_Select;

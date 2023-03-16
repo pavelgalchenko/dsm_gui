@@ -5,6 +5,7 @@
 
 #include <QDialog>
 #include <QListWidgetItem>
+#include <QDebug>
 
 namespace Ui {
 class FOV_Menu;

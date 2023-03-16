@@ -1,7 +1,6 @@
 #include "fov_menu.h"
 #include "ui_fov_menu.h"
 
-#include <QDebug>
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>

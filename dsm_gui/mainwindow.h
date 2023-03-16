@@ -5,6 +5,9 @@
 #include "grh_menu.h"
 #include "tdr_menu.h"
 #include "fov_menu.h"
+#include "nos_menu.h"
+
+#include <QDebug>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -33,12 +36,15 @@ private slots:
 
     void on_FOV_Menu_clicked();
 
+    void on_NOS_Menu_clicked();
+
 private:
     Ui::MainWindow *ui;
 
     GRH_Menu *grh_menu;
     TDR_Menu *tdr_menu;
     FOV_Menu *fov_menu;
+    NOS_Menu *nos_menu;
     QString path;
 };
 #endif // MAINWINDOW_H
