@@ -84,6 +84,7 @@ void MainWindow::on_new_mission_clicked()
     ui->TDR_Menu->setEnabled(true);
     ui->FOV_Menu->setEnabled(true);
     ui->NOS_Menu->setEnabled(true);
+    ui->RGN_Menu->setEnabled(true);
 }
 
 int MainWindow::warning_message(QString warningText)
@@ -142,3 +143,13 @@ void MainWindow::on_NOS_Menu_clicked()
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 
+void MainWindow::on_RGN_Menu_clicked()
+{
+    rgn_menu = new RGN_Menu(this);
+    rgn_menu->setModal(true);
+    rgn_menu->show();
+
+    connect(this, SIGNAL(send_data(QString)), rgn_menu, SLOT(receive_rgnpath(QString)));
+    emit send_data(path);
+    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+}

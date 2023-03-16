@@ -44,6 +44,7 @@ void FOV_Menu::receive_fovpath(QString path)
     file_path = path+"Inp_FOV.txt";
     receive_data();
     apply_data();
+    populate_list();
 }
 
 void FOV_Menu::receive_data()
@@ -117,7 +118,6 @@ void FOV_Menu::apply_data()
         line_item = fov_string[11*i+3];
         fov_names.append(line_item);
     }
-    populate_list();
 }
 
 void FOV_Menu::populate_list()
@@ -202,8 +202,8 @@ void FOV_Menu::on_fov_add_clicked()
     fov_string.append(newfov);
     for (int i = 0; i < 9; i++) fov_string.append("blankline");
 
-    fov_update.append("--------------------------------------------------------------------");
-    fov_update.append("\"SOLID\"                           ! Label\n");
+    fov_update.append("--------------------------------------------------------------------\n");
+    fov_update.append("\"NEWFOV\"                          ! Label\n");
     fov_update.append("4   4.0                           ! Number of Sides, Length [m]\n");
     fov_update.append("8.0  4.0                          ! H Width, V Height [deg]\n");
     fov_update.append("0.0 1.0 0.0 0.5                   ! Color RGB+Alpha\n");
@@ -215,6 +215,11 @@ void FOV_Menu::on_fov_add_clicked()
     fov_update.append("Z_AXIS                            ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
 
     ui->fovlist->addItem(newfov);
+
+    write_data();
+
+    ui->fovlist->setCurrentRow(ui->fovlist->count()-1);
+    on_fovlist_itemClicked(ui->fovlist->currentItem());
 }
 
 void FOV_Menu::on_fovlist_itemClicked(QListWidgetItem *item)
@@ -225,13 +230,21 @@ void FOV_Menu::on_fovlist_itemClicked(QListWidgetItem *item)
         return;
     }
     else {
-        if (global_fov_index != -1) {
-            int response = warning_message("Note that current FOV changes since last \"Apply\" will be lost!");
-            if (response != QMessageBox::Ok) {
+        if ( (global_fov_index != -1) && (global_fov_ignore == 0) ) {
+            int response = warning_message("Note that changes to the previous selected FOV are lost unless you first select \"Apply\"! This is your only warning.");
+            if (response == QMessageBox::Cancel) {
                 ui->fovlist->setCurrentRow(global_fov_index);
+                global_fov_ignore = 1;
                 return;
             }
+            else if (response == QMessageBox::Ok) {
+                global_fov_ignore = 1;
+            }
         }
+
+        receive_data();
+        apply_data();
+
         global_fov_index = index;
 
         int string_index = 11*index+3;
@@ -357,49 +370,57 @@ void FOV_Menu::on_applyButton_clicked()
     QString data_inp;
 
     int index = ui->fovlist->currentRow();
+
+    if (index == -1) {
+        return;
+    }
+
     int fov_num = ui->fovlist->count();
 
-    int string_index = 11*index+3;
-    int data_index = 11*index+4;
+    int data_index = 11*index+2;
 
     ui->fovlist->item(index)->setText(ui->fov_name->text());
+
+    fov_update[0] = "************************* Fields of View ***************************\n";
 
     data_inp = QString::number(fov_num);
     fov_update[1] = whitespace(data_inp) + " ! Number of FOVs\n";
 
+    fov_update[data_index+0] = "--------------------------------------------------------------------\n";
+
     data_inp = ui->fov_name->text();
-    fov_update[string_index] = whitespace(data_inp) + " ! Label\n";
+    fov_update[data_index+1] = whitespace(data_inp) + " ! Label\n";
 
     data_inp = ui->num_sides->text() + "  " + ui->length_sides->text();
-    fov_update[data_index+0] = whitespace(data_inp) + " ! Number of Sides, Length [m]\n";
+    fov_update[data_index+2] = whitespace(data_inp) + " ! Number of Sides, Length [m]\n";
 
     data_inp = ui->horizontal_width->text() + "  " + ui->vertical_height->text();
-    fov_update[data_index+1] = whitespace(data_inp) + " ! H Width, V Height [deg]\n";
+    fov_update[data_index+3] = whitespace(data_inp) + " ! H Width, V Height [deg]\n";
 
     data_inp = ui->redvalue->text() + "  " + ui->greenvalue->text()+ "  " + ui->bluevalue->text()+ "  " + ui->alphavalue->text();
-    fov_update[data_index+2] = whitespace(data_inp) + " ! Color RGB+Alpha\n";
+    fov_update[data_index+4] = whitespace(data_inp) + " ! Color RGB+Alpha\n";
 
     data_inp = ui->fov_type->currentText();
-    fov_update[data_index+3] = whitespace(data_inp) + " ! WIREFRAME, SOLID, VECTOR, or PLANE\n";
+    fov_update[data_index+5] = whitespace(data_inp) + " ! WIREFRAME, SOLID, VECTOR, or PLANE\n";
 
     if (ui->nearfield_on->isChecked()) data_inp = "TRUE";
     else data_inp = "FALSE";
     data_inp.append("  ");
     if (ui->farfield_on->isChecked()) data_inp.append("TRUE");
     else data_inp.append("FALSE");
-    fov_update[data_index+4] = whitespace(data_inp) + " ! Draw Near Field, Draw Far Field\n";
+    fov_update[data_index+6] = whitespace(data_inp) + " ! Draw Near Field, Draw Far Field\n";
 
     data_inp = ui->sc_num->text() + "  " + ui->bdy_num->text();
-    fov_update[data_index+5] = whitespace(data_inp) + " ! SC, Body\n";
+    fov_update[data_index+7] = whitespace(data_inp) + " ! SC, Body\n";
 
     data_inp = ui->pos_x->text() + "  " + ui->pos_y->text()+ "  " + ui->pos_z->text();
-    fov_update[data_index+6] = whitespace(data_inp) + " ! Position in Body [m]\n";
+    fov_update[data_index+8] = whitespace(data_inp) + " ! Position in Body [m]\n";
 
     data_inp = ui->rot1->text() + "  " + ui->rot2->text()+ "  " + ui->rot3->text()+ "  " + ui->euler_seq->currentText();
-    fov_update[data_index+7] = whitespace(data_inp) + " ! Euler Angles [deg], Sequence\n";
+    fov_update[data_index+9] = whitespace(data_inp) + " ! Euler Angles [deg], Sequence\n";
 
     data_inp = ui->boresightaxis->currentText();
-    fov_update[data_index+8] = whitespace(data_inp) + " ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n";
+    fov_update[data_index+10] = whitespace(data_inp) + " ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n";
 
     write_data();
 

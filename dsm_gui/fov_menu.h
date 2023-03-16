@@ -49,6 +49,7 @@ private:
     COLOR_Select *color_menu;
 
     int global_fov_index = -1;
+    int global_fov_ignore = 0;
 
     QString inout_path;
     QString file_path;
