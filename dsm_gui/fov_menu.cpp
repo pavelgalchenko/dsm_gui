@@ -166,17 +166,25 @@ void FOV_Menu::on_fov_remove_clicked()
     }
     else {
         int fov_index = 11*(removeitem)+2;
-
-        delete ui->fovlist->takeItem(removeitem);
-        ui->fovlist->setCurrentRow(-1);
-        global_fov_index = -1;
-
         fov_names.removeAt(removeitem);
         for (int i = 0; i < 11; i++) {
             fov_data.removeAt(fov_index);
             fov_string.removeAt(fov_index);
             fov_update.removeAt(fov_index);
         }
+
+        delete ui->fovlist->takeItem(removeitem);
+
+        QString data_inp;
+        int fov_num = ui->fovlist->count();
+
+        data_inp = QString::number(fov_num);
+        fov_update[1] = whitespace(data_inp) + " ! Number of FOVs\n";
+
+        write_data();
+
+        ui->fovlist->setCurrentRow(-1);
+        global_fov_index = -1;
     }
 }
 

@@ -174,14 +174,14 @@ void RGN_Menu::on_rgn_add_clicked()
     for (int i = 0; i < 6; i++) rgn_string.append("blankline");
 
     rgn_update.append("--------------------------------------------------------------------\n");
-    rgn_update.append("TRUE                           ! Exists\n");
-    rgn_update.append("\"NEWREGION\"                    ! Name\n");
-    rgn_update.append("EARTH                          ! World\n");
-    rgn_update.append("LLA                            ! POSW or LLA\n");
-    rgn_update.append("0.0   0.0  0.0                 ! Position in W, m\n");
-    rgn_update.append("-80.53  28.46 1000.0           ! Lng, Lat (deg), Alt (m)\n");
-    rgn_update.append("1.0E6  1.0E4  0.1              ! Elasticity, Damping, Friction Coef\n");
-    rgn_update.append("Rgn_Terrain.obj                ! Geometry File Name\n");
+    rgn_update.append("TRUE                         ! Exists\n");
+    rgn_update.append("\"NEWREGION\"                  ! Name\n");
+    rgn_update.append("EARTH                        ! World\n");
+    rgn_update.append("LLA                          ! POSW or LLA\n");
+    rgn_update.append("0.0   0.0  0.0               ! Position in W, m\n");
+    rgn_update.append("-80.53  28.46 1000.0         ! Lng, Lat (deg), Alt (m)\n");
+    rgn_update.append("1.0E6  1.0E4  0.1            ! Elasticity, Damping, Friction Coef\n");
+    rgn_update.append("Rgn_Terrain.obj              ! Geometry File Name\n");
 
     ui->rgnlist->addItem(newrgn);
 
