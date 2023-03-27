@@ -7,6 +7,7 @@
 #include "fov_menu.h"
 #include "nos_menu.h"
 #include "rgn_menu.h"
+#include "ipc_menu.h"
 
 #include <QDebug>
 
@@ -36,6 +37,7 @@ private slots:
     void on_FOV_Menu_clicked();
     void on_NOS_Menu_clicked();
     void on_RGN_Menu_clicked();
+    void on_IPC_Menu_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -45,6 +47,7 @@ private:
     FOV_Menu *fov_menu;
     NOS_Menu *nos_menu;
     RGN_Menu *rgn_menu;
+    IPC_Menu *ipc_menu;
     QString path;
 };
 #endif // MAINWINDOW_H

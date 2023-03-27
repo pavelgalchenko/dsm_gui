@@ -85,6 +85,7 @@ void MainWindow::on_new_mission_clicked()
     ui->FOV_Menu->setEnabled(true);
     ui->NOS_Menu->setEnabled(true);
     ui->RGN_Menu->setEnabled(true);
+    ui->IPC_Menu->setEnabled(true);
 }
 
 int MainWindow::warning_message(QString warningText)
@@ -153,3 +154,15 @@ void MainWindow::on_RGN_Menu_clicked()
     emit send_data(path);
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
+
+void MainWindow::on_IPC_Menu_clicked()
+{
+    ipc_menu = new IPC_Menu(this);
+    ipc_menu->setModal(true);
+    ipc_menu->show();
+
+    connect(this, SIGNAL(send_data(QString)), ipc_menu, SLOT(receive_ipcpath(QString)));
+    emit send_data(path);
+    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+}
+
