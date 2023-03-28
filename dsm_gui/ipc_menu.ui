@@ -76,15 +76,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
-       <widget class="QCheckBox" name="manualdisable">
-        <property name="text">
-         <string>Manually Disable all Sockets</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <layout class="QHBoxLayout" name="horizontalLayout_3"/>
     </item>
     <item>
      <widget class="QListWidget" name="ipclist"/>
@@ -326,8 +318,21 @@
        <layout class="QHBoxLayout" name="horizontalLayout_12">
         <item>
          <widget class="QPushButton" name="prefix_remove">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
           <property name="text">
            <string>Remove Prefix</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Rename Prefix</string>
           </property>
          </widget>
         </item>

@@ -30,12 +30,14 @@ private slots:
     void on_ipc_remove_clicked();
     void on_ipc_add_clicked();
     void on_ipclist_itemClicked(QListWidgetItem *item);
-    //void on_loaddefaultButton_clicked();
-    //void on_savedefaultButton_clicked();
+    void on_loaddefaultButton_clicked();
+    void on_savedefaultButton_clicked();
     void on_closeButton_clicked();
-    //void on_applyButton_clicked();
+    void on_applyButton_clicked();
 
-
+    void on_prefixlist_itemClicked(QListWidgetItem *item);
+    void on_prefix_remove_clicked();
+    void on_prefix_add_clicked();
 
 private:
     Ui::IPC_Menu *ui;
