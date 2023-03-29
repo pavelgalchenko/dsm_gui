@@ -327,7 +327,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton">
+         <widget class="QPushButton" name="prefix_rename">
           <property name="enabled">
            <bool>false</bool>
           </property>

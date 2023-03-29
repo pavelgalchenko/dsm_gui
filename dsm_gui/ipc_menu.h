@@ -39,6 +39,8 @@ private slots:
     void on_prefix_remove_clicked();
     void on_prefix_add_clicked();
 
+    void on_prefix_rename_clicked();
+
 private:
     Ui::IPC_Menu *ui;
 

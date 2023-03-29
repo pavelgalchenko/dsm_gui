@@ -5,6 +5,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QRegularExpression>
+#include <QInputDialog>
 
 IPC_Menu::IPC_Menu(QWidget *parent) :
     QDialog(parent),
@@ -212,6 +213,7 @@ void IPC_Menu::on_ipclist_itemClicked(QListWidgetItem *item)
 
         global_ipc_index = index;
         ui->prefix_remove->setEnabled(false);
+        ui->prefix_rename->setEnabled(false);
 
         int data_index = ipc_name_index.at(index);
         int line_num;
@@ -390,6 +392,7 @@ QString IPC_Menu::whitespace(QString data)
 void IPC_Menu::on_prefixlist_itemClicked(QListWidgetItem *item)
 {
     ui->prefix_remove->setEnabled(true);
+    ui->prefix_rename->setEnabled(true);
 }
 
 void IPC_Menu::on_prefix_remove_clicked()
@@ -401,6 +404,7 @@ void IPC_Menu::on_prefix_remove_clicked()
     else {
         ui->prefixlist->setCurrentRow(-1);
         ui->prefix_remove->setEnabled(false);
+        ui->prefix_rename->setEnabled(false);
         int ipcindex = ui->ipclist->currentRow();
         int ipccount = ui->ipclist->count();
         if (ipcindex == -1) {
@@ -455,6 +459,7 @@ void IPC_Menu::on_prefix_add_clicked()
     else {
         ui->prefixlist->setCurrentRow(-1);
         ui->prefix_remove->setEnabled(false);
+        ui->prefix_rename->setEnabled(false);
 
         QString newprefix = "\"SC[0].AC\"";
 
@@ -484,3 +489,38 @@ void IPC_Menu::on_prefix_add_clicked()
         apply_data();
     }
 }
+
+void IPC_Menu::on_prefix_rename_clicked()
+{
+    int renameitem = ui->prefixlist->currentRow();
+    if (renameitem == -1) {
+        return;
+    }
+    else {
+        //ui->prefixlist->setCurrentRow(-1);
+        int ipcindex = ui->ipclist->currentRow();
+        if (ipcindex == -1) {
+            return;
+        }
+        else {
+            bool ok;
+            QString text = QInputDialog::getText(this, tr("Input Prefix Name"), tr("Prefix:"), QLineEdit::Normal, ui->prefixlist->currentItem()->text(), &ok);
+            if (ok && !text.isEmpty()) {
+
+                int prefix_index = ipc_name_index.at(ipcindex)+8;
+                int rename_index  = prefix_index+renameitem+1;
+
+                ipc_update.replace(rename_index,whitespace(text)+" ! Prefix " + QString::number(renameitem) + "\n");
+                ui->prefixlist->item(renameitem)->setText(text);
+
+                write_data();
+
+                receive_data();
+                apply_data();
+
+                //ui->prefixlist->repaint();
+            }
+        }
+    }
+}
+
