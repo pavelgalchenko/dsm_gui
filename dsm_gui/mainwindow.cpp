@@ -21,7 +21,7 @@ MainWindow::~MainWindow()
 void MainWindow::on_new_mission_clicked()
 {
     QString homedir = getenv("HOME");
-    QString dir_name= QFileDialog::getExistingDirectory(this, tr("Choose Folder"), homedir);
+    QString dir_name = QFileDialog::getExistingDirectory(this, tr("Choose Folder"), homedir, QFileDialog::DontUseNativeDialog);
 
     if (dir_name.isEmpty())
         return;
