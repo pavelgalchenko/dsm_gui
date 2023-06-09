@@ -5,6 +5,7 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QRegularExpression>
+#include <QColorDialog>
 
 FOV_Menu::FOV_Menu(QWidget *parent) :
     QDialog(parent),
@@ -128,20 +129,44 @@ void FOV_Menu::populate_list()
 
 void FOV_Menu::on_pickcolor_clicked()
 {
-    color_menu = new COLOR_Select(this);
-    color_menu->setModal(true);
-    color_menu->show();
+    QColor prev_color;
+    prev_color.setRedF(ui->redvalue->text().toDouble());
+    prev_color.setBlueF(ui->bluevalue->text().toDouble());
+    prev_color.setGreenF(ui->greenvalue->text().toDouble());
 
+    QColor color = QColorDialog::getColor(prev_color, this );
     QStringList rgbavalues;
-    rgbavalues.append(ui->redvalue->text());
-    rgbavalues.append(ui->greenvalue->text());
-    rgbavalues.append(ui->bluevalue->text());
-    rgbavalues.append(ui->alphavalue->text());
 
-    connect(this, SIGNAL(send_rgbavalues(QStringList)), color_menu, SLOT(receive_rgbavalues(QStringList)));
-    connect(color_menu, SIGNAL(send_newrgbavalues(QStringList)), this, SLOT(receive_newrgbavalues(QStringList)));
-    emit send_rgbavalues(rgbavalues);
-    disconnect(this, SIGNAL(send_rgbavalues(QStringList)), 0, 0);
+    QString red;
+    QString green;
+    QString blue;
+    QString alpha;
+
+    QString color_text;
+
+    if( color.isValid() )
+    {
+        red.setNum(color.redF());
+        green.setNum(color.greenF());
+        blue.setNum(color.blueF());
+        alpha.setNum(color.alphaF());
+
+        rgbavalues.append(red);
+        rgbavalues.append(green);
+        rgbavalues.append(blue);
+        rgbavalues.append(alpha);
+
+        color_text = rgbavalues[0];
+        ui->redvalue->setValue(color_text.toDouble());
+        color_text = rgbavalues[1];
+        ui->greenvalue->setValue(color_text.toDouble());
+        color_text = rgbavalues[2];
+        ui->bluevalue->setValue(color_text.toDouble());
+        color_text = rgbavalues[3];
+        ui->alphavalue->setValue(color_text.toDouble());
+    }    
+
+    if (!color.isValid()) return;
 }
 
 void FOV_Menu::receive_newrgbavalues(QStringList newrgbavalues)
