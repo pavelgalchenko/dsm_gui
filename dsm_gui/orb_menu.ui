@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>730</width>
-    <height>480</height>
+    <height>560</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>860</width>
-     <height>480</height>
+     <width>730</width>
+     <height>560</height>
     </rect>
    </property>
    <widget class="QWidget" name="verticalLayoutWidget">
@@ -28,7 +28,7 @@
       <x>10</x>
       <y>10</y>
       <width>218</width>
-      <height>411</height>
+      <height>491</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -61,7 +61,7 @@
       <x>240</x>
       <y>0</y>
       <width>481</width>
-      <height>421</height>
+      <height>501</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -77,7 +77,7 @@
         <x>0</x>
         <y>0</y>
         <width>471</width>
-        <height>252</height>
+        <height>294</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -130,6 +130,33 @@
          </item>
          <item>
           <widget class="QLineEdit" name="orbDescription"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_44">
+         <item>
+          <widget class="QLabel" name="label_42">
+           <property name="text">
+            <string>Orbit Type:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_40">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="orbType"/>
          </item>
         </layout>
        </item>
@@ -418,13 +445,13 @@
           <widget class="QLineEdit" name="orbFormOriginPos_1">
            <property name="minimumSize">
             <size>
-             <width>67</width>
+             <width>70</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>67</width>
+             <width>70</width>
              <height>16777215</height>
             </size>
            </property>
@@ -434,13 +461,13 @@
           <widget class="QLineEdit" name="orbFormOriginPos_2">
            <property name="minimumSize">
             <size>
-             <width>67</width>
+             <width>70</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>67</width>
+             <width>70</width>
              <height>16777215</height>
             </size>
            </property>
@@ -450,13 +477,13 @@
           <widget class="QLineEdit" name="orbFormOriginPos_3">
            <property name="minimumSize">
             <size>
-             <width>67</width>
+             <width>70</width>
              <height>0</height>
             </size>
            </property>
            <property name="maximumSize">
             <size>
-             <width>67</width>
+             <width>70</width>
              <height>16777215</height>
             </size>
            </property>
@@ -477,7 +504,7 @@
         <x>0</x>
         <y>0</y>
         <width>471</width>
-        <height>51</height>
+        <height>70</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -507,15 +534,29 @@
           <widget class="QComboBox" name="orbZeroWorld">
            <property name="minimumSize">
             <size>
-             <width>67</width>
+             <width>200</width>
              <height>0</height>
             </size>
            </property>
-           <property name="maximumSize">
-            <size>
-             <width>67</width>
-             <height>16777215</height>
-            </size>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="orbZeroMinorBodyLabel">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Minor Body [#]:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="orbZeroMinorBodyNum">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="maximum">
+            <number>9</number>
            </property>
           </widget>
          </item>
@@ -572,7 +613,7 @@
         <x>0</x>
         <y>0</y>
         <width>471</width>
-        <height>51</height>
+        <height>61</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -654,7 +695,7 @@
         <x>0</x>
         <y>0</y>
         <width>471</width>
-        <height>81</height>
+        <height>112</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -682,8 +723,31 @@
          </item>
          <item>
           <widget class="QComboBox" name="orbCentWorld">
-           <property name="frame">
-            <bool>true</bool>
+           <property name="minimumSize">
+            <size>
+             <width>200</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="minorbodylabel">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Minor Body [#]:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="orbCentMinorBodyNum">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="maximum">
+            <number>9</number>
            </property>
           </widget>
          </item>
@@ -712,14 +776,14 @@
           </spacer>
          </item>
          <item>
-          <widget class="QRadioButton" name="radioButton_3">
+          <widget class="QRadioButton" name="orbCentJ2_on">
            <property name="text">
             <string>On</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="radioButton_4">
+          <widget class="QRadioButton" name="orbCentJ2_off">
            <property name="text">
             <string>Off</string>
            </property>
@@ -760,7 +824,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>90</y>
+        <y>170</y>
         <width>481</width>
         <height>301</height>
        </rect>
@@ -778,7 +842,7 @@
           <x>0</x>
           <y>0</y>
           <width>471</width>
-          <height>194</height>
+          <height>226</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -805,14 +869,14 @@
             </spacer>
            </item>
            <item>
-            <widget class="QRadioButton" name="radioButton_2">
+            <widget class="QRadioButton" name="orbCentPA_on">
              <property name="text">
               <string>PA</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="radioButton">
+            <widget class="QRadioButton" name="orbCentPA_off">
              <property name="text">
               <string>AE</string>
              </property>
@@ -859,7 +923,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="orbCentKepPeriAlt_2">
+            <widget class="QLineEdit" name="orbCentKepApoAlt">
              <property name="minimumSize">
               <size>
                <width>70</width>
@@ -899,10 +963,36 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbCentKepMinAlt"/>
+            <widget class="QLineEdit" name="orbCentKepMinAlt">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbCentKepEcc"/>
+            <widget class="QLineEdit" name="orbCentKepEcc">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -929,7 +1019,20 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbCentKepInc"/>
+            <widget class="QLineEdit" name="orbCentKepInc">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -956,7 +1059,60 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbCentKepRAAN"/>
+            <widget class="QLineEdit" name="orbCentKepRAAN">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_46">
+           <item>
+            <widget class="QLabel" name="label_44">
+             <property name="text">
+              <string>Argument of Periapsis (deg)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_44">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="orbCentKepArgPeri">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -983,7 +1139,20 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbCentKepTA"/>
+            <widget class="QLineEdit" name="orbCentKepTA">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1000,7 +1169,7 @@
           <x>0</x>
           <y>0</y>
           <width>471</width>
-          <height>51</height>
+          <height>58</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -1027,13 +1196,52 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbCentPVPos1"/>
+            <widget class="QLineEdit" name="orbCentPVPos_1">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbCentPVPos2"/>
+            <widget class="QLineEdit" name="orbCentPVPos_2">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbCentPVPos3"/>
+            <widget class="QLineEdit" name="orbCentPVPos_3">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1060,13 +1268,52 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbCentPVVel1"/>
+            <widget class="QLineEdit" name="orbCentPVVel_1">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbCentPVVel2"/>
+            <widget class="QLineEdit" name="orbCentPVVel_2">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbCentPVVel3"/>
+            <widget class="QLineEdit" name="orbCentPVVel_3">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1083,7 +1330,7 @@
           <x>0</x>
           <y>0</y>
           <width>471</width>
-          <height>81</height>
+          <height>200</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -1137,7 +1384,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPlainTextEdit" name="orbCentFileLabel"/>
+            <widget class="QLineEdit" name="orbCentFileLabel"/>
            </item>
           </layout>
          </item>
@@ -1164,7 +1411,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPlainTextEdit" name="orbCentFileName"/>
+            <widget class="QTextBrowser" name="orbCentFileName"/>
            </item>
           </layout>
          </item>
@@ -1175,13 +1422,13 @@
     </widget>
     <widget class="QWidget" name="orbTabTBody">
      <attribute name="title">
-      <string>3 Body</string>
+      <string>Three Body</string>
      </attribute>
      <widget class="QTabWidget" name="orbTBodyTypeTab">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>90</y>
+        <y>170</y>
         <width>481</width>
         <height>301</height>
        </rect>
@@ -1199,7 +1446,7 @@
           <x>0</x>
           <y>0</y>
           <width>471</width>
-          <height>231</height>
+          <height>262</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -1226,7 +1473,20 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbTBodyModeXYSMA"/>
+            <widget class="QLineEdit" name="orbTBodyModeXYSMA">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1253,7 +1513,20 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbTBodyModeXYPhase"/>
+            <widget class="QLineEdit" name="orbTBodyModeXYPhase">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1318,7 +1591,20 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbTBodyModeXYSMA_2"/>
+            <widget class="QLineEdit" name="orbTBodyModeXYSMA_2">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1345,7 +1631,20 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbTBodyModeXYPhase_2"/>
+            <widget class="QLineEdit" name="orbTBodyModeXYPhase_2">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1410,7 +1709,20 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbTBodyModeZSMA"/>
+            <widget class="QLineEdit" name="orbTBodyModeZSMA">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1437,7 +1749,20 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbTBodyModeZPhase"/>
+            <widget class="QLineEdit" name="orbTBodyModeZPhase">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1446,7 +1771,7 @@
       </widget>
       <widget class="QWidget" name="orbTBodyTypeTabCowell">
        <attribute name="title">
-        <string>Cowell</string>
+        <string>Position/Velocity</string>
        </attribute>
        <widget class="QWidget" name="verticalLayoutWidget_10">
         <property name="geometry">
@@ -1481,13 +1806,52 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbTBodyCowellPos1"/>
+            <widget class="QLineEdit" name="orbTBodyCowellPos_1">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbTBodyCowellPos2"/>
+            <widget class="QLineEdit" name="orbTBodyCowellPos_3">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbTBodyCowellPos3"/>
+            <widget class="QLineEdit" name="orbTBodyCowellPos_2">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1514,13 +1878,52 @@
             </spacer>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbTBodyCowellVel1"/>
+            <widget class="QLineEdit" name="orbTBodyCowellVel_1">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbTBodyCowellVel2"/>
+            <widget class="QLineEdit" name="orbTBodyCowellVel_2">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="orbTBodyCowellVel3"/>
+            <widget class="QLineEdit" name="orbTBodyCowellVel_3">
+             <property name="minimumSize">
+              <size>
+               <width>70</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>70</width>
+               <height>16777215</height>
+              </size>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -1529,7 +1932,7 @@
       </widget>
       <widget class="QWidget" name="orbTBodyTypeTabFile">
        <attribute name="title">
-        <string>File</string>
+        <string>Spline</string>
        </attribute>
        <widget class="QWidget" name="verticalLayoutWidget_11">
         <property name="geometry">
@@ -1537,7 +1940,7 @@
           <x>0</x>
           <y>0</y>
           <width>471</width>
-          <height>81</height>
+          <height>200</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_11">
@@ -1591,7 +1994,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPlainTextEdit" name="orbTBodyFileLabel"/>
+            <widget class="QLineEdit" name="orbTBodyFileLabel"/>
            </item>
           </layout>
          </item>
@@ -1618,7 +2021,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPlainTextEdit" name="orbTBodyFileName"/>
+            <widget class="QTextBrowser" name="orbTBodyFileName"/>
            </item>
           </layout>
          </item>
@@ -1632,7 +2035,7 @@
         <x>0</x>
         <y>0</y>
         <width>471</width>
-        <height>81</height>
+        <height>160</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_12">
@@ -1691,6 +2094,33 @@
         </layout>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_45">
+         <item>
+          <widget class="QLabel" name="label_43">
+           <property name="text">
+            <string>Propagation Method</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_43">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="orbTBodyProp"/>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_40">
          <item>
           <widget class="QLabel" name="label_33">
@@ -1725,46 +2155,46 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>430</y>
-      <width>711</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QPushButton" name="loaddefaultButton">
-       <property name="text">
-        <string>Load Default</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="savedefaultButton">
-       <property name="text">
-        <string>Save Default</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="closeButton">
-       <property name="text">
-        <string>Close</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="applyButton">
-       <property name="text">
-        <string>Apply</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>510</y>
+     <width>711</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QPushButton" name="loaddefaultButton">
+      <property name="text">
+       <string>Load Default</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="savedefaultButton">
+      <property name="text">
+       <string>Save Default</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="closeButton">
+      <property name="text">
+       <string>Close</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="applyButton">
+      <property name="text">
+       <string>Apply</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>
