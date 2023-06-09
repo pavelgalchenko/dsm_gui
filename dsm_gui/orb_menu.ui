@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>ORB_Menu</class>
- <widget class="QMainWindow" name="ORB_Menu">
+ <widget class="QDialog" name="ORB_Menu">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,9 +11,17 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="centralwidget">
+  <widget class="QWidget" name="centralwidget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>731</width>
+     <height>471</height>
+    </rect>
+   </property>
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
@@ -57,7 +65,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="orbTabGeneral">
      <attribute name="title">
@@ -69,7 +77,7 @@
         <x>0</x>
         <y>0</y>
         <width>471</width>
-        <height>241</height>
+        <height>171</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -160,18 +168,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QComboBox" name="orbFormFrame">
-           <item>
-            <property name="text">
-             <string>N</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>L</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QComboBox" name="orbFormFrame"/>
          </item>
         </layout>
        </item>
@@ -198,7 +195,68 @@
           </spacer>
          </item>
          <item>
-          <widget class="QComboBox" name="orbFormFrameEulerSeq"/>
+          <widget class="QComboBox" name="orbFormFrameEulerSeq">
+           <item>
+            <property name="text">
+             <string>123</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>231</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>312</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>132</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>213</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>321</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>121</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>131</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>212</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>232</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>313</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>323</string>
+            </property>
+           </item>
+          </widget>
          </item>
          <item>
           <widget class="QDoubleSpinBox" name="orbFormFrameEuler1"/>
@@ -234,18 +292,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QComboBox" name="orbFormOrigin">
-           <item>
-            <property name="text">
-             <string>N</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>L</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QComboBox" name="orbFormOrigin"/>
          </item>
         </layout>
        </item>
@@ -272,13 +319,13 @@
           </spacer>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="orbFormOrigin1"/>
+          <widget class="QDoubleSpinBox" name="orbFormOriginPos1"/>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="orbFormOrigin2"/>
+          <widget class="QDoubleSpinBox" name="orbFormOriginPos2"/>
          </item>
          <item>
-          <widget class="QDoubleSpinBox" name="orbFormOrigin3"/>
+          <widget class="QDoubleSpinBox" name="orbFormOriginPos3"/>
          </item>
         </layout>
        </item>
@@ -295,7 +342,7 @@
         <x>0</x>
         <y>0</y>
         <width>471</width>
-        <height>71</height>
+        <height>51</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -366,7 +413,7 @@
         <x>0</x>
         <y>0</y>
         <width>471</width>
-        <height>71</height>
+        <height>51</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -437,7 +484,7 @@
         <x>0</x>
         <y>0</y>
         <width>471</width>
-        <height>111</height>
+        <height>81</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_5">
@@ -464,7 +511,11 @@
           </spacer>
          </item>
          <item>
-          <widget class="QComboBox" name="orbCentBody"/>
+          <widget class="QComboBox" name="orbCentWorld">
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -518,23 +569,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QComboBox" name="orbCentralICParam">
-           <item>
-            <property name="text">
-             <string>Keplerian</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Position/Velocity</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>File</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QComboBox" name="orbCentICParam"/>
          </item>
         </layout>
        </item>
@@ -544,13 +579,13 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>120</y>
+        <y>90</y>
         <width>481</width>
-        <height>271</height>
+        <height>301</height>
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="orbCentTypeTabKep">
        <attribute name="title">
@@ -562,7 +597,7 @@
           <x>0</x>
           <y>0</y>
           <width>471</width>
-          <height>241</height>
+          <height>171</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -571,7 +606,7 @@
            <item>
             <widget class="QLabel" name="label_10">
              <property name="text">
-              <string>Peri/Apoapsis (PA) or Min Altitude/Eccentricity (AE)</string>
+              <string>Peri/Apoapsis (PA) or Min Alt/Ecc (AE)</string>
              </property>
             </widget>
            </item>
@@ -589,17 +624,17 @@
             </spacer>
            </item>
            <item>
-            <widget class="QComboBox" name="orbCentKepPA">
-             <item>
-              <property name="text">
-               <string>PA</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>AE</string>
-              </property>
-             </item>
+            <widget class="QRadioButton" name="radioButton_2">
+             <property name="text">
+              <string>PA</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="radioButton">
+             <property name="text">
+              <string>AE</string>
+             </property>
             </widget>
            </item>
           </layout>
@@ -639,7 +674,7 @@
            <item>
             <widget class="QLabel" name="label_12">
              <property name="text">
-              <string>Peri/Apoapsis Altitude (km)</string>
+              <string>Min Altitude (km)/Eccentricity</string>
              </property>
             </widget>
            </item>
@@ -758,7 +793,7 @@
           <x>0</x>
           <y>0</y>
           <width>471</width>
-          <height>81</height>
+          <height>51</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -839,9 +874,9 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>2</y>
+          <y>0</y>
           <width>471</width>
-          <height>206</height>
+          <height>81</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -868,23 +903,7 @@
             </spacer>
            </item>
            <item>
-            <widget class="QComboBox" name="orbCentFileType">
-             <item>
-              <property name="text">
-               <string>TLE</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>TRV</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Spline</string>
-              </property>
-             </item>
-            </widget>
+            <widget class="QComboBox" name="orbCentFileType"/>
            </item>
           </layout>
          </item>
@@ -947,10 +966,556 @@
       </widget>
      </widget>
     </widget>
-    <widget class="QWidget" name="orbTabThreeBody">
+    <widget class="QWidget" name="orbTabTBody">
      <attribute name="title">
       <string>3 Body</string>
      </attribute>
+     <widget class="QTabWidget" name="orbTBodyTypeTab">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>90</y>
+        <width>481</width>
+        <height>301</height>
+       </rect>
+      </property>
+      <property name="currentIndex">
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="orbTBodyTypeTabMode">
+       <attribute name="title">
+        <string>Modes</string>
+       </attribute>
+       <widget class="QWidget" name="verticalLayoutWidget_9">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>471</width>
+          <height>231</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_9">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_17">
+           <item>
+            <widget class="QLabel" name="label_13">
+             <property name="text">
+              <string>XY Semimajor Axis (km)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_18">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="orbTBodyModeXYSMA"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_20">
+           <item>
+            <widget class="QLabel" name="label_14">
+             <property name="text">
+              <string>XY Phase, CCW from +Y (deg)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_19">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="orbTBodyModeXYPhase"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_21">
+           <item>
+            <widget class="QLabel" name="label_15">
+             <property name="text">
+              <string>Sense, viewed from +Z</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_20">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="orbTBodySense_CW">
+             <property name="text">
+              <string>CW</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="orbTBodySense_CCW">
+             <property name="text">
+              <string>CCW</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_30">
+           <item>
+            <widget class="QLabel" name="label_24">
+             <property name="text">
+              <string>Second XY Semimajor Axis (km) (L4/L5 Only)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_27">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="orbTBodyModeXYSMA_2"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_32">
+           <item>
+            <widget class="QLabel" name="label_25">
+             <property name="text">
+              <string>Second XY Phase, CCW from +Y (deg) (L4/L5 Only)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_29">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="orbTBodyModeXYPhase_2"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_33">
+           <item>
+            <widget class="QLabel" name="label_26">
+             <property name="text">
+              <string>Second Sense, viewed from +Z (L4/L5 Only)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_31">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="orbTBodySense_CW_2">
+             <property name="text">
+              <string>CW</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="orbTBodySense_CCW_2">
+             <property name="text">
+              <string>CCW</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_42">
+           <item>
+            <widget class="QLabel" name="label_36">
+             <property name="text">
+              <string>Z Semimajor Axis (km)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_41">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="orbTBodyModeZSMA"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_43">
+           <item>
+            <widget class="QLabel" name="label_37">
+             <property name="text">
+              <string>Z Phase (deg)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_42">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="orbTBodyModeZPhase"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="orbTBodyTypeTabCowell">
+       <attribute name="title">
+        <string>Cowell</string>
+       </attribute>
+       <widget class="QWidget" name="verticalLayoutWidget_10">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>471</width>
+          <height>51</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_10">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_34">
+           <item>
+            <widget class="QLabel" name="label_27">
+             <property name="text">
+              <string>Initial Position (ND)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_32">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="orbTBodyCowellPos1"/>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="orbTBodyCowellPos2"/>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="orbTBodyCowellPos3"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_35">
+           <item>
+            <widget class="QLabel" name="label_28">
+             <property name="text">
+              <string>Initial Velocity (ND)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_33">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="orbTBodyCowellVel1"/>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="orbTBodyCowellVel2"/>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="orbTBodyCowellVel3"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="orbTBodyTypeTabFile">
+       <attribute name="title">
+        <string>File</string>
+       </attribute>
+       <widget class="QWidget" name="verticalLayoutWidget_11">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>471</width>
+          <height>81</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_11">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_36">
+           <item>
+            <widget class="QLabel" name="label_29">
+             <property name="text">
+              <string>File Type</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_34">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QComboBox" name="orbTBodyFileType"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_37">
+           <item>
+            <widget class="QLabel" name="label_30">
+             <property name="text">
+              <string>Label in File</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_35">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPlainTextEdit" name="orbTBodyFileLabel"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_38">
+           <item>
+            <widget class="QLabel" name="label_31">
+             <property name="text">
+              <string>File Name</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_36">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPlainTextEdit" name="orbTBodyFileName"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </widget>
+     <widget class="QWidget" name="verticalLayoutWidget_12">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>471</width>
+        <height>81</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_12">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_22">
+         <item>
+          <widget class="QLabel" name="label_32">
+           <property name="text">
+            <string>Lagrange System</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_37">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="orbTBodyLSystem"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_39">
+         <item>
+          <widget class="QLabel" name="label_34">
+           <property name="text">
+            <string>Lagrange Point</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_38">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="orbTBodyLPoint"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_40">
+         <item>
+          <widget class="QLabel" name="label_33">
+           <property name="text">
+            <string>Initial Condition Param</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_39">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QComboBox" name="orbTBodyICParam">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </widget>
    <widget class="QWidget" name="layoutWidget">

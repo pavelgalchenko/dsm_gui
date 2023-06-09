@@ -169,7 +169,7 @@ void MainWindow::on_IPC_Menu_clicked()
 
 void MainWindow::on_ORB_Menu_clicked()
 {
-    orb_menu = new Orb_Menu(this);
+    orb_menu = new ORB_Menu(this);
     orb_menu->setModal(true);
     orb_menu->show();
 
