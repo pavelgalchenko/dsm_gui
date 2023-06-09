@@ -19,6 +19,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     nos_menu.cpp \
+    orb_menu.cpp \
     rgn_menu.cpp \
     tdr_menu.cpp
 
@@ -29,6 +30,7 @@ HEADERS += \
     ipc_menu.h \
     mainwindow.h \
     nos_menu.h \
+    orb_menu.h \
     rgn_menu.h \
     tdr_menu.h
 
@@ -39,6 +41,7 @@ FORMS += \
     ipc_menu.ui \
     mainwindow.ui \
     nos_menu.ui \
+    orb_menu.ui \
     rgn_menu.ui \
     tdr_menu.ui
 
