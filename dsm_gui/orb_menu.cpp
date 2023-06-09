@@ -122,30 +122,34 @@ void ORB_Menu::write_data()
 
 void ORB_Menu::apply_data()
 {
-    QStringList line_items;
-    QString line_item;
-    int current_index = 2;
+//    QStringList line_items;
+//    QString line_item;
+//    int current_index = 2;
 
-    orb_names.clear();
-    orb_name_index.clear();
-    orb_name_size.clear();
+//    orb_names.clear();
+//    orb_name_index.clear();
+//    orb_name_size.clear();
 
-    line_items = orb_data[1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-    line_item = line_items[0];
+//    line_items = orb_data[1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+//    line_item = line_items[0];
 
-    for (int i=0; i < num_ipc; i++) {
+//    for (int i=0; i < num_ipc; i++) {
 
-        line_items = orb_data[current_index+8].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-        line_item = line_items[0];
-        num_prefixes = line_item.toInt();
+//        line_items = orb_data[current_index+8].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+//        line_item = line_items[0];
+//        num_prefixes = line_item.toInt();
 
-        orb_names.append("IPC "+QString::number(i));
-        orb_update.replace(current_index,"********************************  "+orb_names.at(i)+"  ********************************\n");
-        orb_name_index.append(current_index);
-        orb_name_size.append(9+num_prefixes);
-        current_index = current_index+9+num_prefixes;
-    }
-    write_data();
+//        orb_names.append("IPC "+QString::number(i));
+//        orb_update.replace(current_index,"********************************  "+orb_names.at(i)+"  ********************************\n");
+//        orb_name_index.append(current_index);
+//        orb_name_size.append(9+num_prefixes);
+//        current_index = current_index+9+num_prefixes;
+//    }
+//    write_data();
+}
+
+void ORB_Menu::populate_list(){
+
 }
 
 
