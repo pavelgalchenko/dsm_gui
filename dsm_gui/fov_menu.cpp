@@ -133,8 +133,12 @@ void FOV_Menu::on_pickcolor_clicked()
     prev_color.setRedF(ui->redvalue->text().toDouble());
     prev_color.setBlueF(ui->bluevalue->text().toDouble());
     prev_color.setGreenF(ui->greenvalue->text().toDouble());
+    prev_color.setAlphaF(ui->alphavalue->text().toDouble());
 
-    QColor color = QColorDialog::getColor(prev_color, this );
+    QString title = "Color Picker";
+
+    QColor color = QColorDialog::getColor(prev_color, this, title, QColorDialog::ShowAlphaChannel);
+
     QStringList rgbavalues;
 
     QString red;
@@ -164,7 +168,7 @@ void FOV_Menu::on_pickcolor_clicked()
         ui->bluevalue->setValue(color_text.toDouble());
         color_text = rgbavalues[3];
         ui->alphavalue->setValue(color_text.toDouble());
-    }    
+    }
 
     if (!color.isValid()) return;
 }
