@@ -173,7 +173,7 @@ void MainWindow::on_ORB_Menu_clicked()
     orb_menu->setModal(true);
     orb_menu->show();
 
-    connect(this, SIGNAL(send_data(QString)), orb_menu, SLOT(receive_ipcpath(QString)));
+    connect(this, SIGNAL(send_data(QString)), orb_menu, SLOT(receive_orbpath(QString)));
     emit send_data(path);
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
