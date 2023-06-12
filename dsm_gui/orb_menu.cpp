@@ -3,6 +3,7 @@
 
 #include <QFile>
 #include <QDebug>
+#include <QHash>
 //#include <QTextStream>
 #include <QMessageBox>
 #include <QRegularExpression>
@@ -24,7 +25,8 @@ ORB_Menu::~ORB_Menu()
 
 void ORB_Menu::set_validators()
 {
-    ui->orbType->addItems(orbTypeInputs);
+    for(auto i = orbTypeInputs.cbegin(), end = orbTypeInputs.cend(); i != end; ++i)
+        ui->orbType->addItem(i.value());
     ui->orbFormFrame->addItems(orbFrameInputs);
     ui->orbFormOrigin->addItems(orbFrameInputs);
     ui->orbFormFrameEulerSeq->addItems(eulerSeqInputs);
@@ -38,7 +40,8 @@ void ORB_Menu::set_validators()
     ui->orbZeroWorld->addItems(worldInputs);
 
     ui->orbCentWorld->addItems(worldInputs);
-    ui->orbCentICParam->addItems(orbCentICTypeInputs);
+    for(auto i = orbCentICTypeInputs.cbegin(), end = orbCentICTypeInputs.cend(); i != end; ++i)
+        ui->orbCentICParam->addItem(i.value());
     ui->orbCentKepPeriAlt->setValidator(new QDoubleValidator);
     ui->orbCentKepApoAlt->setValidator(new QDoubleValidator);
     ui->orbCentKepMinAlt->setValidator(new QDoubleValidator);
@@ -52,11 +55,16 @@ void ORB_Menu::set_validators()
     ui->orbCentPVVel_1->setValidator(new QDoubleValidator);
     ui->orbCentPVVel_2->setValidator(new QDoubleValidator);
     ui->orbCentPVVel_3->setValidator(new QDoubleValidator);
-    ui->orbCentFileType->addItems(orbFileTypeInputs);
+    for(auto i = orbFileTypeInputs.cbegin(), end = orbFileTypeInputs.cend(); i != end; ++i)
+        ui->orbCentFileType->addItem(i.value());
 
-    ui->orbTBodyLSystem->addItems(orbTBodyLSystemInputs);
-    ui->orbTBodyProp->addItems(orbTBodyPropInputs);
-    ui->orbTBodyICParam->addItems(orbTBodyICTypeInputs);
+    for(auto i = orbTBodyLSysInputs.cbegin(), end = orbTBodyLSysInputs.cend(); i != end; ++i)
+        ui->orbTBodyLSystem->addItem(i.value());
+    for(auto i = orbTBodyPropInputs.cbegin(), end = orbTBodyPropInputs.cend(); i != end; ++i)
+        ui->orbTBodyProp->addItem(i.value());
+    for(auto i = orbTBodyICTypeInputs.cbegin(), end = orbTBodyICTypeInputs.cend(); i != end; ++i)
+        ui->orbTBodyICParam->addItem(i.value());
+    ui->orbTBodyLPoint->addItems(lagrangePointInputs);
     ui->orbTBodyModeXYSMA->setValidator(new QDoubleValidator);
     ui->orbTBodyModeXYPhase->setValidator(new QDoubleValidator);
     ui->orbTBodyModeXYSMA_2->setValidator(new QDoubleValidator);
@@ -69,7 +77,8 @@ void ORB_Menu::set_validators()
     ui->orbTBodyCowellVel_1->setValidator(new QDoubleValidator);
     ui->orbTBodyCowellVel_2->setValidator(new QDoubleValidator);
     ui->orbTBodyCowellVel_3->setValidator(new QDoubleValidator);
-    ui->orbTBodyFileType->addItems(orbFileTypeInputs);
+    for(auto i = orbFileTypeInputs.cbegin(), end = orbFileTypeInputs.cend(); i != end; ++i)
+        ui->orbTBodyFileType->addItem(i.value());
 }
 
 void ORB_Menu::receive_orbpath(QString path)
@@ -128,10 +137,10 @@ void ORB_Menu::receive_data() {
     while(!in.atEnd()) {
         QString line = in.readLine();
         QRegularExpressionMatch match1 = rx1.match(line);
-        orb_data.append(match1.captured(1)); // 0 includes ! character, 1 does not
+        orb_data.append(match1.captured(1)); // index 0 includes ! character, index 1 does not
 
         QRegularExpressionMatch match2 = rx2.match(line);
-        orb_string.append(match2.captured(1)); // 0 includes "" characters, 1 does not
+        orb_string.append(match2.captured(1)); // index 0 includes "" characters, index 1 does not
 
         QRegularExpressionMatch match3 = rx3.match(line);
         if (match3.hasMatch()) {
@@ -146,10 +155,6 @@ void ORB_Menu::receive_data() {
         line.append("\n");
         orb_update.append(line);
     }
-//    qDebug()<<orb_file_headers;
-//    qDebug()<<orb_file_descrip;
-//    qDebug()<<orb_data;
-//    qDebug()<<orb_string;
     file.close();
 }
 
@@ -173,28 +178,24 @@ void ORB_Menu::apply_data()
 {
     QStringList line_items;
     QString line_string;
-    QStringList orbTypeStrs = {"ZERO", "FLIGHT", "CENTRAL", "THREE_BODY"};
-    QStringList orbCentICStrs  = {"KEP", "RV", "FILE"};
-    QStringList orbTBodyPropStrs = {"LAGDOF_MODES", "LAGDOF_COWELL", "LAGDOF_SPLINE"};
-    QStringList orbTBodyICStrs = {"MODES", "XYZ", "FILE"};
-    QStringList orbFileTypeStrs = {"TLE", "TRV", "SPLINE"};
-//    QString line_item;
-//    int line_num = 0;
 
-//    line_num = 1;
-
-    for(int line_num=1; line_num<=47; line_num++){
+    // Iterate over the number of lines in the file. Last line can end in newline "\n" character.
+    for(int line_num=1; line_num<=orb_data.length(); line_num++){
         line_string = orb_string[line_num-1];
         line_items = orb_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
         switch (line_num) {
 /******************************************* HEADER ***************************************************/
+        case 1: // File Header
+            break;
         case 2: // Orbit Description
             ui->orbDescription->setText(line_string);
             break;
         case 3: // Orbit Type
-            ui->orbType->setCurrentIndex(orbTypeStrs.indexOf(line_items[0]));
+            setQComboBox(ui->orbType,orbTypeInputs.value(line_items[0]));
             break;
 /***************************************** ZERO ORBIT *************************************************/
+        case 4: // Zero Orbit Header
+            break;
         case 5: // Zero Orbit Body
             if(line_items[0].contains("MINORBODY")) {
                 ui->orbZeroWorld->setCurrentIndex(worldInputs.length()-1);
@@ -206,6 +207,8 @@ void ORB_Menu::apply_data()
             string2radiobool(line_items[0],ui->orbZeroPolyGrav_on,ui->orbZeroPolyGrav_off);
             break;
 /**************************************** FLIGHT ORBIT ************************************************/
+        case 7: // Flight Orbit Header
+            break;
         case 8: // Flight Orbit Region
             ui->orbFlightRegion->setValue(line_items[0].toInt());
             break;
@@ -213,6 +216,8 @@ void ORB_Menu::apply_data()
             string2radiobool(line_items[0],ui->orbFlightPolyGrav_on,ui->orbFlightPolyGrav_off);
             break;
 /**************************************** CENTRAL ORBIT ***********************************************/
+        case 10: // Central Orbit Header
+            break;
         case 11: // Central Orbit World
             if(line_items[0].contains("MINORBODY")) {
                 ui->orbCentWorld->setCurrentIndex(worldInputs.length());
@@ -224,7 +229,7 @@ void ORB_Menu::apply_data()
             string2radiobool(line_items[0],ui->orbCentJ2_on,ui->orbCentJ2_off);
             break;
         case 13: // Central Orbit Initial Condition Elements
-            ui->orbCentICParam->setCurrentIndex(orbCentICStrs.indexOf(line_items[0]));
+            setQComboBox(ui->orbCentICParam,orbCentICTypeInputs.value(line_items[0]));
             break;
         case 14: // Central Orbit Peri/Apoapsis Alt or Min Alt & Ecc
             if(!line_items[0].compare("PA")) string2radiobool("TRUE",ui->orbCentPA_on,ui->orbCentPA_off);
@@ -261,7 +266,7 @@ void ORB_Menu::apply_data()
             ui->orbCentPVVel_3->setText(line_items[2]);
             break;
         case 23: // Central Orbit File Format Type
-            ui->orbCentFileType->setCurrentIndex(orbFileTypeStrs.indexOf(line_items[0]));
+            setQComboBox(ui->orbCentFileType,orbFileTypeInputs.value(line_items[0]));
             break;
         case 24: // Central Orbit File Name
             ui->orbCentFileName->setText(line_string);
@@ -270,7 +275,85 @@ void ORB_Menu::apply_data()
             ui->orbCentFileLabel->setText(line_string);
             break;
 /************************************** THREE BODY ORBIT **********************************************/
-        default:
+        case 26: // Three Body Orbit Header
+            break;
+        case 27: // Three Body Orbit Lagrange System
+            setQComboBox(ui->orbTBodyLSystem,orbTBodyLSysInputs.value(line_items[0]));
+            break;
+        case 28: // Three Body Orbit Propagation Method
+            setQComboBox(ui->orbTBodyProp,orbTBodyPropInputs.value(line_items[0]));
+            break;
+        case 29: // Three Body Orbit Initialization Method
+            setQComboBox(ui->orbTBodyICParam,orbTBodyICTypeInputs.value(line_items[0]));
+            break;
+        case 30: // Three Body Orbit Lagrange Point
+            setQComboBox(ui->orbTBodyLPoint,line_items[0]);
+            break;
+        case 31: // Three Body Orbit XY First Semimajor Axis
+            ui->orbTBodyModeXYSMA->setText(line_items[0]);
+            break;
+        case 32: // Three Body Orbit XY First Phase
+            ui->orbTBodyModeXYPhase->setText(line_items[0]);
+            break;
+        case 33: // Three Body Orbit XY First Sense
+            if(!line_items[0].compare("CW")) string2radiobool("TRUE",ui->orbTBodyModeSense_CW,ui->orbTBodyModeSense_CCW);
+            else string2radiobool("FALSE",ui->orbTBodyModeSense_CW,ui->orbTBodyModeSense_CCW);
+            break;
+        case 34: // Three Body Orbit XY Second Semimajor Axis
+            ui->orbTBodyModeXYSMA_2->setText(line_items[0]);
+            break;
+        case 35: // Three Body Orbit XY Second Phase
+            ui->orbTBodyModeXYPhase_2->setText(line_items[0]);
+            break;
+        case 36: // Three Body Orbit XY Second Sense
+            if(!line_items[0].compare("CW")) string2radiobool("TRUE",ui->orbTBodyModeSense_CW_2,ui->orbTBodyModeSense_CCW_2);
+            else string2radiobool("FALSE",ui->orbTBodyModeSense_CW_2,ui->orbTBodyModeSense_CCW_2);
+            break;
+        case 37: // Three Body Orbit Z Semimajor Axis
+            ui->orbTBodyModeZSMA->setText(line_items[0]);
+            break;
+        case 38: // Three Body Orbit Z Phase
+            ui->orbTBodyModeZPhase->setText(line_items[0]);
+            break;
+        case 39: // Three Body Orbit Initial Position
+            ui->orbTBodyCowellPos_1->setText(line_items[0]);
+            ui->orbTBodyCowellPos_2->setText(line_items[1]);
+            ui->orbTBodyCowellPos_3->setText(line_items[2]);
+            break;
+        case 40: // Three Body Orbit Initial Velocity
+            ui->orbTBodyCowellVel_1->setText(line_items[0]);
+            ui->orbTBodyCowellVel_2->setText(line_items[1]);
+            ui->orbTBodyCowellVel_3->setText(line_items[2]);
+            break;
+        case 41: // Three Body Orbit File Type and Label
+            setQComboBox(ui->orbTBodyFileType,orbFileTypeInputs.value(line_items[0]));
+            ui->orbTBodyFileName->setText(line_string);
+            break;
+        case 42: // Three Body Orbit File Name
+            ui->orbTBodyFileLabel->setText(line_string);
+            break;
+/*************************************** FORMATION FRAME **********************************************/
+        case 43: // Formation Frame Header
+            break;
+        case 44: // Formation Frame Fixed Frame
+            setQComboBox(ui->orbFormFrame,line_items[0]);
+            break;
+        case 45: // Formation Frame Euler Angles and Sequence
+            ui->orbFormFrameEuler_1->setText(line_items[0]);
+            ui->orbFormFrameEuler_2->setText(line_items[1]);
+            ui->orbFormFrameEuler_3->setText(line_items[2]);
+            setQComboBox(ui->orbFormFrameEulerSeq,line_items[3]);
+            break;
+        case 46: // Formation Frame Origin Position Frame Expression
+            setQComboBox(ui->orbFormOrigin,line_items[0]);
+            break;
+        case 47: // Formation Frame Origin Position
+            ui->orbFormOriginPos_1->setText(line_items[0]);
+            ui->orbFormOriginPos_2->setText(line_items[1]);
+            ui->orbFormOriginPos_3->setText(line_items[2]);
+            break;
+        default: // Will go here if there's too many lines in the file
+            // error out
             break;
         }
     }
@@ -325,6 +408,8 @@ void ORB_Menu::string2radiobool(QString boolString, QRadioButton *onButton, QRad
     }
 }
 
-
+void ORB_Menu::setQComboBox(QComboBox *comboBox, QString string) {
+    comboBox->setCurrentIndex(comboBox->findText(string));
+}
 
 

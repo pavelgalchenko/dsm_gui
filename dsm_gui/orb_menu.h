@@ -4,7 +4,9 @@
 #include <QDialog>
 #include <QListWidgetItem>
 #include <QDebug>
+#include <QHash>
 #include <QRadioButton>
+#include <QComboBox>
 
 namespace Ui {
 class ORB_Menu;
@@ -29,6 +31,7 @@ private slots:
     QString whitespace(QString);
     QString radiobool2string(QRadioButton *onButton);
     void string2radiobool(QString boolString, QRadioButton *onButton, QRadioButton *offButton);
+    void setQComboBox(QComboBox *comboBox, QString string);
 
     void on_orbListRemove_clicked();
     void on_orbListAdd_clicked();
@@ -51,8 +54,6 @@ private:
     QStringList orb_update;
     QStringList orb_string;
 
-    QStringList orbTypeInputs = {"Zero", "Flight", "Central", "Three Body"};
-    QStringList orbFrameInputs = {"N", "L"};
     QStringList eulerSeqInputs = {"123", "231", "312", "132", "213", "321", "121", "131", "212", "232", "313","323"};
     QStringList worldInputs = {"SOL","MERCURY","VENUS","EARTH","MARS","JUPITER","SATURN","URANUS",
                                 "NEPTUNE","PLUTO","LUNA","PHOBOS","DEIMOS","IO","EUROPA","GANYMEDE","CALLISTO",
@@ -61,11 +62,26 @@ private:
                                 "TITAN","HYPERION","IAPETUS","PHOEBE","JANUS","EPIMETHEUS","HELENE","TELESTO",
                                 "CALYPSO","ATLAS","PROMETHEUS","PANDORA","PAN","ARIEL","UMBRIEL",
                                 "TITANIA","OBERON","MIRANDA","TRITON","NERIED","CHARON","MINORBODY"};
-    QStringList orbTBodyLSystemInputs = {"Earth/Moon", "Sun/Earth", "Sun/Jupiter"};
-    QStringList orbCentICTypeInputs   = {"Keplerian", "Position/Velocity", "File"};
-    QStringList orbTBodyPropInputs    = {"Modes", "Cowell", "Spline"};
-    QStringList orbTBodyICTypeInputs  = {"Modes", "Position/Velocity", "File"};
-    QStringList orbFileTypeInputs     = {"TLE", "TRV", "Spline"};
+    const QHash<QString, QString> orbTypeInputs = {{"ZERO","Zero"},
+                                                   {"FLIGHT","Flight"},
+                                                   {"CENTRAL","Central"},
+                                                   {"THREE_BODY","Three Body"}};
+    const QHash<QString, QString> orbTBodyLSysInputs = {{"EARTHMOON","Earth/Moon"},
+                                                        {"SUNEARTH","Sun/Earth"},
+                                                        {"SUNJUPITER","Sun/Jupiter"}};
+    const QHash<QString, QString> orbCentICTypeInputs = {{"KEP","Keplerian"},
+                                                         {"RV","Position/Velocity"},
+                                                         {"FILE","File"}};
+    const QHash<QString, QString> orbTBodyPropInputs = {{"LAGDOF_MODES","Modes"},
+                                                        {"LAGDOF_COWELL","Cowell"},
+                                                        {"LAGDOF_SPLINE","Spline"}};
+    const QHash<QString, QString> orbTBodyICTypeInputs = {{"MODES","Modes"},
+                                                          {"XYZ","Position/Velocity"},
+                                                          {"FILE","File"}};
+    const QHash<QString, QString> orbFileTypeInputs = {{"TLE","TLE"},
+                                                       {"TRV","TRV"},
+                                                       {"SPLINE","Spline"}};
+    QStringList orbFrameInputs = {"N", "L"};
     QStringList lagrangePointInputs   = {"L1", "L2", "L3", "L4", "L5"};
 
 };

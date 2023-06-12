@@ -267,66 +267,6 @@
              <height>16777215</height>
             </size>
            </property>
-           <item>
-            <property name="text">
-             <string>123</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>231</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>312</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>132</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>213</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>321</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>121</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>131</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>212</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>232</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>313</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>323</string>
-            </property>
-           </item>
           </widget>
          </item>
          <item>
@@ -1553,14 +1493,14 @@
             </spacer>
            </item>
            <item>
-            <widget class="QRadioButton" name="orbTBodySense_CW">
+            <widget class="QRadioButton" name="orbTBodyModeSense_CW">
              <property name="text">
               <string>CW</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="orbTBodySense_CCW">
+            <widget class="QRadioButton" name="orbTBodyModeSense_CCW">
              <property name="text">
               <string>CCW</string>
              </property>
@@ -1671,14 +1611,14 @@
             </spacer>
            </item>
            <item>
-            <widget class="QRadioButton" name="orbTBodySense_CW_2">
+            <widget class="QRadioButton" name="orbTBodyModeSense_CW_2">
              <property name="text">
               <string>CW</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="orbTBodySense_CCW_2">
+            <widget class="QRadioButton" name="orbTBodyModeSense_CCW_2">
              <property name="text">
               <string>CCW</string>
              </property>
@@ -1822,7 +1762,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="orbTBodyCowellPos_3">
+            <widget class="QLineEdit" name="orbTBodyCowellPos_2">
              <property name="minimumSize">
               <size>
                <width>70</width>
@@ -1838,7 +1778,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="orbTBodyCowellPos_2">
+            <widget class="QLineEdit" name="orbTBodyCowellPos_3">
              <property name="minimumSize">
               <size>
                <width>70</width>
