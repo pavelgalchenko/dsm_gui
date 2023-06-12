@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QListWidgetItem>
 #include <QDebug>
-#include <QHash>
+//#include <QHash>
 #include <QRadioButton>
 #include <QComboBox>
 
@@ -32,6 +32,7 @@ private slots:
     QString radiobool2string(QRadioButton *onButton);
     void string2radiobool(QString boolString, QRadioButton *onButton, QRadioButton *offButton);
     void setQComboBox(QComboBox *comboBox, QString string);
+    QStringList hashValue2QStringList(QHash<QString, QString> hash);
 
     void on_orbListRemove_clicked();
     void on_orbListAdd_clicked();
@@ -54,14 +55,14 @@ private:
     QStringList orb_update;
     QStringList orb_string;
 
-    QStringList eulerSeqInputs = {"123", "231", "312", "132", "213", "321", "121", "131", "212", "232", "313","323"};
-    QStringList worldInputs = {"SOL","MERCURY","VENUS","EARTH","MARS","JUPITER","SATURN","URANUS",
-                                "NEPTUNE","PLUTO","LUNA","PHOBOS","DEIMOS","IO","EUROPA","GANYMEDE","CALLISTO",
-                                "AMALTHEA","HIMALITA","ELARA","PASIPHAE","SINOPE","LYSITHEA","CARME","ANANKE",
-                                "LEDA","THEBE","ADRASTEA","METIS","MIMAS","ENCELADUS","TETHYS","DIONE","RHEA",
-                                "TITAN","HYPERION","IAPETUS","PHOEBE","JANUS","EPIMETHEUS","HELENE","TELESTO",
-                                "CALYPSO","ATLAS","PROMETHEUS","PANDORA","PAN","ARIEL","UMBRIEL",
-                                "TITANIA","OBERON","MIRANDA","TRITON","NERIED","CHARON","MINORBODY"};
+    const QStringList eulerSeqInputs = {"123", "231", "312", "132", "213", "321", "121", "131", "212", "232", "313","323"};
+    const QStringList worldInputs = {"SOL","MERCURY","VENUS","EARTH","MARS","JUPITER","SATURN","URANUS",
+                                     "NEPTUNE","PLUTO","LUNA","PHOBOS","DEIMOS","IO","EUROPA","GANYMEDE","CALLISTO",
+                                     "AMALTHEA","HIMALITA","ELARA","PASIPHAE","SINOPE","LYSITHEA","CARME","ANANKE",
+                                     "LEDA","THEBE","ADRASTEA","METIS","MIMAS","ENCELADUS","TETHYS","DIONE","RHEA",
+                                     "TITAN","HYPERION","IAPETUS","PHOEBE","JANUS","EPIMETHEUS","HELENE","TELESTO",
+                                     "CALYPSO","ATLAS","PROMETHEUS","PANDORA","PAN","ARIEL","UMBRIEL",
+                                     "TITANIA","OBERON","MIRANDA","TRITON","NERIED","CHARON","MINORBODY"};
     const QHash<QString, QString> orbTypeInputs = {{"ZERO","Zero"},
                                                    {"FLIGHT","Flight"},
                                                    {"CENTRAL","Central"},
@@ -81,8 +82,8 @@ private:
     const QHash<QString, QString> orbFileTypeInputs = {{"TLE","TLE"},
                                                        {"TRV","TRV"},
                                                        {"SPLINE","Spline"}};
-    QStringList orbFrameInputs = {"N", "L"};
-    QStringList lagrangePointInputs   = {"L1", "L2", "L3", "L4", "L5"};
+    const QStringList orbFrameInputs = {"N", "L"};
+    const QStringList lagrangePointInputs   = {"L1", "L2", "L3", "L4", "L5"};
 
 };
 

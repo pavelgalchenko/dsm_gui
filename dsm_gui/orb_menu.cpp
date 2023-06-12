@@ -25,8 +25,7 @@ ORB_Menu::~ORB_Menu()
 
 void ORB_Menu::set_validators()
 {
-    for(auto i = orbTypeInputs.cbegin(), end = orbTypeInputs.cend(); i != end; ++i)
-        ui->orbType->addItem(i.value());
+    ui->orbType->addItems(hashValue2QStringList(orbTypeInputs));
     ui->orbFormFrame->addItems(orbFrameInputs);
     ui->orbFormOrigin->addItems(orbFrameInputs);
     ui->orbFormFrameEulerSeq->addItems(eulerSeqInputs);
@@ -40,8 +39,7 @@ void ORB_Menu::set_validators()
     ui->orbZeroWorld->addItems(worldInputs);
 
     ui->orbCentWorld->addItems(worldInputs);
-    for(auto i = orbCentICTypeInputs.cbegin(), end = orbCentICTypeInputs.cend(); i != end; ++i)
-        ui->orbCentICParam->addItem(i.value());
+    ui->orbCentICParam->addItems(hashValue2QStringList(orbCentICTypeInputs));
     ui->orbCentKepPeriAlt->setValidator(new QDoubleValidator);
     ui->orbCentKepApoAlt->setValidator(new QDoubleValidator);
     ui->orbCentKepMinAlt->setValidator(new QDoubleValidator);
@@ -55,15 +53,11 @@ void ORB_Menu::set_validators()
     ui->orbCentPVVel_1->setValidator(new QDoubleValidator);
     ui->orbCentPVVel_2->setValidator(new QDoubleValidator);
     ui->orbCentPVVel_3->setValidator(new QDoubleValidator);
-    for(auto i = orbFileTypeInputs.cbegin(), end = orbFileTypeInputs.cend(); i != end; ++i)
-        ui->orbCentFileType->addItem(i.value());
+    ui->orbCentFileType->addItems(hashValue2QStringList(orbFileTypeInputs));
 
-    for(auto i = orbTBodyLSysInputs.cbegin(), end = orbTBodyLSysInputs.cend(); i != end; ++i)
-        ui->orbTBodyLSystem->addItem(i.value());
-    for(auto i = orbTBodyPropInputs.cbegin(), end = orbTBodyPropInputs.cend(); i != end; ++i)
-        ui->orbTBodyProp->addItem(i.value());
-    for(auto i = orbTBodyICTypeInputs.cbegin(), end = orbTBodyICTypeInputs.cend(); i != end; ++i)
-        ui->orbTBodyICParam->addItem(i.value());
+    ui->orbTBodyLSystem->addItems(hashValue2QStringList(orbTBodyLSysInputs));
+    ui->orbTBodyProp->addItems(hashValue2QStringList(orbTBodyPropInputs));
+    ui->orbTBodyICParam->addItems(hashValue2QStringList(orbTBodyICTypeInputs));
     ui->orbTBodyLPoint->addItems(lagrangePointInputs);
     ui->orbTBodyModeXYSMA->setValidator(new QDoubleValidator);
     ui->orbTBodyModeXYPhase->setValidator(new QDoubleValidator);
@@ -77,8 +71,7 @@ void ORB_Menu::set_validators()
     ui->orbTBodyCowellVel_1->setValidator(new QDoubleValidator);
     ui->orbTBodyCowellVel_2->setValidator(new QDoubleValidator);
     ui->orbTBodyCowellVel_3->setValidator(new QDoubleValidator);
-    for(auto i = orbFileTypeInputs.cbegin(), end = orbFileTypeInputs.cend(); i != end; ++i)
-        ui->orbTBodyFileType->addItem(i.value());
+    ui->orbTBodyFileType->addItems(hashValue2QStringList(orbFileTypeInputs));
 }
 
 void ORB_Menu::receive_orbpath(QString path)
@@ -105,7 +98,7 @@ void ORB_Menu::receive_orbpath(QString path)
 
     for(int i=0; i<file_paths.length();i++) {
         file_path = file_paths[i];
-        qDebug()<<file_path;
+
         receive_data();
         apply_data();
         populate_list();
@@ -352,8 +345,8 @@ void ORB_Menu::apply_data()
             ui->orbFormOriginPos_2->setText(line_items[1]);
             ui->orbFormOriginPos_3->setText(line_items[2]);
             break;
-        default: // Will go here if there's too many lines in the file
-            // error out
+        default: // Will go here if there are too many lines in the file
+            /* error out */
             break;
         }
     }
@@ -412,4 +405,11 @@ void ORB_Menu::setQComboBox(QComboBox *comboBox, QString string) {
     comboBox->setCurrentIndex(comboBox->findText(string));
 }
 
+QStringList ORB_Menu::hashValue2QStringList(QHash<QString, QString> hash) {
+    QStringList output;
+    for(auto i = hash.cbegin(), end = hash.cend(); i != end; ++i)
+        output.append(i.value());
+    output.sort();
+    return output;
+}
 
