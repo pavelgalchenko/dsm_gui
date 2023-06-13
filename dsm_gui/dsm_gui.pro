@@ -20,6 +20,7 @@ SOURCES += \
     nos_menu.cpp \
     rgn_menu.cpp \
     spc_menu.cpp \
+    spc_submenu.cpp \
     tdr_menu.cpp
 
 HEADERS += \
@@ -30,6 +31,7 @@ HEADERS += \
     nos_menu.h \
     rgn_menu.h \
     spc_menu.h \
+    spc_submenu.h \
     tdr_menu.h
 
 FORMS += \
@@ -40,6 +42,7 @@ FORMS += \
     nos_menu.ui \
     rgn_menu.ui \
     spc_menu.ui \
+    spc_submenu.ui \
     tdr_menu.ui
 
 # Default rules for deployment.
