@@ -81,6 +81,10 @@ void ORB_Menu::set_validators()
     ui->orbCentPA->setId(ui->orbCentPA_on,0); ui->orbCentPA->setId(ui->orbCentPA_off,1);
     ui->orbTBodyModeSense->setId(ui->orbTBodyModeSense_CW,0); ui->orbTBodyModeSense->setId(ui->orbTBodyModeSense_CCW,1);
     ui->orbTBodyModeSense_2->setId(ui->orbTBodyModeSense_CW_2,0); ui->orbTBodyModeSense_2->setId(ui->orbTBodyModeSense_CCW_2,1);
+
+
+    ui->orbList->setSortingEnabled(true);
+    ui->orbList->sortItems(Qt::AscendingOrder);
 }
 
 void ORB_Menu::receive_orbpath(QString path)
@@ -93,6 +97,9 @@ void ORB_Menu::receive_orbpath(QString path)
         file_paths.append(inout_path+orbFiles[i]); // Full file path of Orbit file
         orb_names.append(orbFiles[i].chopped(4).mid(4)); // Everything between "Orb_" and ".txt"
     }
+
+    file_paths.sort();
+    orb_names.sort();
 
     ui->orbList->clear();
     for(int i=0; i<file_paths.length();i++) {
@@ -388,6 +395,9 @@ void ORB_Menu::on_orbListAdd_clicked() {
     file_path = inout_path+"Orb_"+newOrb+".txt";
     file_paths.append(file_path);
 
+    orb_names.sort();
+    file_paths.sort();
+
     QFile::copy(inout_path + "__default__/Orb_Default.txt", file_path);
 
     ui->orbList->addItem(newOrb);
@@ -652,6 +662,13 @@ void ORB_Menu::on_applyButton_clicked() {
             orb_update.append(orb_file_headers[line_num-1]);
         }
     }
+
+    orb_names.sort();
+    file_paths.sort();
+    index = file_paths.indexOf(file_path);
+    orb_name_index=index;
+    ui->orbList->setCurrentRow(index);
+
     write_data();
 }
 
