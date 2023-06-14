@@ -1,6 +1,8 @@
 #ifndef ORB_MENU_H
 #define ORB_MENU_H
 
+#include "dsm_gui_lib.h"
+
 #include <QDialog>
 #include <QListWidgetItem>
 #include <QDebug>
@@ -21,18 +23,19 @@ public:
     ~ORB_Menu();
 
 private slots:
+    void initialize_maps();
     void set_validators();
     void receive_orbpath(QString);
     void receive_data();
     void apply_data();
     void write_data();
 
-    int warning_message(QString);
-    QString whitespace(QString);
+//    int warning_message(QString);
+//    QString whitespace(QString);
     QString radiobool2string(QButtonGroup *buttonGroup);
     void string2radiobool(QString boolString, QButtonGroup *buttonGroup);
     void setQComboBox(QComboBox *comboBox, QString string);
-    QStringList hashValue2QStringList(QHash<QString, QString> hash);
+    QStringList multiMapValue2QStringList(QMultiMap<int, QString> map);
 
     void on_orbListRemove_clicked();
     void on_orbListAdd_clicked();
@@ -43,6 +46,18 @@ private slots:
     void on_closeButton_clicked();
     void on_applyButton_clicked();
 
+    void on_orbType_currentIndexChanged(int index);
+
+    void on_orbCentICParam_currentIndexChanged(int index);
+
+    void on_orbTBodyICParam_currentIndexChanged(int index);
+
+    void on_orbZeroWorld_currentTextChanged(const QString &arg1);
+
+    void on_orbCentWorld_currentTextChanged(const QString &arg1);
+
+    void on_orbCentFileSelect_clicked();
+    void on_orbTBodyFileSelect_clicked();
 
 private:
     Ui::ORB_Menu *ui;
@@ -70,25 +85,13 @@ private:
                                      "TITAN","HYPERION","IAPETUS","PHOEBE","JANUS","EPIMETHEUS","HELENE","TELESTO",
                                      "CALYPSO","ATLAS","PROMETHEUS","PANDORA","PAN","ARIEL","UMBRIEL",
                                      "TITANIA","OBERON","MIRANDA","TRITON","NERIED","CHARON","MINORBODY"};
-    const QHash<QString, QString> orbTypeInputs = {{"ZERO","Zero"},
-                                                   {"FLIGHT","Flight"},
-                                                   {"CENTRAL","Central"},
-                                                   {"THREE_BODY","Three Body"}};
-    const QHash<QString, QString> orbTBodyLSysInputs = {{"EARTHMOON","Earth/Moon"},
-                                                        {"SUNEARTH","Sun/Earth"},
-                                                        {"SUNJUPITER","Sun/Jupiter"}};
-    const QHash<QString, QString> orbCentICTypeInputs = {{"KEP","Keplerian"},
-                                                         {"RV","Position/Velocity"},
-                                                         {"FILE","File"}};
-    const QHash<QString, QString> orbTBodyPropInputs = {{"LAGDOF_MODES","Modes"},
-                                                        {"LAGDOF_COWELL","Cowell"},
-                                                        {"LAGDOF_SPLINE","Spline"}};
-    const QHash<QString, QString> orbTBodyICTypeInputs = {{"MODES","Modes"},
-                                                          {"XYZ","Position/Velocity"},
-                                                          {"FILE","File"}};
-    const QHash<QString, QString> orbFileTypeInputs = {{"TLE","TLE"},
-                                                       {"TRV","TRV"},
-                                                       {"SPLINE","Spline"}};
+    QMultiMap<int, QString> orbTypeInputs;
+    QMultiMap<int, QString> orbTBodyLSysInputs;
+    QMultiMap<int, QString> orbCentICTypeInputs;
+    QMultiMap<int, QString> orbTBodyPropInputs;
+    QMultiMap<int, QString> orbTBodyICTypeInputs;
+    QMultiMap<int, QString> orbFileTypeInputs;
+
     const QStringList orbFrameInputs = {"N", "L"};
     const QStringList lagrangePointInputs   = {"L1", "L2", "L3", "L4", "L5"};
 

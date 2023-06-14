@@ -13,6 +13,7 @@ QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 
 SOURCES += \
     color_select.cpp \
+    dsm_gui_lib.cpp \
     fov_menu.cpp \
     grh_menu.cpp \
     ipc_menu.cpp \
@@ -25,6 +26,7 @@ SOURCES += \
 
 HEADERS += \
     color_select.h \
+    dsm_gui_lib.h \
     fov_menu.h \
     grh_menu.h \
     ipc_menu.h \
