@@ -88,7 +88,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>5</number>
         </property>
         <widget class="QWidget" name="general">
          <attribute name="title">
@@ -403,7 +403,7 @@
               <widget class="QLineEdit" name="spc_cur_eul_3"/>
              </item>
              <item>
-              <widget class="QComboBox" name="comboBox_3"/>
+              <widget class="QComboBox" name="spc_cur_eul_seq"/>
              </item>
             </layout>
            </item>
@@ -423,10 +423,10 @@
               <widget class="QLineEdit" name="spc_cur_xvel_form"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="spc_cur_ypos_form_2"/>
+              <widget class="QLineEdit" name="spc_cur_yvel_form"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="spc_cur_zpos_form_2"/>
+              <widget class="QLineEdit" name="spc_cur_zvel_form"/>
              </item>
             </layout>
            </item>
@@ -471,7 +471,7 @@
             </widget>
            </item>
            <item row="0" column="0">
-            <widget class="QLabel" name="spc_desc_4">
+            <widget class="QLabel" name="label_212">
              <property name="text">
               <string>Propagation Type:</string>
              </property>
@@ -866,7 +866,7 @@
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_5">
              <item>
-              <widget class="QListWidget" name="spc_cur_body_joint_list"/>
+              <widget class="QListWidget" name="spc_cur_joint_list"/>
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -874,21 +874,21 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QPushButton" name="spc_cur_body_add_2">
+                <widget class="QPushButton" name="spc_cur_joint_add">
                  <property name="text">
                   <string>+</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="spc_cur_body_remove_2">
+                <widget class="QPushButton" name="spc_cur_joint_remove">
                  <property name="text">
                   <string>-</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="spc_cur_body_duplicate_2">
+                <widget class="QPushButton" name="spc_cur_joint_duplicate">
                  <property name="text">
                   <string>Duplicate</string>
                  </property>
@@ -1269,9 +1269,9 @@
          <widget class="QTabWidget" name="tabWidget">
           <property name="geometry">
            <rect>
-            <x>20</x>
+            <x>10</x>
             <y>10</y>
-            <width>501</width>
+            <width>521</width>
             <height>621</height>
            </rect>
           </property>
@@ -1297,23 +1297,1877 @@
            <attribute name="title">
             <string>Wheel</string>
            </attribute>
+           <widget class="QWidget" name="verticalLayoutWidget_4">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>168</width>
+              <height>591</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_7">
+               <item>
+                <widget class="QListWidget" name="spc_cur_wheel_list"/>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_33">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_wheel_add">
+                   <property name="text">
+                    <string>+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_wheel_remove">
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_wheel_duplicate">
+                   <property name="text">
+                    <string>Duplicate</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="gridLayoutWidget_4">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>0</y>
+              <width>351</width>
+              <height>589</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_6">
+             <property name="leftMargin">
+              <number>12</number>
+             </property>
+             <property name="topMargin">
+              <number>12</number>
+             </property>
+             <property name="rightMargin">
+              <number>12</number>
+             </property>
+             <property name="bottomMargin">
+              <number>12</number>
+             </property>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="spc_cur_wheel_maxtrq"/>
+             </item>
+             <item row="8" column="0">
+              <spacer name="verticalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="7" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_35">
+               <item>
+                <widget class="QCheckBox" name="spc_cur_wheel_drjit_on">
+                 <property name="text">
+                  <string>None</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_wheel_drjit_file"/>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="spc_cur_wheel_initmom"/>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_50">
+               <property name="text">
+                <string>Max Momentum [Nms]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_47">
+               <property name="text">
+                <string>Initial Momentum [Nms]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_53">
+               <property name="text">
+                <string>Node</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="spc_cur_wheel_maxmom"/>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_51">
+               <property name="text">
+                <string>Wheel Rotor Inertia [kg*m^2]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QSpinBox" name="spc_cur_wheel_body"/>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_49">
+               <property name="text">
+                <string>Max Torque [Nm]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_48">
+               <property name="text">
+                <string>Wheel Axis Components [X. Y, Z]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_34">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_wheel_axis_1"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_wheel_axis_2"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_wheel_axis_3"/>
+               </item>
+              </layout>
+             </item>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="spc_cur_wheel_inertia"/>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_52">
+               <property name="text">
+                <string>Body</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="label_54">
+               <property name="text">
+                <string>Drag/Jitter Input File Name</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="1">
+              <widget class="QSpinBox" name="spc_cur_wheel_node"/>
+             </item>
+            </layout>
+           </widget>
           </widget>
           <widget class="QWidget" name="mtb">
            <attribute name="title">
             <string>MTB</string>
            </attribute>
+           <widget class="QWidget" name="verticalLayoutWidget_5">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>168</width>
+              <height>591</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_8">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_9">
+               <item>
+                <widget class="QListWidget" name="spc_cur_mtb_list"/>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_36">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_mtb_sat_add">
+                   <property name="text">
+                    <string>+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_mtb_remove">
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_mtb_duplicate">
+                   <property name="text">
+                    <string>Duplicate</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="gridLayoutWidget_2">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>0</y>
+              <width>341</width>
+              <height>591</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_5">
+             <item row="1" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_37">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_mtb_axis_1"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_mtb_axis_2"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_mtb_axis_3"/>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="spc_cur_mtb_sat"/>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_56">
+               <property name="text">
+                <string>MTB Axis Comp. , [X, Y, Z]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_55">
+               <property name="text">
+                <string>Saturation [A*m^2]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <spacer name="verticalSpacer_5">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_57">
+               <property name="text">
+                <string>Node</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QSpinBox" name="spinBox"/>
+             </item>
+            </layout>
+           </widget>
           </widget>
           <widget class="QWidget" name="thruster">
            <attribute name="title">
             <string>Thruster</string>
            </attribute>
+           <widget class="QWidget" name="verticalLayoutWidget_6">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>168</width>
+              <height>591</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_10">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_11">
+               <item>
+                <widget class="QListWidget" name="spc_cur_thruster_list"/>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_38">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_thruster_add">
+                   <property name="text">
+                    <string>+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_thruster_remove">
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_thruster_duplicate">
+                   <property name="text">
+                    <string>Duplicate</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="gridLayoutWidget_5">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>0</y>
+              <width>341</width>
+              <height>591</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_7">
+             <item row="5" column="0">
+              <spacer name="verticalSpacer_6">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_59">
+               <property name="text">
+                <string>Mode</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QSpinBox" name="spc_cur_thruster_body"/>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="spc_cur_thruster_force"/>
+             </item>
+             <item row="2" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_39">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_thruster_axis_1"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_thruster_axis_2"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_thruster_axis_3"/>
+               </item>
+              </layout>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_58">
+               <property name="text">
+                <string>Thrust Force [N]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_61">
+               <property name="text">
+                <string>Body</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QComboBox" name="spc_cur_thruster_mode"/>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_60">
+               <property name="text">
+                <string>Thrust Axis</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_62">
+               <property name="text">
+                <string>Node</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QSpinBox" name="spc_cur_thruster_node"/>
+             </item>
+            </layout>
+           </widget>
           </widget>
          </widget>
         </widget>
-        <widget class="QWidget" name="sensors_2">
+        <widget class="QWidget" name="sensors">
          <attribute name="title">
           <string>Sensors</string>
          </attribute>
+         <widget class="QTabWidget" name="tabWidget_3">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>521</width>
+            <height>621</height>
+           </rect>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="autoFillBackground">
+           <bool>true</bool>
+          </property>
+          <property name="tabPosition">
+           <enum>QTabWidget::North</enum>
+          </property>
+          <property name="tabShape">
+           <enum>QTabWidget::Rounded</enum>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <property name="elideMode">
+           <enum>Qt::ElideLeft</enum>
+          </property>
+          <widget class="QWidget" name="gyro">
+           <attribute name="title">
+            <string>Gyro</string>
+           </attribute>
+           <widget class="QWidget" name="verticalLayoutWidget_7">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>168</width>
+              <height>591</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_12">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_13">
+               <item>
+                <widget class="QListWidget" name="spc_cur_gyro_list"/>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_40">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_gyro_add">
+                   <property name="text">
+                    <string>+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_gyro_remove">
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_gyro_duplicate">
+                   <property name="text">
+                    <string>Duplicate</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="gridLayoutWidget_6">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>0</y>
+              <width>351</width>
+              <height>589</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_8">
+             <property name="leftMargin">
+              <number>12</number>
+             </property>
+             <property name="topMargin">
+              <number>12</number>
+             </property>
+             <property name="rightMargin">
+              <number>12</number>
+             </property>
+             <property name="bottomMargin">
+              <number>12</number>
+             </property>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_66">
+               <property name="text">
+                <string>Quantization [arcsec]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_68">
+               <property name="text">
+                <string>Axis in Body Frame    [X, Y, Z]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="0">
+              <widget class="QLabel" name="label_65">
+               <property name="text">
+                <string>Node</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="spc_cur_gyro_maxtrq"/>
+             </item>
+             <item row="10" column="0">
+              <spacer name="verticalSpacer_7">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_63">
+               <property name="text">
+                <string>Scale Factor Error [ppm]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_70">
+               <property name="text">
+                <string>Bias Stability [deg/hr], over time span [hr]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="1">
+              <widget class="QLineEdit" name="spc_cur_gyro_angnoise"/>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLineEdit" name="spc_cur_gyro_angrwalk"/>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="label_79">
+               <property name="text">
+                <string>Angle Noise [arcsec RMS]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="spc_cur_gyro_samptime"/>
+             </item>
+             <item row="9" column="1">
+              <widget class="QSpinBox" name="spc_cur_gyro_node"/>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_64">
+               <property name="text">
+                <string>Sample Time [s]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_69">
+               <property name="text">
+                <string>Angle Random Walk [deg/rt-hr]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_67">
+               <property name="text">
+                <string>Max Rate [deg/s]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="spc_cur_gyro_quant"/>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="spc_cur_gyro_scaleferror"/>
+             </item>
+             <item row="1" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_42">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_gyro_axis_1"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_gyro_axis_2"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_gyro_axis_3"/>
+               </item>
+              </layout>
+             </item>
+             <item row="6" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_41">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_gyro_bias_stab"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_gyro_bias_tspan"/>
+               </item>
+              </layout>
+             </item>
+             <item row="8" column="0">
+              <widget class="QLabel" name="label_80">
+               <property name="text">
+                <string>Initial Bias [deg/hr]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="1">
+              <widget class="QLineEdit" name="spc_cur_gyro_initbias"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="magnetometer">
+           <attribute name="title">
+            <string>Magnetometer</string>
+           </attribute>
+           <widget class="QWidget" name="verticalLayoutWidget_8">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>168</width>
+              <height>591</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_14">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_15">
+               <item>
+                <widget class="QListWidget" name="spc_cur_mag_list"/>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_43">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_mag_add">
+                   <property name="text">
+                    <string>+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_mag_remove">
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_mag_duplicate">
+                   <property name="text">
+                    <string>Duplicate</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="gridLayoutWidget_7">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>0</y>
+              <width>351</width>
+              <height>589</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_9">
+             <property name="leftMargin">
+              <number>12</number>
+             </property>
+             <property name="topMargin">
+              <number>12</number>
+             </property>
+             <property name="rightMargin">
+              <number>12</number>
+             </property>
+             <property name="bottomMargin">
+              <number>12</number>
+             </property>
+             <item row="1" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_44">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_mag_axis_1"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_mag_axis_2"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_mag_axis_3"/>
+               </item>
+              </layout>
+             </item>
+             <item row="6" column="1">
+              <widget class="QSpinBox" name="spc_cur_mag_node"/>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="spc_cur_mag_scaleferror"/>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLineEdit" name="spc_cur_mag_angrwalk"/>
+             </item>
+             <item row="7" column="0">
+              <spacer name="verticalSpacer_8">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_86">
+               <property name="text">
+                <string>Saturation [Tesla]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_85">
+               <property name="text">
+                <string>Noise [Tesla RMS]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="spc_cur_mag_samptime"/>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_84">
+               <property name="text">
+                <string>Sample Time [s]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_81">
+               <property name="text">
+                <string>Scale Factor Error [ppm]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="spc_cur_mag_quant"/>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_72">
+               <property name="text">
+                <string>Axis in Body Frame    [X, Y, Z]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="spc_cur_mag_sat"/>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_73">
+               <property name="text">
+                <string>Node</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_71">
+               <property name="text">
+                <string>Quantization [Tesla]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="css">
+           <attribute name="title">
+            <string>CSS</string>
+           </attribute>
+           <widget class="QWidget" name="verticalLayoutWidget_9">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>168</width>
+              <height>591</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_16">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_17">
+               <item>
+                <widget class="QListWidget" name="spc_cur_css_list"/>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_45">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_css_add">
+                   <property name="text">
+                    <string>+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_css_remove">
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_css_duplicate">
+                   <property name="text">
+                    <string>Duplicate</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="gridLayoutWidget_8">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>0</y>
+              <width>351</width>
+              <height>589</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_10">
+             <property name="leftMargin">
+              <number>12</number>
+             </property>
+             <property name="topMargin">
+              <number>12</number>
+             </property>
+             <property name="rightMargin">
+              <number>12</number>
+             </property>
+             <property name="bottomMargin">
+              <number>12</number>
+             </property>
+             <item row="6" column="1">
+              <widget class="QSpinBox" name="spc_cur_css_node"/>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_88">
+               <property name="text">
+                <string>Body</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_46">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_css_axis_1"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_css_axis_2"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_css_axis_3"/>
+               </item>
+              </layout>
+             </item>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="spc_cur_css_quant"/>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_89">
+               <property name="text">
+                <string>Sample Time [s]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_75">
+               <property name="text">
+                <string>Node</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="spc_cur_css_samptime"/>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_76">
+               <property name="text">
+                <string>Quantization</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="spc_cur_css_scale"/>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_82">
+               <property name="text">
+                <string>Scale Factor</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="spc_cur_css_halfcone"/>
+             </item>
+             <item row="7" column="0">
+              <spacer name="verticalSpacer_9">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_74">
+               <property name="text">
+                <string>Axis in Body Frame  [X, Y, Z]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_77">
+               <property name="text">
+                <string>Half-cone angle, [deg]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QSpinBox" name="spc_cur_css_body"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="fss">
+           <attribute name="title">
+            <string>FSS</string>
+           </attribute>
+           <widget class="QWidget" name="verticalLayoutWidget_10">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>168</width>
+              <height>591</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_18">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_19">
+               <item>
+                <widget class="QListWidget" name="spc_cur_css_list_2"/>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_47">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_fss_add">
+                   <property name="text">
+                    <string>+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_fss_remove">
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_fss_duplicate">
+                   <property name="text">
+                    <string>Duplicate</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="gridLayoutWidget_9">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>0</y>
+              <width>351</width>
+              <height>589</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_11">
+             <property name="leftMargin">
+              <number>12</number>
+             </property>
+             <property name="topMargin">
+              <number>12</number>
+             </property>
+             <property name="rightMargin">
+              <number>12</number>
+             </property>
+             <property name="bottomMargin">
+              <number>12</number>
+             </property>
+             <item row="4" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_49">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_fss_hfov"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_fss_vfov"/>
+               </item>
+              </layout>
+             </item>
+             <item row="3" column="1">
+              <widget class="QComboBox" name="spc_cur_fss_boreaxis"/>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_90">
+               <property name="text">
+                <string>Noise Equivalent Angle [deg RMS]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="1">
+              <widget class="QLineEdit" name="spc_cur_fss_quant"/>
+             </item>
+             <item row="1" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_48">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_fss_mount_1"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_fss_mount_2"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_fss_mount_3"/>
+               </item>
+              </layout>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="spc_cur_fss_samptime"/>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_92">
+               <property name="text">
+                <string>Mounting Angles [deg]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_91">
+               <property name="text">
+                <string>Sample Time [s]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_93">
+               <property name="text">
+                <string>Boresight Axis</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_83">
+               <property name="text">
+                <string>Quantization</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0">
+              <spacer name="verticalSpacer_10">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="7" column="1">
+              <widget class="QSpinBox" name="spc_cur_fss_node"/>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="label_78">
+               <property name="text">
+                <string>Node</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_87">
+               <property name="text">
+                <string>H, V FOV Size, [deg]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLineEdit" name="spc_cur_fss_noiseang"/>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_94">
+               <property name="text">
+                <string>Mounting Angle Sequence</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QComboBox" name="spc_cur_fss_mountseq"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="star_tracker">
+           <attribute name="title">
+            <string>Star Tracker</string>
+           </attribute>
+           <widget class="QWidget" name="verticalLayoutWidget_11">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>168</width>
+              <height>591</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_20">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_21">
+               <item>
+                <widget class="QListWidget" name="spc_cur_strack_list"/>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_50">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_strack_add">
+                   <property name="text">
+                    <string>+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_strack_remove">
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_strack_duplicate">
+                   <property name="text">
+                    <string>Duplicate</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="gridLayoutWidget_10">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>0</y>
+              <width>351</width>
+              <height>589</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_12">
+             <property name="leftMargin">
+              <number>12</number>
+             </property>
+             <property name="topMargin">
+              <number>12</number>
+             </property>
+             <property name="rightMargin">
+              <number>12</number>
+             </property>
+             <property name="bottomMargin">
+              <number>12</number>
+             </property>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_96">
+               <property name="text">
+                <string>Mounting Angles [deg]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_51">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_strack_hfov"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_strack_vfov"/>
+               </item>
+              </layout>
+             </item>
+             <item row="6" column="1">
+              <widget class="QLineEdit" name="spc_cur_strack_noiseang"/>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="spc_cur_strack_samptime"/>
+             </item>
+             <item row="7" column="1">
+              <widget class="QSpinBox" name="spc_cur_strack_node"/>
+             </item>
+             <item row="1" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_52">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_strack_mount_1"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_strack_mount_2"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_strack_mount_3"/>
+               </item>
+              </layout>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_98">
+               <property name="text">
+                <string>Boresight Axis</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_102">
+               <property name="text">
+                <string>Mounting Angle Sequence</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QComboBox" name="spc_cur_strack_mountseq"/>
+             </item>
+             <item row="3" column="1">
+              <widget class="QComboBox" name="spc_cur_strack_boreaxis"/>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_97">
+               <property name="text">
+                <string>Sample Time [s]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_101">
+               <property name="text">
+                <string>H, V FOV Size, [deg]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_95">
+               <property name="text">
+                <string>Noise Equivalent Angle [deg RMS]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0">
+              <spacer name="verticalSpacer_11">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="label_100">
+               <property name="text">
+                <string>Node</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_99">
+               <property name="text">
+                <string>Sun, Earth, Moon Exclusion Angles, [deg]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_53">
+               <item>
+                <widget class="QLineEdit" name="lineEdit"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit_5"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit_6"/>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="gps">
+           <attribute name="title">
+            <string>GPS</string>
+           </attribute>
+           <widget class="QWidget" name="verticalLayoutWidget_12">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>168</width>
+              <height>591</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_22">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_23">
+               <item>
+                <widget class="QListWidget" name="spc_cur_gps_list"/>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_54">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_gps_add">
+                   <property name="text">
+                    <string>+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_gps_remove">
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_gps_duplicate">
+                   <property name="text">
+                    <string>Duplicate</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="gridLayoutWidget_11">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>0</y>
+              <width>351</width>
+              <height>589</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_13">
+             <property name="leftMargin">
+              <number>12</number>
+             </property>
+             <property name="topMargin">
+              <number>12</number>
+             </property>
+             <property name="rightMargin">
+              <number>12</number>
+             </property>
+             <property name="bottomMargin">
+              <number>12</number>
+             </property>
+             <item row="4" column="1">
+              <widget class="QSpinBox" name="spc_cur_gps_noise"/>
+             </item>
+             <item row="5" column="0">
+              <spacer name="verticalSpacer_12">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_109">
+               <property name="text">
+                <string>Node</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_105">
+               <property name="text">
+                <string>Velocity Noise [m RMS]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_104">
+               <property name="text">
+                <string>Time Noise [sec RMS]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="spc_cur_gps_posnoise"/>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_106">
+               <property name="text">
+                <string>Sample Time [s]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="spc_cur_gps_velnoise"/>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_103">
+               <property name="text">
+                <string>Position Noise [m RMS]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="spc_cur_gps_samptime"/>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="spc_cur_gps_timenoise"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="accel">
+           <attribute name="title">
+            <string>Accelerometer</string>
+           </attribute>
+           <widget class="QWidget" name="verticalLayoutWidget_13">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>168</width>
+              <height>591</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_24">
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_25">
+               <item>
+                <widget class="QListWidget" name="spc_cur_gps_list_2"/>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_55">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_gps_add_2">
+                   <property name="text">
+                    <string>+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_gps_remove_2">
+                   <property name="text">
+                    <string>-</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_gps_duplicate_2">
+                   <property name="text">
+                    <string>Duplicate</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="gridLayoutWidget_12">
+            <property name="geometry">
+             <rect>
+              <x>170</x>
+              <y>0</y>
+              <width>352</width>
+              <height>589</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_14">
+             <property name="leftMargin">
+              <number>12</number>
+             </property>
+             <property name="topMargin">
+              <number>12</number>
+             </property>
+             <property name="rightMargin">
+              <number>12</number>
+             </property>
+             <property name="bottomMargin">
+              <number>12</number>
+             </property>
+             <item row="2" column="1">
+              <widget class="QLineEdit" name="spc_cur_acc_maxacc"/>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_114">
+               <property name="text">
+                <string>Max Acceleration [m/s^2]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="spc_cur_acc_scaleerror"/>
+             </item>
+             <item row="1" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_56">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_acc_axis_1"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_acc_axis_2"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_acc_axis_3"/>
+               </item>
+              </layout>
+             </item>
+             <item row="8" column="0">
+              <widget class="QLabel" name="label_107">
+               <property name="text">
+                <string>Initial Bias [m/s^2]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="0">
+              <widget class="QLabel" name="label_110">
+               <property name="text">
+                <string>Node</string>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QLabel" name="label_116">
+               <property name="text">
+                <string>Bias Stability [m/s^2], over timespan [hr]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_115">
+               <property name="text">
+                <string>DV Random Walk [m/s/rt-hr]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_113">
+               <property name="text">
+                <string>Axis in Body Frame  [X, Y, Z]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="label_117">
+               <property name="text">
+                <string>DV Noise [m/s]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="1">
+              <widget class="QSpinBox" name="spc_cur_acc_node"/>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLineEdit" name="spc_cur_acc_dvrandwalk"/>
+             </item>
+             <item row="4" column="1">
+              <widget class="QLineEdit" name="spc_cur_acc_quant"/>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_111">
+               <property name="text">
+                <string>Scale Factor Error [ppm]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_108">
+               <property name="text">
+                <string>Sample Time [s]</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_112">
+               <property name="text">
+                <string>Quantization [m/s^2]</string>
+               </property>
+               <property name="wordWrap">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="spc_cur_acc_samptime"/>
+             </item>
+             <item row="10" column="0">
+              <spacer name="verticalSpacer_13">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="6" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_57">
+               <item>
+                <widget class="QLineEdit" name="spc_cur_acc_bias_stab"/>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="spc_cur_acc_bias_tspan"/>
+               </item>
+              </layout>
+             </item>
+             <item row="7" column="1">
+              <widget class="QLineEdit" name="spc_cur_acc_dvnoise"/>
+             </item>
+             <item row="8" column="1">
+              <widget class="QLineEdit" name="spc_cur_acc_initbias"/>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </widget>
         </widget>
        </widget>
       </item>
@@ -1357,8 +3211,8 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_con"/>
+  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_2flex"/>
  </buttongroups>
 </ui>
