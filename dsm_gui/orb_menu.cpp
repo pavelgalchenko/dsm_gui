@@ -426,13 +426,14 @@ void ORB_Menu::on_orbListRemove_clicked() {
 void ORB_Menu::on_orbListAdd_clicked()
 {
     QString newOrb = "New";
-    for(int i = 0; i <= 20; i++) {
+    for(int i = 0; i <= 50; i++) {
         QString newOrbTest = newOrb;
-        if(i>0) newOrbTest += "_" + QString::number(i);
-        if(!orb_names.contains(newOrbTest)) {
+        if (i>0) newOrbTest += "_" + QString::number(i);
+        if (!orb_names.contains(newOrbTest)) {
             newOrb = newOrbTest;
             break;
         }
+        if (i==50) return; // Nothing happens if too many
     }
     orb_names.append(newOrb);
     file_path = inout_path+"Orb_"+newOrb+".txt";
@@ -808,7 +809,7 @@ void ORB_Menu::on_orbListDuplicate_clicked()
 {
     int index = ui->orbList->currentRow();
     QString newOrb = orb_names[index] +"_Copy";
-    for(int i = 0; i <= 20; i++) {
+    for(int i = 0; i <= 30; i++) {
         QString newOrbTest = newOrb;
         if(i>0) newOrbTest += "_" + QString::number(i);
         if(!orb_names.contains(newOrbTest)) {
