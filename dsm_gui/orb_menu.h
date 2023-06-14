@@ -59,6 +59,12 @@ private slots:
     void on_orbCentFileSelect_clicked();
     void on_orbTBodyFileSelect_clicked();
 
+    void on_orbListDuplicate_clicked();
+
+    void on_orbCentPA_on_toggled(bool checked);
+
+    void on_orbTBodyLPoint_currentIndexChanged(int index);
+
 private:
     Ui::ORB_Menu *ui;
 

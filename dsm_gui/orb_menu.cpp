@@ -423,8 +423,8 @@ void ORB_Menu::on_orbListRemove_clicked() {
     }
 }
 
-void ORB_Menu::on_orbListAdd_clicked() {
-
+void ORB_Menu::on_orbListAdd_clicked()
+{
     QString newOrb = "New";
     for(int i = 0; i <= 20; i++) {
         QString newOrbTest = newOrb;
@@ -450,7 +450,6 @@ void ORB_Menu::on_orbListAdd_clicked() {
 
     receive_data();
     apply_data();
-
 }
 
 void ORB_Menu::on_orbList_itemClicked(QListWidgetItem *item) {
@@ -767,7 +766,6 @@ void ORB_Menu::on_orbTBodyICParam_currentIndexChanged(int index)
     ui->orbTBodyTypeTab->setCurrentIndex(index);
 }
 
-
 void ORB_Menu::on_orbZeroWorld_currentTextChanged(const QString &arg1)
 {
     ui->orbZeroMinorBodyNum->setEnabled(!arg1.compare("MINORBODY"));
@@ -806,4 +804,59 @@ void ORB_Menu::on_orbTBodyFileSelect_clicked()
     ui->orbTBodyFileName->setText(rel_file_path);
 }
 
+void ORB_Menu::on_orbListDuplicate_clicked()
+{
+    int index = ui->orbList->currentRow();
+    QString newOrb = orb_names[index] +"_Copy";
+    for(int i = 0; i <= 20; i++) {
+        QString newOrbTest = newOrb;
+        if(i>0) newOrbTest += "_" + QString::number(i);
+        if(!orb_names.contains(newOrbTest)) {
+            newOrb = newOrbTest;
+            break;
+        }
+    }
+    orb_names.append(newOrb);
+    file_path = inout_path+"Orb_"+newOrb+".txt";
+    QFile::copy(file_paths[index], file_path);
+    file_paths.append(file_path);
+
+    orb_names.sort();
+    file_paths.sort();
+    ui->orbList->addItem(newOrb);
+    orb_name_index = orb_names.indexOf(newOrb);
+
+    ui->orbList->setCurrentRow(orb_name_index);
+
+    receive_data();
+    apply_data();
+}
+
+void ORB_Menu::on_orbCentPA_on_toggled(bool checked)
+{
+    ui->orbCentKepPALabel->setEnabled(checked);
+    ui->orbCentKepPeriAlt->setEnabled(checked);
+    ui->orbCentKepApoAlt->setEnabled(checked);
+    ui->orbCentKepAELabel->setEnabled(!checked);
+    ui->orbCentKepMinAlt->setEnabled(!checked);
+    ui->orbCentKepEcc->setEnabled(!checked);
+}
+
+
+void ORB_Menu::on_orbTBodyLPoint_currentIndexChanged(int index)
+{
+    bool isTriPt = ((lagrangePointInputs[index] == "L4") || (lagrangePointInputs[index] == "L5"));
+    ui->orbTBodyModeXYSMALabel_2->setEnabled(isTriPt);
+    ui->orbTBodyModeXYSMA_2->setEnabled(isTriPt);
+    ui->orbTBodyModeXYPhaseLabel_2->setEnabled(isTriPt);
+    ui->orbTBodyModeXYPhase_2->setEnabled(isTriPt);
+    ui->orbTBodyModeSenseLabel_2->setEnabled(isTriPt);
+//    qDebug()<<ui->orbTBodyModeSense_2->id(ui->orbTBodyModeSense_CCW_2);
+//    for (int i = 0; i < ui->orbTBodyModeSense_2->buttons().count(); i++) {
+//        qDebug()<<i;
+//        qDebug()<<ui->orbTBodyModeSense_2->button(i)->isChecked();
+    ui->orbTBodyModeSense_CW_2->setEnabled(isTriPt);
+    ui->orbTBodyModeSense_CCW_2->setEnabled(isTriPt);
+//    }
+}
 

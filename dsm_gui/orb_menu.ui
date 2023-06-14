@@ -51,6 +51,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="orbListDuplicate">
+         <property name="text">
+          <string>Duplicate</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
@@ -65,7 +72,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="orbTabZero">
      <attribute name="title">
@@ -496,7 +503,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_21">
            <item>
-            <widget class="QLabel" name="label_16">
+            <widget class="QLabel" name="orbCentKepPALabel">
              <property name="text">
               <string>Peri/Apoapsis Altitude (km)</string>
              </property>
@@ -552,7 +559,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_22">
            <item>
-            <widget class="QLabel" name="label_17">
+            <widget class="QLabel" name="orbCentKepAELabel">
              <property name="text">
               <string>Min Altitude (km)/Eccentricity</string>
              </property>
@@ -1232,7 +1239,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_36">
            <item>
-            <widget class="QLabel" name="label_29">
+            <widget class="QLabel" name="orbTBodyModeXYSMALabel_2">
              <property name="text">
               <string>Second XY Semimajor Axis (km) (L4/L5 Only)</string>
              </property>
@@ -1272,7 +1279,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_37">
            <item>
-            <widget class="QLabel" name="label_30">
+            <widget class="QLabel" name="orbTBodyModeXYPhaseLabel_2">
              <property name="text">
               <string>Second XY Phase (deg) (L4/L5 Only)</string>
              </property>
@@ -1312,7 +1319,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_38">
            <item>
-            <widget class="QLabel" name="label_31">
+            <widget class="QLabel" name="orbTBodyModeSenseLabel_2">
              <property name="text">
               <string>Second Sense (L4/L5 Only)</string>
              </property>
@@ -2318,12 +2325,12 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="orbEnabled"/>
   <buttongroup name="orbZeroPolyGrav"/>
-  <buttongroup name="orbFlightPolyGrav"/>
   <buttongroup name="orbCentJ2"/>
-  <buttongroup name="orbCentPA"/>
   <buttongroup name="orbTBodyModeSense"/>
+  <buttongroup name="orbFlightPolyGrav"/>
+  <buttongroup name="orbCentPA"/>
+  <buttongroup name="orbEnabled"/>
   <buttongroup name="orbTBodyModeSense_2"/>
  </buttongroups>
 </ui>
