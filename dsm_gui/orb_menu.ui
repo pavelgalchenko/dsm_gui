@@ -77,12 +77,12 @@
         <x>0</x>
         <y>0</y>
         <width>471</width>
-        <height>294</height>
+        <height>330</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <layout class="QHBoxLayout" name="horizontalLayout_33">
          <item>
           <widget class="QLabel" name="label_38">
            <property name="text">
@@ -108,6 +108,9 @@
            <property name="text">
             <string>Enabled</string>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">orbEnabled</string>
+           </attribute>
           </widget>
          </item>
          <item>
@@ -115,7 +118,37 @@
            <property name="text">
             <string>Disabled</string>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">orbEnabled</string>
+           </attribute>
           </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_47">
+         <item>
+          <widget class="QLabel" name="label_45">
+           <property name="text">
+            <string>Orbit Label:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_45">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="orbLabel"/>
          </item>
         </layout>
        </item>
@@ -503,7 +536,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_10">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
           <widget class="QLabel" name="label_39">
            <property name="text">
@@ -529,6 +562,9 @@
            <property name="text">
             <string>On</string>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">orbZeroPolyGrav</string>
+           </attribute>
           </widget>
          </item>
          <item>
@@ -536,6 +572,9 @@
            <property name="text">
             <string>Off</string>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">orbZeroPolyGrav</string>
+           </attribute>
           </widget>
          </item>
         </layout>
@@ -585,7 +624,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_12">
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
          <item>
           <widget class="QLabel" name="label_40">
            <property name="text">
@@ -611,6 +650,9 @@
            <property name="text">
             <string>On</string>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">orbFlightPolyGrav</string>
+           </attribute>
           </widget>
          </item>
          <item>
@@ -618,6 +660,9 @@
            <property name="text">
             <string>Off</string>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">orbFlightPolyGrav</string>
+           </attribute>
           </widget>
          </item>
         </layout>
@@ -694,7 +739,7 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_14">
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
          <item>
           <widget class="QLabel" name="label_41">
            <property name="text">
@@ -720,6 +765,9 @@
            <property name="text">
             <string>On</string>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">orbCentJ2</string>
+           </attribute>
           </widget>
          </item>
          <item>
@@ -727,6 +775,9 @@
            <property name="text">
             <string>Off</string>
            </property>
+           <attribute name="buttonGroup">
+            <string notr="true">orbCentJ2</string>
+           </attribute>
           </widget>
          </item>
         </layout>
@@ -787,7 +838,7 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_16">
+          <layout class="QHBoxLayout" name="horizontalLayout_14">
            <item>
             <widget class="QLabel" name="label_10">
              <property name="text">
@@ -813,6 +864,9 @@
              <property name="text">
               <string>PA</string>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">orbCentPA</string>
+             </attribute>
             </widget>
            </item>
            <item>
@@ -820,6 +874,9 @@
              <property name="text">
               <string>AE</string>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">orbCentPA</string>
+             </attribute>
             </widget>
            </item>
           </layout>
@@ -1471,7 +1528,7 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_21">
+          <layout class="QHBoxLayout" name="horizontalLayout_16">
            <item>
             <widget class="QLabel" name="label_15">
              <property name="text">
@@ -1497,6 +1554,9 @@
              <property name="text">
               <string>CW</string>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">orbTBodyModeSense</string>
+             </attribute>
             </widget>
            </item>
            <item>
@@ -1504,6 +1564,9 @@
              <property name="text">
               <string>CCW</string>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">orbTBodyModeSense</string>
+             </attribute>
             </widget>
            </item>
           </layout>
@@ -1589,7 +1652,7 @@
           </layout>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_33">
+          <layout class="QHBoxLayout" name="horizontalLayout_21">
            <item>
             <widget class="QLabel" name="label_26">
              <property name="text">
@@ -1615,6 +1678,9 @@
              <property name="text">
               <string>CW</string>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">orbTBodyModeSense_2</string>
+             </attribute>
             </widget>
            </item>
            <item>
@@ -1622,6 +1688,9 @@
              <property name="text">
               <string>CCW</string>
              </property>
+             <attribute name="buttonGroup">
+              <string notr="true">orbTBodyModeSense_2</string>
+             </attribute>
             </widget>
            </item>
           </layout>
@@ -2107,14 +2176,14 @@
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <widget class="QPushButton" name="loaddefaultButton">
+     <widget class="QPushButton" name="loadDefaultButton">
       <property name="text">
        <string>Load Default</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="savedefaultButton">
+     <widget class="QPushButton" name="saveDefaultButton">
       <property name="text">
        <string>Save Default</string>
       </property>
@@ -2139,4 +2208,13 @@
  </widget>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="orbZeroPolyGrav"/>
+  <buttongroup name="orbEnabled"/>
+  <buttongroup name="orbFlightPolyGrav"/>
+  <buttongroup name="orbCentJ2"/>
+  <buttongroup name="orbCentPA"/>
+  <buttongroup name="orbTBodyModeSense"/>
+  <buttongroup name="orbTBodyModeSense_2"/>
+ </buttongroups>
 </ui>

@@ -58,7 +58,7 @@ void MainWindow::on_new_mission_clicked()
     QFile::copy(":/data/__default__/Inp_Sim.txt", path+"Inp_Sim.txt");
     QFile::copy(":/data/__default__/Inp_TDRS.txt", path+"Inp_TDRS.txt");
     QFile::copy(":/data/__default__/Nodes_Simple.txt", path+"Nodes_Simple.txt");
-    QFile::copy(":/data/__default__/Orb_LEO.txt", path+"Orb_LEO.txt");
+    QFile::copy(":/data/__default__/Orb_Default.txt", path+"Orb_Default.txt");
     QFile::copy(":/data/__default__/SC_Simple.txt", path+"SC_Simple.txt");
     QFile::copy(":/data/__default__/Shaker_Simple.txt", path+"Shaker_Simple.txt");
     QFile::copy(":/data/__default__/TRV.txt", path+"TRV.txt");
@@ -74,7 +74,7 @@ void MainWindow::on_new_mission_clicked()
     QFile::copy(":/data/__default__/Inp_Sim.txt", path+"__default__/Inp_Sim.txt");
     QFile::copy(":/data/__default__/Inp_TDRS.txt", path+"__default__/Inp_TDRS.txt");
     QFile::copy(":/data/__default__/Nodes_Simple.txt", path+"__default__/Nodes_Simple.txt");
-    QFile::copy(":/data/__default__/Orb_LEO.txt", path+"__default__/Orb_LEO.txt");
+    QFile::copy(":/data/__default__/Orb_Default.txt", path+"__default__/Orb_Default.txt");
     QFile::copy(":/data/__default__/SC_Simple.txt", path+"__default__/SC_Simple.txt");
     QFile::copy(":/data/__default__/Shaker_Simple.txt", path+"__default__/Shaker_Simple.txt");
     QFile::copy(":/data/__default__/TRV.txt", path+"__default__/TRV.txt");

@@ -26,16 +26,23 @@ private slots:
     void receive_data();
     void apply_data();
     void write_data();
-    void populate_list();
-//    void write_data();
+
+    int warning_message(QString);
     QString whitespace(QString);
-    QString radiobool2string(QRadioButton *onButton);
-    void string2radiobool(QString boolString, QRadioButton *onButton, QRadioButton *offButton);
+    QString radiobool2string(QButtonGroup *buttonGroup);
+    void string2radiobool(QString boolString, QButtonGroup *buttonGroup);
     void setQComboBox(QComboBox *comboBox, QString string);
     QStringList hashValue2QStringList(QHash<QString, QString> hash);
 
     void on_orbListRemove_clicked();
     void on_orbListAdd_clicked();
+    void on_orbList_itemClicked(QListWidgetItem *item);
+
+    void on_loadDefaultButton_clicked();
+    void on_saveDefaultButton_clicked();
+    void on_closeButton_clicked();
+    void on_applyButton_clicked();
+
 
 private:
     Ui::ORB_Menu *ui;
@@ -47,8 +54,8 @@ private:
     QString file_path;
     QStringList file_paths;
     QStringList orb_names;
-    QVector<int> orb_name_index;
-    QVector<int> orb_name_size;
+    int orb_name_index;
+    int orb_name_size;
     QStringList orb_data;
     QStringList orb_file_headers; // section headers in the file
     QStringList orb_file_descrip; // data descriptors in the file
