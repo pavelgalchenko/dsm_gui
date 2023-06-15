@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QListWidgetItem>
 #include <QDebug>
+#include "spc_submenu.h"
 
 namespace Ui {
 class SPC_Menu;
@@ -17,6 +18,9 @@ public:
     explicit SPC_Menu(QWidget *parent = nullptr);
     ~SPC_Menu();
 
+//signals:
+    //void send_data(QString);
+
 private slots:
 
     void on_spc_add_clicked();
@@ -28,7 +32,7 @@ private slots:
     void on_spc_close_clicked();
     void on_spc_apply_clicked();
 
-    //void on_spc_conf_clicked();
+    void on_spc_conf_clicked();
 
     QString whitespace(QString);
 
@@ -41,6 +45,8 @@ private slots:
     int warning_message(QString);
 
     void receive_spcpath(QString);
+
+    void on_spc_list_itemActivated(QListWidgetItem *item);
 
 private:
     Ui::SPC_Menu *ui;
@@ -63,7 +69,7 @@ private:
     QStringList spc_file_headers; // section headers in the file
     QStringList spc_file_descrip; // data descriptors in the file
 
-
+    SPC_submenu *spc_submenu;
 };
 
 #endif // SPC_Menu_H

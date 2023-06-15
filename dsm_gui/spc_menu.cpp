@@ -19,9 +19,7 @@ SPC_Menu::~SPC_Menu()
     delete ui;
 }
 
-
-
-void SPC_Menu::on_spc_add_clicked()
+void SPC_Menu::on_spc_add_clicked() // Add S/C
 {
     QString new_spc = "Simple";
     for(int i = 0; i <= 50; i++) {
@@ -52,7 +50,7 @@ void SPC_Menu::on_spc_add_clicked()
 }
 
 
-void SPC_Menu::on_spc_remove_clicked()
+void SPC_Menu::on_spc_remove_clicked() // Remove S/C
 {
     int remove_Item = ui->spc_list->currentRow();
     if(remove_Item == -1) return;
@@ -84,7 +82,7 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
         }
     }
     spc_names.append(new_spc);
-    file_path = inout_path+"Orb_"+new_spc+".txt";
+    file_path = inout_path+"SC_"+new_spc+".txt";
     QFile::copy(file_paths[index], file_path);
     file_paths.append(file_path);
 
@@ -96,7 +94,7 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
 }
 
 
-void SPC_Menu::on_spc_load_clicked()
+void SPC_Menu::on_spc_load_clicked() // Load default S/C
 {
     int index = ui->spc_list->currentRow();
     if(index == -1) return;
@@ -164,7 +162,7 @@ void SPC_Menu::on_spc_apply_clicked()
     file_path = file_paths[index];
 
     for(int line_num=1; line_num<=6; line_num++)
-    { // stop after general information
+    { // append data from "general" information
         QString data_inp = "";
         switch (line_num) {
             /******************************************* HEADER ***************************************************/
@@ -173,13 +171,13 @@ void SPC_Menu::on_spc_apply_clicked()
         case 2: // Spacecraft Description
             data_inp = ui->spc_desc->text();
             break;
-        case 3: // Orbit Type
+        case 3: // Spacecraft Name
             data_inp = "\"" + ui->spc_name->text() + "\"";
             break;
         case 4: // Sprite File Name
             data_inp = ui->spc_sprite->text();
         case 5: // Flight Software Identifier
-            data_inp = ui->spc_fswid->text();
+            data_inp = ui->spc_fswid->text(); // change this to combo box!
         case 6: // Flight Software Sample Time
             data_inp = ui->spc_fswsamp->text();
         }
@@ -195,6 +193,25 @@ void SPC_Menu::on_spc_apply_clicked()
 
     }
 
+    // Read in the rest of the file and append it to the end. Functionally equivalent to only changing the first 6 lines.
+    QFile file(file_path);
+    if(!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::information(0, "error", file.errorString());
+    }
+
+    QTextStream in(&file);
+    long counter = 1;
+    while(!in.atEnd()) {
+        QString line = in.readLine();
+        if (counter > 6)
+        {
+            spc_update.append(line);
+            spc_update.append("\n");
+        }
+        counter++;
+    }
+    file.close();
+
     spc_names.sort();
     file_paths.sort();
     index = file_paths.indexOf(file_path);
@@ -208,10 +225,16 @@ void SPC_Menu::on_spc_apply_clicked()
 }
 
 
-//void SPC_Menu::on_spc_conf_clicked()
-//{
+void SPC_Menu::on_spc_conf_clicked()
+{
+    spc_submenu = new SPC_submenu(this);
+    spc_submenu->setModal(true);
+    spc_submenu->show();
 
-//}
+    //connect(this, SIGNAL(send_data(QString)), spc_submenu, SLOT(receive_spc_sm_path(QString)));
+    //emit send_data(ui->spc_name->text());
+    //disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+}
 
 
 QString SPC_Menu::whitespace(QString data)
@@ -246,6 +269,9 @@ void SPC_Menu::on_spc_list_itemClicked(QListWidgetItem *item)
             }
         }
     }
+
+    file_path = file_paths[index];
+    spc_name_index = index;
 
     receive_data();
     apply_data();
@@ -328,6 +354,8 @@ void SPC_Menu::apply_data()
             ui->spc_fswsamp->setText(line_items[0]);
         }
     }
+
+
 }
 
 void SPC_Menu::receive_spcpath(QString path)
@@ -381,5 +409,11 @@ int SPC_Menu::warning_message(QString warningText)
     warningMsg.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     int ret = warningMsg.exec();
     return ret;
+}
+
+
+void SPC_Menu::on_spc_list_itemActivated(QListWidgetItem *item)
+{
+    ui->spc_conf->setEnabled(true);
 }
 

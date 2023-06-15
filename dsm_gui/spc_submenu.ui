@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>575</width>
+    <width>574</width>
     <height>777</height>
    </rect>
   </property>
@@ -73,7 +73,7 @@
       <item row="0" column="0" colspan="2">
        <widget class="QTabWidget" name="tabWidget_2">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -88,7 +88,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>6</number>
         </property>
         <widget class="QWidget" name="dynamics">
          <attribute name="title">
@@ -97,13 +97,16 @@
          <widget class="QWidget" name="gridLayoutWidget">
           <property name="geometry">
            <rect>
-            <x>-11</x>
-            <y>9</y>
-            <width>571</width>
+            <x>10</x>
+            <y>0</y>
+            <width>531</width>
             <height>571</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetNoConstraint</enum>
+           </property>
            <property name="leftMargin">
             <number>12</number>
            </property>
@@ -405,7 +408,7 @@
            <rect>
             <x>0</x>
             <y>10</y>
-            <width>541</width>
+            <width>531</width>
             <height>561</height>
            </rect>
           </property>
@@ -454,7 +457,7 @@
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QComboBox" name="spc_cur_att_param"/>
+            <widget class="QComboBox" name="spc_cur_att_param_2"/>
            </item>
            <item row="1" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_62">
@@ -486,32 +489,32 @@
            <item row="4" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_58">
              <item>
-              <widget class="QLineEdit" name="spc_cur_eul_1"/>
+              <widget class="QLineEdit" name="spc_cur_eul_4"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="spc_cur_eul_2"/>
+              <widget class="QLineEdit" name="spc_cur_eul_5"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="spc_cur_eul_3"/>
+              <widget class="QLineEdit" name="spc_cur_eul_6"/>
              </item>
              <item>
-              <widget class="QComboBox" name="spc_cur_eul_seq"/>
+              <widget class="QComboBox" name="spc_cur_eul_seq_2"/>
              </item>
             </layout>
            </item>
            <item row="3" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_60">
              <item>
-              <widget class="QLineEdit" name="spc_cur_q1"/>
+              <widget class="QLineEdit" name="spc_cur_q1_2"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="spc_cur_q2"/>
+              <widget class="QLineEdit" name="spc_cur_q2_2"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="spc_cur_q3"/>
+              <widget class="QLineEdit" name="spc_cur_q3_2"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="spc_cur_q4"/>
+              <widget class="QLineEdit" name="spc_cur_q4_2"/>
              </item>
             </layout>
            </item>
@@ -538,9 +541,9 @@
          <widget class="QWidget" name="layoutWidget">
           <property name="geometry">
            <rect>
-            <x>164</x>
+            <x>170</x>
             <y>0</y>
-            <width>401</width>
+            <width>381</width>
             <height>651</height>
            </rect>
           </property>
@@ -786,16 +789,16 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QPushButton" name="spc_cur_body_add">
+                <widget class="QPushButton" name="spc_cur_body_remove">
                  <property name="text">
-                  <string>+</string>
+                  <string>-</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="spc_cur_body_remove">
+                <widget class="QPushButton" name="spc_cur_body_add">
                  <property name="text">
-                  <string>-</string>
+                  <string>+</string>
                  </property>
                 </widget>
                </item>
@@ -838,16 +841,16 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QPushButton" name="spc_cur_joint_add">
+                <widget class="QPushButton" name="spc_cur_joint_remove">
                  <property name="text">
-                  <string>+</string>
+                  <string>-</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="spc_cur_joint_remove">
+                <widget class="QPushButton" name="spc_cur_joint_add">
                  <property name="text">
-                  <string>-</string>
+                  <string>+</string>
                  </property>
                 </widget>
                </item>
@@ -869,7 +872,7 @@
            <rect>
             <x>170</x>
             <y>-10</y>
-            <width>391</width>
+            <width>381</width>
             <height>661</height>
            </rect>
           </property>
@@ -1252,7 +1255,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>1</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideLeft</enum>
@@ -1282,16 +1285,16 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_wheel_add">
+                  <widget class="QPushButton" name="spc_cur_wheel_remove">
                    <property name="text">
-                    <string>+</string>
+                    <string>-</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_wheel_remove">
+                  <widget class="QPushButton" name="spc_cur_wheel_add">
                    <property name="text">
-                    <string>-</string>
+                    <string>+</string>
                    </property>
                   </widget>
                  </item>
@@ -1481,16 +1484,16 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_mtb_sat_add">
+                  <widget class="QPushButton" name="spc_cur_mtb_remove">
                    <property name="text">
-                    <string>+</string>
+                    <string>-</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_mtb_remove">
+                  <widget class="QPushButton" name="spc_cur_mtb_add">
                    <property name="text">
-                    <string>-</string>
+                    <string>+</string>
                    </property>
                   </widget>
                  </item>
@@ -1601,16 +1604,16 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_thruster_add">
+                  <widget class="QPushButton" name="spc_cur_thruster_remove">
                    <property name="text">
-                    <string>+</string>
+                    <string>-</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_thruster_remove">
+                  <widget class="QPushButton" name="spc_cur_thruster_add">
                    <property name="text">
-                    <string>-</string>
+                    <string>+</string>
                    </property>
                   </widget>
                  </item>
@@ -1744,7 +1747,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>6</number>
+           <number>0</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideLeft</enum>
@@ -1758,7 +1761,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>168</width>
+              <width>171</width>
               <height>591</height>
              </rect>
             </property>
@@ -1774,16 +1777,16 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_gyro_add">
+                  <widget class="QPushButton" name="spc_cur_gyro_remove_2">
                    <property name="text">
-                    <string>+</string>
+                    <string>-</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_gyro_remove">
+                  <widget class="QPushButton" name="spc_cur_gyro_add">
                    <property name="text">
-                    <string>-</string>
+                    <string>+</string>
                    </property>
                   </widget>
                  </item>
@@ -2001,16 +2004,16 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_mag_add">
+                  <widget class="QPushButton" name="spc_cur_mag_remove">
                    <property name="text">
-                    <string>+</string>
+                    <string>-</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_mag_remove">
+                  <widget class="QPushButton" name="spc_cur_mag_add">
                    <property name="text">
-                    <string>-</string>
+                    <string>+</string>
                    </property>
                   </widget>
                  </item>
@@ -2182,16 +2185,16 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_css_add">
+                  <widget class="QPushButton" name="spc_cur_css_remove">
                    <property name="text">
-                    <string>+</string>
+                    <string>-</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_css_remove">
+                  <widget class="QPushButton" name="spc_cur_css_add">
                    <property name="text">
-                    <string>-</string>
+                    <string>+</string>
                    </property>
                   </widget>
                  </item>
@@ -2366,16 +2369,16 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_fss_add">
+                  <widget class="QPushButton" name="spc_cur_fss_remove">
                    <property name="text">
-                    <string>+</string>
+                    <string>-</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_fss_remove">
+                  <widget class="QPushButton" name="spc_cur_fss_add">
                    <property name="text">
-                    <string>-</string>
+                    <string>+</string>
                    </property>
                   </widget>
                  </item>
@@ -2570,16 +2573,16 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_strack_add">
+                  <widget class="QPushButton" name="spc_cur_strack_remove">
                    <property name="text">
-                    <string>+</string>
+                    <string>-</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_strack_remove">
+                  <widget class="QPushButton" name="spc_cur_strack_add">
                    <property name="text">
-                    <string>-</string>
+                    <string>+</string>
                    </property>
                   </widget>
                  </item>
@@ -2786,14 +2789,14 @@
                  <item>
                   <widget class="QPushButton" name="spc_cur_gps_add">
                    <property name="text">
-                    <string>+</string>
+                    <string>-</string>
                    </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="spc_cur_gps_remove">
                    <property name="text">
-                    <string>-</string>
+                    <string>+</string>
                    </property>
                   </widget>
                  </item>
@@ -2916,7 +2919,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>168</width>
+              <width>194</width>
               <height>591</height>
              </rect>
             </property>
@@ -2932,21 +2935,21 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_gps_add_2">
-                   <property name="text">
-                    <string>+</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="spc_cur_gps_remove_2">
+                  <widget class="QPushButton" name="spc_cur_accel_remove">
                    <property name="text">
                     <string>-</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_gps_duplicate_2">
+                  <widget class="QPushButton" name="spc_cur_accel_add">
+                   <property name="text">
+                    <string>+</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_accel_duplicate">
                    <property name="text">
                     <string>Duplicate</string>
                    </property>
@@ -2961,10 +2964,10 @@
            <widget class="QWidget" name="gridLayoutWidget_12">
             <property name="geometry">
              <rect>
-              <x>170</x>
+              <x>191</x>
               <y>0</y>
-              <width>352</width>
-              <height>589</height>
+              <width>331</width>
+              <height>591</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_14">
