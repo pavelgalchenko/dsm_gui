@@ -446,6 +446,7 @@ void ORB_Menu::on_orbListAdd_clicked()
 
     ui->orbList->addItem(newOrb);
     orb_name_index = orb_names.indexOf(newOrb);
+    global_orb_index = orb_name_index;
 
     ui->orbList->setCurrentRow(orb_name_index);
 
