@@ -374,10 +374,10 @@ void ORB_Menu::apply_data()
             break;
         case 41: // Three Body Orbit File Type and Label
             setQComboBox(ui->orbTBodyFileType,orbFileTypeInputs.values(orbFileTypeInputs.key(line_items[0])).at(0));
-            ui->orbTBodyFileName->setText(line_string);
+            ui->orbTBodyFileLabel->setText(line_string);
             break;
         case 42: // Three Body Orbit File Name
-            ui->orbTBodyFileLabel->setText(line_string);
+            ui->orbTBodyFileName->setText(line_string);
             break;
 /*************************************** FORMATION FRAME **********************************************/
         case 43: // Formation Frame Header
@@ -677,10 +677,10 @@ void ORB_Menu::on_applyButton_clicked() {
             data_inp = ui->orbTBodyCowellVel_1->text() + "  " + ui->orbTBodyCowellVel_2->text() + "  " + ui->orbTBodyCowellVel_3->text();
             break;
         case 41: // Three Body Orbit File Type and Label
-            data_inp = orbFileTypeInputs.values(orbFileTypeInputs.key(ui->orbTBodyFileType->currentText())).at(1) + "  \"" + ui->orbTBodyFileName->toPlainText() + "\"";
+            data_inp = orbFileTypeInputs.values(orbFileTypeInputs.key(ui->orbTBodyFileType->currentText())).at(1) + "  \"" + ui->orbTBodyFileLabel->text() + "\"";
             break;
         case 42: // Three Body Orbit File Name
-            data_inp = "\"" + ui->orbTBodyFileLabel->text() + "\"";
+            data_inp = "\"" + ui->orbTBodyFileName->toPlainText() + "\"";
             break;
             /*************************************** FORMATION FRAME **********************************************/
         case 43: // Formation Frame Header
@@ -721,7 +721,7 @@ void ORB_Menu::on_applyButton_clicked() {
 
 QString ORB_Menu::radiobool2string(QButtonGroup *buttonGroup){
     QString output;
-    if(buttonGroup->checkedButton()==0) output = "TRUE";
+    if(buttonGroup->checkedId()==0) output = "TRUE";
     else output = "FALSE";
     return output;
 }
