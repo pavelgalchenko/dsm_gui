@@ -1,5 +1,5 @@
-#include "SPC_Menu.h"
-#include "ui_SPC_Menu.h"
+#include "spc_menu.h"
+#include "ui_spc_menu.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -23,50 +23,195 @@ SPC_Menu::~SPC_Menu()
 
 void SPC_Menu::on_spc_add_clicked()
 {
+    QString new_spc = "Simple";
+    for(int i = 0; i <= 50; i++) {
+        QString new_spc_test = new_spc;
+        if (i>0) new_spc_test += "_" + QString::number(i);
+        if (!spc_names.contains(new_spc_test)) {
+            new_spc = new_spc_test;
+            break;
+        }
+        if (i==50) return; // Nothing happens if too many
+    }
+    spc_names.append(new_spc);
+    file_path = inout_path+"SC_"+new_spc+".txt";
+    file_paths.append(file_path);
 
+    spc_names.sort();
+    file_paths.sort();
+
+    QFile::copy(inout_path + "__default__/SC_Simple.txt", file_path);
+
+    ui->spc_list->addItem(new_spc);
+    spc_name_index = spc_names.indexOf(new_spc);
+
+    ui->spc_list->setCurrentRow(spc_name_index);
+
+    receive_data();
+    apply_data();
 }
 
 
 void SPC_Menu::on_spc_remove_clicked()
 {
+    int remove_Item = ui->spc_list->currentRow();
+    if(remove_Item == -1) return;
+    else{
+        file_path = file_paths[remove_Item];
+        ui->spc_list->takeItem(remove_Item);
+        spc_names.removeAt(remove_Item);
+        file_paths.removeAt(remove_Item);
+        QFile::remove(file_path);
+        ui->spc_list->setCurrentRow(-1);
+        global_spc_index = -1;
+        spc_name_index = -1;
+    }
 
 }
 
 
-void SPC_Menu::on_spc_duplicate_clicked()
+void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
 {
+    int index = ui->spc_list->currentRow();
+    QString old_spc = spc_names[index];
+    QString new_spc = old_spc +"_Copy";
+    for(int i = 0; i <= 30; i++) {
+        QString new_spc_test = new_spc;
+        if(i>0) new_spc_test += "_" + QString::number(i);
+        if(!spc_names.contains(new_spc_test)) {
+            new_spc = new_spc_test;
+            break;
+        }
+    }
+    spc_names.append(new_spc);
+    file_path = inout_path+"Orb_"+new_spc+".txt";
+    QFile::copy(file_paths[index], file_path);
+    file_paths.append(file_path);
+
+    ui->spc_list->addItem(new_spc);
+    spc_names.sort();
+    file_paths.sort();
+
 
 }
 
 
 void SPC_Menu::on_spc_load_clicked()
 {
+    int index = ui->spc_list->currentRow();
+    if(index == -1) return;
+    else {
+        file_path = file_paths[index];
+        int response = warning_message("Overwrite SC file?");
+        if (response == QMessageBox::Ok) {
+            QFile::remove(file_path);
+            QFile::copy(inout_path+"__default__/SC_Simple.txt", file_path);
+
+            spc_name_index = index;
+            receive_data();
+            apply_data();
+        }
+        else return;
+    }
 
 }
 
 
 void SPC_Menu::on_spc_save_clicked()
 {
+    int index = ui->spc_list->currentRow();
+    if(index == -1) return;
+    else {
+        file_path = file_paths[index];
+        int response = warning_message("Overwrite Default SC file?");
+        if (response == QMessageBox::Ok) {
+            QFile::remove(inout_path+"__default__/SC_Simple.txt");
+            QFile::copy(file_path,inout_path+"__default__/SC_Simple.txt");
+            spc_name_index = index;
+            receive_data();
+            apply_data();
+        }
+        else return;
+    }
 
 }
 
 
 void SPC_Menu::on_spc_close_clicked()
 {
-
+    SPC_Menu::close();
 }
 
 
 void SPC_Menu::on_spc_apply_clicked()
 {
+    int index = ui->spc_list->currentRow();
+    if(index == -1){
+        return;
+    }
+
+    QString newLabel = ui->spc_name->text();
+    if ( spc_names.indexOf(newLabel) != index && spc_names.contains(newLabel,Qt::CaseInsensitive)) {
+        warning_message("Spacecraft \"" + newLabel + "\" already exists. Spacecraft names are NOT case sensitive.");
+        return;
+    }
+
+    file_path = file_paths[index];
+    ui->spc_list->currentItem()->setText(newLabel);
+    spc_names[index] = newLabel;
+    file_paths[index] = inout_path + "SC_" + newLabel + ".txt";
+    QFile::rename(file_path,file_paths[index]);
+    file_path = file_paths[index];
+
+    for(int line_num=1; line_num<=6; line_num++)
+    { // stop after general information
+        QString data_inp = "";
+        switch (line_num) {
+            /******************************************* HEADER ***************************************************/
+        case 1: // File Header
+            break;
+        case 2: // Spacecraft Description
+            data_inp = ui->spc_desc->text();
+            break;
+        case 3: // Orbit Type
+            data_inp = "\"" + ui->spc_name->text() + "\"";
+            break;
+        case 4: // Sprite File Name
+            data_inp = ui->spc_sprite->text();
+        case 5: // Flight Software Identifier
+            data_inp = ui->spc_fswid->text();
+        case 6: // Flight Software Sample Time
+            data_inp = ui->spc_fswsamp->text();
+        }
+
+        if (spc_file_headers[line_num-1].isEmpty())
+        {
+            spc_update.append(whitespace(data_inp)+spc_file_descrip[line_num-1]);
+        }
+        else
+        {
+            spc_update.append(spc_file_headers[line_num-1]);
+        }
+
+    }
+
+    spc_names.sort();
+    file_paths.sort();
+    index = file_paths.indexOf(file_path);
+    global_spc_index=index;
+    spc_name_index=index;
+    ui->spc_list->setCurrentRow(index);
+
+    write_data();
+
 
 }
 
 
-void SPC_Menu::on_spc_conf_clicked()
-{
+//void SPC_Menu::on_spc_conf_clicked()
+//{
 
-}
+//}
 
 
 QString SPC_Menu::whitespace(QString data)
@@ -155,7 +300,34 @@ void SPC_Menu::receive_data()
 
 void SPC_Menu::apply_data()
 {
+    QStringList line_items;
+    QString line_string;
 
+    ui->spc_name->setText(spc_names[spc_name_index]);
+
+    for(int line_num=1; line_num<=6; line_num++)
+    { // stop after general information
+        line_string = spc_string[line_num-1];
+        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+        switch (line_num) {
+            /******************************************* HEADER ***************************************************/
+        case 1: // File Header
+            break;
+        case 2: // Spacecraft Description
+            ui->spc_desc->setText(spc_data[line_num-1]);
+            break;
+        case 3: // Spacecraft Name
+            ui->spc_label->setText(line_string);
+            break;
+        case 4: // Sprite File Name
+            ui->spc_sprite->setText(line_items[0]);
+        case 5: // Flight Software Identifier
+            ui->spc_fswid->setText(line_items[0]);
+        case 6: // Flight Software Sample Time
+            ui->spc_fswsamp->setText(line_items[0]);
+        }
+    }
 }
 
 void SPC_Menu::receive_spcpath(QString path)
@@ -165,7 +337,7 @@ void SPC_Menu::receive_spcpath(QString path)
     QStringList spcFiles = QDir(inout_path).entryList({"SC_*"});
     for (int i = 0; i<spcFiles.length(); i++) {
         file_paths.append(inout_path+spcFiles[i]); // Full file path of SC file
-        spc_names.append(spcFiles[i].chopped(4).mid(4)); // Everything between "SC_" and ".txt"
+        spc_names.append(spcFiles[i].chopped(4).mid(3)); // Everything between "SC_" and ".txt"
     }
 
     file_paths.sort();
@@ -182,6 +354,24 @@ void SPC_Menu::receive_spcpath(QString path)
     ui->spc_list->addItems(spc_names);
 
 }
+
+void SPC_Menu::write_data()
+{
+    QFile::remove(file_path);
+    QFile file(file_path);
+    if(!file.open(QFile::WriteOnly)) {
+        QMessageBox::information(0, "error", file.errorString());
+    }
+    else {
+        QTextStream in(&file);
+        for (int i=0; i < spc_update.size(); i++){
+            in << spc_update.at(i);
+        }
+    }
+    spc_update.clear();
+    file.close();
+}
+
 
 int SPC_Menu::warning_message(QString warningText)
 {

@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QListWidgetItem>
+#include <QDebug>
 
 namespace Ui {
 class SPC_Menu;
@@ -27,7 +28,7 @@ private slots:
     void on_spc_close_clicked();
     void on_spc_apply_clicked();
 
-    void on_spc_conf_clicked();
+    //void on_spc_conf_clicked();
 
     QString whitespace(QString);
 
@@ -35,7 +36,6 @@ private slots:
 
     void receive_data();
     void apply_data();
-    void populate_list();
     void write_data();
 
     int warning_message(QString);
@@ -53,9 +53,11 @@ private:
     QStringList file_paths;
 
 
+
     QStringList spc_names;
     QStringList spc_string;
     QStringList spc_data;
+    QStringList spc_update;
     int spc_name_index;
 
     QStringList spc_file_headers; // section headers in the file
