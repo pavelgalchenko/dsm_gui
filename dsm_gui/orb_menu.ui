@@ -72,7 +72,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="orbTabZero">
      <attribute name="title">
@@ -595,7 +595,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="orbCentKepEcc">
+            <widget class="QDoubleSpinBox" name="orbCentKepEcc">
              <property name="minimumSize">
               <size>
                <width>70</width>
@@ -607,6 +607,9 @@
                <width>70</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="singleStep">
+              <double>0.100000000000000</double>
              </property>
             </widget>
            </item>

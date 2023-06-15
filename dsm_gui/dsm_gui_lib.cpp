@@ -15,8 +15,7 @@ int dsm_gui_lib::warning_message(QString warningText) {
     return ret;
 }
 
-QString dsm_gui_lib::whitespace(QString data)
-{
+QString dsm_gui_lib::whitespace(QString data) {
     QString empty_space = "                              ";
     int data_len = empty_space.count()-data.count();
     if (data_len < 1) data_len = 1;
@@ -24,4 +23,11 @@ QString dsm_gui_lib::whitespace(QString data)
         data.append(" ");
     }
     return data;
+}
+
+QStringList dsm_gui_lib::sortStringList(QStringList unsorted) {
+    QStringList sorted;
+    unsorted.sort();
+    sorted = unsorted;
+    return sorted;
 }

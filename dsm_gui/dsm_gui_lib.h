@@ -9,8 +9,9 @@ class dsm_gui_lib
 public:
     dsm_gui_lib();
 
-    static int warning_message(QString);
-    static QString whitespace(QString);
+    static int warning_message(QString warningText);
+    static QString whitespace(QString data);
+    static QStringList sortStringList(QStringList unsorted);
 };
 
 #endif // DSM_GUI_LIB_H
