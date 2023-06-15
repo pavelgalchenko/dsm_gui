@@ -808,7 +808,8 @@ void ORB_Menu::on_orbTBodyFileSelect_clicked()
 void ORB_Menu::on_orbListDuplicate_clicked()
 {
     int index = ui->orbList->currentRow();
-    QString newOrb = orb_names[index] +"_Copy";
+    QString oldOrb = orb_names[index];
+    QString newOrb = oldOrb +"_Copy";
     for(int i = 0; i <= 30; i++) {
         QString newOrbTest = newOrb;
         if(i>0) newOrbTest += "_" + QString::number(i);
@@ -822,15 +823,9 @@ void ORB_Menu::on_orbListDuplicate_clicked()
     QFile::copy(file_paths[index], file_path);
     file_paths.append(file_path);
 
+    ui->orbList->addItem(newOrb);
     orb_names.sort();
     file_paths.sort();
-    ui->orbList->addItem(newOrb);
-    orb_name_index = orb_names.indexOf(newOrb);
-
-    ui->orbList->setCurrentRow(orb_name_index);
-
-    receive_data();
-    apply_data();
 }
 
 void ORB_Menu::on_orbCentPA_on_toggled(bool checked)
