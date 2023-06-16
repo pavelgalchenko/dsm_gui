@@ -13,8 +13,8 @@ SPC_submenu::~SPC_submenu()
     delete ui;
 }
 
-//void SPC_submenu::receive_spc_sm_path(QString spc_cur_name)
-//{
-    ; // fill in after slot/signal is configured
-//}
+void SPC_submenu::receive_spc_sm_path(QString spc_cur_name)
+{
+    spc_name = spc_cur_name; // fill in after slot/signal is configured
+}
 

@@ -15,12 +15,12 @@ public:
     explicit SPC_submenu(QWidget *parent = nullptr);
     ~SPC_submenu();
 
-//signals:
-    //void receive_spc_sm_path(QString);
+private slots:
+    void receive_spc_sm_path(QString);
 
 private:
     Ui::SPC_submenu *ui;
-    QString spc_sm_path;
+    QString spc_name;
 };
 
 #endif // SPC_SUBMENU_H

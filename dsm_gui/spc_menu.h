@@ -4,6 +4,9 @@
 #include <QDialog>
 #include <QListWidgetItem>
 #include <QDebug>
+#include <QComboBox>
+#include <QStringList>
+
 #include "spc_submenu.h"
 
 namespace Ui {
@@ -18,8 +21,8 @@ public:
     explicit SPC_Menu(QWidget *parent = nullptr);
     ~SPC_Menu();
 
-//signals:
-    //void send_data(QString);
+signals:
+    void send_data(QString);
 
 private slots:
 
@@ -34,19 +37,19 @@ private slots:
 
     void on_spc_conf_clicked();
 
-    QString whitespace(QString);
-
     void on_spc_list_itemClicked(QListWidgetItem *item);
 
     void receive_data();
     void apply_data();
     void write_data();
 
-    int warning_message(QString);
-
     void receive_spcpath(QString);
 
     void on_spc_list_itemActivated(QListWidgetItem *item);
+
+    void set_validators();
+
+    void setQComboBox(QComboBox *comboBox, QString string);
 
 private:
     Ui::SPC_Menu *ui;
@@ -58,8 +61,6 @@ private:
     QString file_path;
     QStringList file_paths;
 
-
-
     QStringList spc_names;
     QStringList spc_string;
     QStringList spc_data;
@@ -70,6 +71,8 @@ private:
     QStringList spc_file_descrip; // data descriptors in the file
 
     SPC_submenu *spc_submenu;
+
+    const QStringList fswid_types = {"PASSIVE_FSW", "PROTOTYPE_FSW", "AD_HOC_FSW", "SPINNER_FSW", "MOMBIAS_FSW", "THREE_AXIS_FSW", "ISS_FSW", "CMG_FSW", "THR_FSW", "DSM_FSW", "CFS_FSW"}; //"PASSIVE_FSW", "PROTOTYPE_FSW", "AD_HOC_FSW", "SPINNER_FSW", "MOMBIAS_FSW", "THREE_AXIS_FSW", "ISS_FSW", "CMG_FSW", "THR_FSW", "DSM_FSW", "CFS_FSW"
 };
 
 #endif // SPC_Menu_H

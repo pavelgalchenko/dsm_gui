@@ -1,9 +1,11 @@
 #include "spc_menu.h"
 #include "ui_spc_menu.h"
+#include "dsm_gui_lib.h"
 
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
+#include <QComboBox>
 #include <QRegularExpression>
 #include <QDir>
 
@@ -12,12 +14,19 @@ SPC_Menu::SPC_Menu(QWidget *parent) :
     ui(new Ui::SPC_Menu)
 {
     ui->setupUi(this);
+    set_validators();
 }
 
 SPC_Menu::~SPC_Menu()
 {
     delete ui;
 }
+
+void SPC_Menu::set_validators()
+{
+    ui->spc_fswid->addItems(dsm_gui_lib::sortStringList(fswid_types));
+}
+
 
 void SPC_Menu::on_spc_add_clicked() // Add S/C
 {
@@ -100,7 +109,7 @@ void SPC_Menu::on_spc_load_clicked() // Load default S/C
     if(index == -1) return;
     else {
         file_path = file_paths[index];
-        int response = warning_message("Overwrite SC file?");
+        int response = dsm_gui_lib::warning_message("Overwrite SC file?");
         if (response == QMessageBox::Ok) {
             QFile::remove(file_path);
             QFile::copy(inout_path+"__default__/SC_Simple.txt", file_path);
@@ -121,7 +130,7 @@ void SPC_Menu::on_spc_save_clicked()
     if(index == -1) return;
     else {
         file_path = file_paths[index];
-        int response = warning_message("Overwrite Default SC file?");
+        int response = dsm_gui_lib::warning_message("Overwrite Default SC file?");
         if (response == QMessageBox::Ok) {
             QFile::remove(inout_path+"__default__/SC_Simple.txt");
             QFile::copy(file_path,inout_path+"__default__/SC_Simple.txt");
@@ -150,7 +159,7 @@ void SPC_Menu::on_spc_apply_clicked()
 
     QString newLabel = ui->spc_name->text();
     if ( spc_names.indexOf(newLabel) != index && spc_names.contains(newLabel,Qt::CaseInsensitive)) {
-        warning_message("Spacecraft \"" + newLabel + "\" already exists. Spacecraft names are NOT case sensitive.");
+        dsm_gui_lib::warning_message("Spacecraft \"" + newLabel + "\" already exists. Spacecraft names are NOT case sensitive.");
         return;
     }
 
@@ -176,15 +185,18 @@ void SPC_Menu::on_spc_apply_clicked()
             break;
         case 4: // Sprite File Name
             data_inp = ui->spc_sprite->text();
+            break;
         case 5: // Flight Software Identifier
-            data_inp = ui->spc_fswid->text(); // change this to combo box!
+            data_inp = ui->spc_fswid->currentText();
+            break;
         case 6: // Flight Software Sample Time
             data_inp = ui->spc_fswsamp->text();
+            break;
         }
 
         if (spc_file_headers[line_num-1].isEmpty())
         {
-            spc_update.append(whitespace(data_inp)+spc_file_descrip[line_num-1]);
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+spc_file_descrip[line_num-1]);
         }
         else
         {
@@ -231,21 +243,9 @@ void SPC_Menu::on_spc_conf_clicked()
     spc_submenu->setModal(true);
     spc_submenu->show();
 
-    //connect(this, SIGNAL(send_data(QString)), spc_submenu, SLOT(receive_spc_sm_path(QString)));
-    //emit send_data(ui->spc_name->text());
-    //disconnect(this, SIGNAL(send_data(QString)), 0, 0);
-}
-
-
-QString SPC_Menu::whitespace(QString data)
-{
-    QString empty_space = "                              ";
-    int data_len = empty_space.count()-data.count();
-    if (data_len < 1) data_len = 1;
-    for (int i = 0; i < data_len; i++){
-        data.append(" ");
-    }
-    return data;
+    connect(this, SIGNAL(send_data(QString)), spc_submenu, SLOT(receive_spc_sm_path(QString)));
+    emit send_data(ui->spc_name->text());
+    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 
 
@@ -258,7 +258,7 @@ void SPC_Menu::on_spc_list_itemClicked(QListWidgetItem *item)
     }
     else {
         if ( (global_spc_index != -1) && (global_spc_ignore == 0) ) {
-            int response = warning_message("Note that changes to the previous selected spacecraft are lost unless you first select \"Apply\"! This is your only warning.");
+            int response = dsm_gui_lib::warning_message("Note that changes to the previous selected spacecraft are lost unless you first select \"Apply\"! This is your only warning.");
             if (response == QMessageBox::Cancel) {
                 ui->spc_list->setCurrentRow(global_spc_index);
                 global_spc_ignore = 1;
@@ -349,7 +349,7 @@ void SPC_Menu::apply_data()
         case 4: // Sprite File Name
             ui->spc_sprite->setText(line_items[0]);
         case 5: // Flight Software Identifier
-            ui->spc_fswid->setText(line_items[0]);
+            setQComboBox(ui->spc_fswid, line_items[0]);
         case 6: // Flight Software Sample Time
             ui->spc_fswsamp->setText(line_items[0]);
         }
@@ -401,19 +401,12 @@ void SPC_Menu::write_data()
 }
 
 
-int SPC_Menu::warning_message(QString warningText)
-{
-    QMessageBox warningMsg;
-    warningMsg.setIcon(QMessageBox::Warning);
-    warningMsg.setText(warningText);
-    warningMsg.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    int ret = warningMsg.exec();
-    return ret;
-}
-
-
 void SPC_Menu::on_spc_list_itemActivated(QListWidgetItem *item)
 {
     ui->spc_conf->setEnabled(true);
+}
+
+void SPC_Menu::setQComboBox(QComboBox *comboBox, QString string) {
+    comboBox->setCurrentIndex(comboBox->findText(string));
 }
 
