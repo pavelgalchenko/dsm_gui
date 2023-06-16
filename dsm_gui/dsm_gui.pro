@@ -13,22 +13,26 @@ QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 
 SOURCES += \
     color_select.cpp \
+    dsm_gui_lib.cpp \
     fov_menu.cpp \
     grh_menu.cpp \
     ipc_menu.cpp \
     main.cpp \
     mainwindow.cpp \
     nos_menu.cpp \
+    orb_menu.cpp \
     rgn_menu.cpp \
     tdr_menu.cpp
 
 HEADERS += \
     color_select.h \
+    dsm_gui_lib.h \
     fov_menu.h \
     grh_menu.h \
     ipc_menu.h \
     mainwindow.h \
     nos_menu.h \
+    orb_menu.h \
     rgn_menu.h \
     tdr_menu.h
 
@@ -39,6 +43,7 @@ FORMS += \
     ipc_menu.ui \
     mainwindow.ui \
     nos_menu.ui \
+    orb_menu.ui \
     rgn_menu.ui \
     tdr_menu.ui
 

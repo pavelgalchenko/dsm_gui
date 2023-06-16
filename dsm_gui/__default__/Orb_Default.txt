@@ -1,5 +1,5 @@
 <<<<<<<<<<<<<<<<<  42: Orbit Description File   >>>>>>>>>>>>>>>>>
-Low Earth Orbit               !  Description
+"Low Earth Orbit"             !  Description
 CENTRAL                       !  Orbit Type (ZERO, FLIGHT, CENTRAL, THREE_BODY)
 ::::::::::::::  Use these lines if ZERO           :::::::::::::::::
 MINORBODY_2                   !  World
