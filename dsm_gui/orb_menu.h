@@ -23,7 +23,6 @@ public:
     ~ORB_Menu();
 
 private slots:
-//    void initialize_maps();
     void set_validators();
     void receive_orbpath(QString);
     void receive_data(QString file_path);
@@ -33,7 +32,6 @@ private slots:
 
     void string2radiobool(QString boolString, QButtonGroup *buttonGroup);
     void setQComboBox(QComboBox *comboBox, QString string);
-//    QStringList multiMapValue2QStringList(QMultiMap<int, QString> map);
 
     void on_orbListRemove_clicked();
     void on_orbListAdd_clicked();

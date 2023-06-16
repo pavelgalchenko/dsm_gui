@@ -831,18 +831,16 @@ void ORB_Menu::checkKepPA() {
     ui->orbCentKepApoAlt->setValidator(new QDoubleValidator(periAlt.toDouble(), INFINITY, 5));
     if (!(ui->orbCentPA->checkedId()==1) || ui->orbCentICParam->currentText().compare("Keplerian")) {
         ui->orbCentKepPAWarning->setVisible(false);
+        ui->applyButton->setEnabled(true);
     }
     else if (ui->orbCentKepPeriAlt->validator()->validate(periAlt,i)==QValidator::Intermediate) {
-        ui->orbCentKepPAWarning->setText("Periapsis Altitude cannot be greater than Apoapsis Altitude!");
+        ui->orbCentKepPAWarning->setText("***Periapsis Altitude cannot be greater than Apoapsis Altitude!***");
         ui->orbCentKepPAWarning->setVisible(true);
-    }
-    else if (ui->orbCentKepApoAlt->validator()->validate(apoAlt,i)==QValidator::Intermediate) {
-        ui->orbCentKepPAWarning->setText("Apoapsis Altitude cannot be less than Periapsis Altitude!");
-        ui->orbCentKepPAWarning->setVisible(true);
+        ui->applyButton->setEnabled(false);
     }
     else {
         ui->orbCentKepPAWarning->setVisible(false);
+        ui->applyButton->setEnabled(true);
     }
 }
-
 
