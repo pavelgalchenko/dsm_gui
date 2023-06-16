@@ -70,7 +70,6 @@ void ORB_Menu::set_validators() {
     ui->orbTBodyFileType->addItems(dsm_gui_lib::sortStringList(orbFileTypeInputs.values()));
     ui->orbTBodyFileLabel->setValidator(noQuotes);
 
-    ui->orbEnabled->setId(ui->orbEnabled_on,1); ui->orbEnabled->setId(ui->orbEnabled_off,0);
     ui->orbZeroPolyGrav->setId(ui->orbZeroPolyGrav_on,1); ui->orbZeroPolyGrav->setId(ui->orbZeroPolyGrav_off,0);
     ui->orbFlightPolyGrav->setId(ui->orbFlightPolyGrav_on,1); ui->orbFlightPolyGrav->setId(ui->orbFlightPolyGrav_off,0);
     ui->orbCentJ2->setId(ui->orbCentJ2_on,1); ui->orbCentJ2->setId(ui->orbCentJ2_off,0);
