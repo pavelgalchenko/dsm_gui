@@ -243,9 +243,9 @@ void SPC_Menu::on_spc_conf_clicked()
     spc_submenu->setModal(true);
     spc_submenu->show();
 
-    connect(this, SIGNAL(send_data(QString)), spc_submenu, SLOT(receive_spc_sm_path(QString)));
-    emit send_data(ui->spc_name->text());
-    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+    connect(this, SIGNAL(send_data(QString, QString)), spc_submenu, SLOT(receive_spc_sm_path(QString, QString)));
+    emit send_data(ui->spc_name->text(), inout_path);
+    disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
 }
 
 

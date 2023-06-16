@@ -22,7 +22,7 @@ public:
     ~SPC_Menu();
 
 signals:
-    void send_data(QString);
+    void send_data(QString, QString);
 
 private slots:
 
