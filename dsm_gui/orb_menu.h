@@ -28,6 +28,7 @@ private slots:
     void receive_orbpath(QString);
     void receive_data(QString file_path);
     void apply_data();
+    void clear_data();
     void write_data(QString file_path);
 
     void string2radiobool(QString boolString, QButtonGroup *buttonGroup);
@@ -60,13 +61,18 @@ private slots:
 
     void on_orbCentPA_on_toggled(bool checked);
 
-    void on_orbTBodyLPoint_currentIndexChanged(int index);
+    void on_orbTBodyLPoint_currentTextChanged(const QString &text);
+
+    void checkKepPA();
 
 private:
     Ui::ORB_Menu *ui;
 
     int global_orb_index = -1;
     int global_orb_ignore = 0;
+
+    QString oldPeriAlt = "";
+    QString oldApoAlt = "";
 
     QString inout_path;
     QStringList orb_data;

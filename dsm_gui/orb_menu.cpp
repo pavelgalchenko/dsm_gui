@@ -9,13 +9,16 @@ ORB_Menu::ORB_Menu(QWidget *parent) :
     set_validators();
 }
 
-ORB_Menu::~ORB_Menu()
-{
+ORB_Menu::~ORB_Menu() {
     delete ui;
 }
 
-void ORB_Menu::set_validators()
-{
+void ORB_Menu::set_validators() {
+    QRegularExpression rx("[^\"]*");
+    QValidator *noQuotes = new QRegularExpressionValidator(rx,this);
+
+    ui->orbLabel->setValidator(noQuotes);
+    ui->orbDescription->setValidator(noQuotes);
     ui->orbType->addItems(dsm_gui_lib::sortStringList(orbTypeInputs.values()));
     ui->orbFormFrame->addItems(orbFrameInputs);
     ui->orbFormOrigin->addItems(orbFrameInputs);
@@ -33,8 +36,8 @@ void ORB_Menu::set_validators()
     ui->orbCentWorld->addItems(worldInputs);
     ui->orbCentWorld->setMaxVisibleItems(10);
     ui->orbCentICParam->addItems(dsm_gui_lib::sortStringList(orbCentICTypeInputs.values()));
-    ui->orbCentKepPeriAlt->setValidator(new QDoubleValidator);
-    ui->orbCentKepApoAlt->setValidator(new QDoubleValidator);
+    ui->orbCentKepPeriAlt->setValidator(new QDoubleValidator(-INFINITY,INFINITY,5));
+    ui->orbCentKepApoAlt->setValidator(new QDoubleValidator(-INFINITY,INFINITY,5));
     ui->orbCentKepMinAlt->setValidator(new QDoubleValidator);
     ui->orbCentKepInc->setValidator(new QDoubleValidator);
     ui->orbCentKepRAAN->setValidator(new QDoubleValidator);
@@ -46,16 +49,17 @@ void ORB_Menu::set_validators()
     ui->orbCentPVVel_2->setValidator(new QDoubleValidator);
     ui->orbCentPVVel_3->setValidator(new QDoubleValidator);
     ui->orbCentFileType->addItems(dsm_gui_lib::sortStringList(orbFileTypeInputs.values()));
+    ui->orbCentFileLabel->setValidator(noQuotes);
 
     ui->orbTBodyLSystem->addItems(dsm_gui_lib::sortStringList(orbTBodyLSysInputs.values()));
     ui->orbTBodyProp->addItems(dsm_gui_lib::sortStringList(orbTBodyPropInputs.values()));
     ui->orbTBodyICParam->addItems(dsm_gui_lib::sortStringList(orbTBodyICTypeInputs.values()));
     ui->orbTBodyLPoint->addItems(lagrangePointInputs);
-    ui->orbTBodyModeXYSMA->setValidator(new QDoubleValidator);
+    ui->orbTBodyModeXYSMA->setValidator(new QDoubleValidator(0,INFINITY,5));
     ui->orbTBodyModeXYPhase->setValidator(new QDoubleValidator);
-    ui->orbTBodyModeXYSMA_2->setValidator(new QDoubleValidator);
+    ui->orbTBodyModeXYSMA_2->setValidator(new QDoubleValidator(0,INFINITY,5));
     ui->orbTBodyModeXYPhase_2->setValidator(new QDoubleValidator);
-    ui->orbTBodyModeZSMA->setValidator(new QDoubleValidator);
+    ui->orbTBodyModeZSMA->setValidator(new QDoubleValidator(0,INFINITY,5));
     ui->orbTBodyModeZPhase->setValidator(new QDoubleValidator);
     ui->orbTBodyCowellPos_1->setValidator(new QDoubleValidator);
     ui->orbTBodyCowellPos_2->setValidator(new QDoubleValidator);
@@ -64,6 +68,7 @@ void ORB_Menu::set_validators()
     ui->orbTBodyCowellVel_2->setValidator(new QDoubleValidator);
     ui->orbTBodyCowellVel_3->setValidator(new QDoubleValidator);
     ui->orbTBodyFileType->addItems(dsm_gui_lib::sortStringList(orbFileTypeInputs.values()));
+    ui->orbTBodyFileLabel->setValidator(noQuotes);
 
     ui->orbEnabled->setId(ui->orbEnabled_on,1); ui->orbEnabled->setId(ui->orbEnabled_off,0);
     ui->orbZeroPolyGrav->setId(ui->orbZeroPolyGrav_on,1); ui->orbZeroPolyGrav->setId(ui->orbZeroPolyGrav_off,0);
@@ -83,10 +88,16 @@ void ORB_Menu::set_validators()
     ui->orbCentKepMinAlt->setEnabled(false);
     ui->orbCentKepEcc->setEnabled(false);
     ui->orbCentPA_on->setChecked(true);
+
+    ui->orbCentKepPAWarning->setVisible(false);
+    connect(ui->orbCentKepPeriAlt, &QLineEdit::textChanged, this, &ORB_Menu::checkKepPA);
+    connect(ui->orbCentKepApoAlt, &QLineEdit::textChanged, this, &ORB_Menu::checkKepPA);
+    connect(ui->orbCentICParam, &QComboBox::currentTextChanged, this, &ORB_Menu::checkKepPA);
+    connect(ui->orbCentPA, &QButtonGroup::idToggled, this, &ORB_Menu::checkKepPA);
+    connect(ui->orbList, &QListWidget::currentRowChanged, this, &ORB_Menu::clear_data);
 }
 
-void ORB_Menu::receive_orbpath(QString path)
-{
+void ORB_Menu::receive_orbpath(QString path) {
     inout_path = path;
     QStringList orbFiles = QDir(inout_path).entryList({"Orb_*"});
 
@@ -94,7 +105,7 @@ void ORB_Menu::receive_orbpath(QString path)
     ui->orbList->clear();
 
     for (int i = 0; i<orbFiles.length(); i++)
-        orbFileHash.insert(orbFiles[i].chopped(4).mid(4),inout_path+orbFiles[i]);
+        orbFileHash.insert(orbFiles[i].chopped(4).mid(4),inout_path+orbFiles[i].remove("\""));
 
     ui->orbList->addItems(orbFileHash.keys());
 }
@@ -169,7 +180,7 @@ void ORB_Menu::apply_data()
     // Iterate over the number of lines in the file. Last line can end in newline "\n" character.
     for(int line_num=1; line_num<=orb_data.length(); line_num++) {
         line_string = orb_string[line_num-1];
-        line_items = orb_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+        line_items = orb_data[line_num-1].remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
         switch (line_num) {
 /******************************************* HEADER ***************************************************/
         case 1: // File Header
@@ -228,6 +239,8 @@ void ORB_Menu::apply_data()
         case 15: // Central Orbit Peri/Apoapsis Alt
             ui->orbCentKepPeriAlt->setText(line_items[0]);
             ui->orbCentKepApoAlt->setText(line_items[1]);
+            ui->orbCentKepPeriAlt->setValidator(new QDoubleValidator(-INFINITY,ui->orbCentKepApoAlt->text().toDouble(), 5));
+            ui->orbCentKepApoAlt->setValidator(new QDoubleValidator(ui->orbCentKepPeriAlt->text().toDouble(), INFINITY, 5));
             break;
         case 16: // Central Orbit Min Alt & Ecc
             ui->orbCentKepMinAlt->setText(line_items[0]);
@@ -391,7 +404,7 @@ void ORB_Menu::on_orbList_itemClicked() {
     QString itemText = ui->orbList->currentItem()->text();
 
     if (index == global_orb_index) {
-
+        return;
     } else {
 
         if ( (global_orb_index != -1) && (global_orb_ignore == 0) ) {
@@ -409,9 +422,8 @@ void ORB_Menu::on_orbList_itemClicked() {
         receive_data(orbFileHash[itemText]);
         apply_data();
 
-    }
-
         global_orb_index = index;
+    }
 }
 
 void ORB_Menu::on_loadDefaultButton_clicked() {
@@ -455,10 +467,10 @@ void ORB_Menu::on_closeButton_clicked() {
 void ORB_Menu::on_applyButton_clicked() {
 
     int index = ui->orbList->currentRow();
-    QString oldOrb = ui->orbList->currentItem()->text();
     if(index == -1) {
         return;
     }
+    QString oldOrb = ui->orbList->currentItem()->text();
     QString oldOrbFile = orbFileHash.take(oldOrb);
 
     QString newLabel = ui->orbLabel->text();
@@ -467,6 +479,7 @@ void ORB_Menu::on_applyButton_clicked() {
         return;
     }
 
+    newLabel = newLabel.remove("\"");
     ui->orbList->currentItem()->setText(newLabel);
     orbFileHash.insert(newLabel,inout_path + "Orb_" + newLabel + ".txt");
     QFile::rename(oldOrbFile,orbFileHash[newLabel]);
@@ -479,7 +492,7 @@ void ORB_Menu::on_applyButton_clicked() {
         case 1: // File Header
             break;
         case 2: // Orbit Description
-            data_inp = "\"" + ui->orbDescription->text() + "\"";
+            data_inp = "\"" + ui->orbDescription->text().remove("\"") + "\"";
             break;
         case 3: // Orbit Type
             data_inp = orbTypeInputs.key(ui->orbType->currentText());
@@ -636,6 +649,80 @@ void ORB_Menu::on_applyButton_clicked() {
     write_data(file_path);
 }
 
+void ORB_Menu::clear_data()
+{    
+    // If ui->orbList->currentRow()==1, set all fields to blank
+    if (ui->orbList->currentRow()!=-1) return;
+
+    ui->orbLabel->setText("");
+
+    ui->orbDescription->setText("");
+    ui->orbType->setCurrentIndex(0);
+
+    ui->orbZeroWorld->setCurrentIndex(0);
+    ui->orbZeroMinorBodyNum->setValue(0);
+    ui->orbZeroPolyGrav->button(0)->setChecked(true);
+
+    ui->orbFlightRegion->setValue(0);
+    ui->orbFlightPolyGrav->button(0)->setChecked(true);
+
+    ui->orbCentWorld->setCurrentIndex(0);
+    ui->orbCentMinorBodyNum->setValue(0);
+    ui->orbCentJ2->button(0)->setChecked(true);
+    ui->orbCentICParam->setCurrentIndex(0);
+    ui->orbCentPA->button(0)->setChecked(true);
+    ui->orbCentKepPeriAlt->setText("");
+    ui->orbCentKepApoAlt->setText("");
+    ui->orbCentKepMinAlt->setText("");
+    ui->orbCentKepEcc->setValue(0);
+    ui->orbCentKepInc->setText("");
+    ui->orbCentKepRAAN->setText("");
+    ui->orbCentKepArgPeri->setText("");
+    ui->orbCentKepTA->setText("");
+    ui->orbCentPVPos_1->setText("");
+    ui->orbCentPVPos_2->setText("");
+    ui->orbCentPVPos_3->setText("");
+    ui->orbCentPVVel_1->setText("");
+    ui->orbCentPVVel_2->setText("");
+    ui->orbCentPVVel_3->setText("");
+    ui->orbCentFileType->setCurrentIndex(0);
+    ui->orbCentFileName->setText("");
+    ui->orbCentFileLabel->setText("");
+
+    ui->orbTBodyLSystem->setCurrentIndex(0);
+    ui->orbTBodyProp->setCurrentIndex(0);
+    ui->orbTBodyICParam->setCurrentIndex(0);
+    ui->orbTBodyLPoint->setCurrentIndex(0);
+
+    ui->orbTBodyModeXYSMA->setText("");
+    ui->orbTBodyModeXYPhase->setText("");
+    ui->orbTBodyModeSense->button(0)->setChecked(true);
+    ui->orbTBodyModeXYSMA_2->setText("");
+    ui->orbTBodyModeXYPhase_2->setText("");
+    ui->orbTBodyModeSense_2->button(0)->setChecked(true);
+    ui->orbTBodyModeZSMA->setText("");
+    ui->orbTBodyModeZPhase->setText("");
+    ui->orbTBodyCowellPos_1->setText("");
+    ui->orbTBodyCowellPos_2->setText("");
+    ui->orbTBodyCowellPos_3->setText("");
+    ui->orbTBodyCowellVel_1->setText("");
+    ui->orbTBodyCowellVel_2->setText("");
+    ui->orbTBodyCowellVel_3->setText("");
+    ui->orbTBodyFileType->setCurrentIndex(0);
+    ui->orbTBodyFileLabel->setText("");
+    ui->orbTBodyFileName->setText("");
+
+    ui->orbFormFrame->setCurrentIndex(0);
+    ui->orbFormFrameEulerSeq->setCurrentIndex(0);
+    ui->orbFormFrameEuler_1->setText("");
+    ui->orbFormFrameEuler_2->setText("");
+    ui->orbFormFrameEuler_3->setText("");
+    ui->orbFormOrigin->setCurrentIndex(0);
+    ui->orbFormOriginPos_1->setText("");
+    ui->orbFormOriginPos_2->setText("");
+    ui->orbFormOriginPos_3->setText("");
+}
+
 void ORB_Menu::string2radiobool(QString boolString, QButtonGroup *buttonGroup) {
     if(!boolString.compare("TRUE",Qt::CaseInsensitive)) { // compare returns zero if equal
         buttonGroup->button(1)->setChecked(true);
@@ -647,7 +734,6 @@ void ORB_Menu::string2radiobool(QString boolString, QButtonGroup *buttonGroup) {
 void ORB_Menu::setQComboBox(QComboBox *comboBox, QString string) {
     comboBox->setCurrentIndex(comboBox->findText(string));
 }
-
 
 void ORB_Menu::on_orbType_currentTextChanged(const QString &arg1) {
     for (int i = 0; i < ui->orbTab->count(); i++)
@@ -715,7 +801,6 @@ void ORB_Menu::on_orbListDuplicate_clicked() {
     QFile::copy(orbFileHash[oldOrb], orbFileHash[newOrb]);
 
     ui->orbList->addItem(newOrb);
-
 }
 
 void ORB_Menu::on_orbCentPA_on_toggled(bool checked) {
@@ -727,8 +812,8 @@ void ORB_Menu::on_orbCentPA_on_toggled(bool checked) {
     ui->orbCentKepEcc->setEnabled(!checked);
 }
 
-void ORB_Menu::on_orbTBodyLPoint_currentIndexChanged(int index) {
-    bool isTriPt = ((lagrangePointInputs[index] == "L4") || (lagrangePointInputs[index] == "L5"));
+void ORB_Menu::on_orbTBodyLPoint_currentTextChanged(const QString &text) {
+    bool isTriPt = ((!text.compare("L4")) || (!text.compare("L5")));
     ui->orbTBodyModeXYSMALabel_2->setEnabled(isTriPt);
     ui->orbTBodyModeXYSMA_2->setEnabled(isTriPt);
     ui->orbTBodyModeXYPhaseLabel_2->setEnabled(isTriPt);
@@ -737,3 +822,27 @@ void ORB_Menu::on_orbTBodyLPoint_currentIndexChanged(int index) {
     ui->orbTBodyModeSense_CW_2->setEnabled(isTriPt);
     ui->orbTBodyModeSense_CCW_2->setEnabled(isTriPt);
 }
+
+void ORB_Menu::checkKepPA() {
+    int i;
+    QString apoAlt = ui->orbCentKepApoAlt->text();
+    QString periAlt = ui->orbCentKepPeriAlt->text();
+    ui->orbCentKepPeriAlt->setValidator(new QDoubleValidator(-INFINITY, apoAlt.toDouble(), 5));
+    ui->orbCentKepApoAlt->setValidator(new QDoubleValidator(periAlt.toDouble(), INFINITY, 5));
+    if (!(ui->orbCentPA->checkedId()==1) || ui->orbCentICParam->currentText().compare("Keplerian")) {
+        ui->orbCentKepPAWarning->setVisible(false);
+    }
+    else if (ui->orbCentKepPeriAlt->validator()->validate(periAlt,i)==QValidator::Intermediate) {
+        ui->orbCentKepPAWarning->setText("Periapsis Altitude cannot be greater than Apoapsis Altitude!");
+        ui->orbCentKepPAWarning->setVisible(true);
+    }
+    else if (ui->orbCentKepApoAlt->validator()->validate(apoAlt,i)==QValidator::Intermediate) {
+        ui->orbCentKepPAWarning->setText("Apoapsis Altitude cannot be less than Periapsis Altitude!");
+        ui->orbCentKepPAWarning->setVisible(true);
+    }
+    else {
+        ui->orbCentKepPAWarning->setVisible(false);
+    }
+}
+
+
