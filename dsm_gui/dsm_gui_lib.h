@@ -2,11 +2,7 @@
 #define DSM_GUI_LIB_H
 
 #include <QDialog>
-<<<<<<< HEAD
 #include <QComboBox>
-=======
->>>>>>> main
-
 
 class dsm_gui_lib
 {

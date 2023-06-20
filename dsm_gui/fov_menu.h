@@ -1,8 +1,6 @@
 #ifndef FOV_MENU_H
 #define FOV_MENU_H
 
-#include "color_select.h"
-
 #include <QDialog>
 #include <QListWidgetItem>
 #include <QDebug>
@@ -45,8 +43,6 @@ private slots:
 
 private:
     Ui::FOV_Menu *ui;
-
-    COLOR_Select *color_menu;
 
     int global_fov_index = -1;
     int global_fov_ignore = 0;

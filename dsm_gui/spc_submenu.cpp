@@ -238,8 +238,9 @@ void SPC_submenu::apply_data()
         if (line_num > 27){
             for (i=0; i<bodies; i++)
             {
+                ui->spc_cur_body_list->addItem("Body " + QString::number(i));
                 ui->spc_cur_body_list->setCurrentRow(i);
-                long body_line_num = line_num - 28 - 9*i;
+                long body_line_num = line_num - 28 - 10*i;
                 switch (body_line_num) {
                 case 0: // Body X Header
                     break;
@@ -299,10 +300,223 @@ void SPC_submenu::apply_data()
                 }
             }
         } // end body section
-        // else if (i > 27 + bodies*9) ...
+        // begin joint section
+        else if (i > 27 + bodies*9 + 5)
+        {
+            joints = bodies - 1;
+            for (i=0; i<joints; i++)
+            {
+                long joint_line_num = line_num - 28 - 10*bodies - 4 - 16*i;
+                ui->spc_cur_joint_list->addItem("Joint " + QString::number(i));
+                ui->spc_cur_joint_list->setCurrentRow(i);
+                switch (joint_line_num) {
+                case 0: // Joint X Header
+                    break;
+                case 1:
+                    setQComboBox(ui->spc_cur_joint_type, line_items[0]);
+                    break;
+                case 2:
+                    ui->spc_cur_joint_in->setValue(line_items[0].toInt());
+                    ui->spc_cur_joint_out->setValue(line_items[1].toInt());
+                    break;
+                case 3:
+                    ui->spc_cur_joint_rotdof->setValue(line_items[0].toInt());
+                    setQComboBox(ui->spc_cur_joint_rotdof_seq, line_items[1]);
+                    setQComboBox(ui->spc_cur_joint_rottype, line_items[2]);
+                    break;
+                case 4:
+                    ui->spc_cur_joint_trndof->setValue(line_items[0].toInt());
+                    setQComboBox(ui->scp_cur_joint_trndof_seq, line_items[1]);
+                    break;
+                case 5:
+                    if (QString::compare(line_items[0], "FALSE")) ui->spc_cur_joint_rlock1->setCheckState(Qt::Checked);
+                    else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+
+                    if (QString::compare(line_items[1], "FALSE")) ui->spc_cur_joint_rlock2->setCheckState(Qt::Checked);
+                    else ui->spc_cur_joint_rlock2->setCheckState(Qt::Unchecked);
+
+                    if (QString::compare(line_items[2], "FALSE")) ui->spc_cur_joint_rlock3->setCheckState(Qt::Checked);
+                    else ui->spc_cur_joint_rlock3->setCheckState(Qt::Unchecked);
+                    break;
+
+                case 6:
+                    if (QString::compare(line_items[0], "FALSE")) ui->spc_cur_joint_tlock1->setCheckState(Qt::Checked);
+                    else ui->spc_cur_joint_tlock1->setCheckState(Qt::Unchecked);
+
+                    if (QString::compare(line_items[1], "FALSE")) ui->spc_cur_joint_tlock2->setCheckState(Qt::Checked);
+                    else ui->spc_cur_joint_tlock2->setCheckState(Qt::Unchecked);
+
+                    if (QString::compare(line_items[2], "FALSE")) ui->spc_cur_joint_tlock3->setCheckState(Qt::Checked);
+                    else ui->spc_cur_joint_tlock3->setCheckState(Qt::Unchecked);
+                    break;
+                case 7:
+                    ui->spc_cur_joint_ang0_1->setText(line_items[0]);
+                    ui->spc_cur_joint_ang0_2->setText(line_items[1]);
+                    ui->spc_cur_joint_ang0_3->setText(line_items[2]);
+                    break;
+                case 8:
+                    ui->spc_cur_joint_angrate0_1->setText(line_items[0]);
+                    ui->spc_cur_joint_angrate0_2->setText(line_items[1]);
+                    ui->spc_cur_joint_angrate0_3->setText(line_items[2]);
+                    break;
+                case 9:
+                    ui->spc_cur_joint_disp0_1->setText(line_items[0]);
+                    ui->spc_cur_joint_disp0_2->setText(line_items[1]);
+                    ui->spc_cur_joint_disp0_3->setText(line_items[2]);
+                    break;
+                case 10:
+                    ui->spc_cur_joint_dispr0_1->setText(line_items[0]);
+                    ui->spc_cur_joint_dispr0_2->setText(line_items[1]);
+                    ui->spc_cur_joint_dispr0_3->setText(line_items[2]);
+                    break;
+                case 11:
+                    ui->spc_cur_joint_bigi_1->setText(line_items[0]);
+                    ui->spc_cur_joint_bigi_2->setText(line_items[1]);
+                    ui->spc_cur_joint_bigi_3->setText(line_items[2]);
+
+                    setQComboBox(ui->spc_cur_joint_bigi_seq, line_items[3]);
+                    break;
+                case 12:
+                    ui->spc_cur_joint_bogo_1->setText(line_items[0]);
+                    ui->spc_cur_joint_bogo_2->setText(line_items[1]);
+                    ui->spc_cur_joint_bogo_3->setText(line_items[2]);
+
+                    setQComboBox(ui->spc_cur_joint_bogo_seq, line_items[3]);
+                    break;
+                case 13:
+                    ui->spc_cur_joint_poswrt_in_1->setText(line_items[0]);
+                    ui->spc_cur_joint_poswrt_in_2->setText(line_items[1]);
+                    ui->spc_cur_joint_poswrt_in_3->setText(line_items[2]);
+                    break;
+                case 14:
+                    ui->spc_cur_joint_poswrt_out_1->setText(line_items[0]);
+                    ui->spc_cur_joint_poswrt_out_2->setText(line_items[1]);
+                    ui->spc_cur_joint_poswrt_out_3->setText(line_items[2]);
+                    break;
+                case 15:
+                    ui->spc_cur_joint_param_file->setText(line_items[0]);
+                    break;
+                }
+            }
+        }
+        else if (i > 27 + bodies*9 + 5 + joints*16 + 3)
+        {
+            if (line_num == 27 + bodies*9 + 5 + joints*16 + 3)
+            {
+                wheels = line_items[0].toInt();
+            }
+            else
+            {
+                for (i=0; i<wheels; i++)
+                {
+                    long wheel_line_num = line_num - 28 - 10*bodies - 4 - 16*joints - 3 - 7*i;
+                    ui->spc_cur_wheel_list->addItem("Wheel " + QString::number(i));
+                    ui->spc_cur_wheel_list->setCurrentRow(i);
+                    switch (wheel_line_num){
+                    case 0:
+                        break; // header
+                    case 1:
+                        ui->spc_cur_wheel_initmom->setText(line_items[0]);
+                        break;
+                    case 2:
+                        ui->spc_cur_wheel_axis_1->setText(line_items[0]);
+                        ui->spc_cur_wheel_axis_2->setText(line_items[1]);
+                        ui->spc_cur_wheel_axis_3->setText(line_items[2]);
+                        break;
+                    case 3:
+                        ui->spc_cur_wheel_maxtrq->setText(line_items[0]);
+                        ui->spc_cur_wheel_maxmom->setText(line_items[1]);
+                        break;
+                    case 4:
+                        ui->spc_cur_wheel_body->setValue(line_items[0].toInt());
+                        break;
+                    case 5:
+                        ui->spc_cur_wheel_node->setValue(line_items[0].toInt());
+                        break;
+                    case 6:
+                        if (QString::compare(line_items[0], "NONE"))
+                        {
+                            ui->spc_cur_wheel_drjit_on->setCheckState(Qt::Checked);
+                        }
+                        else
+                        {
+                            ui->spc_cur_wheel_drjit_on->setCheckState(Qt::Unchecked);
+                            ui->spc_cur_wheel_drjit_file->setText(line_items[0]);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        else if (i > 27 + bodies*9 + 5 + joints*16 + 3 + wheels*7)
+        {
+            if (line_num == 27 + bodies*9 + 5 + joints*16 + 3 + wheels*7 + 1)
+            {
+                mtbs = line_items[0].toInt();
+            }
+            else
+            {
+                for (i=0; i<mtbs; i++)
+                {
+                    long mtb_line_num = line_num - 28 - 10*bodies - 4 - 16*joints - 3 - 7*wheels - 4*i;
+                    ui->spc_cur_mtb_list->addItem("MTB " + QString::number(i));
+                    ui->spc_cur_mtb_list->setCurrentRow(i);
+                    switch (mtb_line_num){
+                    case 0:
+                        break; // header
+                    case 1:
+                        ui->spc_cur_mtb_sat->setText(line_items[0]);
+                        break;
+                    case 2:
+                        ui->spc_cur_mtb_axis_1->setText(line_items[0]);
+                        ui->spc_cur_mtb_axis_2->setText(line_items[1]);
+                        ui->spc_cur_mtb_axis_3->setText(line_items[2]);
+                        break;
+                    case 3:
+                        ui->spc_cur_mtb_node->setValue(line_items[0].toInt());
+                        break;
+                    }
+                }
+            }
+        }
+        else if (i > 27 + bodies*9 + 5 + joints*16 + 3 + wheels*7 + 4*mtbs)
+        {
+            if (line_num == 27 + bodies*9 + 5 + joints*16 + 3 + wheels*7 + 1 + 4*mtbs + 1)
+            {
+                thrusters = line_items[0].toInt();
+            }
+            else
+            {
+                for (i=0; i<thrusters; i++)
+                {
+                    long thruster_line_num = line_num - 28 - 10*bodies - 4 - 16*joints - 3 - 7*wheels - 4*mtbs - 6*i;
+                    ui->spc_cur_thruster_list->addItem("Thruster " + QString::number(i));
+                    ui->spc_cur_thruster_list->setCurrentRow(i);
+                    switch (thruster_line_num){
+                    case 0:
+                        break; // header
+                    case 1:
+                        setQComboBox(ui->spc_cur_thruster_mode, line_items[0]);
+                        break;
+                    case 2:
+                        ui->spc_cur_thruster_force->setText(line_items[0]);
+                        break;
+                    case 3:
+                        ui->spc_cur_thruster_axis_1->setText(line_items[0]);
+                        ui->spc_cur_thruster_axis_2->setText(line_items[1]);
+                        ui->spc_cur_thruster_axis_3->setText(line_items[2]);
+                        break;
+                    case 4:
+                        ui->spc_cur_thruster_body->setValue(line_items[0].toInt());
+                        break;
+                    case 5:
+                        ui->spc_cur_thruster_node->setValue(line_items[0].toInt());
+                        break;
+                    }
+                }
+            }
+        }
     }
-
-
 }
 
 void SPC_submenu::write_data()

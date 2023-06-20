@@ -11,10 +11,22 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>697</width>
+    <height>777</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>697</width>
+    <height>777</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
@@ -100,7 +112,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>5</number>
         </property>
         <widget class="QWidget" name="dynamics">
          <attribute name="title">
@@ -309,7 +321,7 @@
            <item row="5" column="0">
             <widget class="QLabel" name="label">
              <property name="text">
-              <string>TextLabel</string>
+              <string>Shaker File Name</string>
              </property>
             </widget>
            </item>
@@ -862,7 +874,7 @@
             <x>0</x>
             <y>0</y>
             <width>168</width>
-            <height>651</height>
+            <height>611</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -909,7 +921,7 @@
             <x>170</x>
             <y>-10</y>
             <width>501</width>
-            <height>661</height>
+            <height>657</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout_3">
@@ -925,67 +937,39 @@
            <property name="bottomMargin">
             <number>12</number>
            </property>
-           <item row="1" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_24">
+           <item row="4" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
              <item>
-              <widget class="QSpinBox" name="spc_cur_joint_in"/>
+              <widget class="QCheckBox" name="spc_cur_joint_rlock1">
+               <property name="text">
+                <string>Yes</string>
+               </property>
+              </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="spc_cur_joint_out"/>
+              <widget class="QCheckBox" name="spc_cur_joint_rlock2">
+               <property name="text">
+                <string>Yes</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="spc_cur_joint_rlock3">
+               <property name="text">
+                <string>Yes</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
-           <item row="10" column="0">
-            <widget class="QLabel" name="label_38">
-             <property name="text">
-              <string>Init Disp [m]</string>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="1">
-            <widget class="QComboBox" name="scp_cur_joint_trndof_seq"/>
-           </item>
-           <item row="18" column="0">
+           <item row="19" column="0">
             <widget class="QLabel" name="label_44">
              <property name="text">
               <string>Parameter File Name</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="spc_cur_joint_type"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_35">
-             <property name="text">
-              <string>Inner, Outer Body Indices</string>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_26">
-             <item>
-              <widget class="QSpinBox" name="spc_cur_joint_trndof"/>
-             </item>
-            </layout>
-           </item>
-           <item row="18" column="1">
-            <widget class="QLineEdit" name="spc_cur_joint_param_file"/>
-           </item>
-           <item row="11" column="0">
-            <widget class="QLabel" name="label_39">
-             <property name="text">
-              <string>Init Disp Rate [m/s]</string>
-             </property>
-            </widget>
-           </item>
-           <item row="15" column="1">
-            <widget class="QComboBox" name="spc_cur_joint_bogo_seq"/>
-           </item>
-           <item row="17" column="0">
+           <item row="18" column="0">
             <widget class="QLabel" name="label_43">
              <property name="text">
               <string>Position wrt Outer Body Origin [m]</string>
@@ -995,217 +979,29 @@
              </property>
             </widget>
            </item>
-           <item row="16" column="0">
-            <widget class="QLabel" name="label_42">
-             <property name="text">
-              <string>Position wrt Inner Body Origin [m]</string>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <item row="18" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_32">
              <item>
-              <widget class="QCheckBox" name="spc_cur_joint_lock1">
-               <property name="text">
-                <string>Yes</string>
-               </property>
-              </widget>
+              <widget class="QLineEdit" name="spc_cur_joint_poswrt_out_1"/>
              </item>
              <item>
-              <widget class="QCheckBox" name="spc_cur_joint_lock2">
-               <property name="text">
-                <string>Yes</string>
-               </property>
-              </widget>
+              <widget class="QLineEdit" name="spc_cur_joint_poswrt_out_2"/>
              </item>
              <item>
-              <widget class="QCheckBox" name="spc_cur_joint_lock3">
-               <property name="text">
-                <string>Yes</string>
-               </property>
-              </widget>
+              <widget class="QLineEdit" name="spc_cur_joint_poswrt_out_3"/>
              </item>
             </layout>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_36">
-             <property name="text">
-              <string>RotDOF, Type</string>
-             </property>
-             <property name="wordWrap">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="14" column="0">
-            <widget class="QLabel" name="label_41">
-             <property name="text">
-              <string>Bo to Go Static Angles [deg], Seq</string>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="16" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_31">
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_poswrt_in_1"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_poswrt_in_2"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_poswrt_in_3"/>
-             </item>
-            </layout>
-           </item>
-           <item row="10" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_25">
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_disp0_1"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_disp0_2"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_disp0_3"/>
-             </item>
-            </layout>
-           </item>
-           <item row="14" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_30">
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_bogo_1"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_bogo_2"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_bogo_3"/>
-             </item>
-            </layout>
-           </item>
-           <item row="13" column="1">
-            <widget class="QComboBox" name="spc_cur_joint_bigi_seq"/>
            </item>
            <item row="3" column="1">
             <widget class="QComboBox" name="spc_cur_joint_rotdof_seq"/>
            </item>
-           <item row="6" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_23">
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_angrate0_1"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_angrate0_2"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_angrate0_3"/>
-             </item>
-            </layout>
+           <item row="16" column="1">
+            <widget class="QComboBox" name="spc_cur_joint_bogo_seq"/>
            </item>
-           <item row="12" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_29">
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_bigi_1"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_bigi_2"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_bigi_3"/>
-             </item>
-            </layout>
-           </item>
-           <item row="12" column="0">
-            <widget class="QLabel" name="label_40">
+           <item row="11" column="0">
+            <widget class="QLabel" name="label_38">
              <property name="text">
-              <string>Bi to Gi Static Angles [deg]</string>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="9" column="0">
-            <widget class="QLabel" name="label_32">
-             <property name="text">
-              <string>TrnDOF Sequence</string>
-             </property>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <widget class="QLabel" name="label_31">
-             <property name="text">
-              <string>TrnDOF</string>
-             </property>
-             <property name="scaledContents">
-              <bool>false</bool>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="13" column="0">
-            <widget class="QLabel" name="label_45">
-             <property name="text">
-              <string>Bi to GI Sequence</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_24">
-             <property name="text">
-              <string>RotDOF Locked?</string>
-             </property>
-            </widget>
-           </item>
-           <item row="15" column="0">
-            <widget class="QLabel" name="label_46">
-             <property name="text">
-              <string>Bo to Go Sequence</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="label_33">
-             <property name="text">
-              <string>Init Angle [deg]</string>
-             </property>
-            </widget>
-           </item>
-           <item row="11" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_28">
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_dispr0_1"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_dispr0_2"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_joint_dispr0_3"/>
-             </item>
-            </layout>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_30">
-             <property name="text">
-              <string>RotDOF Sequence</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="label_34">
-             <property name="text">
-              <string>Init Angle Rate [deg/s]</string>
-             </property>
-             <property name="wordWrap">
-              <bool>true</bool>
+              <string>Init Disp [m]</string>
              </property>
             </widget>
            </item>
@@ -1222,10 +1018,67 @@
              </item>
             </layout>
            </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_37">
+           <item row="12" column="0">
+            <widget class="QLabel" name="label_39">
              <property name="text">
-              <string>Type of Joint</string>
+              <string>Init Disp Rate [m/s]</string>
+             </property>
+            </widget>
+           </item>
+           <item row="19" column="1">
+            <widget class="QLineEdit" name="spc_cur_joint_param_file"/>
+           </item>
+           <item row="16" column="0">
+            <widget class="QLabel" name="label_46">
+             <property name="text">
+              <string>Go to Bo Sequence</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_26">
+             <item>
+              <widget class="QSpinBox" name="spc_cur_joint_trndof"/>
+             </item>
+            </layout>
+           </item>
+           <item row="7" column="0">
+            <widget class="QLabel" name="label_31">
+             <property name="text">
+              <string>TrnDOF</string>
+             </property>
+             <property name="scaledContents">
+              <bool>false</bool>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="15" column="0">
+            <widget class="QLabel" name="label_41">
+             <property name="text">
+              <string>Go to Bo Static Angles [deg], Seq</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="13" column="0">
+            <widget class="QLabel" name="label_40">
+             <property name="text">
+              <string>Bi to Gi Static Angles [deg]</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="label_33">
+             <property name="text">
+              <string>Init Angle [deg]</string>
              </property>
             </widget>
            </item>
@@ -1249,16 +1102,207 @@
              </item>
             </layout>
            </item>
+           <item row="1" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_24">
+             <item>
+              <widget class="QSpinBox" name="spc_cur_joint_in"/>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spc_cur_joint_out"/>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="label_36">
+             <property name="text">
+              <string>RotDOF, Type</string>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="14" column="1">
+            <widget class="QComboBox" name="spc_cur_joint_bigi_seq"/>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="label_34">
+             <property name="text">
+              <string>Init Angle Rate [deg/s]</string>
+             </property>
+             <property name="wordWrap">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="13" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_29">
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_bigi_1"/>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_bigi_2"/>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_bigi_3"/>
+             </item>
+            </layout>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_24">
+             <property name="text">
+              <string>RotDOF Locked?</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_35">
+             <property name="text">
+              <string>Inner, Outer Body Indices</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="1">
+            <widget class="QComboBox" name="scp_cur_joint_trndof_seq"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="spc_cur_joint_type"/>
+           </item>
            <item row="17" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_32">
+            <layout class="QHBoxLayout" name="horizontalLayout_31">
              <item>
-              <widget class="QLineEdit" name="spc_cur_joint_poswrt_out_1"/>
+              <widget class="QLineEdit" name="spc_cur_joint_poswrt_in_1"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="spc_cur_joint_poswrt_out_2"/>
+              <widget class="QLineEdit" name="spc_cur_joint_poswrt_in_2"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="spc_cur_joint_poswrt_out_3"/>
+              <widget class="QLineEdit" name="spc_cur_joint_poswrt_in_3"/>
+             </item>
+            </layout>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_37">
+             <property name="text">
+              <string>Type of Joint</string>
+             </property>
+            </widget>
+           </item>
+           <item row="15" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_30">
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_bogo_1"/>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_bogo_2"/>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_bogo_3"/>
+             </item>
+            </layout>
+           </item>
+           <item row="12" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_28">
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_dispr0_1"/>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_dispr0_2"/>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_dispr0_3"/>
+             </item>
+            </layout>
+           </item>
+           <item row="17" column="0">
+            <widget class="QLabel" name="label_42">
+             <property name="text">
+              <string>Position wrt Inner Body Origin [m]</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="0">
+            <widget class="QLabel" name="label_32">
+             <property name="text">
+              <string>TrnDOF Sequence</string>
+             </property>
+            </widget>
+           </item>
+           <item row="14" column="0">
+            <widget class="QLabel" name="label_45">
+             <property name="text">
+              <string>Bi to GI Sequence</string>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_25">
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_disp0_1"/>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_disp0_2"/>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_disp0_3"/>
+             </item>
+            </layout>
+           </item>
+           <item row="6" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_23">
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_angrate0_1"/>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_angrate0_2"/>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="spc_cur_joint_angrate0_3"/>
+             </item>
+            </layout>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="label_30">
+             <property name="text">
+              <string>RotDOF Sequence</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="0">
+            <widget class="QLabel" name="label_3">
+             <property name="text">
+              <string>TrnDOF Locked?</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="1">
+            <layout class="QHBoxLayout" name="horizontalLayout_14">
+             <item>
+              <widget class="QCheckBox" name="spc_cur_joint_tlock1">
+               <property name="text">
+                <string>Yes</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="spc_cur_joint_tlock2">
+               <property name="text">
+                <string>Yes</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="spc_cur_joint_tlock3">
+               <property name="text">
+                <string>Yes</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -1291,7 +1335,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideLeft</enum>
@@ -1352,7 +1396,7 @@
              <rect>
               <x>170</x>
               <y>0</y>
-              <width>351</width>
+              <width>471</width>
               <height>589</height>
              </rect>
             </property>
@@ -1610,7 +1654,7 @@
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="QSpinBox" name="spinBox"/>
+              <widget class="QSpinBox" name="spc_cur_mtb_node"/>
              </item>
             </layout>
            </widget>
@@ -3232,8 +3276,8 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="spc_cur_2flex"/>
   <buttongroup name="spc_cur_flex"/>
+  <buttongroup name="spc_cur_2flex"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>

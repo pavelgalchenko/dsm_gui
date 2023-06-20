@@ -86,11 +86,8 @@ void MainWindow::on_new_mission_clicked()
     ui->NOS_Menu->setEnabled(true);
     ui->RGN_Menu->setEnabled(true);
     ui->IPC_Menu->setEnabled(true);
-<<<<<<< HEAD
     ui->SPC_Menu->setEnabled(true);
-=======
     ui->ORB_Menu->setEnabled(true);
->>>>>>> main
 }
 
 int MainWindow::warning_message(QString warningText)
@@ -171,8 +168,6 @@ void MainWindow::on_IPC_Menu_clicked()
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 
-<<<<<<< HEAD
-
 void MainWindow::on_SPC_Menu_clicked()
 {
     spc_menu = new SPC_Menu(this);
@@ -180,7 +175,9 @@ void MainWindow::on_SPC_Menu_clicked()
     spc_menu->show();
 
     connect(this, SIGNAL(send_data(QString)), spc_menu, SLOT(receive_spcpath(QString)));
-=======
+    emit send_data(path);
+    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+}
 void MainWindow::on_ORB_Menu_clicked()
 {
     orb_menu = new ORB_Menu(this);
@@ -188,12 +185,6 @@ void MainWindow::on_ORB_Menu_clicked()
     orb_menu->show();
 
     connect(this, SIGNAL(send_data(QString)), orb_menu, SLOT(receive_orbpath(QString)));
->>>>>>> main
     emit send_data(path);
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
-
-<<<<<<< HEAD
-=======
-
->>>>>>> main
