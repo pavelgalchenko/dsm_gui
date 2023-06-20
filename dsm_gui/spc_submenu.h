@@ -24,7 +24,7 @@ private slots:
     void apply_data();
     void write_data();
 
-    //void set_validators();
+    void set_validators();
 
     void on_spc_cur_load_clicked();
     void on_spc_cur_save_clicked();

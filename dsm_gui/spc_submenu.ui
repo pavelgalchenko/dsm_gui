@@ -112,7 +112,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>6</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="dynamics">
          <attribute name="title">
@@ -182,7 +182,7 @@
               </spacer>
              </item>
              <item>
-              <widget class="QRadioButton" name="spc_cur_2flex_off">
+              <widget class="QRadioButton" name="spc_cur_2flex_on">
                <property name="text">
                 <string>On</string>
                </property>
@@ -192,7 +192,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="spc_cur_2flex_on">
+              <widget class="QRadioButton" name="spc_cur_2flex_off">
                <property name="text">
                 <string>Off</string>
                </property>
@@ -240,7 +240,7 @@
               </spacer>
              </item>
              <item>
-              <widget class="QRadioButton" name="spc_cur_flex_off">
+              <widget class="QRadioButton" name="spc_cur_flex_on">
                <property name="text">
                 <string>On</string>
                </property>
@@ -250,7 +250,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="spc_cur_flex_on">
+              <widget class="QRadioButton" name="spc_cur_flex_off">
                <property name="text">
                 <string>Off</string>
                </property>
@@ -290,7 +290,7 @@
               </spacer>
              </item>
              <item>
-              <widget class="QRadioButton" name="spc_cur_con_off">
+              <widget class="QRadioButton" name="spc_cur_con_on">
                <property name="text">
                 <string>On</string>
                </property>
@@ -300,7 +300,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="spc_cur_con_on">
+              <widget class="QRadioButton" name="spc_cur_con_off">
                <property name="text">
                 <string>Off</string>
                </property>
