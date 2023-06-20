@@ -57,7 +57,6 @@ private:
 
     QString inout_path;
     QString file_path;
-    QStringList file_paths;
 
     QStringList spc_names;
     QStringList spc_string;
@@ -74,10 +73,10 @@ private:
     int mtbs;
     int thrusters;
     int gyros;
-    int magentometers;
+    int mags;
     int css_s;
     int fss_s;
-    int star_trackers;
+    int stracks;
     int gps_s;
     int accels;
 };

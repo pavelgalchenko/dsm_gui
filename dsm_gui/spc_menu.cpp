@@ -80,6 +80,7 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
 void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
 {
     int index = ui->spc_list->currentRow();
+    if (index == -1) return;
     QString old_spc = spc_names[index];
     QString new_spc = old_spc +"_Copy";
     for(int i = 0; i <= 30; i++) {
