@@ -1,6 +1,9 @@
 #include "dsm_gui_lib.h"
 #include <QMessageBox>
+<<<<<<< HEAD
 #include <QComboBox>
+=======
+>>>>>>> main
 
 dsm_gui_lib::dsm_gui_lib()
 {
@@ -32,4 +35,7 @@ QStringList dsm_gui_lib::sortStringList(QStringList unsorted) {
     sorted = unsorted;
     return sorted;
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> main

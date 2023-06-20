@@ -8,7 +8,11 @@
 #include "nos_menu.h"
 #include "rgn_menu.h"
 #include "ipc_menu.h"
+<<<<<<< HEAD
 #include "spc_menu.h"
+=======
+#include "orb_menu.h"
+>>>>>>> main
 
 #include <QDebug>
 
@@ -40,7 +44,11 @@ private slots:
     void on_RGN_Menu_clicked();
     void on_IPC_Menu_clicked();
 
+<<<<<<< HEAD
     void on_SPC_Menu_clicked();
+=======
+    void on_ORB_Menu_clicked();
+>>>>>>> main
 
 private:
     Ui::MainWindow *ui;
@@ -51,7 +59,11 @@ private:
     NOS_Menu *nos_menu;
     RGN_Menu *rgn_menu;
     IPC_Menu *ipc_menu;
+<<<<<<< HEAD
     SPC_Menu *spc_menu;
+=======
+    ORB_Menu *orb_menu;
+>>>>>>> main
     QString path;
 };
 #endif // MAINWINDOW_H
