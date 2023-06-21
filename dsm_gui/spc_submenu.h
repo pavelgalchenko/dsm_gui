@@ -95,6 +95,17 @@ private:
     long reset_ind_acc;
     long reset_ind_end;
 
+    long joint_headers = 4;
+    long wheel_headers = 4;
+    long mtb_headers = 2;
+    long thr_headers = 2;
+    long gyro_headers = 2;
+    long css_headers = 2;
+    long fss_headers = 2;
+    long strack_headers = 2;
+    long gps_headers = 2;
+    long accel_headers = 2;
+
     long body_entries = 10;
     long joint_entries = 16;
     long wheel_entries = 8;
@@ -102,9 +113,9 @@ private:
     long thr_entries = 6;
     long gyro_entries = 11;
     long mag_entries = 8;
-    long css_entries = 11;
-    long fss_entries = 11;
-    long strack_entries = 11;
+    long css_entries = 8;
+    long fss_entries = 8;
+    long strack_entries = 8;
     long gps_entries = 6;
     long acc_entries = 11;
 };
