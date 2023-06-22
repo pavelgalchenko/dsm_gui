@@ -45,7 +45,7 @@ private:
     const QStringList att_params = {"Q", "A"};
     const QStringList att_wrt = {"N", "L", "F"};
     const QStringList euler_seq = {"123", "231", "312", "132", "213", "321", "121", "131", "212", "232", "313","323"};
-    const QStringList solve_dynamics = {"GAUSS_ELIM", "ORDER_M"};
+    const QStringList solve_dynamics = {"GAUSS_ELIM", "ORDER_N"};
     const QStringList mass_prop_ref = {"REFPT_CM", "REFPT_JOINT"};
     const QStringList joint_type = {"PASSIVE", "ACTUATED"};
     const QStringList rot_joint_seqtype = {"GIMBAL", "SPHERICAL"};
@@ -100,6 +100,7 @@ private:
     long mtb_headers = 2;
     long thr_headers = 2;
     long gyro_headers = 2;
+    long mag_headers = 2;
     long css_headers = 2;
     long fss_headers = 2;
     long strack_headers = 2;
