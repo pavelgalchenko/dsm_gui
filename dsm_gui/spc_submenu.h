@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QComboBox>
 #include <QButtonGroup>
+#include <QListWidgetItem>
 
 namespace Ui {
 class SPC_submenu;
@@ -33,6 +34,14 @@ private slots:
 
     void setQComboBox(QComboBox *comboBox, QString string);
 
+    void on_spc_cur_body_remove_clicked();
+
+    void on_spc_cur_body_add_clicked();
+
+    void on_spc_cur_body_duplicate_clicked();
+
+    void on_spc_cur_body_list_itemClicked(QListWidgetItem *item);
+
 private:
     Ui::SPC_submenu *ui;
     QString spc_cur_name;
@@ -54,6 +63,8 @@ private:
 
     int global_spc_index = -1;
     int global_spc_ignore = 0;
+
+    int global_body_index = -1;
 
     QString inout_path;
     QString file_path;
@@ -95,6 +106,7 @@ private:
     long reset_ind_acc;
     long reset_ind_end;
 
+    long body_headers = 4;
     long joint_headers = 4;
     long wheel_headers = 4;
     long mtb_headers = 2;

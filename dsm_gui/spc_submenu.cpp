@@ -9,6 +9,7 @@
 #include <QRegularExpression>
 #include <QDir>
 #include <QDebug>
+#include <QList>
 
 SPC_submenu::SPC_submenu(QWidget *parent):
     QDialog(parent),
@@ -296,6 +297,7 @@ void SPC_submenu::apply_data()
 
     reset_ind_joint = reset_ind_body + body_entries*bodies;
 
+
     ui->spc_cur_body_list->clear();
     for (int i=0; i<bodies; i++) tmp_list.append("Body " + QString::number(i));
     ui->spc_cur_body_list->addItems(tmp_list);
@@ -308,6 +310,8 @@ void SPC_submenu::apply_data()
         long body_line_num = line_num - reset_ind_body;
         cur_item = floor(body_line_num/body_entries);
         cur_entry = body_line_num % body_entries;
+
+        qDebug() << line_items;
 
         ui->spc_cur_body_list->setCurrentRow(cur_item);
 
@@ -369,665 +373,666 @@ void SPC_submenu::apply_data()
             break;
         }
     }
-
-    joints = bodies - 1;
-
-    ui->spc_cur_joint_list->clear();
-    tmp_list.clear();
-
-    for (int i=0; i<joints; i++) tmp_list.append("Joint " + QString::number(i));
-    ui->spc_cur_joint_list->addItems(tmp_list);
-
-    if (joints == 0){
-        joints = 1;
-    }
-
-    reset_ind_wheel = reset_ind_joint + joint_headers + joint_entries*bodies;
-
-    for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
-    {
-        line_string = spc_string[line_num-1];
-        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-        long joint_line_num = line_num - reset_ind_joint - joint_headers;
-        cur_item = floor(joint_line_num/joint_entries);
-        cur_entry = joint_line_num % joint_entries;
-
-        ui->spc_cur_joint_list->setCurrentRow(cur_item);
-
-        switch (cur_entry) {
-        case 0: // Joint X Header
-            break;
-        case 1:
-            setQComboBox(ui->spc_cur_joint_type, line_items[0]);
-            break;
-        case 2:
-            ui->spc_cur_joint_in->setValue(line_items[0].toInt());
-            ui->spc_cur_joint_out->setValue(line_items[1].toInt());
-            break;
-        case 3:
-            ui->spc_cur_joint_rotdof->setValue(line_items[0].toInt());
-            setQComboBox(ui->spc_cur_joint_rotdof_seq, line_items[1]);
-            setQComboBox(ui->spc_cur_joint_rottype, line_items[2]);
-            break;
-        case 4:
-            ui->spc_cur_joint_trndof->setValue(line_items[0].toInt());
-            setQComboBox(ui->spc_cur_joint_trndof_seq, line_items[1]);
-            break;
-        case 5:
-            if (QString::compare(line_items[0], "FALSE")) ui->spc_cur_joint_rlock1->setCheckState(Qt::Checked);
-            else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
-
-            if (QString::compare(line_items[1], "FALSE")) ui->spc_cur_joint_rlock2->setCheckState(Qt::Checked);
-            else ui->spc_cur_joint_rlock2->setCheckState(Qt::Unchecked);
-
-            if (QString::compare(line_items[2], "FALSE")) ui->spc_cur_joint_rlock3->setCheckState(Qt::Checked);
-            else ui->spc_cur_joint_rlock3->setCheckState(Qt::Unchecked);
-            break;
-
-        case 6:
-            if (QString::compare(line_items[0], "FALSE")) ui->spc_cur_joint_tlock1->setCheckState(Qt::Checked);
-            else ui->spc_cur_joint_tlock1->setCheckState(Qt::Unchecked);
-
-            if (QString::compare(line_items[1], "FALSE")) ui->spc_cur_joint_tlock2->setCheckState(Qt::Checked);
-            else ui->spc_cur_joint_tlock2->setCheckState(Qt::Unchecked);
-
-            if (QString::compare(line_items[2], "FALSE")) ui->spc_cur_joint_tlock3->setCheckState(Qt::Checked);
-            else ui->spc_cur_joint_tlock3->setCheckState(Qt::Unchecked);
-            break;
-        case 7:
-            ui->spc_cur_joint_ang0_1->setText(line_items[0]);
-            ui->spc_cur_joint_ang0_2->setText(line_items[1]);
-            ui->spc_cur_joint_ang0_3->setText(line_items[2]);
-            break;
-        case 8:
-            ui->spc_cur_joint_angrate0_1->setText(line_items[0]);
-            ui->spc_cur_joint_angrate0_2->setText(line_items[1]);
-            ui->spc_cur_joint_angrate0_3->setText(line_items[2]);
-            break;
-        case 9:
-            ui->spc_cur_joint_disp0_1->setText(line_items[0]);
-            ui->spc_cur_joint_disp0_2->setText(line_items[1]);
-            ui->spc_cur_joint_disp0_3->setText(line_items[2]);
-            break;
-        case 10:
-            ui->spc_cur_joint_dispr0_1->setText(line_items[0]);
-            ui->spc_cur_joint_dispr0_2->setText(line_items[1]);
-            ui->spc_cur_joint_dispr0_3->setText(line_items[2]);
-            break;
-        case 11:
-            ui->spc_cur_joint_bigi_1->setText(line_items[0]);
-            ui->spc_cur_joint_bigi_2->setText(line_items[1]);
-            ui->spc_cur_joint_bigi_3->setText(line_items[2]);
-
-            setQComboBox(ui->spc_cur_joint_bigi_seq, line_items[3]);
-            break;
-        case 12:
-            ui->spc_cur_joint_bogo_1->setText(line_items[0]);
-            ui->spc_cur_joint_bogo_2->setText(line_items[1]);
-            ui->spc_cur_joint_bogo_3->setText(line_items[2]);
-
-            setQComboBox(ui->spc_cur_joint_bogo_seq, line_items[3]);
-            break;
-        case 13:
-            ui->spc_cur_joint_poswrt_in_1->setText(line_items[0]);
-            ui->spc_cur_joint_poswrt_in_2->setText(line_items[1]);
-            ui->spc_cur_joint_poswrt_in_3->setText(line_items[2]);
-            break;
-        case 14:
-            ui->spc_cur_joint_poswrt_out_1->setText(line_items[0]);
-            ui->spc_cur_joint_poswrt_out_2->setText(line_items[1]);
-            ui->spc_cur_joint_poswrt_out_3->setText(line_items[2]);
-            break;
-        case 15:
-            ui->spc_cur_joint_param_file->setText(line_items[0]);
-            break;
-        }
-    }
-
-    tmp_line_item = spc_data[reset_ind_wheel + 3 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-    wheels = tmp_line_item[0].toInt();
-
-    ui->spc_cur_wheel_list->clear();
-    tmp_list.clear();
-
-    for (int i=0; i<wheels; i++) tmp_list.append("Wheel " + QString::number(i));
-    ui->spc_cur_wheel_list->addItems(tmp_list);
-
-    if (wheels == 0){
-        wheels = 1;
-    } // even if there are 0 used items, the template contains an example that is ignored.
-
-    reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
-
-    for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
-    {
-        line_string = spc_string[line_num-1];
-        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-        long wheel_line_num = line_num - reset_ind_wheel - wheel_headers;
-        cur_item = floor(wheel_line_num/wheel_entries);
-        cur_entry = wheel_line_num % wheel_entries;
-
-        ui->spc_cur_wheel_list->setCurrentRow(cur_item);
-
-        switch (cur_entry){
-        case 0:
-            break; // header
-        case 1:
-            ui->spc_cur_wheel_initmom->setText(line_items[0]);
-            break;
-        case 2:
-            ui->spc_cur_wheel_axis_1->setText(line_items[0]);
-            ui->spc_cur_wheel_axis_2->setText(line_items[1]);
-            ui->spc_cur_wheel_axis_3->setText(line_items[2]);
-            break;
-        case 3:
-            ui->spc_cur_wheel_maxtrq->setText(line_items[0]);
-            ui->spc_cur_wheel_maxmom->setText(line_items[1]);
-            break;
-        case 4:
-            ui->spc_cur_wheel_inertia->setText(line_items[0]);
-            break;
-        case 5:
-            ui->spc_cur_wheel_body->setValue(line_items[0].toInt());
-            break;
-        case 6:
-            ui->spc_cur_wheel_node->setValue(line_items[0].toInt());
-            break;
-        case 7:
-            if (!QString::compare(line_items[0], "NONE"))
-            {
-                ui->spc_cur_wheel_drjit_on->setCheckState(Qt::Checked);
-            }
-            else
-            {
-                ui->spc_cur_wheel_drjit_on->setCheckState(Qt::Unchecked);
-                ui->spc_cur_wheel_drjit_file->setText(line_items[0]);
-            }
-            break;
-        }
-    }
-
-    tmp_line_item = spc_data[reset_ind_mtb + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-    mtbs = tmp_line_item[0].toInt();
-
-    ui->spc_cur_mtb_list->clear();
-    tmp_list.clear();
-
-    for (int i=0; i<mtbs; i++) tmp_list.append("MTB " + QString::number(i));
-    ui->spc_cur_mtb_list->addItems(tmp_list);
-
-    if (mtbs == 0){
-        mtbs = 1;
-    } // even if there are 0 used items, the template contains an example that is ignored.
-
-    reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries*mtbs;
-
-    for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
-    {
-        line_string = spc_string[line_num-1];
-        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-        long mtb_line_num = line_num - reset_ind_mtb - mtb_headers;
-        cur_item = floor(mtb_line_num/mtb_entries);
-        cur_entry = mtb_line_num % mtb_entries;
-
-        ui->spc_cur_mtb_list->setCurrentRow(cur_item);
-
-        switch (cur_entry){
-        case 0:
-            break; // header
-        case 1:
-            ui->spc_cur_mtb_sat->setText(line_items[0]);
-            break;
-        case 2:
-            ui->spc_cur_mtb_axis_1->setText(line_items[0]);
-            ui->spc_cur_mtb_axis_2->setText(line_items[1]);
-            ui->spc_cur_mtb_axis_3->setText(line_items[2]);
-            break;
-        case 3:
-            ui->spc_cur_mtb_node->setValue(line_items[0].toInt());
-            break;
-        }
-    }
-
-    tmp_line_item = spc_data[reset_ind_thr + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-    thrusters = tmp_line_item[0].toInt();
-
-    ui->spc_cur_thruster_list->clear();
-    tmp_list.clear();
-
-    for (int i=0; i<thrusters; i++) tmp_list.append("Thr " + QString::number(i));
-    ui->spc_cur_thruster_list->addItems(tmp_list);
-
-    if (thrusters == 0) thrusters = 1;
-
-    reset_ind_gyro = reset_ind_thr + thr_headers + thr_entries*thrusters;
-
-    for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
-    {
-        line_string = spc_string[line_num-1];
-        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-        long thr_line_num = line_num - reset_ind_thr - thr_headers;
-        cur_item = floor(thr_line_num/thr_entries);
-        cur_entry = thr_line_num % thr_entries;
-
-        ui->spc_cur_thruster_list->setCurrentRow(cur_item);
-
-        switch (cur_entry){
-        case 0:
-            break; // header
-        case 1:
-            setQComboBox(ui->spc_cur_thruster_mode, line_items[0]);
-            break;
-        case 2:
-            ui->spc_cur_thruster_force->setText(line_items[0]);
-            break;
-        case 3:
-            ui->spc_cur_thruster_axis_1->setText(line_items[0]);
-            ui->spc_cur_thruster_axis_2->setText(line_items[1]);
-            ui->spc_cur_thruster_axis_3->setText(line_items[2]);
-            break;
-        case 4:
-            ui->spc_cur_thruster_body->setValue(line_items[0].toInt());
-            break;
-        case 5:
-            ui->spc_cur_thruster_node->setValue(line_items[0].toInt());
-            break;
-        }
-    }
-
-    tmp_line_item = spc_data[reset_ind_gyro + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-    gyros = tmp_line_item[0].toInt();
-
-    ui->spc_cur_gyro_list->clear();
-    tmp_list.clear();
-
-    for (int i=0; i<gyros; i++) tmp_list.append("Axis " + QString::number(i));
-    ui->spc_cur_gyro_list->addItems(tmp_list);
-
-    if (gyros == 0) gyros = 1;
-    reset_ind_mag = reset_ind_gyro + gyro_headers + gyro_entries*gyros;
-
-    for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
-    {
-        line_string = spc_string[line_num-1];
-        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-        long gyro_line_num = line_num - reset_ind_gyro - gyro_headers;
-        cur_item = floor(gyro_line_num/gyro_entries);
-        cur_entry = gyro_line_num % gyro_entries;
-
-        ui->spc_cur_gyro_list->setCurrentRow(cur_item);
-
-        switch (cur_entry){
-        case 0:
-            break; // header
-        case 1:
-            ui->spc_cur_gyro_samptime->setText(line_items[0]);
-            break;
-        case 2:
-            ui->spc_cur_gyro_axis_1->setText(line_items[0]);
-            ui->spc_cur_gyro_axis_2->setText(line_items[1]);
-            ui->spc_cur_gyro_axis_3->setText(line_items[2]);
-            break;
-        case 3:
-            ui->spc_cur_gyro_maxrate->setText(line_items[0]);
-            break;
-        case 4:
-            ui->spc_cur_gyro_scaleferror->setText(line_items[0]);
-            break;
-        case 5:
-            ui->spc_cur_gyro_quant->setText(line_items[0]);
-            break;
-        case 6:
-            ui->spc_cur_gyro_angrwalk->setText(line_items[0]);
-            break;
-        case 7:
-            ui->spc_cur_gyro_bias_stab->setText(line_items[0]);
-            ui->spc_cur_gyro_bias_tspan->setText(line_items[1]);
-            break;
-        case 8:
-            ui->spc_cur_gyro_angnoise->setText(line_items[0]);
-            break;
-        case 9:
-            ui->spc_cur_gyro_initbias->setText(line_items[0]);
-            break;
-        case 10:
-            ui->spc_cur_gyro_node->setValue(line_items[0].toInt());
-            break;
-        }
-    }
-
-    tmp_line_item = spc_data[reset_ind_mag + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-    mags = tmp_line_item[0].toInt();
-
-    ui->spc_cur_mag_list->clear();
-    tmp_list.clear();
-
-    for (int i=0; i<mags; i++) tmp_list.append("Axis " + QString::number(i));
-    ui->spc_cur_mag_list->addItems(tmp_list);
-
-    if (mags == 0) mags = 1;
-    reset_ind_css = reset_ind_mag + mag_headers + mag_entries*mags;
-
-    for (int line_num = reset_ind_mag + mag_headers; line_num<reset_ind_css; line_num++)
-    {
-        line_string = spc_string[line_num-1];
-        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-        long mag_line_num = line_num - reset_ind_mag - mag_headers;
-        cur_item = floor(mag_line_num/mag_entries);
-        cur_entry = mag_line_num % mag_entries;
-
-        ui->spc_cur_mag_list->setCurrentRow(cur_item);
-
-        switch (cur_entry){
-        case 0:
-            break; // header
-        case 1:
-            ui->spc_cur_mag_samptime->setText(line_items[0]);
-            break;
-        case 2:
-            ui->spc_cur_mag_axis_1->setText(line_items[0]);
-            ui->spc_cur_mag_axis_2->setText(line_items[1]);
-            ui->spc_cur_mag_axis_3->setText(line_items[2]);
-            break;
-        case 3:
-            ui->spc_cur_mag_sat->setText(line_items[0]);
-            break;
-        case 4:
-            ui->spc_cur_mag_scaleferror->setText(line_items[0]);
-            break;
-        case 5:
-            ui->spc_cur_mag_quant->setText(line_items[0]);
-            break;
-        case 6:
-            ui->spc_cur_mag_noise->setText(line_items[0]);
-            break;
-        case 7:
-            ui->spc_cur_mag_node->setValue(line_items[0].toInt());
-            break;
-        }
-    }
-
-    tmp_line_item = spc_data[reset_ind_css + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-    css_s = tmp_line_item[0].toInt();
-
-    ui->spc_cur_css_list->clear();
-    tmp_list.clear();
-
-    for (int i=0; i<css_s; i++) tmp_list.append("CSS " + QString::number(i));
-    ui->spc_cur_css_list->addItems(tmp_list);
-
-    if (css_s == 0) css_s = 1;
-
-    reset_ind_fss = reset_ind_css + css_headers + css_entries*css_s;
-
-    for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
-    {
-        line_string = spc_string[line_num-1];
-        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-        long css_line_num = line_num - reset_ind_css - css_headers;
-        cur_item = floor(css_line_num/css_entries);
-        cur_entry = css_line_num % css_entries;
-
-        ui->spc_cur_css_list->setCurrentRow(cur_item);
-
-        switch (cur_entry){
-        case 0:
-            break; // header
-        case 1:
-            ui->spc_cur_css_samptime->setText(line_items[0]);
-            break;
-        case 2:
-            ui->spc_cur_css_axis_1->setText(line_items[0]);
-            ui->spc_cur_css_axis_2->setText(line_items[1]);
-            ui->spc_cur_css_axis_3->setText(line_items[2]);
-            break;
-        case 3:
-            ui->spc_cur_css_halfcone->setText(line_items[0]);
-            break;
-        case 4:
-            ui->spc_cur_css_scale->setText(line_items[0]);
-            break;
-        case 5:
-            ui->spc_cur_css_quant->setText(line_items[0]);
-            break;
-        case 6:
-            ui->spc_cur_css_body->setValue(line_items[0].toInt());
-            break;
-        case 7:
-            ui->spc_cur_css_node->setValue(line_items[0].toInt());
-            break;
-        }
-    }
-
-    tmp_line_item = spc_data[reset_ind_fss + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-    fss_s = tmp_line_item[0].toInt();
-
-    ui->spc_cur_fss_list->clear();
-    tmp_list.clear();
-
-    for (int i=0; i<fss_s; i++) tmp_list.append("FSS " + QString::number(i));
-    ui->spc_cur_fss_list->addItems(tmp_list);
-
-    if (fss_s == 0) fss_s = 1;
-
-    reset_ind_strack = reset_ind_fss + fss_headers + fss_entries*fss_s;
-
-    for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
-    {
-        line_string = spc_string[line_num-1];
-        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-        long fss_line_num = line_num - reset_ind_fss - fss_headers;
-        cur_item = floor(fss_line_num/fss_entries);
-        cur_entry = fss_line_num % fss_entries;
-
-        ui->spc_cur_fss_list->setCurrentRow(cur_item);
-
-        switch (cur_entry){
-        case 0:
-            break; // header
-        case 1:
-            ui->spc_cur_fss_samptime->setText(line_items[0]);
-            break;
-        case 2:
-            ui->spc_cur_fss_mount_1->setText(line_items[0]);
-            ui->spc_cur_fss_mount_2->setText(line_items[1]);
-            ui->spc_cur_fss_mount_3->setText(line_items[2]);
-
-            setQComboBox(ui->spc_cur_fss_mountseq, line_items[0]);
-            break;
-        case 3:
-            setQComboBox(ui->spc_cur_fss_boreaxis, line_items[0]);
-            break;
-        case 4:
-            ui->spc_cur_fss_hfov->setText(line_items[0]);
-            ui->spc_cur_fss_vfov->setText(line_items[1]);
-            break;
-        case 5:
-            ui->spc_cur_fss_noiseang->setText(line_items[0]);
-            break;
-        case 6:
-            ui->spc_cur_fss_quant->setText(line_items[0]);
-            break;
-        case 7:
-            ui->spc_cur_fss_node->setValue(line_items[0].toInt());
-            break;
-        }
-    }
-
-    tmp_line_item = spc_data[reset_ind_strack + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-    stracks = tmp_line_item[0].toInt();
-
-    ui->spc_cur_strack_list->clear();
-    tmp_list.clear();
-
-    for (int i=0; i<stracks; i++) tmp_list.append("ST " + QString::number(i));
-    ui->spc_cur_strack_list->addItems(tmp_list);
-
-    if (stracks == 0) stracks = 1;
-
-    reset_ind_gps = reset_ind_strack + strack_headers +strack_entries*stracks;
-
-    for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
-    {
-        line_string = spc_string[line_num-1];
-        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-        long strack_line_num = line_num - reset_ind_strack - strack_headers;
-        cur_item = floor(strack_line_num/strack_entries);
-        cur_entry = strack_line_num % strack_entries;
-
-        ui->spc_cur_strack_list->setCurrentRow(cur_item);
-
-        switch (cur_entry){
-        case 0:
-            break; // header
-        case 1:
-            ui->spc_cur_strack_samptime->setText(line_items[0]);
-            break;
-        case 2:
-            ui->spc_cur_strack_mount_1->setText(line_items[0]);
-            ui->spc_cur_strack_mount_2->setText(line_items[1]);
-            ui->spc_cur_strack_mount_3->setText(line_items[2]);
-
-            setQComboBox(ui->spc_cur_strack_mountseq, line_items[3]);
-            break;
-        case 3:
-            setQComboBox(ui->spc_cur_strack_boreaxis, line_items[3]);
-            break;
-        case 4:
-            ui->spc_cur_strack_hfov->setText(line_items[0]);
-            ui->spc_cur_strack_vfov->setText(line_items[1]);
-            break;
-        case 5:
-            ui->spc_cur_strack_sun->setText(line_items[0]);
-            ui->spc_cur_strack_earth->setText(line_items[1]);
-            ui->spc_cur_strack_moon->setText(line_items[2]);
-            break;
-        case 6:
-            ui->spc_cur_strack_noiseang_1->setText(line_items[0]);
-            ui->spc_cur_strack_noiseang_2->setText(line_items[1]);
-            ui->spc_cur_strack_noiseang_3->setText(line_items[2]);
-            break;
-        case 7:
-            ui->spc_cur_strack_node->setValue(line_items[0].toInt());
-            break;
-        }
-    }
-
-    tmp_line_item = spc_data[reset_ind_gps + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-    gps_s = tmp_line_item[0].toInt();
-
-    ui->spc_cur_gps_list->clear();
-    tmp_list.clear();
-
-    for (int i=0; i<gps_s; i++) tmp_list.append("GPSR " + QString::number(i));
-    ui->spc_cur_gps_list->addItems(tmp_list);
-
-    if (gps_s == 0) gps_s = 1;
-
-    reset_ind_acc = reset_ind_gps + gps_headers + gps_entries*gps_s;
-
-    for (int line_num = reset_ind_gps + gps_headers; line_num<reset_ind_acc; line_num++)
-    {
-        line_string = spc_string[line_num-1];
-        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-        long gps_line_num = line_num - reset_ind_gps - gps_headers;
-        cur_item = floor(gps_line_num/gps_entries);
-        cur_entry = gps_line_num % gps_entries;
-
-        ui->spc_cur_gps_list->setCurrentRow(cur_item);
-
-        switch (cur_entry){
-        case 0:
-            break; // header
-        case 1:
-            ui->spc_cur_gps_samptime->setText(line_items[0]);
-            break;
-        case 2:
-            ui->spc_cur_gps_posnoise->setText(line_items[0]);
-            break;
-        case 3:
-            ui->spc_cur_gps_velnoise->setText(line_items[0]);
-            break;
-        case 4:
-            ui->spc_cur_gps_timenoise->setText(line_items[0]);
-            break;
-        case 5:
-            ui->spc_cur_gps_node->setValue(line_items[0].toInt());
-            break;
-        }
-    }
-
-    tmp_line_item = spc_data[reset_ind_acc + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-    accels = tmp_line_item[0].toInt();
-
-    ui->spc_cur_accel_list->clear();
-    tmp_list.clear();
-
-    for (int i=0; i<accels; i++) tmp_list.append("Acc " + QString::number(i));
-    ui->spc_cur_accel_list->addItems(tmp_list);
-
-    if (accels == 0) accels = 1;
-
-    //reset_ind_end = reset_ind_acc + accel_headers + acc_entries*accels;
-
-    for (int line_num = reset_ind_acc+accel_headers; line_num<spc_data.length(); line_num++)
-    {
-        line_string = spc_string[line_num-1];
-        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-        long acc_line_num = line_num - reset_ind_acc - accel_headers;
-        cur_item = floor(acc_line_num/acc_entries);
-        cur_entry = acc_line_num % acc_entries;
-
-        ui->spc_cur_gps_list->setCurrentRow(cur_item);
-        switch (cur_entry){
-        case 0:
-            break; // header
-        case 1:
-            ui->spc_cur_acc_samptime->setText(line_items[0]);
-            break;
-        case 2:
-            ui->spc_cur_acc_axis_1->setText(line_items[0]);
-            ui->spc_cur_acc_axis_2->setText(line_items[1]);
-            ui->spc_cur_acc_axis_3->setText(line_items[2]);
-            break;
-        case 3:
-            ui->spc_cur_acc_maxacc->setText(line_items[0]);
-            break;
-        case 4:
-            ui->spc_cur_acc_scaleerror->setText(line_items[0]);
-            break;
-        case 5:
-            ui->spc_cur_acc_quant->setText(line_items[0]);
-            break;
-        case 6:
-            ui->spc_cur_acc_dvrandwalk->setText(line_items[0]);
-            break;
-        case 7:
-            ui->spc_cur_acc_bias_stab->setText(line_items[0]);
-            ui->spc_cur_acc_bias_tspan->setText(line_items[1]);
-            break;
-        case 8:
-            ui->spc_cur_acc_dvnoise->setText(line_items[0]);
-            break;
-        case 9:
-            ui->spc_cur_acc_initbias->setText(line_items[0]);
-            break;
-        case 10:
-            ui->spc_cur_acc_node->setValue(line_items[0].toInt());
-            break;
-        }
-    }
+//    joints = bodies - 1;
+
+//    ui->spc_cur_joint_list->clear();
+//    tmp_list.clear();
+
+//    for (int i=0; i<joints; i++) tmp_list.append("Joint " + QString::number(i));
+//    ui->spc_cur_joint_list->addItems(tmp_list);
+
+//    if (joints == 0){
+//        joints = 1;
+//    }
+
+//    reset_ind_wheel = reset_ind_joint + joint_headers + joint_entries*joints;
+
+//    for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
+//    {
+//        line_string = spc_string[line_num-1];
+//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+//        long joint_line_num = line_num - reset_ind_joint - joint_headers;
+//        cur_item = floor(joint_line_num/joint_entries);
+//        cur_entry = joint_line_num % joint_entries;
+
+//        ui->spc_cur_joint_list->setCurrentRow(cur_item);
+
+//        switch (cur_entry) {
+//        case 0: // Joint X Header
+//            break;
+//        case 1:
+//            setQComboBox(ui->spc_cur_joint_type, line_items[0]);
+//            break;
+//        case 2:
+//            ui->spc_cur_joint_in->setValue(line_items[0].toInt());
+//            ui->spc_cur_joint_out->setValue(line_items[1].toInt());
+//            break;
+//        case 3:
+//            ui->spc_cur_joint_rotdof->setValue(line_items[0].toInt());
+//            setQComboBox(ui->spc_cur_joint_rotdof_seq, line_items[1]);
+//            setQComboBox(ui->spc_cur_joint_rottype, line_items[2]);
+//            break;
+//        case 4:
+//            ui->spc_cur_joint_trndof->setValue(line_items[0].toInt());
+//            setQComboBox(ui->spc_cur_joint_trndof_seq, line_items[1]);
+//            break;
+//        case 5:
+//            if (QString::compare(line_items[0], "FALSE")) ui->spc_cur_joint_rlock1->setCheckState(Qt::Checked);
+//            else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+
+//            if (QString::compare(line_items[1], "FALSE")) ui->spc_cur_joint_rlock2->setCheckState(Qt::Checked);
+//            else ui->spc_cur_joint_rlock2->setCheckState(Qt::Unchecked);
+
+//            if (QString::compare(line_items[2], "FALSE")) ui->spc_cur_joint_rlock3->setCheckState(Qt::Checked);
+//            else ui->spc_cur_joint_rlock3->setCheckState(Qt::Unchecked);
+//            break;
+
+//        case 6:
+//            if (QString::compare(line_items[0], "FALSE")) ui->spc_cur_joint_tlock1->setCheckState(Qt::Checked);
+//            else ui->spc_cur_joint_tlock1->setCheckState(Qt::Unchecked);
+
+//            if (QString::compare(line_items[1], "FALSE")) ui->spc_cur_joint_tlock2->setCheckState(Qt::Checked);
+//            else ui->spc_cur_joint_tlock2->setCheckState(Qt::Unchecked);
+
+//            if (QString::compare(line_items[2], "FALSE")) ui->spc_cur_joint_tlock3->setCheckState(Qt::Checked);
+//            else ui->spc_cur_joint_tlock3->setCheckState(Qt::Unchecked);
+//            break;
+//        case 7:
+//            ui->spc_cur_joint_ang0_1->setText(line_items[0]);
+//            ui->spc_cur_joint_ang0_2->setText(line_items[1]);
+//            ui->spc_cur_joint_ang0_3->setText(line_items[2]);
+//            break;
+//        case 8:
+//            ui->spc_cur_joint_angrate0_1->setText(line_items[0]);
+//            ui->spc_cur_joint_angrate0_2->setText(line_items[1]);
+//            ui->spc_cur_joint_angrate0_3->setText(line_items[2]);
+//            break;
+//        case 9:
+//            ui->spc_cur_joint_disp0_1->setText(line_items[0]);
+//            ui->spc_cur_joint_disp0_2->setText(line_items[1]);
+//            ui->spc_cur_joint_disp0_3->setText(line_items[2]);
+//            break;
+//        case 10:
+//            ui->spc_cur_joint_dispr0_1->setText(line_items[0]);
+//            ui->spc_cur_joint_dispr0_2->setText(line_items[1]);
+//            ui->spc_cur_joint_dispr0_3->setText(line_items[2]);
+//            break;
+//        case 11:
+//            ui->spc_cur_joint_bigi_1->setText(line_items[0]);
+//            ui->spc_cur_joint_bigi_2->setText(line_items[1]);
+//            ui->spc_cur_joint_bigi_3->setText(line_items[2]);
+
+//            setQComboBox(ui->spc_cur_joint_bigi_seq, line_items[3]);
+//            break;
+//        case 12:
+//            ui->spc_cur_joint_bogo_1->setText(line_items[0]);
+//            ui->spc_cur_joint_bogo_2->setText(line_items[1]);
+//            ui->spc_cur_joint_bogo_3->setText(line_items[2]);
+
+//            setQComboBox(ui->spc_cur_joint_bogo_seq, line_items[3]);
+//            break;
+//        case 13:
+//            ui->spc_cur_joint_poswrt_in_1->setText(line_items[0]);
+//            ui->spc_cur_joint_poswrt_in_2->setText(line_items[1]);
+//            ui->spc_cur_joint_poswrt_in_3->setText(line_items[2]);
+//            break;
+//        case 14:
+//            ui->spc_cur_joint_poswrt_out_1->setText(line_items[0]);
+//            ui->spc_cur_joint_poswrt_out_2->setText(line_items[1]);
+//            ui->spc_cur_joint_poswrt_out_3->setText(line_items[2]);
+//            break;
+//        case 15:
+//            ui->spc_cur_joint_param_file->setText(line_items[0]);
+//            break;
+//        }
+//    }
+
+//    tmp_line_item = spc_data[reset_ind_wheel + 3 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+//    wheels = tmp_line_item[0].toInt();
+
+//    ui->spc_cur_wheel_list->clear();
+//    tmp_list.clear();
+
+//    for (int i=0; i<wheels; i++) tmp_list.append("Wheel " + QString::number(i));
+//    ui->spc_cur_wheel_list->addItems(tmp_list);
+
+//    if (wheels == 0){
+//        wheels = 1;
+//    } // even if there are 0 used items, the template contains an example that is ignored.
+
+//    reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
+
+//    for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
+//    {
+//        line_string = spc_string[line_num-1];
+//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+//        long wheel_line_num = line_num - reset_ind_wheel - wheel_headers;
+//        cur_item = floor(wheel_line_num/wheel_entries);
+//        cur_entry = wheel_line_num % wheel_entries;
+
+//        ui->spc_cur_wheel_list->setCurrentRow(cur_item);
+
+//        switch (cur_entry){
+//        case 0:
+//            break; // header
+//        case 1:
+//            ui->spc_cur_wheel_initmom->setText(line_items[0]);
+//            break;
+//        case 2:
+//            ui->spc_cur_wheel_axis_1->setText(line_items[0]);
+//            ui->spc_cur_wheel_axis_2->setText(line_items[1]);
+//            ui->spc_cur_wheel_axis_3->setText(line_items[2]);
+//            break;
+//        case 3:
+//            ui->spc_cur_wheel_maxtrq->setText(line_items[0]);
+//            ui->spc_cur_wheel_maxmom->setText(line_items[1]);
+//            break;
+//        case 4:
+//            ui->spc_cur_wheel_inertia->setText(line_items[0]);
+//            break;
+//        case 5:
+//            ui->spc_cur_wheel_body->setValue(line_items[0].toInt());
+//            break;
+//        case 6:
+//            ui->spc_cur_wheel_node->setValue(line_items[0].toInt());
+//            break;
+//        case 7:
+//            if (!QString::compare(line_items[0], "NONE"))
+//            {
+//                ui->spc_cur_wheel_drjit_on->setCheckState(Qt::Checked);
+//            }
+//            else
+//            {
+//                ui->spc_cur_wheel_drjit_on->setCheckState(Qt::Unchecked);
+//                ui->spc_cur_wheel_drjit_file->setText(line_items[0]);
+//            }
+//            break;
+//        }
+//    }
+
+//    tmp_line_item = spc_data[reset_ind_mtb + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+//    mtbs = tmp_line_item[0].toInt();
+
+//    ui->spc_cur_mtb_list->clear();
+//    tmp_list.clear();
+
+//    for (int i=0; i<mtbs; i++) tmp_list.append("MTB " + QString::number(i));
+//    ui->spc_cur_mtb_list->addItems(tmp_list);
+
+//    if (mtbs == 0){
+//        mtbs = 1;
+//    } // even if there are 0 used items, the template contains an example that is ignored.
+
+//    reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries*mtbs;
+
+//    for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
+//    {
+//        line_string = spc_string[line_num-1];
+//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+//        long mtb_line_num = line_num - reset_ind_mtb - mtb_headers;
+//        cur_item = floor(mtb_line_num/mtb_entries);
+//        cur_entry = mtb_line_num % mtb_entries;
+
+//        ui->spc_cur_mtb_list->setCurrentRow(cur_item);
+
+//        switch (cur_entry){
+//        case 0:
+//            break; // header
+//        case 1:
+//            ui->spc_cur_mtb_sat->setText(line_items[0]);
+//            break;
+//        case 2:
+//            ui->spc_cur_mtb_axis_1->setText(line_items[0]);
+//            ui->spc_cur_mtb_axis_2->setText(line_items[1]);
+//            ui->spc_cur_mtb_axis_3->setText(line_items[2]);
+//            break;
+//        case 3:
+//            ui->spc_cur_mtb_node->setValue(line_items[0].toInt());
+//            break;
+//        }
+//    }
+
+//    tmp_line_item = spc_data[reset_ind_thr + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+//    thrusters = tmp_line_item[0].toInt();
+
+//    ui->spc_cur_thruster_list->clear();
+//    tmp_list.clear();
+
+//    for (int i=0; i<thrusters; i++) tmp_list.append("Thr " + QString::number(i));
+//    ui->spc_cur_thruster_list->addItems(tmp_list);
+
+//    if (thrusters == 0) thrusters = 1;
+
+//    reset_ind_gyro = reset_ind_thr + thr_headers + thr_entries*thrusters;
+
+//    for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
+//    {
+//        line_string = spc_string[line_num-1];
+//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+//        long thr_line_num = line_num - reset_ind_thr - thr_headers;
+//        cur_item = floor(thr_line_num/thr_entries);
+//        cur_entry = thr_line_num % thr_entries;
+
+//        ui->spc_cur_thruster_list->setCurrentRow(cur_item);
+
+//        switch (cur_entry){
+//        case 0:
+//            break; // header
+//        case 1:
+//            setQComboBox(ui->spc_cur_thruster_mode, line_items[0]);
+//            break;
+//        case 2:
+//            ui->spc_cur_thruster_force->setText(line_items[0]);
+//            break;
+//        case 3:
+//            ui->spc_cur_thruster_axis_1->setText(line_items[0]);
+//            ui->spc_cur_thruster_axis_2->setText(line_items[1]);
+//            ui->spc_cur_thruster_axis_3->setText(line_items[2]);
+//            break;
+//        case 4:
+//            ui->spc_cur_thruster_body->setValue(line_items[0].toInt());
+//            break;
+//        case 5:
+//            ui->spc_cur_thruster_node->setValue(line_items[0].toInt());
+//            break;
+//        }
+//    }
+
+//    tmp_line_item = spc_data[reset_ind_gyro + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+//    gyros = tmp_line_item[0].toInt();
+
+//    ui->spc_cur_gyro_list->clear();
+//    tmp_list.clear();
+
+//    for (int i=0; i<gyros; i++) tmp_list.append("Axis " + QString::number(i));
+//    ui->spc_cur_gyro_list->addItems(tmp_list);
+
+//    if (gyros == 0) gyros = 1;
+//    reset_ind_mag = reset_ind_gyro + gyro_headers + gyro_entries*gyros;
+
+//    for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
+//    {
+//        line_string = spc_string[line_num-1];
+//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+//        long gyro_line_num = line_num - reset_ind_gyro - gyro_headers;
+//        cur_item = floor(gyro_line_num/gyro_entries);
+//        cur_entry = gyro_line_num % gyro_entries;
+
+//        ui->spc_cur_gyro_list->setCurrentRow(cur_item);
+
+//        switch (cur_entry){
+//        case 0:
+//            break; // header
+//        case 1:
+//            ui->spc_cur_gyro_samptime->setText(line_items[0]);
+//            break;
+//        case 2:
+//            ui->spc_cur_gyro_axis_1->setText(line_items[0]);
+//            ui->spc_cur_gyro_axis_2->setText(line_items[1]);
+//            ui->spc_cur_gyro_axis_3->setText(line_items[2]);
+//            break;
+//        case 3:
+//            ui->spc_cur_gyro_maxrate->setText(line_items[0]);
+//            break;
+//        case 4:
+//            ui->spc_cur_gyro_scaleferror->setText(line_items[0]);
+//            break;
+//        case 5:
+//            ui->spc_cur_gyro_quant->setText(line_items[0]);
+//            break;
+//        case 6:
+//            ui->spc_cur_gyro_angrwalk->setText(line_items[0]);
+//            break;
+//        case 7:
+//            ui->spc_cur_gyro_bias_stab->setText(line_items[0]);
+//            ui->spc_cur_gyro_bias_tspan->setText(line_items[1]);
+//            break;
+//        case 8:
+//            ui->spc_cur_gyro_angnoise->setText(line_items[0]);
+//            break;
+//        case 9:
+//            ui->spc_cur_gyro_initbias->setText(line_items[0]);
+//            break;
+//        case 10:
+//            ui->spc_cur_gyro_node->setValue(line_items[0].toInt());
+//            break;
+//        }
+//    }
+
+//    tmp_line_item = spc_data[reset_ind_mag + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+//    mags = tmp_line_item[0].toInt();
+
+//    ui->spc_cur_mag_list->clear();
+//    tmp_list.clear();
+
+//    for (int i=0; i<mags; i++) tmp_list.append("Axis " + QString::number(i));
+//    ui->spc_cur_mag_list->addItems(tmp_list);
+
+//    if (mags == 0) mags = 1;
+//    reset_ind_css = reset_ind_mag + mag_headers + mag_entries*mags;
+
+//    for (int line_num = reset_ind_mag + mag_headers; line_num<reset_ind_css; line_num++)
+//    {
+//        line_string = spc_string[line_num-1];
+//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+//        long mag_line_num = line_num - reset_ind_mag - mag_headers;
+//        cur_item = floor(mag_line_num/mag_entries);
+//        cur_entry = mag_line_num % mag_entries;
+
+//        ui->spc_cur_mag_list->setCurrentRow(cur_item);
+
+//        switch (cur_entry){
+//        case 0:
+//            break; // header
+//        case 1:
+//            ui->spc_cur_mag_samptime->setText(line_items[0]);
+//            break;
+//        case 2:
+//            ui->spc_cur_mag_axis_1->setText(line_items[0]);
+//            ui->spc_cur_mag_axis_2->setText(line_items[1]);
+//            ui->spc_cur_mag_axis_3->setText(line_items[2]);
+//            break;
+//        case 3:
+//            ui->spc_cur_mag_sat->setText(line_items[0]);
+//            break;
+//        case 4:
+//            ui->spc_cur_mag_scaleferror->setText(line_items[0]);
+//            break;
+//        case 5:
+//            ui->spc_cur_mag_quant->setText(line_items[0]);
+//            break;
+//        case 6:
+//            ui->spc_cur_mag_noise->setText(line_items[0]);
+//            break;
+//        case 7:
+//            ui->spc_cur_mag_node->setValue(line_items[0].toInt());
+//            break;
+//        }
+//    }
+
+//    tmp_line_item = spc_data[reset_ind_css + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+//    css_s = tmp_line_item[0].toInt();
+
+//    ui->spc_cur_css_list->clear();
+//    tmp_list.clear();
+
+//    for (int i=0; i<css_s; i++) tmp_list.append("CSS " + QString::number(i));
+//    ui->spc_cur_css_list->addItems(tmp_list);
+
+//    if (css_s == 0) css_s = 1;
+
+//    reset_ind_fss = reset_ind_css + css_headers + css_entries*css_s;
+
+//    for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
+//    {
+//        line_string = spc_string[line_num-1];
+//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+//        long css_line_num = line_num - reset_ind_css - css_headers;
+//        cur_item = floor(css_line_num/css_entries);
+//        cur_entry = css_line_num % css_entries;
+
+//        ui->spc_cur_css_list->setCurrentRow(cur_item);
+
+//        switch (cur_entry){
+//        case 0:
+//            break; // header
+//        case 1:
+//            ui->spc_cur_css_samptime->setText(line_items[0]);
+//            break;
+//        case 2:
+//            ui->spc_cur_css_axis_1->setText(line_items[0]);
+//            ui->spc_cur_css_axis_2->setText(line_items[1]);
+//            ui->spc_cur_css_axis_3->setText(line_items[2]);
+//            break;
+//        case 3:
+//            ui->spc_cur_css_halfcone->setText(line_items[0]);
+//            break;
+//        case 4:
+//            ui->spc_cur_css_scale->setText(line_items[0]);
+//            break;
+//        case 5:
+//            ui->spc_cur_css_quant->setText(line_items[0]);
+//            break;
+//        case 6:
+//            ui->spc_cur_css_body->setValue(line_items[0].toInt());
+//            break;
+//        case 7:
+//            ui->spc_cur_css_node->setValue(line_items[0].toInt());
+//            break;
+//        }
+//    }
+
+//    tmp_line_item = spc_data[reset_ind_fss + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+//    fss_s = tmp_line_item[0].toInt();
+
+//    ui->spc_cur_fss_list->clear();
+//    tmp_list.clear();
+
+//    for (int i=0; i<fss_s; i++) tmp_list.append("FSS " + QString::number(i));
+//    ui->spc_cur_fss_list->addItems(tmp_list);
+
+//    if (fss_s == 0) fss_s = 1;
+
+//    reset_ind_strack = reset_ind_fss + fss_headers + fss_entries*fss_s;
+
+//    for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
+//    {
+//        line_string = spc_string[line_num-1];
+//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+//        long fss_line_num = line_num - reset_ind_fss - fss_headers;
+//        cur_item = floor(fss_line_num/fss_entries);
+//        cur_entry = fss_line_num % fss_entries;
+
+//        ui->spc_cur_fss_list->setCurrentRow(cur_item);
+
+//        switch (cur_entry){
+//        case 0:
+//            break; // header
+//        case 1:
+//            ui->spc_cur_fss_samptime->setText(line_items[0]);
+//            break;
+//        case 2:
+//            ui->spc_cur_fss_mount_1->setText(line_items[0]);
+//            ui->spc_cur_fss_mount_2->setText(line_items[1]);
+//            ui->spc_cur_fss_mount_3->setText(line_items[2]);
+
+//            setQComboBox(ui->spc_cur_fss_mountseq, line_items[0]);
+//            break;
+//        case 3:
+//            setQComboBox(ui->spc_cur_fss_boreaxis, line_items[0]);
+//            break;
+//        case 4:
+//            ui->spc_cur_fss_hfov->setText(line_items[0]);
+//            ui->spc_cur_fss_vfov->setText(line_items[1]);
+//            break;
+//        case 5:
+//            ui->spc_cur_fss_noiseang->setText(line_items[0]);
+//            break;
+//        case 6:
+//            ui->spc_cur_fss_quant->setText(line_items[0]);
+//            break;
+//        case 7:
+//            ui->spc_cur_fss_node->setValue(line_items[0].toInt());
+//            break;
+//        }
+//    }
+
+//    tmp_line_item = spc_data[reset_ind_strack + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+//    stracks = tmp_line_item[0].toInt();
+
+//    ui->spc_cur_strack_list->clear();
+//    tmp_list.clear();
+
+//    for (int i=0; i<stracks; i++) tmp_list.append("ST " + QString::number(i));
+//    ui->spc_cur_strack_list->addItems(tmp_list);
+
+//    if (stracks == 0) stracks = 1;
+
+//    reset_ind_gps = reset_ind_strack + strack_headers +strack_entries*stracks;
+
+//    for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
+//    {
+//        line_string = spc_string[line_num-1];
+//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+//        long strack_line_num = line_num - reset_ind_strack - strack_headers;
+//        cur_item = floor(strack_line_num/strack_entries);
+//        cur_entry = strack_line_num % strack_entries;
+
+//        ui->spc_cur_strack_list->setCurrentRow(cur_item);
+
+//        switch (cur_entry){
+//        case 0:
+//            break; // header
+//        case 1:
+//            ui->spc_cur_strack_samptime->setText(line_items[0]);
+//            break;
+//        case 2:
+//            ui->spc_cur_strack_mount_1->setText(line_items[0]);
+//            ui->spc_cur_strack_mount_2->setText(line_items[1]);
+//            ui->spc_cur_strack_mount_3->setText(line_items[2]);
+
+//            setQComboBox(ui->spc_cur_strack_mountseq, line_items[3]);
+//            break;
+//        case 3:
+//            setQComboBox(ui->spc_cur_strack_boreaxis, line_items[3]);
+//            break;
+//        case 4:
+//            ui->spc_cur_strack_hfov->setText(line_items[0]);
+//            ui->spc_cur_strack_vfov->setText(line_items[1]);
+//            break;
+//        case 5:
+//            ui->spc_cur_strack_sun->setText(line_items[0]);
+//            ui->spc_cur_strack_earth->setText(line_items[1]);
+//            ui->spc_cur_strack_moon->setText(line_items[2]);
+//            break;
+//        case 6:
+//            ui->spc_cur_strack_noiseang_1->setText(line_items[0]);
+//            ui->spc_cur_strack_noiseang_2->setText(line_items[1]);
+//            ui->spc_cur_strack_noiseang_3->setText(line_items[2]);
+//            break;
+//        case 7:
+//            ui->spc_cur_strack_node->setValue(line_items[0].toInt());
+//            break;
+//        }
+//    }
+
+//    tmp_line_item = spc_data[reset_ind_gps + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+//    gps_s = tmp_line_item[0].toInt();
+
+//    ui->spc_cur_gps_list->clear();
+//    tmp_list.clear();
+
+//    for (int i=0; i<gps_s; i++) tmp_list.append("GPSR " + QString::number(i));
+//    ui->spc_cur_gps_list->addItems(tmp_list);
+
+//    if (gps_s == 0) gps_s = 1;
+
+//    reset_ind_acc = reset_ind_gps + gps_headers + gps_entries*gps_s;
+
+//    for (int line_num = reset_ind_gps + gps_headers; line_num<reset_ind_acc; line_num++)
+//    {
+//        line_string = spc_string[line_num-1];
+//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+//        long gps_line_num = line_num - reset_ind_gps - gps_headers;
+//        cur_item = floor(gps_line_num/gps_entries);
+//        cur_entry = gps_line_num % gps_entries;
+
+//        ui->spc_cur_gps_list->setCurrentRow(cur_item);
+
+//        switch (cur_entry){
+//        case 0:
+//            break; // header
+//        case 1:
+//            ui->spc_cur_gps_samptime->setText(line_items[0]);
+//            break;
+//        case 2:
+//            ui->spc_cur_gps_posnoise->setText(line_items[0]);
+//            break;
+//        case 3:
+//            ui->spc_cur_gps_velnoise->setText(line_items[0]);
+//            break;
+//        case 4:
+//            ui->spc_cur_gps_timenoise->setText(line_items[0]);
+//            break;
+//        case 5:
+//            ui->spc_cur_gps_node->setValue(line_items[0].toInt());
+//            break;
+//        }
+//    }
+
+//    tmp_line_item = spc_data[reset_ind_acc + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+//    accels = tmp_line_item[0].toInt();
+
+//    ui->spc_cur_accel_list->clear();
+//    tmp_list.clear();
+
+//    for (int i=0; i<accels; i++) tmp_list.append("Acc " + QString::number(i));
+//    ui->spc_cur_accel_list->addItems(tmp_list);
+
+//    if (accels == 0) accels = 1;
+//    qDebug() << accels;
+
+//    reset_ind_end = reset_ind_acc + accel_headers + acc_entries*accels;
+
+//    for (int line_num = reset_ind_acc+accel_headers; line_num<reset_ind_end; line_num++)
+//    {
+//        line_string = spc_string[line_num-1];
+//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+//        long acc_line_num = line_num - reset_ind_acc - accel_headers;
+//        cur_item = floor(acc_line_num/acc_entries);
+//        cur_entry = acc_line_num % acc_entries;
+
+//        ui->spc_cur_accel_list->setCurrentRow(cur_item);
+//        switch (cur_entry){
+//        case 0:
+//            break; // header
+//        case 1:
+//            ui->spc_cur_acc_samptime->setText(line_items[0]);
+//            break;
+//        case 2:
+//            ui->spc_cur_acc_axis_1->setText(line_items[0]);
+//            ui->spc_cur_acc_axis_2->setText(line_items[1]);
+//            ui->spc_cur_acc_axis_3->setText(line_items[2]);
+//            break;
+//        case 3:
+//            ui->spc_cur_acc_maxacc->setText(line_items[0]);
+//            break;
+//        case 4:
+//            ui->spc_cur_acc_scaleerror->setText(line_items[0]);
+//            break;
+//        case 5:
+//            ui->spc_cur_acc_quant->setText(line_items[0]);
+//            break;
+//        case 6:
+//            ui->spc_cur_acc_dvrandwalk->setText(line_items[0]);
+//            break;
+//        case 7:
+//            ui->spc_cur_acc_bias_stab->setText(line_items[0]);
+//            ui->spc_cur_acc_bias_tspan->setText(line_items[1]);
+//            break;
+//        case 8:
+//            ui->spc_cur_acc_dvnoise->setText(line_items[0]);
+//            break;
+//        case 9:
+//            ui->spc_cur_acc_initbias->setText(line_items[0]);
+//            break;
+//        case 10:
+//            ui->spc_cur_acc_node->setValue(line_items[0].toInt());
+//            break;
+//        }
+//    }
+    qDebug() << "hi";
 }
 
 void SPC_submenu::write_data()
@@ -1951,6 +1956,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    apply_data();
     write_data();
 }
 
@@ -1969,12 +1975,75 @@ void SPC_submenu::on_spc_cur_body_remove_clicked()
 
 void SPC_submenu::on_spc_cur_body_add_clicked()
 {
-    ;
+    int index = ui->spc_cur_body_list->currentRow();
+
+    bodies += 1;
+    QString newitem = "Body "+ QString::number(bodies - 1);
+
+    QStringList item_update = {};
+    QStringList item_data = {};
+
+    item_update.append("================================ " + newitem + " ================================\n");
+    item_update.append("100.0                       ! Mass\n");
+    item_update.append("100.0  200.0  300.0         ! Moments of Inertia (kg-m^2)\n");
+    item_update.append("0.0  0.0  0.0               ! Products of Inertia (xy,xz,yz)\n");
+    item_update.append("0.0  0.0  0.0               ! Location of mass center, m\n");
+    item_update.append("0.0  0.0  0.0               ! Constant Embedded Momentum (Nms)\n");
+    item_update.append("0.0  0.0  0.0               ! Constant Embedded Magnetic Dipole (A-m^2)\n");
+    item_update.append("IonCruiser.obj              ! Geometry Input File Name\n");
+    item_update.append("NONE                        ! Node File Name\n");
+    item_update.append("NONE                        ! Flex File Name\n");
+
+    spc_data[reset_ind_body - 2] = dsm_gui_lib::whitespace(QString::number(bodies));
+
+    for (int i=0; i<item_update.length(); i++){
+        spc_update.insert(reset_ind_body + (bodies-1)*body_entries + i - 1, item_update[i]);
+    }
+
+
+    ui->spc_cur_body_list->addItem(newitem);
+    ui->spc_cur_body_list->setCurrentRow(ui->spc_cur_body_list->count()-1);
+    on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
+
+    for (int i=0; i<spc_data.length(); i++) qDebug() << QString::number(i) + ": " + spc_data[i];
+
+    receive_data();
+
+    global_body_index = index;
 }
 
 
 void SPC_submenu::on_spc_cur_body_duplicate_clicked()
 {
     ;
+}
+
+
+void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item)
+{
+    int index = ui->spc_cur_body_list->row(item);
+    QString itemText = ui->spc_cur_body_list->currentItem()->text();
+
+    if (index == global_body_index) {
+        return;
+    } else {
+
+        if ( (global_body_index != -1) && (global_spc_ignore == 0) ) {
+            int response = dsm_gui_lib::warning_message("Note that changes to the previous selected Spacecraft are lost unless you first select \"Apply\"! This is your only warning.");
+            if (response == QMessageBox::Cancel) {
+                ui->spc_cur_body_list->setCurrentRow(global_body_index);
+                global_spc_ignore = 1;
+                return;
+            }
+            else if (response == QMessageBox::Ok) {
+                global_spc_ignore = 1;
+            }
+        }
+
+        receive_data();
+        apply_data();
+
+        global_body_index = index;
+    }
 }
 
