@@ -87,6 +87,7 @@ void MainWindow::on_new_mission_clicked()
     ui->RGN_Menu->setEnabled(true);
     ui->IPC_Menu->setEnabled(true);
     ui->ORB_Menu->setEnabled(true);
+    ui->SIM_Menu->setEnabled(true);
 }
 
 int MainWindow::warning_message(QString warningText)
@@ -178,4 +179,14 @@ void MainWindow::on_ORB_Menu_clicked()
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 
+void MainWindow::on_SIM_Menu_clicked()
+{
+    sim_menu = new SIM_Menu(this);
+    sim_menu->setModal(true);
+    sim_menu->show();
+
+    connect(this, SIGNAL(send_data(QString)), sim_menu, SLOT(receive_simpath(QString)));
+    emit send_data(path);
+    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+}
 

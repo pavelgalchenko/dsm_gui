@@ -9,6 +9,7 @@
 #include "rgn_menu.h"
 #include "ipc_menu.h"
 #include "orb_menu.h"
+#include "sim_menu.h"
 
 #include <QDebug>
 
@@ -39,8 +40,8 @@ private slots:
     void on_NOS_Menu_clicked();
     void on_RGN_Menu_clicked();
     void on_IPC_Menu_clicked();
-
     void on_ORB_Menu_clicked();
+    void on_SIM_Menu_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -52,6 +53,7 @@ private:
     RGN_Menu *rgn_menu;
     IPC_Menu *ipc_menu;
     ORB_Menu *orb_menu;
+    SIM_Menu *sim_menu;
     QString path;
 };
 #endif // MAINWINDOW_H
