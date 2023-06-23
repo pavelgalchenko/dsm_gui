@@ -44,6 +44,10 @@ private slots:
     void on_spc_cur_body_list_itemClicked(QListWidgetItem *item);
 
 
+    void on_sections_tabBarClicked(int index);
+
+    void on_spc_cur_joint_list_itemClicked(QListWidgetItem *item);
+
 private:
     Ui::SPC_submenu *ui;
     QString spc_cur_name;

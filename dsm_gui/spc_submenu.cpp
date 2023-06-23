@@ -142,6 +142,8 @@ void SPC_submenu::apply_data()
     QStringList tmp_line_item;
     QStringList tmp_data = {};
 
+    int skip = 0;
+
     ui->spc_cur_name_sub->setText(spc_cur_name);
     for(int line_num=8; line_num<reset_ind_body; line_num++)
     {
@@ -317,83 +319,67 @@ void SPC_submenu::apply_data()
         case 0: // Body X Header
             tmp_data.append("blankline");
             break;
-        case 1:
+        case 1: // Mass
             tmp_data.append(line_items[0]);
-            // ui->spc_cur_body_mass->setText(line_items[0]);
+
             break;
         case 2: // Moments of Inertia (kg-m^2)
             tmp_data.append(line_items[0]);
             tmp_data.append(line_items[1]);
             tmp_data.append(line_items[2]);
 
-            // ui->spc_cur_body_pmoi_x->setText(line_items[0]);
-            //ui->spc_cur_body_pmoi_y->setText(line_items[1]);
-            //ui->spc_cur_body_pmoi_z->setText(line_items[2]);
             break;
         case 3: // Products of Inertia
             tmp_data.append(line_items[0]);
             tmp_data.append(line_items[1]);
             tmp_data.append(line_items[2]);
 
-            //ui->spc_cur_body_poi_x->setText(line_items[0]);
-            //ui->spc_cur_body_poi_y->setText(line_items[1]);
-            //ui->spc_cur_body_poi_z->setText(line_items[2]);
             break;
         case 4: // Location of mass center
             tmp_data.append(line_items[0]);
             tmp_data.append(line_items[1]);
             tmp_data.append(line_items[2]);
 
-            //ui->spc_cur_body_com_x->setText(line_items[0]);
-            //ui->spc_cur_body_com_y->setText(line_items[1]);
-            //ui->spc_cur_body_com_z->setText(line_items[2]);
             break;
         case 5: // constant embedded momentum
             tmp_data.append(line_items[0]);
             tmp_data.append(line_items[1]);
             tmp_data.append(line_items[2]);
 
-            //ui->spc_cur_body_cem_x->setText(line_items[0]);
-            //ui->spc_cur_body_cem_y->setText(line_items[1]);
-            //ui->spc_cur_body_cem_z->setText(line_items[2]);
             break;
         case 6: // constant embedded momentum
             tmp_data.append(line_items[0]);
             tmp_data.append(line_items[1]);
             tmp_data.append(line_items[2]);
 
-            //ui->spc_cur_body_cemd_x->setText(line_items[0]);
-            //ui->spc_cur_body_cemd_y->setText(line_items[1]);
-            //ui->spc_cur_body_cemd_z->setText(line_items[2]);
             break;
-        case 7:
+        case 7:// Geometry File
             tmp_data.append(line_items[0]);
 
-            //ui->spc_cur_body_geom->setText(line_items[0]);
             break;
-        case 8:
+        case 8: // Node
             tmp_data.append(line_items[0]);
-//            if (!QString::compare(line_items[0], "NONE"))
-//            {
-//                ui->spc_cur_node_enab->setCheckState(Qt::Checked);
-//            }
-//            else
-//            {
-//                ui->spc_cur_node_enab->setCheckState(Qt::Unchecked);
-//                ui->spc_cur_node_file->setText(line_items[0]);
-//            }
+            if (!QString::compare(line_items[0], "NONE"))
+            {
+                ui->spc_cur_node_enab->setCheckState(Qt::Checked);
+            }
+            else
+            {
+                ui->spc_cur_node_enab->setCheckState(Qt::Unchecked);
+                ui->spc_cur_node_file->setText(line_items[0]);
+            }
             break;
-        case 9:
+        case 9: // Flex
             tmp_data.append(line_items[0]);
-//            if (!QString::compare(line_items[0], "NONE"))
-//            {
-//                ui->spc_cur_flex_enab->setCheckState(Qt::Checked);
-//            }
-//            else
-//            {
-//                ui->spc_cur_flex_enab->setCheckState(Qt::Unchecked);
-//                ui->spc_cur_flex_file->setText(line_items[0]);
-//            }
+            if (!QString::compare(line_items[0], "NONE"))
+            {
+                ui->spc_cur_flex_enab->setCheckState(Qt::Checked);
+            }
+            else
+            {
+                ui->spc_cur_flex_enab->setCheckState(Qt::Unchecked);
+                ui->spc_cur_flex_file->setText(line_items[0]);
+            }
             break;
         }
         if (cur_entry==body_entries-1){
@@ -404,174 +390,142 @@ void SPC_submenu::apply_data()
         }
     }
 
+    joints = bodies - 1;
+    qDebug() << joints;
 
-//    joints = bodies - 1;
+    ui->spc_cur_joint_list->clear();
+    tmp_list.clear();
 
-//    ui->spc_cur_joint_list->clear();
-//    tmp_list.clear();
 
-//    for (int i=0; i<joints; i++) tmp_list.append("Joint " + QString::number(i));
-//    ui->spc_cur_joint_list->addItems(tmp_list);
+    if (joints == 0) reset_ind_wheel = reset_ind_joint + joint_headers + joint_entries; // SC_Simple has an example joint
+    else reset_ind_wheel = reset_ind_joint + joint_headers + joint_entries*joints;
 
-//    if (joints == 0){
-//        joints = 1;
-//    }
+    if (joints > 0){
+        for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
+        {
+            line_string = spc_string[line_num-1];
+            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
 
-//    reset_ind_wheel = reset_ind_joint + joint_headers + joint_entries*joints;
+            long joint_line_num = line_num - reset_ind_joint - joint_headers;
+            cur_item = floor(joint_line_num/joint_entries);
+            cur_entry = joint_line_num % joint_entries;
 
-//    for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
-//    {
-//        line_string = spc_string[line_num-1];
-//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+            if (cur_entry == 0){
+                ui->spc_cur_joint_list->addItem("Joint " + QString::number(cur_item));
+            }
 
-//        long joint_line_num = line_num - reset_ind_joint - joint_headers;
-//        cur_item = floor(joint_line_num/joint_entries);
-//        cur_entry = joint_line_num % joint_entries;
+            switch (cur_entry) {
+            case 0: // Joint X Header
+                tmp_data.append("blankline");
+                break;
+            case 1: // Joint Type
+                tmp_data.append(line_items[0]);
+                break;
+            case 2: // Joint Connections (inner and outer body)
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                break;
+            case 3: // RotDOF, RotDOF Seq, Rot Type
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                break;
+            case 4: // Trn DOF, Trn Seq
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                break;
+            case 5: // Rotational Axes Locked?
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
 
-//        ui->spc_cur_joint_list->setCurrentRow(cur_item);
+                //if (QString::compare(line_items[0], "FALSE")) ui->spc_cur_joint_rlock1->setCheckState(Qt::Checked);
+                //else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
 
-//        switch (cur_entry) {
-//        case 0: // Joint X Header
-//            break;
-//        case 1:
-//            tmp_data.append(line_items[0]);
-//            //setQComboBox(ui->spc_cur_joint_type, line_items[0]);
-//            break;
-//        case 2:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
+                //if (QString::compare(line_items[1], "FALSE")) ui->spc_cur_joint_rlock2->setCheckState(Qt::Checked);
+                //else ui->spc_cur_joint_rlock2->setCheckState(Qt::Unchecked);
 
-//            //ui->spc_cur_joint_in->setValue(line_items[0].toInt());
-//            //ui->spc_cur_joint_out->setValue(line_items[1].toInt());
-//            break;
-//        case 3:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
-//            tmp_data.append(line_items[2]);
+                //if (QString::compare(line_items[2], "FALSE")) ui->spc_cur_joint_rlock3->setCheckState(Qt::Checked);
+                //else ui->spc_cur_joint_rlock3->setCheckState(Qt::Unchecked);
+                break;
 
-//            //ui->spc_cur_joint_rotdof->setValue(line_items[0].toInt());
-//            //setQComboBox(ui->spc_cur_joint_rotdof_seq, line_items[1]);
-//            //setQComboBox(ui->spc_cur_joint_rottype, line_items[2]);
-//            break;
-//        case 4:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
+            case 6: // Translational Axes Locked?
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
 
-//            //ui->spc_cur_joint_trndof->setValue(line_items[0].toInt());
-//            //setQComboBox(ui->spc_cur_joint_trndof_seq, line_items[1]);
-//            break;
-//        case 5:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
-//            tmp_data.append(line_items[2]);
+                //if (QString::compare(line_items[0], "FALSE")) ui->spc_cur_joint_tlock1->setCheckState(Qt::Checked);
+                //else ui->spc_cur_joint_tlock1->setCheckState(Qt::Unchecked);
 
-//            //if (QString::compare(line_items[0], "FALSE")) ui->spc_cur_joint_rlock1->setCheckState(Qt::Checked);
-//            //else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+                //if (QString::compare(line_items[1], "FALSE")) ui->spc_cur_joint_tlock2->setCheckState(Qt::Checked);
+                //else ui->spc_cur_joint_tlock2->setCheckState(Qt::Unchecked);
 
-//            //if (QString::compare(line_items[1], "FALSE")) ui->spc_cur_joint_rlock2->setCheckState(Qt::Checked);
-//            //else ui->spc_cur_joint_rlock2->setCheckState(Qt::Unchecked);
+                //if (QString::compare(line_items[2], "FALSE")) ui->spc_cur_joint_tlock3->setCheckState(Qt::Checked);
+                //else ui->spc_cur_joint_tlock3->setCheckState(Qt::Unchecked);
+                break;
+            case 7: // Joint initial angle
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
 
-//            //if (QString::compare(line_items[2], "FALSE")) ui->spc_cur_joint_rlock3->setCheckState(Qt::Checked);
-//            //else ui->spc_cur_joint_rlock3->setCheckState(Qt::Unchecked);
-//            break;
+                break;
+            case 8: // Joint initial angle rate
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
 
-//        case 6:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
-//            tmp_data.append(line_items[2]);
+                break;
+            case 9: // Joint initial displacement
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
 
-//            //if (QString::compare(line_items[0], "FALSE")) ui->spc_cur_joint_tlock1->setCheckState(Qt::Checked);
-//            //else ui->spc_cur_joint_tlock1->setCheckState(Qt::Unchecked);
+                break;
+            case 10: // Joint initial velocity
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
 
-//            //if (QString::compare(line_items[1], "FALSE")) ui->spc_cur_joint_tlock2->setCheckState(Qt::Checked);
-//            //else ui->spc_cur_joint_tlock2->setCheckState(Qt::Unchecked);
+                break;
+            case 11: // Joint Bi Gi angles, sequence
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                tmp_data.append(line_items[3]);
 
-//            //if (QString::compare(line_items[2], "FALSE")) ui->spc_cur_joint_tlock3->setCheckState(Qt::Checked);
-//            //else ui->spc_cur_joint_tlock3->setCheckState(Qt::Unchecked);
-//            break;
-//        case 7:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
-//            tmp_data.append(line_items[2]);
+                break;
+            case 12: // Joint Go Bo angles, sequence
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                tmp_data.append(line_items[3]);
 
-//            //ui->spc_cur_joint_ang0_1->setText(line_items[0]);
-//            //ui->spc_cur_joint_ang0_2->setText(line_items[1]);
-//            //ui->spc_cur_joint_ang0_3->setText(line_items[2]);
-//            break;
-//        case 8:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
-//            tmp_data.append(line_items[2]);
+                break;
+            case 13: // Joint Position wrt inner body
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
 
-//            //ui->spc_cur_joint_angrate0_1->setText(line_items[0]);
-//            //ui->spc_cur_joint_angrate0_2->setText(line_items[1]);
-//            //ui->spc_cur_joint_angrate0_3->setText(line_items[2]);
-//            break;
-//        case 9:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
-//            tmp_data.append(line_items[2]);
+                break;
+            case 14: // Joint Position wrt outer body
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
 
-//            ui->spc_cur_joint_disp0_1->setText(line_items[0]);
-//            ui->spc_cur_joint_disp0_2->setText(line_items[1]);
-//            ui->spc_cur_joint_disp0_3->setText(line_items[2]);
-//            break;
-//        case 10:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
-//            tmp_data.append(line_items[2]);
+                break;
+            case 15: // Joint parameter file
+                tmp_data.append(line_items[0]);
+                break;
+            }
+            if (cur_entry==joint_entries-1){
+                ui->spc_cur_joint_list->setCurrentRow(cur_item);
+                ui->spc_cur_joint_list->currentItem()->setData(0, "Joint " + QString::number(cur_item));
+                ui->spc_cur_joint_list->currentItem()->setData(1, tmp_data);
+                tmp_data.clear();
+            }
+        }
+    }
 
-//            ui->spc_cur_joint_dispr0_1->setText(line_items[0]);
-//            ui->spc_cur_joint_dispr0_2->setText(line_items[1]);
-//            ui->spc_cur_joint_dispr0_3->setText(line_items[2]);
-//            break;
-//        case 11:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
-//            tmp_data.append(line_items[2]);
-
-//            ui->spc_cur_joint_bigi_1->setText(line_items[0]);
-//            ui->spc_cur_joint_bigi_2->setText(line_items[1]);
-//            ui->spc_cur_joint_bigi_3->setText(line_items[2]);
-
-//            setQComboBox(ui->spc_cur_joint_bigi_seq, line_items[3]);
-//            break;
-//        case 12:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
-//            tmp_data.append(line_items[2]);
-
-//            ui->spc_cur_joint_bogo_1->setText(line_items[0]);
-//            ui->spc_cur_joint_bogo_2->setText(line_items[1]);
-//            ui->spc_cur_joint_bogo_3->setText(line_items[2]);
-
-//            setQComboBox(ui->spc_cur_joint_bogo_seq, line_items[3]);
-//            break;
-//        case 13:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
-//            tmp_data.append(line_items[2]);
-
-//            ui->spc_cur_joint_poswrt_in_1->setText(line_items[0]);
-//            ui->spc_cur_joint_poswrt_in_2->setText(line_items[1]);
-//            ui->spc_cur_joint_poswrt_in_3->setText(line_items[2]);
-//            break;
-//        case 14:
-//            tmp_data.append(line_items[0]);
-//            tmp_data.append(line_items[1]);
-//            tmp_data.append(line_items[2]);
-
-//            ui->spc_cur_joint_poswrt_out_1->setText(line_items[0]);
-//            ui->spc_cur_joint_poswrt_out_2->setText(line_items[1]);
-//            ui->spc_cur_joint_poswrt_out_3->setText(line_items[2]);
-//            break;
-//        case 15:
-//            tmp_data.append(line_items[0]);
-
-//            ui->spc_cur_joint_param_file->setText(line_items[0]);
-//            break;
-//        }
-//    }
 
 //    tmp_line_item = spc_data[reset_ind_wheel + 3 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
 //    wheels = tmp_line_item[0].toInt();
@@ -1174,7 +1128,24 @@ void SPC_submenu::on_spc_cur_close_clicked()
 
 void SPC_submenu::on_spc_cur_apply_clicked()
 {
-    QString ast_line = "************************************************************************\n";
+
+    QFile file(file_path);
+    if(!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::information(0, "error", file.errorString());
+    }
+
+    QTextStream in(&file);
+    long counter = 1;
+    while(!in.atEnd()) {
+        QString line = in.readLine();
+        if (counter < 8)
+        {
+            spc_update.append(line);
+            spc_update.append("\n");
+        }
+        counter++;
+    }
+    file.close();
 
     for(int line_num=8; line_num<reset_ind_body; line_num++)
     {
@@ -1305,6 +1276,93 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             spc_update.append(spc_file_headers[line_num-1]);
     }
 
+    /************************************* BODY SECTION ***********************************/
+
+    reset_ind_joint = reset_ind_body + body_entries*bodies;
+
+    QStringList tmp_data = {}; // Update the list widget data of the body tab we are currently on.
+    if (ui->sections->currentIndex() == 3)
+    {
+        for (int line_num = reset_ind_body; line_num<reset_ind_joint; line_num++)
+        {
+
+            long body_line_num = line_num - reset_ind_body;
+            long cur_item = floor(body_line_num/body_entries);
+            long cur_entry = body_line_num % body_entries;
+
+            if (ui->spc_cur_body_list->currentRow() == cur_item)
+            {
+                switch (cur_entry) {
+                case 0: // Body X Header
+                    tmp_data.append("blankline");
+                    break;
+                case 1:
+                    tmp_data.append(ui->spc_cur_body_mass->text());
+                    break;
+                case 2: // Moments of Inertia (kg-m^2)
+                    tmp_data.append(ui->spc_cur_body_pmoi_x->text());
+                    tmp_data.append(ui->spc_cur_body_pmoi_y->text());
+                    tmp_data.append(ui->spc_cur_body_pmoi_z->text());
+                    break;
+                case 3: // Products of Inertia
+                    tmp_data.append(ui->spc_cur_body_poi_x->text());
+                    tmp_data.append(ui->spc_cur_body_poi_y->text());
+                    tmp_data.append(ui->spc_cur_body_poi_z->text());
+
+                    break;
+                case 4: // Location of mass center
+                    tmp_data.append(ui->spc_cur_body_com_x->text());
+                    tmp_data.append(ui->spc_cur_body_com_y->text());
+                    tmp_data.append(ui->spc_cur_body_com_z->text());
+                    break;
+                case 5: // constant embedded momentum
+                    tmp_data.append(ui->spc_cur_body_cem_x->text());
+                    tmp_data.append(ui->spc_cur_body_cem_y->text());
+                    tmp_data.append(ui->spc_cur_body_cem_z->text());
+                    break;
+                case 6: // constant embedded momentum
+                    tmp_data.append(ui->spc_cur_body_cemd_x->text());
+                    tmp_data.append(ui->spc_cur_body_cemd_y->text());
+                    tmp_data.append(ui->spc_cur_body_cemd_z->text());
+                    break;
+                case 7:
+                    tmp_data.append(ui->spc_cur_body_geom->text());
+                    break;
+                case 8:
+                    if (ui->spc_cur_node_enab->isChecked())
+                    {
+                        tmp_data.append("NONE");
+                        ui->spc_cur_node_file->setEnabled(false);
+                    }
+                    else
+                    {
+                        tmp_data.append(ui->spc_cur_node_file->text());
+                        ui->spc_cur_node_file->setEnabled(true);
+                        ui->spc_cur_node_file->setText(ui->spc_cur_node_file->text());
+                    }
+                    break;
+                case 9:
+                    tmp_data.append(ui->spc_cur_flex_file->text());
+                    if (ui->spc_cur_flex_enab->isChecked())
+                    {
+                        tmp_data.append("NONE");
+                        ui->spc_cur_flex_file->setEnabled(false);
+                    }
+                    else
+                    {
+                        tmp_data.append(ui->spc_cur_flex_file->text());
+                        ui->spc_cur_flex_file->setEnabled(true);
+                        ui->spc_cur_flex_file->setText(ui->spc_cur_flex_file->text());
+                    }
+                    break;
+                }
+            }
+        }
+        ui->spc_cur_body_list->currentItem()->setData(1, tmp_data);
+    }
+
+    tmp_data.clear();
+
     for (int line_num = reset_ind_body; line_num<reset_ind_joint; line_num++)
     {
         QString data_inp = "";
@@ -1314,158 +1372,276 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         long cur_entry = body_line_num % body_entries;
 
         ui->spc_cur_body_list->setCurrentRow(cur_item);
-        QStringList current_data = ui->spc_cur_body_list->currentItem()->data(0).toStringList();
-        int i = 0;
+        QStringList current_data = ui->spc_cur_body_list->currentItem()->data(1).toStringList();
 
         switch (cur_entry) {
         case 0: // Body X Header
             spc_update.append("================================ " + ui->spc_cur_body_list->currentItem()->text() + " ================================\n");
             break;
         case 1:
-            data_inp = current_data[0];
+            data_inp = current_data[1];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Mass\n");
             break;
         case 2: // Moments of Inertia (kg-m^2)
-            data_inp = current_data[1] + " " + current_data[2]  + " " + current_data[3];
+            data_inp = current_data[2] + " " + current_data[3]  + " " + current_data[4];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Moments of Inertia (kg-m^2)\n");
             break;
         case 3: // Products of Inertia
-            data_inp = current_data[4] + " " + current_data[5] + " " + current_data[6];
+            data_inp = current_data[5] + " " + current_data[6] + " " + current_data[7];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Products of Inertia (xy,xz,yz)\n");
             break;
         case 4: // Location of mass center
-            data_inp = current_data[7] + " " + current_data[8] + " " + current_data[9];
+            data_inp = current_data[8] + " " + current_data[9] + " " + current_data[10];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Location of mass center, m\n");
             break;
         case 5: // constant embedded momentum
-            data_inp = current_data[10] + " " + current_data[11] + " " + current_data[12];
+            data_inp = current_data[11] + " " + current_data[12] + " " + current_data[13];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Constant Embedded Momentum (Nms)\n");
             break;
         case 6: // constant embedded momentum
-            data_inp = current_data[13] + " " + current_data[14] + " " + current_data[15];
+            data_inp = current_data[14] + " " + current_data[15] + " " + current_data[16];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Constant Embedded Magnetic Dipole (A-m^2)\n");
             break;
         case 7:
-            data_inp = current_data[16];
+            data_inp = current_data[17];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Geometry Input File Name\n");
             break;
         case 8:
-            if (ui->spc_cur_node_enab->isChecked()) data_inp = "NONE";
-            else data_inp = current_data[17];
+            data_inp = current_data[18];
+            if (ui->spc_cur_node_enab->isChecked()) ui->spc_cur_node_file->setEnabled(false);
+            else ui->spc_cur_node_file->setEnabled(true);
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node File Name\n");
             break;
         case 9:
-            if (ui->spc_cur_flex_enab->isChecked()) data_inp = "NONE";
-            else data_inp = current_data[18];
+            data_inp = current_data[19];
+            if (ui->spc_cur_flex_enab->isChecked()) ui->spc_cur_flex_file->setEnabled(false);
+            else ui->spc_cur_flex_file->setEnabled(true);
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Flex File Name\n");
             break;
         }
     }
 
-//    spc_update.append(ast_line);
-//    spc_update.append("*************************** Joint Parameters ***************************\n");
-//    spc_update.append(ast_line);
-//    spc_update.append("         (Number of Joints is Number of Bodies minus one)\n");
+    /************************************* JOINT SECTION ***********************************/
 
-//    for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
-//    {
-//        QString data_inp = "";
+    spc_update.append("************************************************************************\n");
+    spc_update.append("*************************** Joint Parameters ***************************\n");
+    spc_update.append("************************************************************************\n");
+    spc_update.append("         (Number of Joints is Number of Bodies minus one)\n");
 
-//        long joint_line_num = line_num - reset_ind_joint - joint_headers;
-//        long cur_item = floor(joint_line_num/joint_entries);
-//        long cur_entry = joint_line_num % joint_entries;
+    reset_ind_wheel = reset_ind_joint + joint_headers + joint_entries*joints;
 
-//        ui->spc_cur_joint_list->setCurrentRow(cur_item);
+    if (ui->sections->currentIndex() == 4)
+    {
+        for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
+        {
 
-//        switch (cur_entry) {
-//        case 0: // Joint X Header
-//            if (ui->spc_cur_joint_list->count() > 0)
-//            {
-//                spc_update.append("============================== " + ui->spc_cur_joint_list->currentItem()->text() + " ================================\n");
-//                joints = 0;
-//            }
-//            else
-//            {
-//                spc_update.append("============================== Joint 0 ================================\n");
-//            }
-//            break;
-//        case 1:
-//            data_inp = ui->spc_cur_joint_type->currentText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Type of joint (PASSIVE, ACTUATED, others)\n");
-//            break;
-//        case 2:
-//            data_inp = ui->spc_cur_joint_in->cleanText() + ui->spc_cur_joint_out->cleanText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Inner, outer body indices\n");
-//            break;
-//        case 3:
-//            data_inp = ui->spc_cur_joint_rotdof->cleanText() + " " + ui->spc_cur_joint_rotdof_seq->currentText() + " " + ui->spc_cur_joint_rottype->currentText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! RotDOF, Seq, GIMBAL or SPHERICAL\n");
-//            break;
-//        case 4:
-//            data_inp = ui->spc_cur_joint_trndof->cleanText() + " " + ui->spc_cur_joint_trndof_seq->currentText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! TrnDOF, Seq\n");
-//            break;
-//        case 5:
-//            if (ui->spc_cur_joint_rlock1->isChecked()) data_inp = "FALSE";
-//            else data_inp = "TRUE";
+            long joint_line_num = line_num - reset_ind_joint;
+            long cur_item = floor(joint_line_num/joint_entries);
+            long cur_entry = joint_line_num % joint_entries;
 
-//            if (ui->spc_cur_joint_rlock2->isChecked()) data_inp = "FALSE";
-//            else data_inp = "TRUE";
+            if ((ui->spc_cur_joint_list->count() > 0) && (ui->spc_cur_joint_list->currentRow() == cur_item))
+            {
+                switch (cur_entry) {
+                case 0: // Joint X Header
+                    tmp_data.append("blankline");
+                    break;
+                case 1: // Joint Type
+                    tmp_data.append(ui->spc_cur_joint_type->currentText());
+                    break;
+                case 2: // Joint Connections (inner and outer body)
+                    tmp_data.append(ui->spc_cur_joint_in->text());
+                    tmp_data.append(ui->spc_cur_joint_out->text());
+                    break;
+                case 3: // RotDOF, RotDOF Seq, Rot Type
+                    tmp_data.append(ui->spc_cur_joint_rotdof->text());
+                    tmp_data.append(ui->spc_cur_joint_rotdof_seq->currentText());
+                    tmp_data.append(ui->spc_cur_joint_rottype->currentText());
+                    break;
+                case 4: // Trn DOF, Trn Seq
+                    tmp_data.append(ui->spc_cur_joint_trndof->text());
+                    tmp_data.append(ui->spc_cur_joint_trndof_seq->currentText());
+                    break;
+                case 5: // Rotational Axes Locked?
+                    if (ui->spc_cur_joint_rlock1->isChecked()) tmp_data.append("TRUE");
+                    else tmp_data.append("FALSE");
 
-//            if (ui->spc_cur_joint_rlock3->isChecked()) data_inp = "FALSE";
-//            else data_inp = "TRUE";
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! RotDOF Locked\n");
-//            break;
+                    if (ui->spc_cur_joint_rlock2->isChecked()) tmp_data.append("TRUE");
+                    else tmp_data.append("FALSE");
 
-//        case 6:
-//            if (ui->spc_cur_joint_tlock1->isChecked()) data_inp = "FALSE";
-//            else data_inp = "TRUE";
 
-//            if (ui->spc_cur_joint_tlock2->isChecked()) data_inp = "FALSE";
-//            else data_inp = "TRUE";
+                    if (ui->spc_cur_joint_rlock3->isChecked()) tmp_data.append("TRUE");
+                    else tmp_data.append("FALSE");
 
-//            if (ui->spc_cur_joint_tlock3->isChecked()) data_inp = "FALSE";
-//            else data_inp = "TRUE";
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! TrnDOF Locked\n");
-//            break;
-//        case 7:
-//            data_inp = ui->spc_cur_joint_ang0_1->text() + " " + ui->spc_cur_joint_ang0_1->text() + " " + ui->spc_cur_joint_ang0_1->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Angles [deg]\n");
-//            break;
-//        case 8:
-//            data_inp = ui->spc_cur_joint_angrate0_1->text() + " " + ui->spc_cur_joint_angrate0_2->text() + " " + ui->spc_cur_joint_angrate0_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Rates, deg/sec\n");
-//            break;
-//        case 9:
-//            data_inp = ui->spc_cur_joint_disp0_1->text() + " " + ui->spc_cur_joint_disp0_2->text() + " " + ui->spc_cur_joint_disp0_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Displacements [m]\n");
-//            break;
-//        case 10:
-//            data_inp = ui->spc_cur_joint_dispr0_1->text() + " " + ui->spc_cur_joint_dispr0_2->text() + " " + ui->spc_cur_joint_dispr0_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Displacement Rates, m/sec\n");
-//            break;
-//        case 11:
-//            data_inp = ui->spc_cur_joint_bigi_1->text() + " " + ui->spc_cur_joint_bigi_2->text() + " " + ui->spc_cur_joint_bigi_3->text() + " " + ui->spc_cur_joint_bigi_seq->currentText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Bi to Gi Static Angles [deg] & Seq\n");
-//            break;
-//        case 12:
-//            data_inp = ui->spc_cur_joint_bogo_1->text() + " " + ui->spc_cur_joint_bogo_2->text() + " " + ui->spc_cur_joint_bogo_3->text() + " " + ui->spc_cur_joint_bogo_seq->currentText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Go to Bo Static Angles [deg] & Seq\n");
-//            break;
-//        case 13:
-//            data_inp = ui->spc_cur_joint_poswrt_in_1->text() + " " + ui->spc_cur_joint_poswrt_in_2->text() + " " + ui->spc_cur_joint_poswrt_in_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Position wrt inner body origin, m\n");
-//            break;
-//        case 14:
-//            data_inp = ui->spc_cur_joint_poswrt_out_1->text() + " " + ui->spc_cur_joint_poswrt_out_2->text() + " " + ui->spc_cur_joint_poswrt_out_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Position wrt outer body origin, m\n");
-//            break;
-//        case 15:
-//            data_inp = ui->spc_cur_joint_param_file->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Parameter File Name\n");
-//            break;
-//        }
-//    }
+                    break;
+
+                case 6: // Translational Axes Locked?
+                    if (ui->spc_cur_joint_tlock1->isChecked()) tmp_data.append("TRUE");
+                    else tmp_data.append("FALSE");
+
+                    if (ui->spc_cur_joint_tlock2->isChecked()) tmp_data.append("TRUE");
+                    else tmp_data.append("FALSE");
+
+
+                    if (ui->spc_cur_joint_tlock3->isChecked()) tmp_data.append("TRUE");
+                    else tmp_data.append("FALSE");
+                    break;
+                case 7: // Joint initial angle
+                    tmp_data.append(ui->spc_cur_joint_ang0_1->text());
+                    tmp_data.append(ui->spc_cur_joint_ang0_2->text());
+                    tmp_data.append(ui->spc_cur_joint_ang0_3->text());
+
+                    break;
+                case 8: // Joint initial angle rate
+                    tmp_data.append(ui->spc_cur_joint_angrate0_1->text());
+                    tmp_data.append(ui->spc_cur_joint_angrate0_2->text());
+                    tmp_data.append(ui->spc_cur_joint_angrate0_3->text());
+
+                    break;
+                case 9: // Joint initial displacement
+                    tmp_data.append(ui->spc_cur_joint_disp0_1->text());
+                    tmp_data.append(ui->spc_cur_joint_disp0_2->text());
+                    tmp_data.append(ui->spc_cur_joint_disp0_3->text());
+
+                    break;
+                case 10: // Joint initial velocity
+                    tmp_data.append(ui->spc_cur_joint_dispr0_1->text());
+                    tmp_data.append(ui->spc_cur_joint_dispr0_2->text());
+                    tmp_data.append(ui->spc_cur_joint_dispr0_3->text());
+
+                    break;
+                case 11: // Joint Bi Gi angles, sequence
+                    tmp_data.append(ui->spc_cur_joint_bigi_1->text());
+                    tmp_data.append(ui->spc_cur_joint_bigi_2->text());
+                    tmp_data.append(ui->spc_cur_joint_bigi_3->text());
+                    tmp_data.append(ui->spc_cur_joint_bigi_seq->currentText());
+
+                    break;
+                case 12: // Joint Go Bo angles, sequence
+                    tmp_data.append(ui->spc_cur_joint_bogo_1->text());
+                    tmp_data.append(ui->spc_cur_joint_bogo_2->text());
+                    tmp_data.append(ui->spc_cur_joint_bogo_3->text());
+                    tmp_data.append(ui->spc_cur_joint_bogo_seq->currentText());
+
+                    break;
+                case 13: // Joint Position wrt inner body
+                    tmp_data.append(ui->spc_cur_joint_poswrt_in_1->text());
+                    tmp_data.append(ui->spc_cur_joint_poswrt_in_2->text());
+                    tmp_data.append(ui->spc_cur_joint_poswrt_in_3->text());
+
+                    break;
+                case 14: // Joint Position wrt outer body
+                    tmp_data.append(ui->spc_cur_joint_poswrt_out_1->text());
+                    tmp_data.append(ui->spc_cur_joint_poswrt_out_2->text());
+                    tmp_data.append(ui->spc_cur_joint_poswrt_out_3->text());
+
+                    break;
+                case 15: // Joint parameter file
+                    tmp_data.append(ui->spc_cur_joint_param_file->text());
+                    break;
+                }
+            }
+        }
+    }
+
+    for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
+    {
+        QString data_inp = "";
+
+        long joint_line_num = line_num - reset_ind_joint - joint_headers;
+        long cur_item = floor(joint_line_num/joint_entries);
+        long cur_entry = joint_line_num % joint_entries;
+
+        ui->spc_cur_joint_list->setCurrentRow(cur_item);
+        QStringList current_data = ui->spc_cur_joint_list->currentItem()->data(1).toStringList();
+
+        switch (cur_entry) {
+        case 0: // Joint X Header
+            if (ui->spc_cur_joint_list->count() > 0)
+            {
+                spc_update.append("============================== " + ui->spc_cur_joint_list->currentItem()->text() + " ================================\n");
+            }
+            else
+            {
+                spc_update.append("============================== Joint 0 ================================\n");
+            }
+            break;
+        case 1:
+            data_inp = current_data[1];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Type of joint (PASSIVE, ACTUATED, others)\n");
+            break;
+        case 2:
+            data_inp = current_data[2] + " " + current_data[3];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Inner, outer body indices\n");
+            break;
+        case 3:
+            data_inp = current_data[4] + " " + current_data[5] + " " + current_data[6];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! RotDOF, Seq, GIMBAL or SPHERICAL\n");
+            break;
+        case 4:
+            data_inp = current_data[7] + " " + current_data[8];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! TrnDOF, Seq\n");
+            break;
+        case 5:
+            if (ui->spc_cur_joint_rlock1->isChecked()) data_inp = "TRUE";
+            else data_inp = "FALSE";
+
+            if (ui->spc_cur_joint_rlock2->isChecked()) data_inp = "TRUE";
+            else data_inp = "FALSE";
+
+            if (ui->spc_cur_joint_rlock3->isChecked()) data_inp = "TRUE";
+            else data_inp = "FALSE";
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! RotDOF Locked\n");
+            break;
+
+        case 6:
+            if (ui->spc_cur_joint_tlock1->isChecked()) data_inp = "TRUE";
+            else data_inp = "FALSE";
+
+            if (ui->spc_cur_joint_tlock2->isChecked()) data_inp = "TRUE";
+            else data_inp = "FALSE";
+
+            if (ui->spc_cur_joint_tlock3->isChecked()) data_inp = "TRUE";
+            else data_inp = "FALSE";
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! TrnDOF Locked\n");
+            break;
+        case 7:
+            data_inp = current_data[15] + " " + current_data[16] + " " + current_data[17];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Angles [deg]\n");
+            break;
+        case 8:
+            data_inp = current_data[18] + " " + current_data[19] + " " + current_data[20];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Rates, deg/sec\n");
+            break;
+        case 9:
+            data_inp = current_data[21] + " " + current_data[22] + " " + current_data[23];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Displacements [m]\n");
+            break;
+        case 10:
+            data_inp = current_data[24] + " " + current_data[25] + " " + current_data[26];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Displacement Rates, m/sec\n");
+            break;
+        case 11:
+            data_inp = current_data[27] + " " + current_data[28] + " " + current_data[29] + " " + current_data[30];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Bi to Gi Static Angles [deg] & Seq\n");
+            break;
+        case 12:
+            data_inp = current_data[31] + " " + current_data[32] + " " + current_data[33] + " " + current_data[34];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Go to Bo Static Angles [deg] & Seq\n");
+            break;
+        case 13:
+            data_inp = current_data[35] + " " + current_data[36] + " " + current_data[37];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Position wrt inner body origin, m\n");
+            break;
+        case 14:
+            data_inp = current_data[38] + " " + current_data[39] + " " + current_data[40];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Position wrt outer body origin, m\n");
+            break;
+        case 15:
+            data_inp = current_data[41];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Parameter File Name\n");
+            break;
+        }
+    }
 
 //    long num_drjit = 0;
 
@@ -2041,7 +2217,6 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 //        }
 //    }
 
-    apply_data();
     write_data();
 }
 
@@ -2110,10 +2285,10 @@ void SPC_submenu::on_spc_cur_body_duplicate_clicked()
 
 void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item)
 {
+    receive_data();
+
     QStringList current_data = item->data(1).toStringList();
     item->setText(item->data(0).toString());
-
-    qDebug() << current_data;
 
     ui->spc_cur_body_mass->setText(current_data[1]);
 
@@ -2159,5 +2334,92 @@ void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item)
         ui->spc_cur_flex_file->setText(current_data[19]);
     }
 }
+
+// Joint (item clicked)
+
+void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item)
+{
+    receive_data();
+
+    QStringList current_data = item->data(1).toStringList();
+    item->setText(item->data(0).toString());
+
+    setQComboBox(ui->spc_cur_joint_type, current_data[1]);
+
+    ui->spc_cur_joint_in->setValue(current_data[2].toInt());
+    ui->spc_cur_joint_out->setValue(current_data[3].toInt());
+
+    ui->spc_cur_joint_rotdof->setValue(current_data[4].toInt());
+    setQComboBox(ui->spc_cur_joint_rotdof_seq, current_data[5]);
+    setQComboBox(ui->spc_cur_joint_rottype, current_data[6]);
+
+    ui->spc_cur_joint_trndof->setValue(current_data[7].toInt());
+    setQComboBox(ui->spc_cur_joint_trndof_seq, current_data[8]);
+
+    if (!QString::compare(current_data[9], "TRUE")) ui->spc_cur_joint_rlock1->setCheckState(Qt::Checked);
+    else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+
+    if (!QString::compare(current_data[10], "TRUE")) ui->spc_cur_joint_rlock2->setCheckState(Qt::Checked);
+    else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+
+    if (!QString::compare(current_data[11], "TRUE")) ui->spc_cur_joint_rlock3->setCheckState(Qt::Checked);
+    else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+
+
+
+    if (!QString::compare(current_data[12], "TRUE")) ui->spc_cur_joint_tlock1->setCheckState(Qt::Checked);
+    else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+
+    if (!QString::compare(current_data[13], "TRUE")) ui->spc_cur_joint_tlock2->setCheckState(Qt::Checked);
+    else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+
+    if (!QString::compare(current_data[14], "TRUE")) ui->spc_cur_joint_tlock3->setCheckState(Qt::Checked);
+    else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+
+    ui->spc_cur_joint_ang0_1->setText(current_data[15]);
+    ui->spc_cur_joint_ang0_2->setText(current_data[16]);
+    ui->spc_cur_joint_ang0_3->setText(current_data[17]);
+
+    ui->spc_cur_joint_angrate0_1->setText(current_data[18]);
+    ui->spc_cur_joint_angrate0_2->setText(current_data[19]);
+    ui->spc_cur_joint_angrate0_3->setText(current_data[20]);
+
+    ui->spc_cur_joint_disp0_1->setText(current_data[21]);
+    ui->spc_cur_joint_disp0_2->setText(current_data[22]);
+    ui->spc_cur_joint_disp0_3->setText(current_data[23]);
+
+    ui->spc_cur_joint_dispr0_1->setText(current_data[24]);
+    ui->spc_cur_joint_dispr0_2->setText(current_data[25]);
+    ui->spc_cur_joint_dispr0_3->setText(current_data[26]);
+
+    ui->spc_cur_joint_bigi_1->setText(current_data[27]);
+    ui->spc_cur_joint_bigi_2->setText(current_data[28]);
+    ui->spc_cur_joint_bigi_3->setText(current_data[29]);
+    setQComboBox(ui->spc_cur_joint_bigi_seq, current_data[30]);
+
+    ui->spc_cur_joint_bogo_1->setText(current_data[31]);
+    ui->spc_cur_joint_bogo_2->setText(current_data[32]);
+    ui->spc_cur_joint_bogo_3->setText(current_data[33]);
+    setQComboBox(ui->spc_cur_joint_bogo_seq, current_data[34]);
+
+    ui->spc_cur_joint_poswrt_in_1->setText(current_data[35]);
+    ui->spc_cur_joint_poswrt_in_2->setText(current_data[36]);
+    ui->spc_cur_joint_poswrt_in_3->setText(current_data[37]);
+
+    ui->spc_cur_joint_poswrt_out_1->setText(current_data[38]);
+    ui->spc_cur_joint_poswrt_out_2->setText(current_data[39]);
+    ui->spc_cur_joint_poswrt_out_3->setText(current_data[40]);
+
+    ui->spc_cur_joint_param_file->setText(current_data[41]);
+
+}
+
+void SPC_submenu::on_sections_tabBarClicked(int index)
+{
+    if (index == 3) on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
+    else if (index == 4) on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->currentItem());
+}
+
+
 
 
