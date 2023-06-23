@@ -100,7 +100,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="orbTabZero">
      <attribute name="title">
@@ -321,7 +321,7 @@
         <x>0</x>
         <y>0</y>
         <width>421</width>
-        <height>141</height>
+        <height>154</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -1842,7 +1842,7 @@
         <x>0</x>
         <y>0</y>
         <width>411</width>
-        <height>141</height>
+        <height>170</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -2403,10 +2403,10 @@
  <connections/>
  <buttongroups>
   <buttongroup name="orbTBodyModeSense"/>
-  <buttongroup name="orbZeroPolyGrav"/>
-  <buttongroup name="orbFlightPolyGrav"/>
-  <buttongroup name="orbTBodyModeSense_2"/>
   <buttongroup name="orbCentPA"/>
+  <buttongroup name="orbTBodyModeSense_2"/>
+  <buttongroup name="orbZeroPolyGrav"/>
   <buttongroup name="orbCentJ2"/>
+  <buttongroup name="orbFlightPolyGrav"/>
  </buttongroups>
 </ui>

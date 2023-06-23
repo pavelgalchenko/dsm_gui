@@ -29,18 +29,40 @@ private slots:
     void apply_data();
     void clear_data();
     void write_data();
-    void populate_lists();
 
-    void string2radiobool(QString boolString, QButtonGroup *buttonGroup);
+    void on_loadDefaultButton_clicked();
+    void on_saveDefaultButton_clicked();
+    void on_closeButton_clicked();
+    void on_applyButton_clicked();
+
     void setQComboBox(QComboBox *comboBox, QString string);
 
     QStringList getTextFromList(QListWidget *list);
 
+    void on_simOrbList_itemClicked(QListWidgetItem *item);
+
+    void on_simOrbitEn_toggled(bool checked);
+
+    void on_simSCList_itemClicked(QListWidgetItem *item);
+
+    void on_simSCEn_toggled(bool checked);
+
+    void on_simSCOrbit_currentTextChanged(const QString &arg1);
+
+    void on_simGSList_itemClicked(QListWidgetItem *item);
+
+    void on_simGSEn_toggled(bool checked);
+
+    void on_simGSWorld_currentTextChanged(const QString &arg1);
+
+    void on_simGSLat_textEdited(const QString &arg1);
+
+    void on_simGSLong_textEdited(const QString &arg1);
+
+    void on_simGSLabel_textEdited(const QString &arg1);
+
 private:
     Ui::SIM_Menu *ui;
-
-    int global_orb_index = -1;
-    int global_orb_ignore = 0;
 
     QString inoutPath;
     QString filePath;
@@ -50,7 +72,20 @@ private:
     QStringList simFileDescrip; // data descriptors in the file
     QStringList simUpdate;
 
+    QString orbDescription, scDescription, gsDescription;
+
     QString simFile;
+
+    QList<QCheckBox*> celestialBodies;
+    QList<QCheckBox*> lagrangeSystems;
+
+    const QStringList worldInputs = {"SOL","MERCURY","VENUS","EARTH","MARS","JUPITER","SATURN","URANUS",
+                                     "NEPTUNE","PLUTO","LUNA","PHOBOS","DEIMOS","IO","EUROPA","GANYMEDE","CALLISTO",
+                                     "AMALTHEA","HIMALITA","ELARA","PASIPHAE","SINOPE","LYSITHEA","CARME","ANANKE",
+                                     "LEDA","THEBE","ADRASTEA","METIS","MIMAS","ENCELADUS","TETHYS","DIONE","RHEA",
+                                     "TITAN","HYPERION","IAPETUS","PHOEBE","JANUS","EPIMETHEUS","HELENE","TELESTO",
+                                     "CALYPSO","ATLAS","PROMETHEUS","PANDORA","PAN","ARIEL","UMBRIEL",
+                                     "TITANIA","OBERON","MIRANDA","TRITON","NERIED","CHARON","MINORBODY"};
 
     const QHash<QString, QString> timeModeInputs = {{"FAST", "Fast"},
                                                     {"REAL", "Real"},
@@ -78,9 +113,8 @@ private:
                                       {"LAGRANGE",-1},
                                       {"GROUND",-1}};
 
-    QHash<QString, bool> orbitList; //
-    QHash<QString, bool> scList; // ui->simSCList will have order, will need to pull it out
-    QHash<QString, QString> scOrbs; //
+    QHash<QString, QString> orbFileHash;
+    QHash<QString, QString> scFileHash;
 
 };
 

@@ -653,9 +653,9 @@ void ORB_Menu::clear_data()
     // If ui->orbList->currentRow()==1, set all fields to blank
     if (ui->orbList->currentRow()!=-1) return;
 
-    ui->orbLabel->setText("");
+    ui->orbLabel->clear();
 
-    ui->orbDescription->setText("");
+    ui->orbDescription->clear();
     ui->orbType->setCurrentIndex(0);
 
     ui->orbZeroWorld->setCurrentIndex(0);
@@ -670,56 +670,56 @@ void ORB_Menu::clear_data()
     ui->orbCentJ2->button(0)->setChecked(true);
     ui->orbCentICParam->setCurrentIndex(0);
     ui->orbCentPA->button(0)->setChecked(true);
-    ui->orbCentKepPeriAlt->setText("");
-    ui->orbCentKepApoAlt->setText("");
-    ui->orbCentKepMinAlt->setText("");
+    ui->orbCentKepPeriAlt->clear();
+    ui->orbCentKepApoAlt->clear();
+    ui->orbCentKepMinAlt->clear();
     ui->orbCentKepEcc->setValue(0);
-    ui->orbCentKepInc->setText("");
-    ui->orbCentKepRAAN->setText("");
-    ui->orbCentKepArgPeri->setText("");
-    ui->orbCentKepTA->setText("");
-    ui->orbCentPVPos_1->setText("");
-    ui->orbCentPVPos_2->setText("");
-    ui->orbCentPVPos_3->setText("");
-    ui->orbCentPVVel_1->setText("");
-    ui->orbCentPVVel_2->setText("");
-    ui->orbCentPVVel_3->setText("");
+    ui->orbCentKepInc->clear();
+    ui->orbCentKepRAAN->clear();
+    ui->orbCentKepArgPeri->clear();
+    ui->orbCentKepTA->clear();
+    ui->orbCentPVPos_1->clear();
+    ui->orbCentPVPos_2->clear();
+    ui->orbCentPVPos_3->clear();
+    ui->orbCentPVVel_1->clear();
+    ui->orbCentPVVel_2->clear();
+    ui->orbCentPVVel_3->clear();
     ui->orbCentFileType->setCurrentIndex(0);
-    ui->orbCentFileName->setText("");
-    ui->orbCentFileLabel->setText("");
+    ui->orbCentFileName->clear();
+    ui->orbCentFileLabel->clear();
 
     ui->orbTBodyLSystem->setCurrentIndex(0);
     ui->orbTBodyProp->setCurrentIndex(0);
     ui->orbTBodyICParam->setCurrentIndex(0);
     ui->orbTBodyLPoint->setCurrentIndex(0);
 
-    ui->orbTBodyModeXYSMA->setText("");
-    ui->orbTBodyModeXYPhase->setText("");
+    ui->orbTBodyModeXYSMA->clear();
+    ui->orbTBodyModeXYPhase->clear();
     ui->orbTBodyModeSense->button(0)->setChecked(true);
-    ui->orbTBodyModeXYSMA_2->setText("");
-    ui->orbTBodyModeXYPhase_2->setText("");
+    ui->orbTBodyModeXYSMA_2->clear();
+    ui->orbTBodyModeXYPhase_2->clear();
     ui->orbTBodyModeSense_2->button(0)->setChecked(true);
-    ui->orbTBodyModeZSMA->setText("");
-    ui->orbTBodyModeZPhase->setText("");
-    ui->orbTBodyCowellPos_1->setText("");
-    ui->orbTBodyCowellPos_2->setText("");
-    ui->orbTBodyCowellPos_3->setText("");
-    ui->orbTBodyCowellVel_1->setText("");
-    ui->orbTBodyCowellVel_2->setText("");
-    ui->orbTBodyCowellVel_3->setText("");
+    ui->orbTBodyModeZSMA->clear();
+    ui->orbTBodyModeZPhase->clear();
+    ui->orbTBodyCowellPos_1->clear();
+    ui->orbTBodyCowellPos_2->clear();
+    ui->orbTBodyCowellPos_3->clear();
+    ui->orbTBodyCowellVel_1->clear();
+    ui->orbTBodyCowellVel_2->clear();
+    ui->orbTBodyCowellVel_3->clear();
     ui->orbTBodyFileType->setCurrentIndex(0);
-    ui->orbTBodyFileLabel->setText("");
-    ui->orbTBodyFileName->setText("");
+    ui->orbTBodyFileLabel->clear();
+    ui->orbTBodyFileName->clear();
 
     ui->orbFormFrame->setCurrentIndex(0);
     ui->orbFormFrameEulerSeq->setCurrentIndex(0);
-    ui->orbFormFrameEuler_1->setText("");
-    ui->orbFormFrameEuler_2->setText("");
-    ui->orbFormFrameEuler_3->setText("");
+    ui->orbFormFrameEuler_1->clear();
+    ui->orbFormFrameEuler_2->clear();
+    ui->orbFormFrameEuler_3->clear();
     ui->orbFormOrigin->setCurrentIndex(0);
-    ui->orbFormOriginPos_1->setText("");
-    ui->orbFormOriginPos_2->setText("");
-    ui->orbFormOriginPos_3->setText("");
+    ui->orbFormOriginPos_1->clear();
+    ui->orbFormOriginPos_2->clear();
+    ui->orbFormOriginPos_3->clear();
 }
 
 void ORB_Menu::string2radiobool(QString boolString, QButtonGroup *buttonGroup) {
