@@ -5,6 +5,7 @@
 #include <QComboBox>
 #include <QButtonGroup>
 #include <QListWidgetItem>
+#include <QHash>
 
 namespace Ui {
 class SPC_submenu;
@@ -41,6 +42,7 @@ private slots:
     void on_spc_cur_body_duplicate_clicked();
 
     void on_spc_cur_body_list_itemClicked(QListWidgetItem *item);
+
 
 private:
     Ui::SPC_submenu *ui;
@@ -131,6 +133,7 @@ private:
     long strack_entries = 8;
     long gps_entries = 6;
     long acc_entries = 11;
+
 };
 
 #endif // SPC_SUBMENU_H

@@ -115,7 +115,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="dynamics">
          <attribute name="title">
@@ -885,7 +885,7 @@
             <x>0</x>
             <y>0</y>
             <width>671</width>
-            <height>651</height>
+            <height>641</height>
            </rect>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_17">
@@ -3423,11 +3423,11 @@
  <connections/>
  <buttongroups>
   <buttongroup name="spc_cur_2flex"/>
+  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>
    </property>
   </buttongroup>
-  <buttongroup name="spc_cur_flex"/>
  </buttongroups>
 </ui>
