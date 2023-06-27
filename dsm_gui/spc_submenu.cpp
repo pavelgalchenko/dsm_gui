@@ -142,7 +142,6 @@ void SPC_submenu::apply_data()
     QStringList tmp_line_item;
     QStringList tmp_data = {};
 
-    int skip = 0;
 
     ui->spc_cur_name_sub->setText(spc_cur_name);
     for(int line_num=8; line_num<reset_ind_body; line_num++)
@@ -301,6 +300,7 @@ void SPC_submenu::apply_data()
     reset_ind_joint = reset_ind_body + body_entries*bodies;
 
     ui->spc_cur_body_list->clear();
+    tmp_data.clear();
 
     for (int line_num = reset_ind_body; line_num<reset_ind_joint; line_num++)
     {
@@ -374,10 +374,12 @@ void SPC_submenu::apply_data()
             if (!QString::compare(line_items[0], "NONE"))
             {
                 ui->spc_cur_flex_enab->setCheckState(Qt::Checked);
+                ui->spc_cur_flex_file->setEnabled(false);
             }
             else
             {
                 ui->spc_cur_flex_enab->setCheckState(Qt::Unchecked);
+                ui->spc_cur_flex_file->setEnabled(true);
                 ui->spc_cur_flex_file->setText(line_items[0]);
             }
             break;
@@ -391,11 +393,9 @@ void SPC_submenu::apply_data()
     }
 
     joints = bodies - 1;
-    qDebug() << joints;
 
     ui->spc_cur_joint_list->clear();
-    tmp_list.clear();
-
+    tmp_data.clear();
 
     if (joints == 0) reset_ind_wheel = reset_ind_joint + joint_headers + joint_entries; // SC_Simple has an example joint
     else reset_ind_wheel = reset_ind_joint + joint_headers + joint_entries*joints;
@@ -439,14 +439,6 @@ void SPC_submenu::apply_data()
                 tmp_data.append(line_items[1]);
                 tmp_data.append(line_items[2]);
 
-                //if (QString::compare(line_items[0], "FALSE")) ui->spc_cur_joint_rlock1->setCheckState(Qt::Checked);
-                //else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
-
-                //if (QString::compare(line_items[1], "FALSE")) ui->spc_cur_joint_rlock2->setCheckState(Qt::Checked);
-                //else ui->spc_cur_joint_rlock2->setCheckState(Qt::Unchecked);
-
-                //if (QString::compare(line_items[2], "FALSE")) ui->spc_cur_joint_rlock3->setCheckState(Qt::Checked);
-                //else ui->spc_cur_joint_rlock3->setCheckState(Qt::Unchecked);
                 break;
 
             case 6: // Translational Axes Locked?
@@ -454,14 +446,6 @@ void SPC_submenu::apply_data()
                 tmp_data.append(line_items[1]);
                 tmp_data.append(line_items[2]);
 
-                //if (QString::compare(line_items[0], "FALSE")) ui->spc_cur_joint_tlock1->setCheckState(Qt::Checked);
-                //else ui->spc_cur_joint_tlock1->setCheckState(Qt::Unchecked);
-
-                //if (QString::compare(line_items[1], "FALSE")) ui->spc_cur_joint_tlock2->setCheckState(Qt::Checked);
-                //else ui->spc_cur_joint_tlock2->setCheckState(Qt::Unchecked);
-
-                //if (QString::compare(line_items[2], "FALSE")) ui->spc_cur_joint_tlock3->setCheckState(Qt::Checked);
-                //else ui->spc_cur_joint_tlock3->setCheckState(Qt::Unchecked);
                 break;
             case 7: // Joint initial angle
                 tmp_data.append(line_items[0]);
@@ -515,6 +499,15 @@ void SPC_submenu::apply_data()
                 break;
             case 15: // Joint parameter file
                 tmp_data.append(line_items[0]);
+                if (!QString::compare(line_items[0], "NONE"))
+                {
+                    ui->spc_cur_joint_param_none->setCheckState(Qt::Checked);
+                }
+                else
+                {
+                    ui->spc_cur_joint_param_none->setCheckState(Qt::Unchecked);
+                    ui->spc_cur_joint_param_file->setText(line_items[0]);
+                }
                 break;
             }
             if (cur_entry==joint_entries-1){
@@ -526,70 +519,122 @@ void SPC_submenu::apply_data()
         }
     }
 
+    wheels = spc_data[reset_ind_wheel].toInt();
 
-//    tmp_line_item = spc_data[reset_ind_wheel + 3 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-//    wheels = tmp_line_item[0].toInt();
+    if (wheels == 0) reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries; // SC_Simple has an example wheel
+    else reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
 
-//    ui->spc_cur_wheel_list->clear();
-//    tmp_list.clear();
 
-//    for (int i=0; i<wheels; i++) tmp_list.append("Wheel " + QString::number(i));
-//    ui->spc_cur_wheel_list->addItems(tmp_list);
+    ui->spc_cur_wheel_list->clear();
+    tmp_data.clear();
+    if (wheels > 0){
+        for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
+        {
+            line_string = spc_string[line_num-1];
+            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
 
-//    if (wheels == 0){
-//        wheels = 1;
-//    } // even if there are 0 used items, the template contains an example that is ignored.
+            long wheel_line_num = line_num - reset_ind_wheel - wheel_headers;
+            cur_item = floor(wheel_line_num/wheel_entries);
+            cur_entry = wheel_line_num % wheel_entries;
 
-//    reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
+            if (cur_entry == 0){
+                ui->spc_cur_wheel_list->addItem("Wheel " + QString::number(cur_item));
+            }
 
-//    for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
-//    {
-//        line_string = spc_string[line_num-1];
-//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+            switch (cur_entry){
+            case 0:
+                tmp_data.append("blankline");
+                break; // header
+            case 1:
+                tmp_data.append(line_items[0]);
+                break; // wheel axis
+            case 2:
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                break;
+            case 3: // Max torque, max momentum
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                break;
+            case 4: // wheel inertia
+                tmp_data.append(line_items[0]);
+                break;
+            case 5: // wheel body
+                tmp_data.append(line_items[0]);
+                break;
+            case 6: // wheel node
+                tmp_data.append(line_items[0]);
+                break;
+            case 7: // wheel drag/jitter file
+                tmp_data.append(line_items[0]);
+                if (!QString::compare(line_items[0], "NONE"))
+                {
+                    ui->spc_cur_wheel_drjit_on->setCheckState(Qt::Checked);
+                }
+                else
+                {
+                    ui->spc_cur_wheel_drjit_on->setCheckState(Qt::Unchecked);
+                    ui->spc_cur_joint_param_file->setText(line_items[0]);
+                }
+                break;
+            }
+            if (cur_entry==wheel_entries-1){
+                ui->spc_cur_wheel_list->setCurrentRow(cur_item);
+                ui->spc_cur_wheel_list->currentItem()->setData(0, "Wheel " + QString::number(cur_item));
+                ui->spc_cur_wheel_list->currentItem()->setData(1, tmp_data);
+                tmp_data.clear();
+            }
+        }
+    }
 
-//        long wheel_line_num = line_num - reset_ind_wheel - wheel_headers;
-//        cur_item = floor(wheel_line_num/wheel_entries);
-//        cur_entry = wheel_line_num % wheel_entries;
+//    mtbs = spc_data[reset_ind_mtb].toInt();
 
-//        ui->spc_cur_wheel_list->setCurrentRow(cur_item);
+//    if (mtbs == 0) reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries; // SC_Simple has an example wheel
+//    else reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries*mtbs;
 
-//        switch (cur_entry){
-//        case 0:
-//            break; // header
-//        case 1:
-//            ui->spc_cur_wheel_initmom->setText(line_items[0]);
-//            break;
-//        case 2:
-//            ui->spc_cur_wheel_axis_1->setText(line_items[0]);
-//            ui->spc_cur_wheel_axis_2->setText(line_items[1]);
-//            ui->spc_cur_wheel_axis_3->setText(line_items[2]);
-//            break;
-//        case 3:
-//            ui->spc_cur_wheel_maxtrq->setText(line_items[0]);
-//            ui->spc_cur_wheel_maxmom->setText(line_items[1]);
-//            break;
-//        case 4:
-//            ui->spc_cur_wheel_inertia->setText(line_items[0]);
-//            break;
-//        case 5:
-//            ui->spc_cur_wheel_body->setValue(line_items[0].toInt());
-//            break;
-//        case 6:
-//            ui->spc_cur_wheel_node->setValue(line_items[0].toInt());
-//            break;
-//        case 7:
-//            if (!QString::compare(line_items[0], "NONE"))
-//            {
-//                ui->spc_cur_wheel_drjit_on->setCheckState(Qt::Checked);
+
+//    ui->spc_cur_mtb_list->clear();
+//    tmp_data.clear();
+//    if (mtbs > 0){
+//        for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
+//        {
+//            line_string = spc_string[line_num-1];
+//            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+//            long thr_line_num = line_num - reset_ind_thr - thr_headers;
+//            cur_item = floor(thr_line_num/mtb_entries);
+//            cur_entry = thr_line_num % mtb_entries;
+
+//            if (cur_entry == 0){
+//                ui->spc_cur_mtb_list->addItem("MTB " + QString::number(cur_item));
 //            }
-//            else
-//            {
-//                ui->spc_cur_wheel_drjit_on->setCheckState(Qt::Unchecked);
-//                ui->spc_cur_wheel_drjit_file->setText(line_items[0]);
+
+//            switch (cur_entry){
+//            case 0:
+//                tmp_data.append("blankline");
+//                break; // header
+//            case 1:
+//                tmp_data.append(line_items[0]);
+//                break;
+//            case 2:
+//                tmp_data.append(line_items[0]);
+//                tmp_data.append(line_items[1]);
+//                tmp_data.append(line_items[2]);
+//                break;
+//            case 3:
+//                tmp_data.append(line_items[0]);
+//                break;
 //            }
-//            break;
+//            if (cur_entry==mtb_entries-1){
+//                ui->spc_cur_mtb_list->setCurrentRow(cur_item);
+//                ui->spc_cur_mtb_list->currentItem()->setData(0, "MTB " + QString::number(cur_item));
+//                ui->spc_cur_mtb_list->currentItem()->setData(1, tmp_data);
+//                tmp_data.clear();
+//            }
 //        }
 //    }
+
 
 //    tmp_line_item = spc_data[reset_ind_mtb + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
 //    mtbs = tmp_line_item[0].toInt();
@@ -1357,8 +1402,8 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_body_list->currentItem()->setData(1, tmp_data);
         }
-        ui->spc_cur_body_list->currentItem()->setData(1, tmp_data);
     }
 
     tmp_data.clear();
@@ -1408,14 +1453,10 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             break;
         case 8:
             data_inp = current_data[18];
-            if (ui->spc_cur_node_enab->isChecked()) ui->spc_cur_node_file->setEnabled(false);
-            else ui->spc_cur_node_file->setEnabled(true);
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node File Name\n");
             break;
         case 9:
             data_inp = current_data[19];
-            if (ui->spc_cur_flex_enab->isChecked()) ui->spc_cur_flex_file->setEnabled(false);
-            else ui->spc_cur_flex_file->setEnabled(true);
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Flex File Name\n");
             break;
         }
@@ -1439,7 +1480,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             long cur_item = floor(joint_line_num/joint_entries);
             long cur_entry = joint_line_num % joint_entries;
 
-            if ((ui->spc_cur_joint_list->count() > 0) && (ui->spc_cur_joint_list->currentRow() == cur_item))
+            if (ui->spc_cur_joint_list->count() > 0 && ui->spc_cur_joint_list->currentRow() == cur_item)
             {
                 switch (cur_entry) {
                 case 0: // Joint X Header
@@ -1540,8 +1581,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_joint_list->currentItem()->setData(1, tmp_data);
         }
     }
+
+    tmp_data.clear();
 
     for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
     {
@@ -1643,86 +1687,221 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-//    long num_drjit = 0;
+    /*************************** WHEELS SECTION ****************************/
 
-//    for (int i=0; i<ui->spc_cur_wheel_list->count(); i++)
-//    {
-//        ui->spc_cur_wheel_list->setCurrentRow(i);
-//        if (ui->spc_cur_wheel_drjit_on->isChecked())
-//        {
-//            num_drjit += 1;
-//        }
-//    }
+    reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
 
-//    if (num_drjit == 0)
-//    {
-//        spc_update.append("*************************** Wheel Parameters ***************************\n");
-//        spc_update.append("FALSE                       ! Wheel Drag Active\n");
-//        spc_update.append("FALSE                       ! Wheel Jitter Active\n");
-//    }
-//    else
-//    {
-//        spc_update.append("*************************** Wheel Parameters ***************************\n");
-//        spc_update.append("TRUE                        ! Wheel Drag Active\n");
-//        spc_update.append("TRUE                        ! Wheel Jitter Active\n");
-//    }
+    long num_drjit = 0;
 
-//    spc_update.append(dsm_gui_lib::whitespace(QString::number(wheels)) + "! Number of wheels\n");
+    for (int i=0; i<ui->spc_cur_wheel_list->count(); i++)
+    {
+        QString is_none = ui->spc_cur_wheel_list->item(i)->data(1).toStringList()[10];
+        if (QString::compare(is_none, "NONE"))
+        {
+            num_drjit += 1;
+        }
+    }
 
-//    for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
-//    {
-//        QString data_inp = "";
+    if (num_drjit == 0)
+    {
+        spc_update.append("*************************** Wheel Parameters ***************************\n");
+        spc_update.append("FALSE                         ! Wheel Drag Active\n");
+        spc_update.append("FALSE                         ! Wheel Jitter Active\n");
+    }
+    else
+    {
+        spc_update.append("*************************** Wheel Parameters ***************************\n");
+        spc_update.append("TRUE                          ! Wheel Drag Active\n");
+        spc_update.append("TRUE                          ! Wheel Jitter Active\n");
+    }
 
-//        long wheel_line_num = line_num - reset_ind_wheel - wheel_headers;
-//        long cur_item = floor(wheel_line_num/wheel_entries);
-//        long cur_entry = wheel_line_num % wheel_entries;
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(wheels)) + "! Number of wheels\n");
 
-//        ui->spc_cur_wheel_list->setCurrentRow(cur_item);
+    if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==0)
+    {
+        for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
+        {
 
-//        switch (cur_entry){
-//        case 0:
-//            if (ui->spc_cur_wheel_list->count() > 0)
-//            {
-//                spc_update.append("=============================  " + ui->spc_cur_wheel_list->currentItem()->text() + "  ================================\n");
-//                wheels = 0;
-//            }
-//            else
-//            {
-//                spc_update.append("=============================  Wheel 0  ================================\n");
-//            }
+            long wheel_line_num = line_num - reset_ind_wheel - wheel_headers;
+            long cur_item = floor(wheel_line_num/wheel_entries);
+            long cur_entry = wheel_line_num % wheel_entries;
 
-//            break; // header
-//        case 1:
-//            data_inp = ui->spc_cur_wheel_initmom->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Momentum, N-m-sec\n");
-//            break;
-//        case 2:
-//            data_inp = ui->spc_cur_wheel_axis_1->text() + " " + ui->spc_cur_wheel_axis_2->text() + " " + ui->spc_cur_wheel_axis_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Wheel Axis Components, [X, Y, Z]\n");
-//            break;
-//        case 3:
-//            data_inp = ui->spc_cur_wheel_maxtrq->text() + " " + ui->spc_cur_wheel_maxmom->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Max Torque (N-m), Momentum (N-m-sec)\n");
-//            break;
-//        case 4:
-//            data_inp = ui->spc_cur_wheel_inertia->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Wheel Rotor Inertia, kg-m^2\n");
-//            break;
-//        case 5:
-//            data_inp = ui->spc_cur_wheel_body->cleanText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Body\n");
-//            break;
-//        case 6:
-//            data_inp = ui->spc_cur_wheel_node->cleanText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
-//            break;
-//        case 7:
-//            if (ui->spc_cur_wheel_drjit_on->isChecked()) data_inp = "NONE";
-//            else data_inp = ui->spc_cur_wheel_drjit_on->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Drag/Jitter Input File Name\n");
-//            break;
-//        }
-//    }
+            if (ui->spc_cur_wheel_list->count() > 0 && ui->spc_cur_wheel_list->currentRow() == cur_item)
+            {
+                switch (cur_entry){
+                case 0:
+                    tmp_data.append("blankline");
+
+                    break; // header
+                case 1:
+                    tmp_data.append(ui->spc_cur_wheel_initmom->text());
+                    break;
+                case 2:
+                    tmp_data.append(ui->spc_cur_wheel_axis_1->text());
+                    tmp_data.append(ui->spc_cur_wheel_axis_2->text());
+                    tmp_data.append(ui->spc_cur_wheel_axis_3->text());
+                    break;
+                case 3:
+                    tmp_data.append(ui->spc_cur_wheel_maxtrq->text());
+                    tmp_data.append(ui->spc_cur_wheel_maxmom->text());
+                    break;
+                case 4:
+                    tmp_data.append(ui->spc_cur_wheel_inertia->text());
+
+                    break;
+                case 5:
+                    tmp_data.append(ui->spc_cur_wheel_body->cleanText());
+
+                    break;
+                case 6:
+                    tmp_data.append(ui->spc_cur_wheel_node->cleanText());
+
+                    break;
+                case 7:
+                    if (ui->spc_cur_wheel_drjit_on->isChecked()) tmp_data.append("NONE");
+                    else tmp_data.append(ui->spc_cur_wheel_drjit_on->text());
+                    break;
+                }
+            }
+            ui->spc_cur_wheel_list->currentItem()->setData(1, tmp_data);
+        }
+    }
+
+    tmp_data.clear();
+
+    for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
+    {
+        QString data_inp = "";
+
+        long wheel_line_num = line_num - reset_ind_wheel - wheel_headers;
+        long cur_item = floor(wheel_line_num/wheel_entries);
+        long cur_entry = wheel_line_num % wheel_entries;
+
+        ui->spc_cur_wheel_list->setCurrentRow(cur_item);
+        QStringList current_data = ui->spc_cur_wheel_list->item(cur_item)->data(1).toStringList();
+
+        switch (cur_entry){
+        case 0:
+            if (ui->spc_cur_wheel_list->count() > 0)
+            {
+                spc_update.append("=============================  " + ui->spc_cur_wheel_list->currentItem()->text() + "  ================================\n");
+            }
+            else
+            {
+                spc_update.append("=============================  Wheel 0  ================================\n");
+            }
+
+            break; // header
+        case 1:
+            data_inp = current_data[1];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Momentum, N-m-sec\n");
+            break;
+        case 2:
+            data_inp = current_data[2] + " " +  current_data[3] + " " +  current_data[4];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Wheel Axis Components, [X, Y, Z]\n");
+            break;
+        case 3:
+            data_inp = current_data[5] + " " +  current_data[6];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Max Torque (N-m), Momentum (N-m-sec)\n");
+            break;
+        case 4:
+            data_inp =  current_data[7];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Wheel Rotor Inertia, kg-m^2\n");
+            break;
+        case 5:
+            data_inp =  current_data[8];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Body\n");
+            break;
+        case 6:
+            data_inp =  current_data[9];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            break;
+        case 7:
+            data_inp =  current_data[10];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Drag/Jitter Input File Name\n");
+            break;
+        }
+    }
+
+    /***************************** MTB SECTION ******************************/
+    reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries*mtbs;
+
+    spc_update.append("**************************** MTB Parameters ****************************\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(mtbs)) + "! Number of MTBs\n");
+    if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==1)
+    {
+        for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
+        {
+
+            long mtb_line_num = line_num - reset_ind_mtb - mtb_headers;
+            long cur_item = floor(mtb_line_num/mtb_entries);
+            long cur_entry = mtb_line_num % mtb_entries;
+
+            if (ui->spc_cur_mtb_list->count() > 0 && ui->spc_cur_mtb_list->currentRow() == cur_item)
+            {
+                switch (cur_entry){
+                case 0:
+                    tmp_data.append("blankline");
+
+                    break; // header
+                case 1:
+                    tmp_data.append(ui->spc_cur_mtb_sat->text());
+                    break;
+                case 2:
+                    tmp_data.append(ui->spc_cur_mtb_axis_1->text());
+                    tmp_data.append(ui->spc_cur_mtb_axis_2->text());
+                    tmp_data.append(ui->spc_cur_mtb_axis_3->text());
+                    break;
+                case 3:
+                    tmp_data.append(ui->spc_cur_mtb_node->text());
+                    break;
+                }
+            }
+            ui->spc_cur_mtb_list->currentItem()->setData(1, tmp_data);
+        }
+    }
+
+    tmp_data.clear();
+
+
+    for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
+    {
+        QString data_inp = "";
+
+        long mtb_line_num = line_num - reset_ind_mtb - mtb_headers;
+        long cur_item = floor(mtb_line_num/mtb_entries);
+        long cur_entry = mtb_line_num % mtb_entries;
+
+        ui->spc_cur_mtb_list->setCurrentRow(cur_item);
+        QStringList current_data = ui->spc_cur_mtb_list->currentItem()->data(1).toStringList();
+
+        switch (cur_entry){
+        case 0:
+            if (ui->spc_cur_mtb_list->count() > 0)
+            {
+                spc_update.append("=============================  " + ui->spc_cur_mtb_list->currentItem()->text() + "  ================================\n");
+            }
+            else
+            {
+                spc_update.append("=============================  MTB 0  ================================\n");
+            }
+
+            break; // header
+        case 1:
+            data_inp = current_data[1];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Saturation (A-m^2)\n");
+            break;
+        case 2:
+            data_inp =  current_data[2] + " " +  current_data[3] + " " +  current_data[4];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! MTB Axis Components, [X, Y, Z]\n");
+            break;
+        case 3:
+            data_inp =  current_data[5];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            break;
+        }
+    }
+
 
 //    spc_update.append("**************************** MTB Parameters ****************************\n");
 //    spc_update.append(dsm_gui_lib::whitespace(QString::number(mtbs)) + "! Number of MTBs\n");
@@ -2225,7 +2404,7 @@ void SPC_submenu::setQComboBox(QComboBox *comboBox, QString string) {
 }
 
 
-// Body -/+/Duplicate
+// Body -/+/Duplicate/Item Clicked
 
 void SPC_submenu::on_spc_cur_body_remove_clicked()
 {
@@ -2420,6 +2599,136 @@ void SPC_submenu::on_sections_tabBarClicked(int index)
     else if (index == 4) on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->currentItem());
 }
 
+// Wheels -/+/Duplicate/Item Clicked
 
+void SPC_submenu::on_spc_cur_wheel_remove_clicked()
+{
+    ui->spc_cur_wheel_list->removeItemWidget(ui->spc_cur_wheel_list->currentItem());
+    wheels -= 1;
+    ui->spc_cur_wheel_list->setCurrentRow(ui->spc_cur_wheel_list->count()-1);
+}
+
+void SPC_submenu::on_spc_cur_wheel_add_clicked()
+{
+    wheels += 1;
+
+    QStringList tmp_data = {};
+
+    tmp_data.append("blankline");
+    tmp_data.append("0.0");
+    tmp_data.append("1.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.14");
+    tmp_data.append("50.0");
+    tmp_data.append("0.012");
+    tmp_data.append("0");
+    tmp_data.append("0");
+    tmp_data.append("NONE");
+
+    ui->spc_cur_wheel_list->addItem("Wheel " + QString::number(wheels - 1));
+    ui->spc_cur_wheel_list->setCurrentRow(ui->spc_cur_wheel_list->count()-1);
+
+    ui->spc_cur_wheel_list->currentItem()->setData(0, "Wheel " + QString::number(wheels - 1));
+    ui->spc_cur_wheel_list->currentItem()->setData(1, tmp_data);
+    on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->currentItem());
+}
+
+void SPC_submenu::on_spc_cur_wheel_duplicate_clicked()
+{
+    wheels += 1;
+
+    QStringList old_data = ui->spc_cur_wheel_list->currentItem()->data(1).toStringList();
+
+    ui->spc_cur_wheel_list->addItem("Wheel " + QString::number(wheels - 1));
+    ui->spc_cur_wheel_list->setCurrentRow(ui->spc_cur_wheel_list->count()-1);
+    ui->spc_cur_wheel_list->currentItem()->setData(1, old_data);
+}
+
+
+void SPC_submenu::on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item)
+{
+    receive_data();
+
+    QStringList current_data = item->data(1).toStringList();
+    item->setText(item->data(0).toString());
+
+    ui->spc_cur_wheel_initmom->setText(current_data[1]);
+
+    ui->spc_cur_wheel_axis_1->setText(current_data[2]);
+    ui->spc_cur_wheel_axis_2->setText(current_data[3]);
+    ui->spc_cur_wheel_axis_3->setText(current_data[4]);
+
+    ui->spc_cur_wheel_maxtrq->setText(current_data[5]);
+    ui->spc_cur_wheel_maxmom->setText(current_data[6]);
+
+    ui->spc_cur_wheel_inertia->setText(current_data[7]);
+
+    ui->spc_cur_wheel_body->setValue(current_data[8].toInt());
+    ui->spc_cur_wheel_node->setValue(current_data[9].toInt());
+
+    ui->spc_cur_wheel_drjit_file->setText(current_data[10]);
+}
+
+// MTB buttons
+
+
+void SPC_submenu::on_spc_cur_mtb_remove_clicked()
+{
+    ui->spc_cur_mtb_list->removeItemWidget(ui->spc_cur_mtb_list->currentItem());
+    mtbs -= 1;
+    ui->spc_cur_mtb_list->setCurrentRow(ui->spc_cur_mtb_list->count()-1);
+}
+
+
+void SPC_submenu::on_spc_cur_mtb_add_clicked()
+{
+    mtbs += 1;
+
+    QStringList tmp_data = {};
+
+    tmp_data.append("blankline");
+    tmp_data.append("180.0");
+    tmp_data.append("1.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0");
+
+    ui->spc_cur_mtb_list->addItem("MTB " + QString::number(mtbs - 1));
+    ui->spc_cur_mtb_list->setCurrentRow(ui->spc_cur_mtb_list->count()-1);
+
+    ui->spc_cur_mtb_list->currentItem()->setData(0, "MTB " + QString::number(mtbs - 1));
+    ui->spc_cur_mtb_list->currentItem()->setData(1, tmp_data);
+    on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->currentItem());
+}
+
+
+void SPC_submenu::on_spc_cur_mtb_duplicate_clicked()
+{
+    mtbs += 1;
+
+    QStringList old_data = ui->spc_cur_mtb_list->currentItem()->data(1).toStringList();
+
+    ui->spc_cur_mtb_list->addItem("MTB " + QString::number(mtbs - 1));
+    ui->spc_cur_mtb_list->setCurrentRow(ui->spc_cur_mtb_list->count()-1);
+    ui->spc_cur_mtb_list->currentItem()->setData(1, old_data);
+}
+
+
+void SPC_submenu::on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item)
+{
+    receive_data();
+
+    QStringList current_data = item->data(1).toStringList();
+    item->setText(item->data(0).toString());
+
+    ui->spc_cur_mtb_sat->setText(current_data[1]);
+
+    ui->spc_cur_mtb_axis_1->setText(current_data[2]);
+    ui->spc_cur_mtb_axis_2->setText(current_data[3]);
+    ui->spc_cur_mtb_axis_3->setText(current_data[4]);
+
+    ui->spc_cur_wheel_node->setValue(current_data[5].toInt());
+}
 
 
