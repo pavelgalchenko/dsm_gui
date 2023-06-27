@@ -64,6 +64,14 @@ private slots:
 
     void on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item);
 
+    void on_spc_cur_thruster_remove_clicked();
+
+    void on_spc_cur_thruster_add_clicked();
+
+    void on_spc_cur_thruster_duplicate_clicked();
+
+    void on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item);
+
 private:
     Ui::SPC_submenu *ui;
     QString spc_cur_name;

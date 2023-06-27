@@ -392,6 +392,8 @@ void SPC_submenu::apply_data()
         }
     }
 
+    /***************** JOINTS **************************/
+
     joints = bodies - 1;
 
     ui->spc_cur_joint_list->clear();
@@ -519,11 +521,12 @@ void SPC_submenu::apply_data()
         }
     }
 
+    /********************** WHEELS *************************/
+
     wheels = spc_data[reset_ind_wheel].toInt();
 
     if (wheels == 0) reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries; // SC_Simple has an example wheel
     else reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
-
 
     ui->spc_cur_wheel_list->clear();
     tmp_data.clear();
@@ -588,96 +591,108 @@ void SPC_submenu::apply_data()
         }
     }
 
-//    mtbs = spc_data[reset_ind_mtb].toInt();
+    /**************** MTBS ************************/
 
-//    if (mtbs == 0) reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries; // SC_Simple has an example wheel
-//    else reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries*mtbs;
+    mtbs = spc_data[reset_ind_mtb].toInt();
 
-
-//    ui->spc_cur_mtb_list->clear();
-//    tmp_data.clear();
-//    if (mtbs > 0){
-//        for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
-//        {
-//            line_string = spc_string[line_num-1];
-//            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-//            long thr_line_num = line_num - reset_ind_thr - thr_headers;
-//            cur_item = floor(thr_line_num/mtb_entries);
-//            cur_entry = thr_line_num % mtb_entries;
-
-//            if (cur_entry == 0){
-//                ui->spc_cur_mtb_list->addItem("MTB " + QString::number(cur_item));
-//            }
-
-//            switch (cur_entry){
-//            case 0:
-//                tmp_data.append("blankline");
-//                break; // header
-//            case 1:
-//                tmp_data.append(line_items[0]);
-//                break;
-//            case 2:
-//                tmp_data.append(line_items[0]);
-//                tmp_data.append(line_items[1]);
-//                tmp_data.append(line_items[2]);
-//                break;
-//            case 3:
-//                tmp_data.append(line_items[0]);
-//                break;
-//            }
-//            if (cur_entry==mtb_entries-1){
-//                ui->spc_cur_mtb_list->setCurrentRow(cur_item);
-//                ui->spc_cur_mtb_list->currentItem()->setData(0, "MTB " + QString::number(cur_item));
-//                ui->spc_cur_mtb_list->currentItem()->setData(1, tmp_data);
-//                tmp_data.clear();
-//            }
-//        }
-//    }
+    if (mtbs == 0) reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries; // SC_Simple has an example wheel
+    else reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries*mtbs;
 
 
-//    tmp_line_item = spc_data[reset_ind_mtb + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-//    mtbs = tmp_line_item[0].toInt();
+    ui->spc_cur_mtb_list->clear();
+    tmp_data.clear();
+    if (mtbs > 0){
+        for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
+        {
+            line_string = spc_string[line_num-1];
+            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
 
-//    ui->spc_cur_mtb_list->clear();
-//    tmp_list.clear();
+            long mtb_line_num = line_num - reset_ind_mtb - mtb_headers;
+            cur_item = floor(mtb_line_num/mtb_entries);
+            cur_entry = mtb_line_num % mtb_entries;
 
-//    for (int i=0; i<mtbs; i++) tmp_list.append("MTB " + QString::number(i));
-//    ui->spc_cur_mtb_list->addItems(tmp_list);
+            if (cur_entry == 0){
+                ui->spc_cur_mtb_list->addItem("MTB " + QString::number(cur_item));
+            }
 
-//    if (mtbs == 0){
-//        mtbs = 1;
-//    } // even if there are 0 used items, the template contains an example that is ignored.
+            switch (cur_entry){
+            case 0:
+                tmp_data.append("blankline");
+                break; // header
+            case 1:
+                tmp_data.append(line_items[0]);
+                break;
+            case 2:
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                break;
+            case 3:
+                tmp_data.append(line_items[0]);
+                break;
+            }
+            if (cur_entry==mtb_entries-1){
+                ui->spc_cur_mtb_list->setCurrentRow(cur_item);
+                ui->spc_cur_mtb_list->currentItem()->setData(0, "MTB " + QString::number(cur_item));
+                ui->spc_cur_mtb_list->currentItem()->setData(1, tmp_data);
+                tmp_data.clear();
+            }
+        }
+    }
 
-//    reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries*mtbs;
+    /**************** THRUSTERS ************************/
 
-//    for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
-//    {
-//        line_string = spc_string[line_num-1];
-//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+    thrusters = spc_data[reset_ind_thr].toInt();
 
-//        long mtb_line_num = line_num - reset_ind_mtb - mtb_headers;
-//        cur_item = floor(mtb_line_num/mtb_entries);
-//        cur_entry = mtb_line_num % mtb_entries;
+    if (thrusters == 0) reset_ind_gyro = reset_ind_thr + thr_headers + thr_entries; // SC_Simple has an example wheel
+    else reset_ind_thr = reset_ind_thr + thr_headers + thr_entries*thrusters;
 
-//        ui->spc_cur_mtb_list->setCurrentRow(cur_item);
 
-//        switch (cur_entry){
-//        case 0:
-//            break; // header
-//        case 1:
-//            ui->spc_cur_mtb_sat->setText(line_items[0]);
-//            break;
-//        case 2:
-//            ui->spc_cur_mtb_axis_1->setText(line_items[0]);
-//            ui->spc_cur_mtb_axis_2->setText(line_items[1]);
-//            ui->spc_cur_mtb_axis_3->setText(line_items[2]);
-//            break;
-//        case 3:
-//            ui->spc_cur_mtb_node->setValue(line_items[0].toInt());
-//            break;
-//        }
-//    }
+    ui->spc_cur_thruster_list->clear();
+    tmp_data.clear();
+    if (thrusters > 0){
+        for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
+        {
+            line_string = spc_string[line_num-1];
+            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+            long thr_line_num = line_num - reset_ind_thr - thr_headers;
+            cur_item = floor(thr_line_num/thr_entries);
+            cur_entry = thr_line_num % thr_entries;
+
+            if (cur_entry == 0){
+                ui->spc_cur_thruster_list->addItem("Thr " + QString::number(cur_item));
+            }
+
+            switch (cur_entry){
+            case 0:
+                tmp_data.append("blankline");
+                break; // header
+            case 1:
+                tmp_data.append(line_items[0]);
+                break;
+            case 2:
+                tmp_data.append(line_items[0]);
+            case 3:
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                break;
+            case 4:
+                tmp_data.append(line_items[0]);
+                break;
+            case 5:
+                tmp_data.append(line_items[0]);
+                break;
+            }
+            if (cur_entry==mtb_entries-1){
+                ui->spc_cur_thruster_list->setCurrentRow(cur_item);
+                ui->spc_cur_thruster_list->currentItem()->setData(0, "thr " + QString::number(cur_item));
+                ui->spc_cur_thruster_list->currentItem()->setData(1, tmp_data);
+                tmp_data.clear();
+            }
+        }
+    }
 
 //    tmp_line_item = spc_data[reset_ind_thr + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
 //    thrusters = tmp_line_item[0].toInt();
@@ -1780,6 +1795,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         ui->spc_cur_wheel_list->setCurrentRow(cur_item);
         QStringList current_data = ui->spc_cur_wheel_list->item(cur_item)->data(1).toStringList();
 
+
         switch (cur_entry){
         case 0:
             if (ui->spc_cur_wheel_list->count() > 0)
@@ -1830,7 +1846,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     spc_update.append(dsm_gui_lib::whitespace(QString::number(mtbs)) + "! Number of MTBs\n");
     if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==1)
     {
-        for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
+        for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
         {
 
             long mtb_line_num = line_num - reset_ind_mtb - mtb_headers;
@@ -1902,47 +1918,97 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    /***************************** THRUSTER SECTION ******************************/
+    reset_ind_gyro = reset_ind_thr + thr_headers + thr_entries*thrusters;
 
-//    spc_update.append("**************************** MTB Parameters ****************************\n");
-//    spc_update.append(dsm_gui_lib::whitespace(QString::number(mtbs)) + "! Number of MTBs\n");
+    spc_update.append("************************* Thruster Parameters **************************\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(thrusters)) + "! Number of Thrusters\n");
+    if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==2)
+    {
+        for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
+        {
 
-//    for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
-//    {
-//        QString data_inp = "";
+            long thr_line_num = line_num - reset_ind_thr - thr_headers;
+            long cur_item = floor(thr_line_num/thr_entries);
+            long cur_entry = thr_line_num % thr_entries;
 
-//        long mtb_line_num = line_num - reset_ind_mtb - mtb_headers;
-//        long cur_item = floor(mtb_line_num/mtb_entries);
-//        long cur_entry = mtb_line_num % mtb_entries;
+            if (ui->spc_cur_thruster_list->count() > 0 && ui->spc_cur_thruster_list->currentRow() == cur_item)
+            {
+                switch (cur_entry){
+                case 0:
+                    tmp_data.append("blankline");
 
-//        ui->spc_cur_mtb_list->setCurrentRow(cur_item);
+                    break; // header
+                case 1:
+                    tmp_data.append(ui->spc_cur_thruster_mode->currentText());
+                    break;
+                case 2:
+                    tmp_data.append(ui->spc_cur_thruster_force->text());
+                    break;
+                case 3:
+                    tmp_data.append(ui->spc_cur_thruster_axis_1->text());
+                    tmp_data.append(ui->spc_cur_thruster_axis_2->text());
+                    tmp_data.append(ui->spc_cur_thruster_axis_3->text());
+                    break;
+                case 4:
+                    tmp_data.append(ui->spc_cur_thruster_body->text());
+                case 5:
+                    tmp_data.append(ui->spc_cur_thruster_node->text());
+                    break;
+                }
+            }
+            ui->spc_cur_thruster_list->currentItem()->setData(1, tmp_data);
+        }
+    }
 
-//        switch (cur_entry){
-//        case 0:
-//            if (ui->spc_cur_mtb_list->count() > 0)
-//            {
-//                spc_update.append("=============================  " + ui->spc_cur_mtb_list->currentItem()->text() + "  ================================\n");
-//                mtbs = 0;
-//            }
-//            else
-//            {
-//                spc_update.append("=============================  MTB 0  ================================\n");
-//            }
+    tmp_data.clear();
 
-//            break; // header
-//        case 1:
-//            data_inp = ui->spc_cur_mtb_sat->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Saturation (A-m^2)\n");
-//            break;
-//        case 2:
-//            data_inp = ui->spc_cur_mtb_axis_1->text() + " " + ui->spc_cur_mtb_axis_2->text() + " " + ui->spc_cur_mtb_axis_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! MTB Axis Components, [X, Y, Z]\n");
-//            break;
-//        case 3:
-//            data_inp = ui->spc_cur_mtb_node->cleanText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
-//            break;
-//        }
-//    }
+
+    for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
+    {
+        QString data_inp = "";
+
+        long thr_line_num = line_num - reset_ind_thr - thr_headers;
+        long cur_item = floor(thr_line_num/thr_entries);
+        long cur_entry = thr_line_num % thr_entries;
+
+        ui->spc_cur_thruster_list->setCurrentRow(cur_item);
+        QStringList current_data = ui->spc_cur_thruster_list->currentItem()->data(1).toStringList();
+
+        switch (cur_entry){
+        case 0:
+            if (ui->spc_cur_thruster_list->count() > 0)
+            {
+                spc_update.append("=============================  " + ui->spc_cur_thruster_list->currentItem()->text() + "  ================================\n");
+            }
+            else
+            {
+                spc_update.append("=============================  Thr 0  ================================\n");
+            }
+
+            break; // header
+        case 1:
+            data_inp = current_data[1];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+" Mode (PULSED or PROPORTIONAL)\n");
+            break;
+        case 2:
+            data_inp = current_data[2];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Thrust Force (N)\n");
+            break;
+        case 3:
+            data_inp =  current_data[3] + " " +  current_data[4] + " " +  current_data[5];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Thrust Axis \n");
+            break;
+        case 4:
+            data_inp =  current_data[6];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Body\n");
+            break;
+        case 5:
+            data_inp =  current_data[7];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            break;
+        }
+    }
 
 //    spc_update.append("************************* Thruster Parameters **************************\n");
 //    spc_update.append(dsm_gui_lib::whitespace(QString::number(thrusters)) + "! Number of Thrusters\n");
@@ -2408,9 +2474,9 @@ void SPC_submenu::setQComboBox(QComboBox *comboBox, QString string) {
 
 void SPC_submenu::on_spc_cur_body_remove_clicked()
 {
-    ui->spc_cur_body_list->removeItemWidget(ui->spc_cur_body_list->currentItem());
+    delete ui->spc_cur_body_list->currentItem();
     bodies -= 1;
-    ui->spc_cur_body_list->setCurrentRow(ui->spc_cur_body_list->count()-1);
+
 }
 
 
@@ -2675,9 +2741,8 @@ void SPC_submenu::on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item)
 
 void SPC_submenu::on_spc_cur_mtb_remove_clicked()
 {
-    ui->spc_cur_mtb_list->removeItemWidget(ui->spc_cur_mtb_list->currentItem());
+    delete ui->spc_cur_mtb_list->currentItem();
     mtbs -= 1;
-    ui->spc_cur_mtb_list->setCurrentRow(ui->spc_cur_mtb_list->count()-1);
 }
 
 
@@ -2728,7 +2793,70 @@ void SPC_submenu::on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item)
     ui->spc_cur_mtb_axis_2->setText(current_data[3]);
     ui->spc_cur_mtb_axis_3->setText(current_data[4]);
 
-    ui->spc_cur_wheel_node->setValue(current_data[5].toInt());
+    ui->spc_cur_mtb_node->setValue(current_data[5].toInt());
 }
 
+// Thruster buttons
+
+
+void SPC_submenu::on_spc_cur_thruster_remove_clicked()
+{
+
+}
+
+
+void SPC_submenu::on_spc_cur_thruster_add_clicked()
+{
+    thrusters += 1;
+
+    QStringList tmp_data = {};
+
+    tmp_data.append("blankline");
+    tmp_data.append("PULSED");
+    tmp_data.append("1.0");
+    tmp_data.append("-1.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0");
+    tmp_data.append("0");
+
+    ui->spc_cur_thruster_list->addItem("Thr " + QString::number(thrusters - 1));
+    ui->spc_cur_thruster_list->setCurrentRow(ui->spc_cur_thruster_list->count()-1);
+
+    ui->spc_cur_thruster_list->currentItem()->setData(0, "Thr " + QString::number(thrusters - 1));
+    ui->spc_cur_thruster_list->currentItem()->setData(1, tmp_data);
+    on_spc_cur_thruster_list_itemClicked(ui->spc_cur_thruster_list->currentItem());
+}
+
+
+void SPC_submenu::on_spc_cur_thruster_duplicate_clicked()
+{
+    thrusters += 1;
+
+    QStringList old_data = ui->spc_cur_thruster_list->currentItem()->data(1).toStringList();
+
+    ui->spc_cur_thruster_list->addItem("Thr " + QString::number(mtbs - 1));
+    ui->spc_cur_thruster_list->setCurrentRow(ui->spc_cur_thruster_list->count()-1);
+    ui->spc_cur_thruster_list->currentItem()->setData(1, old_data);
+}
+
+
+void SPC_submenu::on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item)
+{
+    receive_data();
+
+    QStringList current_data = item->data(1).toStringList();
+    item->setText(item->data(0).toString());
+
+    setQComboBox(ui->spc_cur_thruster_mode, current_data[1]);
+
+    ui->spc_cur_thruster_force->setText(current_data[2]);
+
+    ui->spc_cur_thruster_axis_1->setText(current_data[3]);
+    ui->spc_cur_thruster_axis_2->setText(current_data[4]);
+    ui->spc_cur_thruster_axis_3->setText(current_data[5]);
+
+    ui->spc_cur_thruster_body->setValue(current_data[6].toInt());
+    ui->spc_cur_thruster_node->setValue(current_data[7].toInt());
+}
 
