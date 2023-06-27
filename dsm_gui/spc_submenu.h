@@ -72,6 +72,14 @@ private slots:
 
     void on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item);
 
+    void on_spc_cur_gyro_remove_clicked();
+
+    void on_spc_cur_gyro_add_clicked();
+
+    void on_spc_cur_gyro_duplicate_clicked();
+
+    void on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item);
+
 private:
     Ui::SPC_submenu *ui;
     QString spc_cur_name;

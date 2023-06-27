@@ -645,13 +645,13 @@ void SPC_submenu::apply_data()
     thrusters = spc_data[reset_ind_thr].toInt();
 
     if (thrusters == 0) reset_ind_gyro = reset_ind_thr + thr_headers + thr_entries; // SC_Simple has an example wheel
-    else reset_ind_thr = reset_ind_thr + thr_headers + thr_entries*thrusters;
+    else reset_ind_gyro = reset_ind_thr + thr_headers + thr_entries*thrusters;
 
 
     ui->spc_cur_thruster_list->clear();
     tmp_data.clear();
     if (thrusters > 0){
-        for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
+        for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
         {
             line_string = spc_string[line_num-1];
             line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
@@ -685,123 +685,75 @@ void SPC_submenu::apply_data()
                 tmp_data.append(line_items[0]);
                 break;
             }
-            if (cur_entry==mtb_entries-1){
+            if (cur_entry==thr_entries-1){
                 ui->spc_cur_thruster_list->setCurrentRow(cur_item);
-                ui->spc_cur_thruster_list->currentItem()->setData(0, "thr " + QString::number(cur_item));
+                ui->spc_cur_thruster_list->currentItem()->setData(0, "Thr " + QString::number(cur_item));
                 ui->spc_cur_thruster_list->currentItem()->setData(1, tmp_data);
                 tmp_data.clear();
             }
         }
     }
 
-//    tmp_line_item = spc_data[reset_ind_thr + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-//    thrusters = tmp_line_item[0].toInt();
+    /**************** GYROS ************************/
 
-//    ui->spc_cur_thruster_list->clear();
-//    tmp_list.clear();
+    gyros = spc_data[reset_ind_gyro].toInt();
 
-//    for (int i=0; i<thrusters; i++) tmp_list.append("Thr " + QString::number(i));
-//    ui->spc_cur_thruster_list->addItems(tmp_list);
+    if (gyros == 0) reset_ind_mag = reset_ind_gyro + gyro_headers + gyro_entries; // SC_Simple has an example wheel
+    else reset_ind_gyro = reset_ind_gyro + gyro_headers + gyro_entries*gyros;
 
-//    if (thrusters == 0) thrusters = 1;
 
-//    reset_ind_gyro = reset_ind_thr + thr_headers + thr_entries*thrusters;
+    ui->spc_cur_gyro_list->clear();
+    tmp_data.clear();
+    if (gyros > 0){
+        for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
+        {
+            line_string = spc_string[line_num-1];
+            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
 
-//    for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
-//    {
-//        line_string = spc_string[line_num-1];
-//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+            long gyro_line_num = line_num - reset_ind_gyro - gyro_headers;
+            cur_item = floor(gyro_line_num/gyro_entries);
+            cur_entry = gyro_line_num % gyro_entries;
 
-//        long thr_line_num = line_num - reset_ind_thr - thr_headers;
-//        cur_item = floor(thr_line_num/thr_entries);
-//        cur_entry = thr_line_num % thr_entries;
+            if (cur_entry == 0){
+                ui->spc_cur_gyro_list->addItem("Axis " + QString::number(cur_item));
+            }
 
-//        ui->spc_cur_thruster_list->setCurrentRow(cur_item);
-
-//        switch (cur_entry){
-//        case 0:
-//            break; // header
-//        case 1:
-//            setQComboBox(ui->spc_cur_thruster_mode, line_items[0]);
-//            break;
-//        case 2:
-//            ui->spc_cur_thruster_force->setText(line_items[0]);
-//            break;
-//        case 3:
-//            ui->spc_cur_thruster_axis_1->setText(line_items[0]);
-//            ui->spc_cur_thruster_axis_2->setText(line_items[1]);
-//            ui->spc_cur_thruster_axis_3->setText(line_items[2]);
-//            break;
-//        case 4:
-//            ui->spc_cur_thruster_body->setValue(line_items[0].toInt());
-//            break;
-//        case 5:
-//            ui->spc_cur_thruster_node->setValue(line_items[0].toInt());
-//            break;
-//        }
-//    }
-
-//    tmp_line_item = spc_data[reset_ind_gyro + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-//    gyros = tmp_line_item[0].toInt();
-
-//    ui->spc_cur_gyro_list->clear();
-//    tmp_list.clear();
-
-//    for (int i=0; i<gyros; i++) tmp_list.append("Axis " + QString::number(i));
-//    ui->spc_cur_gyro_list->addItems(tmp_list);
-
-//    if (gyros == 0) gyros = 1;
-//    reset_ind_mag = reset_ind_gyro + gyro_headers + gyro_entries*gyros;
-
-//    for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
-//    {
-//        line_string = spc_string[line_num-1];
-//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-//        long gyro_line_num = line_num - reset_ind_gyro - gyro_headers;
-//        cur_item = floor(gyro_line_num/gyro_entries);
-//        cur_entry = gyro_line_num % gyro_entries;
-
-//        ui->spc_cur_gyro_list->setCurrentRow(cur_item);
-
-//        switch (cur_entry){
-//        case 0:
-//            break; // header
-//        case 1:
-//            ui->spc_cur_gyro_samptime->setText(line_items[0]);
-//            break;
-//        case 2:
-//            ui->spc_cur_gyro_axis_1->setText(line_items[0]);
-//            ui->spc_cur_gyro_axis_2->setText(line_items[1]);
-//            ui->spc_cur_gyro_axis_3->setText(line_items[2]);
-//            break;
-//        case 3:
-//            ui->spc_cur_gyro_maxrate->setText(line_items[0]);
-//            break;
-//        case 4:
-//            ui->spc_cur_gyro_scaleferror->setText(line_items[0]);
-//            break;
-//        case 5:
-//            ui->spc_cur_gyro_quant->setText(line_items[0]);
-//            break;
-//        case 6:
-//            ui->spc_cur_gyro_angrwalk->setText(line_items[0]);
-//            break;
-//        case 7:
-//            ui->spc_cur_gyro_bias_stab->setText(line_items[0]);
-//            ui->spc_cur_gyro_bias_tspan->setText(line_items[1]);
-//            break;
-//        case 8:
-//            ui->spc_cur_gyro_angnoise->setText(line_items[0]);
-//            break;
-//        case 9:
-//            ui->spc_cur_gyro_initbias->setText(line_items[0]);
-//            break;
-//        case 10:
-//            ui->spc_cur_gyro_node->setValue(line_items[0].toInt());
-//            break;
-//        }
-//    }
+            switch (cur_entry){
+            case 0:
+                tmp_data.append("blankline");
+                break; // header
+            case 1:
+                tmp_data.append(line_items[0]);
+                break;
+            case 2:
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                break;
+            case 3:
+                tmp_data.append(line_items[0]);
+                break;
+            case 4:
+                tmp_data.append(line_items[0]);
+                break;
+            case 5:
+                tmp_data.append(line_items[0]);
+                break;
+            case 6:
+                tmp_data.append(line_items[0]);
+                break;
+            case 7:
+                tmp_data.append(line_items[0]);
+                break;
+            }
+            if (cur_entry==gyro_entries-1){
+                ui->spc_cur_gyro_list->setCurrentRow(cur_item);
+                ui->spc_cur_gyro_list->currentItem()->setData(0, "Axis " + QString::number(cur_item));
+                ui->spc_cur_gyro_list->currentItem()->setData(1, tmp_data);
+                tmp_data.clear();
+            }
+        }
+    }
 
 //    tmp_line_item = spc_data[reset_ind_mag + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
 //    mags = tmp_line_item[0].toInt();
@@ -1989,7 +1941,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             break; // header
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+" Mode (PULSED or PROPORTIONAL)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Mode (PULSED or PROPORTIONAL)\n");
             break;
         case 2:
             data_inp = current_data[2];
@@ -2005,6 +1957,136 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             break;
         case 5:
             data_inp =  current_data[7];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            break;
+        }
+    }
+
+    /***************************** GYRO SECTION ******************************/
+    reset_ind_mag = reset_ind_gyro + gyro_headers + gyro_entries*gyros;
+
+    spc_update.append("******************************* Gyro ************************************\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(gyros)) + "! Number of Gyro Axes\n");
+    if (ui->sections->currentIndex() == 6 && ui->actuator_sections->currentIndex()==0)
+    {
+        for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
+        {
+
+            long gyro_line_num = line_num - reset_ind_gyro - gyro_headers;
+            long cur_item = floor(gyro_line_num/gyro_entries);
+            long cur_entry = gyro_line_num % gyro_entries;
+
+            if (ui->spc_cur_gyro_list->count() > 0 && ui->spc_cur_gyro_list->currentRow() == cur_item)
+            {
+                switch (cur_entry){
+                case 0:
+                    tmp_data.append("blankline");
+
+                    break; // header
+                case 1:
+                    tmp_data.append(ui->spc_cur_gyro_samptime->text());
+                    break;
+                case 2:
+                    tmp_data.append(ui->spc_cur_gyro_axis_1->text());
+                    tmp_data.append(ui->spc_cur_gyro_axis_2->text());
+                    tmp_data.append(ui->spc_cur_gyro_axis_3->text());
+                    break;
+                case 3:
+                    tmp_data.append(ui->spc_cur_gyro_maxrate->text());
+                case 4:
+                    tmp_data.append(ui->spc_cur_gyro_scaleferror->text());
+                    break;
+                case 5:
+                    tmp_data.append(ui->spc_cur_gyro_quant->text());
+                    break;
+                case 6:
+                    tmp_data.append(ui->spc_cur_gyro_angrwalk->text());
+                    break;
+                case 7:
+                    tmp_data.append(ui->spc_cur_gyro_bias_stab->text());
+                    tmp_data.append(ui->spc_cur_gyro_bias_tspan->text());
+                    break;
+                case 8:
+                    tmp_data.append(ui->spc_cur_gyro_angnoise->text());
+                    break;
+                case 9:
+                    tmp_data.append(ui->spc_cur_gyro_initbias->text());
+                    break;
+                case 10:
+                    tmp_data.append(ui->spc_cur_gyro_node->text());
+                    break;
+                }
+            }
+            ui->spc_cur_gyro_list->currentItem()->setData(1, tmp_data);
+        }
+    }
+
+    tmp_data.clear();
+
+
+    for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
+    {
+        QString data_inp = "";
+
+        long gyro_line_num = line_num - reset_ind_gyro - gyro_headers;
+        long cur_item = floor(gyro_line_num/gyro_entries);
+        long cur_entry = gyro_line_num % gyro_entries;
+
+        qDebug() << cur_entry;
+
+        ui->spc_cur_gyro_list->setCurrentRow(cur_item);
+        QStringList current_data = ui->spc_cur_gyro_list->currentItem()->data(1).toStringList();
+
+        switch (cur_entry){
+        case 0:
+            if (ui->spc_cur_gyro_list->count() > 0)
+            {
+                spc_update.append("=============================  " + ui->spc_cur_gyro_list->currentItem()->text() + "  ================================\n");
+            }
+            else
+            {
+                spc_update.append("=============================  Axis 0  ================================\n");
+            }
+
+            break; // header
+        case 1:
+            data_inp = current_data[1];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
+            break;
+        case 2:
+            data_inp =  current_data[2] + " " +  current_data[3] + " " +  current_data[4];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Axis expressed in Body Frame\n");
+            break;
+        case 3:
+            data_inp =  current_data[5];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Max Rate, deg/sec\n");
+            break;
+        case 4:
+            data_inp =  current_data[6];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Scale Factor Error, ppm\n");
+            break;
+        case 5:
+            data_inp =  current_data[7];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization, arcsec \n");
+            break;
+        case 6:
+            data_inp =  current_data[8];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Angle Random Walk (deg/rt-hr)\n");
+            break;
+        case 7:
+            data_inp =  current_data[9] + " " + current_data[10];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Bias Stability (deg/hr) over timespan (hr)\n");
+            break;
+        case 8:
+            data_inp =  current_data[11];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Angle Noise, arcsec RMS\n");
+            break;
+        case 9:
+            data_inp =  current_data[12];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Bias (deg/hr)\n");
+            break;
+        case 10:
+            data_inp =  current_data[13];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
             break;
         }
@@ -2801,7 +2883,8 @@ void SPC_submenu::on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item)
 
 void SPC_submenu::on_spc_cur_thruster_remove_clicked()
 {
-
+    delete ui->spc_cur_thruster_list->currentItem();
+    thrusters -= 1;
 }
 
 
@@ -2858,5 +2941,86 @@ void SPC_submenu::on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item)
 
     ui->spc_cur_thruster_body->setValue(current_data[6].toInt());
     ui->spc_cur_thruster_node->setValue(current_data[7].toInt());
+}
+
+
+void SPC_submenu::on_spc_cur_gyro_remove_clicked()
+{
+    delete ui->spc_cur_gyro_list->currentItem();
+    gyros -= 1;
+}
+
+
+void SPC_submenu::on_spc_cur_gyro_add_clicked()
+{
+    gyros += 1;
+
+    QStringList tmp_data = {};
+
+    tmp_data.append("blankline");
+    tmp_data.append("0.1");
+    tmp_data.append("1.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("1000.0");
+    tmp_data.append("100.0");
+    tmp_data.append("1.0");
+    tmp_data.append("0.07");
+    tmp_data.append("0.1");
+    tmp_data.append("1.0");
+    tmp_data.append("0.1");
+    tmp_data.append("0.1");
+    tmp_data.append("0");
+
+    ui->spc_cur_gyro_list->addItem("Axis " + QString::number(gyros - 1));
+    ui->spc_cur_gyro_list->setCurrentRow(ui->spc_cur_gyro_list->count()-1);
+
+    ui->spc_cur_gyro_list->currentItem()->setData(0, "Axis " + QString::number(gyros - 1));
+    ui->spc_cur_gyro_list->currentItem()->setData(1, tmp_data);
+    on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->currentItem());
+}
+
+
+void SPC_submenu::on_spc_cur_gyro_duplicate_clicked()
+{
+    gyros += 1;
+
+    QStringList old_data = ui->spc_cur_gyro_list->currentItem()->data(1).toStringList();
+
+    ui->spc_cur_gyro_list->addItem("Axis " + QString::number(gyros - 1));
+    ui->spc_cur_gyro_list->setCurrentRow(ui->spc_cur_gyro_list->count()-1);
+    ui->spc_cur_gyro_list->currentItem()->setData(1, old_data);
+}
+
+
+void SPC_submenu::on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item)
+{
+    receive_data();
+
+    QStringList current_data = item->data(1).toStringList();
+    item->setText(item->data(0).toString());
+
+    ui->spc_cur_gyro_samptime->setText(current_data[1]);
+
+    ui->spc_cur_gyro_axis_1->setText(current_data[2]);
+    ui->spc_cur_gyro_axis_2->setText(current_data[3]);
+    ui->spc_cur_gyro_axis_3->setText(current_data[4]);
+
+    ui->spc_cur_gyro_maxrate->setText(current_data[5]);
+
+    ui->spc_cur_gyro_scaleferror->setText(current_data[6]);
+
+    ui->spc_cur_gyro_quant->setText(current_data[7]);
+
+    ui->spc_cur_gyro_angrwalk->setText(current_data[8]);
+
+    ui->spc_cur_gyro_bias_stab->setText(current_data[9]);
+    ui->spc_cur_gyro_bias_tspan->setText(current_data[10]);
+
+    ui->spc_cur_gyro_angnoise->setText(current_data[11]);
+
+    ui->spc_cur_gyro_initbias->setText(current_data[12]);
+
+    ui->spc_cur_gyro_node->setValue(current_data[13].toInt());
 }
 
