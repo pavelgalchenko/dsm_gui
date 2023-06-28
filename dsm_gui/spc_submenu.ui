@@ -1897,7 +1897,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>4</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideLeft</enum>
@@ -2597,23 +2597,13 @@
                <property name="bottomMargin">
                 <number>12</number>
                </property>
-               <item row="4" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_49">
-                 <item>
-                  <widget class="QLineEdit" name="spc_cur_fss_hfov"/>
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="spc_cur_fss_vfov"/>
-                 </item>
-                </layout>
-               </item>
                <item row="3" column="1">
                 <widget class="QComboBox" name="spc_cur_fss_boreaxis"/>
                </item>
-               <item row="5" column="0">
-                <widget class="QLabel" name="label_90">
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_94">
                  <property name="text">
-                  <string>Noise Equivalent Angle [deg RMS]</string>
+                  <string>Mounting Angle Sequence</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -2622,6 +2612,32 @@
                </item>
                <item row="6" column="1">
                 <widget class="QLineEdit" name="spc_cur_fss_quant"/>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_87">
+                 <property name="text">
+                  <string>H, V FOV Size, [deg]</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="1">
+                <widget class="QSpinBox" name="spc_cur_fss_node"/>
+               </item>
+               <item row="5" column="1">
+                <widget class="QLineEdit" name="spc_cur_fss_noiseang"/>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_93">
+                 <property name="text">
+                  <string>Boresight Axis</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
                <item row="1" column="1">
                 <layout class="QHBoxLayout" name="horizontalLayout_48">
@@ -2636,9 +2652,6 @@
                  </item>
                 </layout>
                </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="spc_cur_fss_samptime"/>
-               </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="label_92">
                  <property name="text">
@@ -2649,17 +2662,10 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_91">
+               <item row="5" column="0">
+                <widget class="QLabel" name="label_90">
                  <property name="text">
-                  <string>Sample Time [s]</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_93">
-                 <property name="text">
-                  <string>Boresight Axis</string>
+                  <string>Noise Equivalent Angle [deg RMS]</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -2689,8 +2695,15 @@
                  </property>
                 </spacer>
                </item>
-               <item row="7" column="1">
-                <widget class="QSpinBox" name="spc_cur_fss_node"/>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="spc_cur_fss_mountseq"/>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_91">
+                 <property name="text">
+                  <string>Sample Time [s]</string>
+                 </property>
+                </widget>
                </item>
                <item row="7" column="0">
                 <widget class="QLabel" name="label_78">
@@ -2699,31 +2712,18 @@
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="label_87">
-                 <property name="text">
-                  <string>H, V FOV Size, [deg]</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>false</bool>
-                 </property>
-                </widget>
+               <item row="4" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_49">
+                 <item>
+                  <widget class="QLineEdit" name="spc_cur_fss_hfov"/>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="spc_cur_fss_vfov"/>
+                 </item>
+                </layout>
                </item>
-               <item row="5" column="1">
-                <widget class="QLineEdit" name="spc_cur_fss_noiseang"/>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_94">
-                 <property name="text">
-                  <string>Mounting Angle Sequence</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QComboBox" name="spc_cur_fss_mountseq"/>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="spc_cur_fss_samptime"/>
                </item>
               </layout>
              </item>

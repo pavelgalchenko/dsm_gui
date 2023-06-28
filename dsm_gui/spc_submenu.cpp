@@ -886,6 +886,136 @@ void SPC_submenu::apply_data()
             }
         }
     }
+
+    /**************** FSS ************************/
+
+    fss_s = spc_data[reset_ind_fss].toInt();
+
+    if (fss_s == 0) reset_ind_strack = reset_ind_fss + fss_headers + fss_entries; // SC_Simple has an example wheel
+    else reset_ind_strack = reset_ind_fss + fss_headers + fss_entries*fss_s;
+
+
+    ui->spc_cur_fss_list->clear();
+    tmp_data.clear();
+    if (css_s > 0){
+        for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
+        {
+            line_string = spc_string[line_num-1];
+            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+            long fss_line_num = line_num - reset_ind_fss - fss_headers;
+            cur_item = floor(fss_line_num/fss_entries);
+            cur_entry = fss_line_num % fss_entries;
+
+            if (cur_entry == 0){
+                ui->spc_cur_fss_list->addItem("FSS " + QString::number(cur_item));
+            }
+
+            switch (cur_entry){
+            case 0:
+                tmp_data.append("blankline");
+                break; // header
+            case 1:
+                tmp_data.append(line_items[0]);
+                break;
+            case 2:
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                tmp_data.append(line_items[3]);
+                break;
+            case 3:
+                tmp_data.append(line_items[0]);
+                break;
+            case 4:
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                break;
+            case 5:
+                tmp_data.append(line_items[0]);
+                break;
+            case 6:
+                tmp_data.append(line_items[0]);
+                break;
+            case 7:
+                tmp_data.append(line_items[0]);
+                break;
+            }
+            if (cur_entry==fss_entries-1){
+                ui->spc_cur_fss_list->setCurrentRow(cur_item);
+                ui->spc_cur_fss_list->currentItem()->setData(0, "Axis " + QString::number(cur_item));
+                ui->spc_cur_fss_list->currentItem()->setData(1, tmp_data);
+                tmp_data.clear();
+            }
+        }
+    }
+
+    /**************** STAR TRACKER ************************/
+
+    stracks = spc_data[reset_ind_strack].toInt();
+
+    if (stracks == 0) reset_ind_gps = reset_ind_strack + strack_headers + strack_entries; // SC_Simple has an example wheel
+    else reset_ind_gps = reset_ind_strack + strack_headers + strack_entries*stracks;
+
+
+    ui->spc_cur_strack_list->clear();
+    tmp_data.clear();
+    if (stracks > 0){
+        for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
+        {
+            line_string = spc_string[line_num-1];
+            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+            long strack_line_num = line_num - reset_ind_strack - strack_headers;
+            cur_item = floor(strack_line_num/strack_entries);
+            cur_entry = strack_line_num % strack_entries;
+
+            if (cur_entry == 0){
+                ui->spc_cur_strack_list->addItem("ST " + QString::number(cur_item));
+            }
+
+            switch (cur_entry){
+            case 0:
+                tmp_data.append("blankline");
+                break; // header
+            case 1:
+                tmp_data.append(line_items[0]);
+                break;
+            case 2:
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                tmp_data.append(line_items[3]);
+                break;
+            case 3:
+                tmp_data.append(line_items[0]);
+                break;
+            case 4:
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                break;
+            case 5:
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                break;
+            case 6:
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                break;
+            case 7:
+                tmp_data.append(line_items[0]);
+                break;
+            }
+            if (cur_entry==strack_entries-1){
+                ui->spc_cur_strack_list->setCurrentRow(cur_item);
+                ui->spc_cur_strack_list->currentItem()->setData(0, "ST " + QString::number(cur_item));
+                ui->spc_cur_strack_list->currentItem()->setData(1, tmp_data);
+                tmp_data.clear();
+            }
+        }
+    }
 }
 
 void SPC_submenu::write_data()
@@ -2109,6 +2239,228 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    /***************************** FSS SECTION ******************************/
+    reset_ind_strack = reset_ind_fss + fss_headers + fss_entries*fss_s;
+
+    spc_update.append("************************* Fine Sun Sensor *******************************\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(fss_s)) + "! Number of Fine Sun Sensors\n");
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==3)
+    {
+        for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
+        {
+
+            long fss_line_num = line_num - reset_ind_fss - fss_headers;
+            long cur_item = floor(fss_line_num/fss_entries);
+            long cur_entry = fss_line_num % fss_entries;
+
+            if (ui->spc_cur_fss_list->count() > 0 && ui->spc_cur_fss_list->currentRow() == cur_item)
+            {
+                switch (cur_entry){
+                case 0:
+                    tmp_data.append("blankline");
+
+                    break; // header
+                case 1:
+                    tmp_data.append(ui->spc_cur_fss_samptime->text());
+                    break;
+                case 2:
+                    tmp_data.append(ui->spc_cur_fss_mount_1->text());
+                    tmp_data.append(ui->spc_cur_fss_mount_2->text());
+                    tmp_data.append(ui->spc_cur_fss_mount_3->text());
+                    tmp_data.append(ui->spc_cur_fss_mountseq->currentText());
+                    break;
+                case 3:
+                    tmp_data.append(ui->spc_cur_fss_boreaxis->currentText());
+                    break;
+                case 4:
+                    tmp_data.append(ui->spc_cur_fss_hfov->text());
+                    tmp_data.append(ui->spc_cur_fss_vfov->text());
+                    break;
+                case 5:
+                    tmp_data.append(ui->spc_cur_fss_noiseang->text());
+                    break;
+                case 6:
+                    tmp_data.append(ui->spc_cur_fss_quant->text());
+                    break;
+                case 7:
+                    tmp_data.append(ui->spc_cur_fss_node->text());
+                    break;
+                }
+            }
+            ui->spc_cur_fss_list->currentItem()->setData(1, tmp_data);
+        }
+    }
+
+    tmp_data.clear();
+
+
+    for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
+    {
+        QString data_inp = "";
+
+        long fss_line_num = line_num - reset_ind_fss - fss_headers;
+        long cur_item = floor(fss_line_num/fss_entries);
+        long cur_entry = fss_line_num % fss_entries;
+
+        ui->spc_cur_fss_list->setCurrentRow(cur_item);
+        QStringList current_data = ui->spc_cur_fss_list->currentItem()->data(1).toStringList();
+
+        switch (cur_entry){
+        case 0:
+            if (ui->spc_cur_fss_list->count() > 0)
+            {
+                spc_update.append("=============================  " + ui->spc_cur_fss_list->currentItem()->text() + "  ================================\n");
+            }
+            else
+            {
+                spc_update.append("=============================  FSS 0  ================================\n");
+            }
+
+            break; // header
+        case 1:
+            data_inp = current_data[1];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
+            break;
+        case 2:
+            data_inp =  current_data[2] + " " +  current_data[3] + " " +  current_data[4] + " " + current_data[5];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Mounting Angles (deg), Seq in Body\n");
+            break;
+        case 3:
+            data_inp =  current_data[6];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
+            break;
+        case 4:
+            data_inp =  current_data[7] + " " + current_data[8];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! H, V FOV Size, deg\n");
+            break;
+        case 5:
+            data_inp =  current_data[8];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Noise Equivalent Angle, deg RMS\n");
+            break;
+        case 6:
+            data_inp =  current_data[9];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization, deg\n");
+            break;
+        case 7:
+            data_inp =  current_data[10];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            break;
+        }
+    }
+
+    /***************************** STAR TRACKER SECTION ******************************/
+    reset_ind_gps = reset_ind_strack + strack_headers + strack_entries*stracks;
+
+    spc_update.append("************************** Star Tracker *********************************\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(stracks)) + "! Number of Star Trackers\n");
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==4)
+    {
+        for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
+        {
+
+            long strack_line_num = line_num - reset_ind_strack - strack_headers;
+            long cur_item = floor(strack_line_num/strack_entries);
+            long cur_entry = strack_line_num % strack_entries;
+
+            if (ui->spc_cur_strack_list->count() > 0 && ui->spc_cur_strack_list->currentRow() == cur_item)
+            {
+                switch (cur_entry){
+                case 0:
+                    tmp_data.append("blankline");
+
+                    break; // header
+                case 1:
+                    tmp_data.append(ui->spc_cur_strack_samptime->text());
+                    break;
+                case 2:
+                    tmp_data.append(ui->spc_cur_strack_mount_1->text());
+                    tmp_data.append(ui->spc_cur_strack_mount_2->text());
+                    tmp_data.append(ui->spc_cur_strack_mount_3->text());
+                    tmp_data.append(ui->spc_cur_strack_mountseq->currentText());
+                    break;
+                case 3:
+                    tmp_data.append(ui->spc_cur_strack_boreaxis->currentText());
+                    break;
+                case 4:
+                    tmp_data.append(ui->spc_cur_strack_hfov->text());
+                    tmp_data.append(ui->spc_cur_strack_vfov->text());
+                    break;
+                case 5:
+                    tmp_data.append(ui->spc_cur_strack_sun->text());
+                    tmp_data.append(ui->spc_cur_strack_earth->text());
+                    tmp_data.append(ui->spc_cur_strack_moon->text());
+                    break;
+                case 6:
+                    tmp_data.append(ui->spc_cur_strack_noiseang_1->text());
+                    tmp_data.append(ui->spc_cur_strack_noiseang_2->text());
+                    tmp_data.append(ui->spc_cur_strack_noiseang_3->text());
+                    break;
+                case 7:
+                    tmp_data.append(ui->spc_cur_strack_node->text());
+                    break;
+                }
+            }
+            ui->spc_cur_strack_list->currentItem()->setData(1, tmp_data);
+        }
+    }
+
+    tmp_data.clear();
+
+
+    for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
+    {
+        QString data_inp = "";
+
+        long strack_line_num = line_num - reset_ind_strack - strack_headers;
+        long cur_item = floor(strack_line_num/strack_entries);
+        long cur_entry = strack_line_num % strack_entries;
+
+        ui->spc_cur_strack_list->setCurrentRow(cur_item);
+        QStringList current_data = ui->spc_cur_strack_list->currentItem()->data(1).toStringList();
+
+        switch (cur_entry){
+        case 0:
+            if (ui->spc_cur_strack_list->count() > 0)
+            {
+                spc_update.append("=============================  " + ui->spc_cur_strack_list->currentItem()->text() + "  ================================\n");
+            }
+            else
+            {
+                spc_update.append("=============================  ST 0  ================================\n");
+            }
+
+            break; // header
+        case 1:
+            data_inp = current_data[1];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
+            break;
+        case 2:
+            data_inp =  current_data[2] + " " +  current_data[3] + " " +  current_data[4] + " " + current_data[5];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Mounting Angles (deg), Seq in Body\n");
+            break;
+        case 3:
+            data_inp =  current_data[6];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
+            break;
+        case 4:
+            data_inp =  current_data[7] + " " + current_data[8];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! H, V FOV Size, deg\n");
+            break;
+        case 5:
+            data_inp =  current_data[8] + " " + current_data[9] + " " + current_data[10];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sun, Earth, Moon Exclusion Angles, deg\n");
+            break;
+        case 6:
+            data_inp =  current_data[11] + " " + current_data[12] + " " + current_data[13];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Noise Equivalent Angle, arcsec RMS\n");
+            break;
+        case 7:
+            data_inp =  current_data[14];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            break;
+        }
+    }
+
     write_data();
 }
 
@@ -2729,5 +3081,163 @@ void SPC_submenu::on_spc_cur_css_list_itemClicked(QListWidgetItem *item)
     ui->spc_cur_css_body->setValue(current_data[8].toInt());
 
     ui->spc_cur_css_node->setValue(current_data[9].toInt());
+}
+
+// FSS Buttons
+
+void SPC_submenu::on_spc_cur_fss_remove_clicked()
+{
+    delete ui->spc_cur_fss_list->currentItem();
+    fss_s -= 1;
+}
+
+
+void SPC_submenu::on_spc_cur_fss_add_clicked()
+{
+    fss_s += 1;
+
+    QStringList tmp_data = {};
+
+    tmp_data.append("blankline");
+    tmp_data.append("0.2");
+    tmp_data.append("70.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("321");
+    tmp_data.append("Z_AXIS");
+    tmp_data.append("32.0");
+    tmp_data.append("32.0");
+    tmp_data.append("0.1");
+    tmp_data.append("0.5");
+    tmp_data.append("0");
+
+    ui->spc_cur_fss_list->addItem("FSS " + QString::number(fss_s - 1));
+    ui->spc_cur_fss_list->setCurrentRow(ui->spc_cur_fss_list->count()-1);
+
+    ui->spc_cur_fss_list->currentItem()->setData(0, "FSS " + QString::number(fss_s - 1));
+    ui->spc_cur_fss_list->currentItem()->setData(1, tmp_data);
+    on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->currentItem());
+}
+
+
+void SPC_submenu::on_spc_cur_fss_duplicate_clicked()
+{
+    fss_s += 1;
+
+    QStringList old_data = ui->spc_cur_fss_list->currentItem()->data(1).toStringList();
+
+    ui->spc_cur_fss_list->addItem("FSS " + QString::number(fss_s - 1));
+    ui->spc_cur_fss_list->setCurrentRow(ui->spc_cur_fss_list->count()-1);
+    ui->spc_cur_fss_list->currentItem()->setData(1, old_data);
+}
+
+
+void SPC_submenu::on_spc_cur_fss_list_itemClicked(QListWidgetItem *item)
+{
+    receive_data();
+
+    QStringList current_data = item->data(1).toStringList();
+    item->setText(item->data(0).toString());
+
+    ui->spc_cur_fss_samptime->setText(current_data[1]);
+
+    ui->spc_cur_fss_mount_1->setText(current_data[2]);
+    ui->spc_cur_fss_mount_2->setText(current_data[3]);
+    ui->spc_cur_fss_mount_3->setText(current_data[4]);
+    setQComboBox(ui->spc_cur_fss_mountseq, current_data[5]);
+
+    setQComboBox(ui->spc_cur_fss_boreaxis, current_data[6]);
+
+    ui->spc_cur_fss_hfov->setText(current_data[7]);
+    ui->spc_cur_fss_vfov->setText(current_data[8]);
+
+    ui->spc_cur_fss_noiseang->setText(current_data[9]);
+
+    ui->spc_cur_fss_quant->setText(current_data[10]);
+
+    ui->spc_cur_css_node->setValue(current_data[11].toInt());
+}
+
+// Star Tracker Buttons
+
+void SPC_submenu::on_spc_cur_strack_remove_clicked()
+{
+    delete ui->spc_cur_strack_list->currentItem();
+    stracks -= 1;
+}
+
+
+void SPC_submenu::on_spc_cur_strack_add_clicked()
+{
+    stracks += 1;
+
+    QStringList tmp_data = {};
+
+    tmp_data.append("blankline");
+    tmp_data.append("0.25");
+    tmp_data.append("-90.0");
+    tmp_data.append("90.0");
+    tmp_data.append("00.0");
+    tmp_data.append("321");
+    tmp_data.append("Z_AXIS");
+    tmp_data.append("8.0");
+    tmp_data.append("8.0");
+    tmp_data.append("30.0");
+    tmp_data.append("10.0");
+    tmp_data.append("10.0");
+    tmp_data.append("2.0");
+    tmp_data.append("2.0");
+    tmp_data.append("20.0");
+    tmp_data.append("0");
+
+    ui->spc_cur_strack_list->addItem("ST " + QString::number(stracks - 1));
+    ui->spc_cur_strack_list->setCurrentRow(ui->spc_cur_strack_list->count()-1);
+
+    ui->spc_cur_strack_list->currentItem()->setData(0, "ST " + QString::number(stracks - 1));
+    ui->spc_cur_strack_list->currentItem()->setData(1, tmp_data);
+    on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->currentItem());
+}
+
+
+void SPC_submenu::on_spc_cur_strack_duplicate_clicked()
+{
+    stracks += 1;
+
+    QStringList old_data = ui->spc_cur_fss_list->currentItem()->data(1).toStringList();
+
+    ui->spc_cur_strack_list->addItem("FSS " + QString::number(stracks - 1));
+    ui->spc_cur_strack_list->setCurrentRow(ui->spc_cur_strack_list->count()-1);
+    ui->spc_cur_strack_list->currentItem()->setData(1, old_data);
+}
+
+
+void SPC_submenu::on_spc_cur_strack_list_itemClicked(QListWidgetItem *item)
+{
+    receive_data();
+
+    QStringList current_data = item->data(1).toStringList();
+    item->setText(item->data(0).toString());
+
+    ui->spc_cur_strack_samptime->setText(current_data[1]);
+
+    ui->spc_cur_strack_mount_1->setText(current_data[2]);
+    ui->spc_cur_strack_mount_2->setText(current_data[3]);
+    ui->spc_cur_strack_mount_3->setText(current_data[4]);
+    setQComboBox(ui->spc_cur_strack_mountseq, current_data[5]);
+
+    setQComboBox(ui->spc_cur_strack_boreaxis, current_data[6]);
+
+    ui->spc_cur_strack_hfov->setText(current_data[7]);
+    ui->spc_cur_strack_vfov->setText(current_data[8]);
+
+    ui->spc_cur_strack_sun->setText(current_data[9]);
+    ui->spc_cur_strack_earth->setText(current_data[10]);
+    ui->spc_cur_strack_moon->setText(current_data[11]);
+
+    ui->spc_cur_strack_noiseang_1->setText(current_data[12]);
+    ui->spc_cur_strack_noiseang_2->setText(current_data[13]);
+    ui->spc_cur_strack_noiseang_3->setText(current_data[14]);
+
+    ui->spc_cur_strack_node->setValue(current_data[15].toInt());
 }
 
