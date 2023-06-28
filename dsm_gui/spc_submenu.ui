@@ -1897,7 +1897,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>4</number>
+           <number>6</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideLeft</enum>
@@ -3027,14 +3027,14 @@
                     <number>0</number>
                    </property>
                    <item>
-                    <widget class="QPushButton" name="spc_cur_gps_add">
+                    <widget class="QPushButton" name="spc_cur_gps_remove">
                      <property name="text">
                       <string>-</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="spc_cur_gps_remove">
+                    <widget class="QPushButton" name="spc_cur_gps_add">
                      <property name="text">
                       <string>+</string>
                      </property>

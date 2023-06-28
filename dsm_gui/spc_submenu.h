@@ -112,6 +112,23 @@ private slots:
 
     void on_spc_cur_strack_list_itemClicked(QListWidgetItem *item);
 
+
+    void on_spc_cur_gps_remove_clicked();
+
+    void on_spc_cur_gps_add_clicked();
+
+    void on_spc_cur_gps_duplicate_clicked();
+
+    void on_spc_cur_gps_list_itemClicked(QListWidgetItem *item);
+
+    void on_spc_cur_accel_remove_clicked();
+
+    void on_spc_cur_accel_add_clicked();
+
+    void on_spc_cur_accel_duplicate_clicked();
+
+    void on_spc_cur_accel_list_itemClicked(QListWidgetItem *item);
+
 private:
     Ui::SPC_submenu *ui;
     QString spc_cur_name;
