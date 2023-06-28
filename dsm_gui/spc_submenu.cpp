@@ -744,6 +744,16 @@ void SPC_submenu::apply_data()
                 break;
             case 7:
                 tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                break;
+            case 8:
+                tmp_data.append(line_items[0]);
+                break;
+            case 9:
+                tmp_data.append(line_items[0]);
+                break;
+            case 10:
+                tmp_data.append(line_items[0]);
                 break;
             }
             if (cur_entry==gyro_entries-1){
@@ -755,333 +765,127 @@ void SPC_submenu::apply_data()
         }
     }
 
-//    tmp_line_item = spc_data[reset_ind_mag + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-//    mags = tmp_line_item[0].toInt();
+    /**************** MAGNETOMETERS ************************/
 
-//    ui->spc_cur_mag_list->clear();
-//    tmp_list.clear();
+    mags = spc_data[reset_ind_mag].toInt();
 
-//    for (int i=0; i<mags; i++) tmp_list.append("Axis " + QString::number(i));
-//    ui->spc_cur_mag_list->addItems(tmp_list);
+    if (mags == 0) reset_ind_css = reset_ind_mag + mag_headers + mag_entries; // SC_Simple has an example wheel
+    else reset_ind_css = reset_ind_mag + mag_headers + mag_entries*mags;
 
-//    if (mags == 0) mags = 1;
-//    reset_ind_css = reset_ind_mag + mag_headers + mag_entries*mags;
 
-//    for (int line_num = reset_ind_mag + mag_headers; line_num<reset_ind_css; line_num++)
-//    {
-//        line_string = spc_string[line_num-1];
-//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+    ui->spc_cur_mag_list->clear();
+    tmp_data.clear();
+    if (mags > 0){
+        for (int line_num = reset_ind_mag + mag_headers; line_num<reset_ind_css; line_num++)
+        {
+            line_string = spc_string[line_num-1];
+            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
 
-//        long mag_line_num = line_num - reset_ind_mag - mag_headers;
-//        cur_item = floor(mag_line_num/mag_entries);
-//        cur_entry = mag_line_num % mag_entries;
+            long mag_line_num = line_num - reset_ind_mag - mag_headers;
+            cur_item = floor(mag_line_num/mag_entries);
+            cur_entry = mag_line_num % mag_entries;
 
-//        ui->spc_cur_mag_list->setCurrentRow(cur_item);
+            if (cur_entry == 0){
+                ui->spc_cur_mag_list->addItem("Axis " + QString::number(cur_item));
+            }
 
-//        switch (cur_entry){
-//        case 0:
-//            break; // header
-//        case 1:
-//            ui->spc_cur_mag_samptime->setText(line_items[0]);
-//            break;
-//        case 2:
-//            ui->spc_cur_mag_axis_1->setText(line_items[0]);
-//            ui->spc_cur_mag_axis_2->setText(line_items[1]);
-//            ui->spc_cur_mag_axis_3->setText(line_items[2]);
-//            break;
-//        case 3:
-//            ui->spc_cur_mag_sat->setText(line_items[0]);
-//            break;
-//        case 4:
-//            ui->spc_cur_mag_scaleferror->setText(line_items[0]);
-//            break;
-//        case 5:
-//            ui->spc_cur_mag_quant->setText(line_items[0]);
-//            break;
-//        case 6:
-//            ui->spc_cur_mag_noise->setText(line_items[0]);
-//            break;
-//        case 7:
-//            ui->spc_cur_mag_node->setValue(line_items[0].toInt());
-//            break;
-//        }
-//    }
+            switch (cur_entry){
+            case 0:
+                tmp_data.append("blankline");
+                break; // header
+            case 1:
+                tmp_data.append(line_items[0]);
+                break;
+            case 2:
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                break;
+            case 3:
+                tmp_data.append(line_items[0]);
+                break;
+            case 4:
+                tmp_data.append(line_items[0]);
+                break;
+            case 5:
+                tmp_data.append(line_items[0]);
+                break;
+            case 6:
+                tmp_data.append(line_items[0]);
+                break;
+            case 7:
+                tmp_data.append(line_items[0]);
+                break;
+            }
+            if (cur_entry==mag_entries-1){
+                ui->spc_cur_mag_list->setCurrentRow(cur_item);
+                ui->spc_cur_mag_list->currentItem()->setData(0, "Axis " + QString::number(cur_item));
+                ui->spc_cur_mag_list->currentItem()->setData(1, tmp_data);
+                tmp_data.clear();
+            }
+        }
+    }
 
-//    tmp_line_item = spc_data[reset_ind_css + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-//    css_s = tmp_line_item[0].toInt();
+    /**************** CSS ************************/
 
-//    ui->spc_cur_css_list->clear();
-//    tmp_list.clear();
+    css_s = spc_data[reset_ind_css].toInt();
 
-//    for (int i=0; i<css_s; i++) tmp_list.append("CSS " + QString::number(i));
-//    ui->spc_cur_css_list->addItems(tmp_list);
+    if (css_s == 0) reset_ind_fss = reset_ind_css + css_headers + css_entries; // SC_Simple has an example wheel
+    else reset_ind_fss = reset_ind_css + css_headers + css_entries*css_s;
 
-//    if (css_s == 0) css_s = 1;
 
-//    reset_ind_fss = reset_ind_css + css_headers + css_entries*css_s;
+    ui->spc_cur_css_list->clear();
+    tmp_data.clear();
+    if (css_s > 0){
+        for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
+        {
+            line_string = spc_string[line_num-1];
+            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
 
-//    for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
-//    {
-//        line_string = spc_string[line_num-1];
-//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+            long css_line_num = line_num - reset_ind_css - css_headers;
+            cur_item = floor(css_line_num/css_entries);
+            cur_entry = css_line_num % css_entries;
 
-//        long css_line_num = line_num - reset_ind_css - css_headers;
-//        cur_item = floor(css_line_num/css_entries);
-//        cur_entry = css_line_num % css_entries;
+            if (cur_entry == 0){
+                ui->spc_cur_css_list->addItem("CSS " + QString::number(cur_item));
+            }
 
-//        ui->spc_cur_css_list->setCurrentRow(cur_item);
-
-//        switch (cur_entry){
-//        case 0:
-//            break; // header
-//        case 1:
-//            ui->spc_cur_css_samptime->setText(line_items[0]);
-//            break;
-//        case 2:
-//            ui->spc_cur_css_axis_1->setText(line_items[0]);
-//            ui->spc_cur_css_axis_2->setText(line_items[1]);
-//            ui->spc_cur_css_axis_3->setText(line_items[2]);
-//            break;
-//        case 3:
-//            ui->spc_cur_css_halfcone->setText(line_items[0]);
-//            break;
-//        case 4:
-//            ui->spc_cur_css_scale->setText(line_items[0]);
-//            break;
-//        case 5:
-//            ui->spc_cur_css_quant->setText(line_items[0]);
-//            break;
-//        case 6:
-//            ui->spc_cur_css_body->setValue(line_items[0].toInt());
-//            break;
-//        case 7:
-//            ui->spc_cur_css_node->setValue(line_items[0].toInt());
-//            break;
-//        }
-//    }
-
-//    tmp_line_item = spc_data[reset_ind_fss + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-//    fss_s = tmp_line_item[0].toInt();
-
-//    ui->spc_cur_fss_list->clear();
-//    tmp_list.clear();
-
-//    for (int i=0; i<fss_s; i++) tmp_list.append("FSS " + QString::number(i));
-//    ui->spc_cur_fss_list->addItems(tmp_list);
-
-//    if (fss_s == 0) fss_s = 1;
-
-//    reset_ind_strack = reset_ind_fss + fss_headers + fss_entries*fss_s;
-
-//    for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
-//    {
-//        line_string = spc_string[line_num-1];
-//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-//        long fss_line_num = line_num - reset_ind_fss - fss_headers;
-//        cur_item = floor(fss_line_num/fss_entries);
-//        cur_entry = fss_line_num % fss_entries;
-
-//        ui->spc_cur_fss_list->setCurrentRow(cur_item);
-
-//        switch (cur_entry){
-//        case 0:
-//            break; // header
-//        case 1:
-//            ui->spc_cur_fss_samptime->setText(line_items[0]);
-//            break;
-//        case 2:
-//            ui->spc_cur_fss_mount_1->setText(line_items[0]);
-//            ui->spc_cur_fss_mount_2->setText(line_items[1]);
-//            ui->spc_cur_fss_mount_3->setText(line_items[2]);
-
-//            setQComboBox(ui->spc_cur_fss_mountseq, line_items[0]);
-//            break;
-//        case 3:
-//            setQComboBox(ui->spc_cur_fss_boreaxis, line_items[0]);
-//            break;
-//        case 4:
-//            ui->spc_cur_fss_hfov->setText(line_items[0]);
-//            ui->spc_cur_fss_vfov->setText(line_items[1]);
-//            break;
-//        case 5:
-//            ui->spc_cur_fss_noiseang->setText(line_items[0]);
-//            break;
-//        case 6:
-//            ui->spc_cur_fss_quant->setText(line_items[0]);
-//            break;
-//        case 7:
-//            ui->spc_cur_fss_node->setValue(line_items[0].toInt());
-//            break;
-//        }
-//    }
-
-//    tmp_line_item = spc_data[reset_ind_strack + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-//    stracks = tmp_line_item[0].toInt();
-
-//    ui->spc_cur_strack_list->clear();
-//    tmp_list.clear();
-
-//    for (int i=0; i<stracks; i++) tmp_list.append("ST " + QString::number(i));
-//    ui->spc_cur_strack_list->addItems(tmp_list);
-
-//    if (stracks == 0) stracks = 1;
-
-//    reset_ind_gps = reset_ind_strack + strack_headers +strack_entries*stracks;
-
-//    for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
-//    {
-//        line_string = spc_string[line_num-1];
-//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-//        long strack_line_num = line_num - reset_ind_strack - strack_headers;
-//        cur_item = floor(strack_line_num/strack_entries);
-//        cur_entry = strack_line_num % strack_entries;
-
-//        ui->spc_cur_strack_list->setCurrentRow(cur_item);
-
-//        switch (cur_entry){
-//        case 0:
-//            break; // header
-//        case 1:
-//            ui->spc_cur_strack_samptime->setText(line_items[0]);
-//            break;
-//        case 2:
-//            ui->spc_cur_strack_mount_1->setText(line_items[0]);
-//            ui->spc_cur_strack_mount_2->setText(line_items[1]);
-//            ui->spc_cur_strack_mount_3->setText(line_items[2]);
-
-//            setQComboBox(ui->spc_cur_strack_mountseq, line_items[3]);
-//            break;
-//        case 3:
-//            setQComboBox(ui->spc_cur_strack_boreaxis, line_items[3]);
-//            break;
-//        case 4:
-//            ui->spc_cur_strack_hfov->setText(line_items[0]);
-//            ui->spc_cur_strack_vfov->setText(line_items[1]);
-//            break;
-//        case 5:
-//            ui->spc_cur_strack_sun->setText(line_items[0]);
-//            ui->spc_cur_strack_earth->setText(line_items[1]);
-//            ui->spc_cur_strack_moon->setText(line_items[2]);
-//            break;
-//        case 6:
-//            ui->spc_cur_strack_noiseang_1->setText(line_items[0]);
-//            ui->spc_cur_strack_noiseang_2->setText(line_items[1]);
-//            ui->spc_cur_strack_noiseang_3->setText(line_items[2]);
-//            break;
-//        case 7:
-//            ui->spc_cur_strack_node->setValue(line_items[0].toInt());
-//            break;
-//        }
-//    }
-
-//    tmp_line_item = spc_data[reset_ind_gps + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-//    gps_s = tmp_line_item[0].toInt();
-
-//    ui->spc_cur_gps_list->clear();
-//    tmp_list.clear();
-
-//    for (int i=0; i<gps_s; i++) tmp_list.append("GPSR " + QString::number(i));
-//    ui->spc_cur_gps_list->addItems(tmp_list);
-
-//    if (gps_s == 0) gps_s = 1;
-
-//    reset_ind_acc = reset_ind_gps + gps_headers + gps_entries*gps_s;
-
-//    for (int line_num = reset_ind_gps + gps_headers; line_num<reset_ind_acc; line_num++)
-//    {
-//        line_string = spc_string[line_num-1];
-//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-//        long gps_line_num = line_num - reset_ind_gps - gps_headers;
-//        cur_item = floor(gps_line_num/gps_entries);
-//        cur_entry = gps_line_num % gps_entries;
-
-//        ui->spc_cur_gps_list->setCurrentRow(cur_item);
-
-//        switch (cur_entry){
-//        case 0:
-//            break; // header
-//        case 1:
-//            ui->spc_cur_gps_samptime->setText(line_items[0]);
-//            break;
-//        case 2:
-//            ui->spc_cur_gps_posnoise->setText(line_items[0]);
-//            break;
-//        case 3:
-//            ui->spc_cur_gps_velnoise->setText(line_items[0]);
-//            break;
-//        case 4:
-//            ui->spc_cur_gps_timenoise->setText(line_items[0]);
-//            break;
-//        case 5:
-//            ui->spc_cur_gps_node->setValue(line_items[0].toInt());
-//            break;
-//        }
-//    }
-
-//    tmp_line_item = spc_data[reset_ind_acc + 1 - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-//    accels = tmp_line_item[0].toInt();
-
-//    ui->spc_cur_accel_list->clear();
-//    tmp_list.clear();
-
-//    for (int i=0; i<accels; i++) tmp_list.append("Acc " + QString::number(i));
-//    ui->spc_cur_accel_list->addItems(tmp_list);
-
-//    if (accels == 0) accels = 1;
-
-//    reset_ind_end = reset_ind_acc + accel_headers + acc_entries*accels;
-
-//    for (int line_num = reset_ind_acc+accel_headers; line_num<reset_ind_end; line_num++)
-//    {
-//        line_string = spc_string[line_num-1];
-//        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-//        long acc_line_num = line_num - reset_ind_acc - accel_headers;
-//        cur_item = floor(acc_line_num/acc_entries);
-//        cur_entry = acc_line_num % acc_entries;
-
-//        ui->spc_cur_accel_list->setCurrentRow(cur_item);
-//        switch (cur_entry){
-//        case 0:
-//            break; // header
-//        case 1:
-//            ui->spc_cur_acc_samptime->setText(line_items[0]);
-//            break;
-//        case 2:
-//            ui->spc_cur_acc_axis_1->setText(line_items[0]);
-//            ui->spc_cur_acc_axis_2->setText(line_items[1]);
-//            ui->spc_cur_acc_axis_3->setText(line_items[2]);
-//            break;
-//        case 3:
-//            ui->spc_cur_acc_maxacc->setText(line_items[0]);
-//            break;
-//        case 4:
-//            ui->spc_cur_acc_scaleerror->setText(line_items[0]);
-//            break;
-//        case 5:
-//            ui->spc_cur_acc_quant->setText(line_items[0]);
-//            break;
-//        case 6:
-//            ui->spc_cur_acc_dvrandwalk->setText(line_items[0]);
-//            break;
-//        case 7:
-//            ui->spc_cur_acc_bias_stab->setText(line_items[0]);
-//            ui->spc_cur_acc_bias_tspan->setText(line_items[1]);
-//            break;
-//        case 8:
-//            ui->spc_cur_acc_dvnoise->setText(line_items[0]);
-//            break;
-//        case 9:
-//            ui->spc_cur_acc_initbias->setText(line_items[0]);
-//            break;
-//        case 10:
-//            ui->spc_cur_acc_node->setValue(line_items[0].toInt());
-//            break;
-//        }
-//    }
+            switch (cur_entry){
+            case 0:
+                tmp_data.append("blankline");
+                break; // header
+            case 1:
+                tmp_data.append(line_items[0]);
+                break;
+            case 2:
+                tmp_data.append(line_items[0]);
+                tmp_data.append(line_items[1]);
+                tmp_data.append(line_items[2]);
+                break;
+            case 3:
+                tmp_data.append(line_items[0]);
+                break;
+            case 4:
+                tmp_data.append(line_items[0]);
+                break;
+            case 5:
+                tmp_data.append(line_items[0]);
+                break;
+            case 6:
+                tmp_data.append(line_items[0]);
+                break;
+            case 7:
+                tmp_data.append(line_items[0]);
+                break;
+            }
+            if (cur_entry==css_entries-1){
+                ui->spc_cur_css_list->setCurrentRow(cur_item);
+                ui->spc_cur_css_list->currentItem()->setData(0, "Axis " + QString::number(cur_item));
+                ui->spc_cur_css_list->currentItem()->setData(1, tmp_data);
+                tmp_data.clear();
+            }
+        }
+    }
 }
 
 void SPC_submenu::write_data()
@@ -1967,7 +1771,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     spc_update.append("******************************* Gyro ************************************\n");
     spc_update.append(dsm_gui_lib::whitespace(QString::number(gyros)) + "! Number of Gyro Axes\n");
-    if (ui->sections->currentIndex() == 6 && ui->actuator_sections->currentIndex()==0)
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==0)
     {
         for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
         {
@@ -1993,6 +1797,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 case 3:
                     tmp_data.append(ui->spc_cur_gyro_maxrate->text());
+                    break;
                 case 4:
                     tmp_data.append(ui->spc_cur_gyro_scaleferror->text());
                     break;
@@ -2031,8 +1836,6 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         long gyro_line_num = line_num - reset_ind_gyro - gyro_headers;
         long cur_item = floor(gyro_line_num/gyro_entries);
         long cur_entry = gyro_line_num % gyro_entries;
-
-        qDebug() << cur_entry;
 
         ui->spc_cur_gyro_list->setCurrentRow(cur_item);
         QStringList current_data = ui->spc_cur_gyro_list->currentItem()->data(1).toStringList();
@@ -2092,457 +1895,219 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-//    spc_update.append("************************* Thruster Parameters **************************\n");
-//    spc_update.append(dsm_gui_lib::whitespace(QString::number(thrusters)) + "! Number of Thrusters\n");
+    /***************************** MAGNETOMETER SECTION ******************************/
+    reset_ind_css = reset_ind_mag + mag_headers + mag_entries*mags;
 
-//    for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
-//    {
-//        QString data_inp = "";
+    spc_update.append("*************************** Magnetometer ********************************\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(mags)) + "! Number of Magnetometer Axes\n");
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==1)
+    {
+        for (int line_num = reset_ind_mag + mag_headers; line_num<reset_ind_css; line_num++)
+        {
 
-//        long thr_line_num = line_num - reset_ind_thr - thr_headers;
-//        long cur_item = floor(thr_line_num/thr_entries);
-//        long cur_entry = thr_line_num % thr_entries;
+            long mag_line_num = line_num - reset_ind_mag - mag_headers;
+            long cur_item = floor(mag_line_num/mag_entries);
+            long cur_entry = mag_line_num % mag_entries;
 
-//        ui->spc_cur_thruster_list->setCurrentRow(cur_item);
+            if (ui->spc_cur_mag_list->count() > 0 && ui->spc_cur_mag_list->currentRow() == cur_item)
+            {
+                switch (cur_entry){
+                case 0:
+                    tmp_data.append("blankline");
 
-//        switch (cur_entry){
-//        case 0:
-//            if (ui->spc_cur_thruster_list->count() > 0)
-//            {
-//                spc_update.append("=============================  " + ui->spc_cur_thruster_list->currentItem()->text() + "  ================================\n");
-//                thrusters = 0;
-//            }
-//            else
-//            {
-//                spc_update.append("=============================  Thr 0  ================================\n");
-//            }
+                    break; // header
+                case 1:
+                    tmp_data.append(ui->spc_cur_mag_samptime->text());
+                    break;
+                case 2:
+                    tmp_data.append(ui->spc_cur_mag_axis_1->text());
+                    tmp_data.append(ui->spc_cur_mag_axis_2->text());
+                    tmp_data.append(ui->spc_cur_mag_axis_3->text());
+                    break;
+                case 3:
+                    tmp_data.append(ui->spc_cur_mag_sat->text());
+                    break;
+                case 4:
+                    tmp_data.append(ui->spc_cur_mag_scaleferror->text());
+                    break;
+                case 5:
+                    tmp_data.append(ui->spc_cur_mag_quant->text());
+                    break;
+                case 6:
+                    tmp_data.append(ui->spc_cur_mag_noise->text());
+                    break;
+                case 7:
+                    tmp_data.append(ui->spc_cur_mag_node->text());
+                    break;
+                }
+            }
+            ui->spc_cur_mag_list->currentItem()->setData(1, tmp_data);
+        }
+    }
 
-//            break; // header
-//        case 1:
-//            data_inp = ui->spc_cur_thruster_mode->currentText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Mode (PULSED or PROPORTIONAL)\n");
-//            break;
-//        case 2:
-//            data_inp = ui->spc_cur_thruster_force->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Thrust Force (N)\n");
-//            break;
-//        case 3:
-//            data_inp = ui->spc_cur_thruster_axis_1->text() + " " + ui->spc_cur_thruster_axis_2->text() + " " + ui->spc_cur_thruster_axis_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Thrust Axis\n");
-//            break;
-//        case 4:
-//            data_inp = ui->spc_cur_thruster_body->cleanText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Body\n");
-//            break;
-//        case 5:
-//            data_inp = ui->spc_cur_thruster_body->cleanText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
-//            break;
-//        }
-//    }
+    tmp_data.clear();
 
-//    spc_update.append("******************************* Gyro ************************************\n");
-//    spc_update.append(dsm_gui_lib::whitespace(QString::number(gyros)) + "! Number of Gyro Axes\n");
 
-//    for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
-//    {
-//        QString data_inp = "";
+    for (int line_num = reset_ind_mag + mag_headers; line_num<reset_ind_css; line_num++)
+    {
+        QString data_inp = "";
 
-//        long gyro_line_num = line_num - reset_ind_gyro - gyro_headers;
-//        long cur_item = floor(gyro_line_num/gyro_entries);
-//        long cur_entry = gyro_line_num % gyro_entries;
+        long mag_line_num = line_num - reset_ind_mag - mag_headers;
+        long cur_item = floor(mag_line_num/mag_entries);
+        long cur_entry = mag_line_num % mag_entries;
 
-//        ui->spc_cur_gyro_list->setCurrentRow(cur_item);
+        ui->spc_cur_mag_list->setCurrentRow(cur_item);
+        QStringList current_data = ui->spc_cur_mag_list->currentItem()->data(1).toStringList();
 
-//        switch (cur_entry){
-//        case 0:
-//            if (ui->spc_cur_gyro_list->count() > 0)
-//            {
-//                spc_update.append("=============================  " + ui->spc_cur_gyro_list->currentItem()->text() + "  ================================\n");
-//                gyros = 0;
-//            }
-//            else
-//            {
-//                spc_update.append("=============================  Axis 0  ================================\n");
-//            }
+        switch (cur_entry){
+        case 0:
+            if (ui->spc_cur_mag_list->count() > 0)
+            {
+                spc_update.append("=============================  " + ui->spc_cur_mag_list->currentItem()->text() + "  ================================\n");
+            }
+            else
+            {
+                spc_update.append("=============================  Axis 0  ================================\n");
+            }
 
-//            break; // header
-//        case 1:
-//            data_inp = ui->spc_cur_gyro_samptime->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
-//            break;
-//        case 2:
-//            data_inp = ui->spc_cur_gyro_axis_1->text() + " " + ui->spc_cur_gyro_axis_2->text() + " " + ui->spc_cur_gyro_axis_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Axis expressed in Body Frame\n");
-//            break;
-//        case 3:
-//            data_inp = ui->spc_cur_gyro_maxrate->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Max Rate, deg/sec\n");
-//            break;
-//        case 4:
-//            data_inp = ui->spc_cur_gyro_scaleferror->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Scale Factor Error, ppm\n");
-//            break;
-//        case 5:
-//            data_inp = ui->spc_cur_gyro_quant->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization, arcsec \n");
-//            break;
-//        case 6:
-//            data_inp = ui->spc_cur_gyro_bias_stab->text() + " " + ui->spc_cur_gyro_bias_tspan->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Bias Stability (deg/hr) over timespan (hr)\n");
-//            break;
-//        case 7:
-//            data_inp = ui->spc_cur_gyro_initbias->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Bias (deg/hr)\n");
-//            break;
-//        case 8:
-//            data_inp = ui->spc_cur_gyro_node->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
-//            break;
-//        }
-//    }
+            break; // header
+        case 1:
+            data_inp = current_data[1];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
+            break;
+        case 2:
+            data_inp =  current_data[2] + " " +  current_data[3] + " " +  current_data[4];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Axis expressed in Body Frame\n");
+            break;
+        case 3:
+            data_inp =  current_data[5];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Saturation, Tesla\n");
+            break;
+        case 4:
+            data_inp =  current_data[6];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Scale Factor Error, ppm\n");
+            break;
+        case 5:
+            data_inp =  current_data[7];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization, Tesla \n");
+            break;
+        case 6:
+            data_inp =  current_data[8];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Noise, Tesla RMS\n");
+            break;
+        case 7:
+            data_inp =  current_data[9];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            break;
+        }
+    }
 
-//    spc_update.append("*************************** Magnetometer ********************************\n");
-//    spc_update.append(dsm_gui_lib::whitespace(QString::number(mags)) + "! Number of Magnetometer Axes\n");
+    /***************************** CSS SECTION ******************************/
+    reset_ind_fss = reset_ind_css + css_headers + css_entries*css_s;
 
-//    for (int line_num = reset_ind_mag + mag_headers; line_num<reset_ind_css; line_num++)
-//    {
-//        QString data_inp = "";
+    spc_update.append("*********************** Coarse Sun Sensor *******************************\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(css_s)) + "! Number of Coarse Sun Sensors\n");
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==2)
+    {
+        for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
+        {
 
-//        long mag_line_num = line_num - reset_ind_mag - mag_headers;
-//        long cur_item = floor(mag_line_num/mag_entries);
-//        long cur_entry = mag_line_num % mag_entries;
+            long css_line_num = line_num - reset_ind_css - css_headers;
+            long cur_item = floor(css_line_num/css_entries);
+            long cur_entry = css_line_num % css_entries;
 
-//        ui->spc_cur_mag_list->setCurrentRow(cur_item);
+            if (ui->spc_cur_css_list->count() > 0 && ui->spc_cur_css_list->currentRow() == cur_item)
+            {
+                switch (cur_entry){
+                case 0:
+                    tmp_data.append("blankline");
 
-//        switch (cur_entry){
-//        case 0:
-//            if (ui->spc_cur_mag_list->count() > 0)
-//            {
-//                spc_update.append("=============================  " + ui->spc_cur_mag_list->currentItem()->text() + "  ================================\n");
-//                mags = 0;
-//            }
-//            else
-//            {
-//                spc_update.append("=============================  Axis 0  ================================\n");
-//            }
+                    break; // header
+                case 1:
+                    tmp_data.append(ui->spc_cur_css_samptime->text());
+                    break;
+                case 2:
+                    tmp_data.append(ui->spc_cur_css_axis_1->text());
+                    tmp_data.append(ui->spc_cur_css_axis_2->text());
+                    tmp_data.append(ui->spc_cur_css_axis_3->text());
+                    break;
+                case 3:
+                    tmp_data.append(ui->spc_cur_css_halfcone->text());
+                    break;
+                case 4:
+                    tmp_data.append(ui->spc_cur_css_scale->text());
+                    break;
+                case 5:
+                    tmp_data.append(ui->spc_cur_css_quant->text());
+                    break;
+                case 6:
+                    tmp_data.append(ui->spc_cur_css_body->text());
+                    break;
+                case 7:
+                    tmp_data.append(ui->spc_cur_css_node->text());
+                    break;
+                }
+            }
+            ui->spc_cur_css_list->currentItem()->setData(1, tmp_data);
+        }
+    }
 
-//            break; // header
-//        case 1:
-//            data_inp = ui->spc_cur_mag_samptime->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
-//            break;
-//        case 2:
-//            data_inp = ui->spc_cur_mag_axis_1->text() + " " + ui->spc_cur_mag_axis_2->text() + " " + ui->spc_cur_mag_axis_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Axis expressed in Body Frame\n");
-//            break;
-//        case 3:
-//            data_inp = ui->spc_cur_mag_sat->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Saturation, Tesla\n");
-//            break;
-//        case 4:
-//            data_inp = ui->spc_cur_mag_scaleferror->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Scale Factor Error, ppm\n");
-//            break;
-//        case 5:
-//            data_inp = ui->spc_cur_mag_quant->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization, Tesla \n");
-//            break;
-//        case 6:
-//            data_inp = ui->spc_cur_mag_noise->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Noise, Tesla RMS\n");
-//            break;
-//        case 7:
-//            data_inp = ui->spc_cur_mag_node->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
-//            break;
-//        }
-//    }
+    tmp_data.clear();
 
-//    spc_update.append("*********************** Coarse Sun Sensor *******************************\n");
-//    spc_update.append(dsm_gui_lib::whitespace(QString::number(css_s)) + "! Number of Coarse Sun Sensors\n");
 
-//    for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
-//    {
-//        QString data_inp = "";
+    for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
+    {
+        QString data_inp = "";
 
-//        long css_line_num = line_num - reset_ind_css - css_headers;
-//        long cur_item = floor(css_line_num/css_entries);
-//        long cur_entry = css_line_num % css_entries;
+        long css_line_num = line_num - reset_ind_css - css_headers;
+        long cur_item = floor(css_line_num/css_entries);
+        long cur_entry = css_line_num % css_entries;
 
-//        ui->spc_cur_css_list->setCurrentRow(cur_item);
+        ui->spc_cur_css_list->setCurrentRow(cur_item);
+        QStringList current_data = ui->spc_cur_css_list->currentItem()->data(1).toStringList();
 
-//        switch (cur_entry){
-//        case 0:
-//            if (ui->spc_cur_css_list->count() > 0)
-//            {
-//                spc_update.append("=============================  " + ui->spc_cur_css_list->currentItem()->text() + "  ================================\n");
-//                css_s = 0;
-//            }
-//            else
-//            {
-//                spc_update.append("=============================  CSS 0  ================================\n");
-//            }
+        switch (cur_entry){
+        case 0:
+            if (ui->spc_cur_css_list->count() > 0)
+            {
+                spc_update.append("=============================  " + ui->spc_cur_css_list->currentItem()->text() + "  ================================\n");
+            }
+            else
+            {
+                spc_update.append("=============================  CSS 0  ================================\n");
+            }
 
-//            break; // header
-//        case 1:
-//            data_inp = ui->spc_cur_css_samptime->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
-//            break;
-//        case 2:
-//            data_inp = ui->spc_cur_css_axis_1->text() + " " + ui->spc_cur_css_axis_2->text() + " " + ui->spc_cur_css_axis_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Axis expressed in Body Frame\n");
-//            break;
-//        case 3:
-//            data_inp = ui->spc_cur_css_halfcone->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Half-cone Angle, deg\n");
-//            break;
-//        case 4:
-//            data_inp = ui->spc_cur_css_scale->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Scale Factor\n");
-//            break;
-//        case 5:
-//            data_inp = ui->spc_cur_css_quant->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization\n");
-//            break;
-//        case 8:
-//            data_inp = ui->spc_cur_css_body->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Body\n");
-//            break;
-//        }
-//    }
-
-//    spc_update.append("************************* Fine Sun Sensor *******************************\n");
-//    spc_update.append(dsm_gui_lib::whitespace(QString::number(fss_s)) + "! Number of Fine Sun Sensors\n");
-
-//    for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
-//    {
-//        QString data_inp = "";
-
-//        long fss_line_num = line_num - reset_ind_fss - fss_headers;
-//        long cur_item = floor(fss_line_num/fss_entries);
-//        long cur_entry = fss_line_num % fss_entries;
-
-//        ui->spc_cur_fss_list->setCurrentRow(cur_item);
-
-//        switch (cur_entry){
-//        case 0:
-//            if (ui->spc_cur_css_list->count() > 0)
-//            {
-//                spc_update.append("=============================  " + ui->spc_cur_fss_list->currentItem()->text() + "  ================================\n");
-//                fss_s = 0;
-//            }
-//            else
-//            {
-//                spc_update.append("=============================  FSS 0  ================================\n");
-//            }
-
-//            break; // header
-//        case 1:
-//            data_inp = ui->spc_cur_fss_samptime->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
-//            break;
-//        case 2:
-//            data_inp = ui->spc_cur_fss_mount_1->text() + " " + ui->spc_cur_fss_mount_2->text() + " " + ui->spc_cur_fss_mount_3->text() + ui->spc_cur_fss_mountseq->currentText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Mounting Angles (deg), Seq in Body\n");
-//            break;
-//        case 3:
-//            data_inp = ui->spc_cur_fss_boreaxis->currentText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
-//            break;
-//        case 4:
-//            data_inp = ui->spc_cur_fss_hfov->text() + " " + ui->spc_cur_fss_vfov->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! H, V FOV Size, deg\n");
-//            break;
-//        case 5:
-//            data_inp = ui->spc_cur_fss_noiseang->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Noise Equivalent Angle, deg RMS\n");
-//            break;
-//        case 6:
-//            data_inp = ui->spc_cur_fss_quant->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization, deg\n");
-//            break;
-//        case 7:
-//            data_inp = ui->spc_cur_fss_node->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
-//            break;
-//        }
-//    }
-
-//    spc_update.append("************************** Star Tracker *********************************\n");
-//    spc_update.append(dsm_gui_lib::whitespace(QString::number(stracks)) + "! Number of Star Trackers\n");
-
-//    for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
-//    {
-//        QString data_inp = "";
-
-//        long strack_line_num = line_num - reset_ind_strack - strack_headers;
-//        long cur_item = floor(strack_line_num/strack_entries);
-//        long cur_entry = strack_line_num % strack_entries;
-
-//        ui->spc_cur_fss_list->setCurrentRow(cur_item);
-
-//        switch (cur_entry){
-//        case 0:
-//            if (ui->spc_cur_strack_list->count() > 0)
-//            {
-//                spc_update.append("=============================  " + ui->spc_cur_strack_list->currentItem()->text() + "  ================================\n");
-//                stracks = 0;
-//            }
-//            else
-//            {
-//                spc_update.append("=============================  ST 0  ================================\n");
-//            }
-
-//            break; // header
-//        case 1:
-//            data_inp = ui->spc_cur_strack_samptime->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
-//            break;
-//        case 2:
-//            data_inp = ui->spc_cur_strack_mount_1->text() + " " + ui->spc_cur_strack_mount_2->text() + " " + ui->spc_cur_strack_mount_3->text() + ui->spc_cur_strack_mountseq->currentText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Mounting Angles (deg), Seq in Body\n");
-//            break;
-//        case 3:
-//            data_inp = ui->spc_cur_strack_boreaxis->currentText();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
-//            break;
-//        case 4:
-//            data_inp = ui->spc_cur_strack_hfov->text() + " " + ui->spc_cur_fss_vfov->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! H, V FOV Size, deg\n");
-//            break;
-//        case 5:
-//            data_inp = ui->spc_cur_strack_sun->text() + " " + ui->spc_cur_strack_earth->text() + " " + ui->spc_cur_strack_moon->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sun, Earth, Moon Exclusion Angles, deg\n");
-//            break;
-//        case 6:
-//            data_inp = ui->spc_cur_strack_noiseang_1->text() + " " + ui->spc_cur_strack_noiseang_2->text() + " " + ui->spc_cur_strack_noiseang_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Noise Equivalent Angle, arcsec RMS\n");
-//            break;
-//        case 7:
-//            data_inp = ui->spc_cur_strack_node->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
-//            break;
-//        }
-//    }
-
-//    spc_update.append("****************************** GPS **************************************\n");
-//    spc_update.append(dsm_gui_lib::whitespace(QString::number(stracks)) + "! Number of GPS Receivers\n");
-
-//    for (int line_num = reset_ind_gps + gps_headers; line_num<reset_ind_acc; line_num++)
-//    {
-//        QString data_inp = "";
-
-//        long gps_line_num = line_num - reset_ind_gps - gps_headers;
-//        long cur_item = floor(gps_line_num/gps_entries);
-//        long cur_entry = gps_line_num % gps_entries;
-
-//        ui->spc_cur_gps_list->setCurrentRow(cur_item);
-
-//        switch (cur_entry){
-//        case 0:
-//            if (ui->spc_cur_gps_list->count() > 0)
-//            {
-//                spc_update.append("=============================  " + ui->spc_cur_gps_list->currentItem()->text() + "  ================================\n");
-//                gps_s = 0;
-//            }
-//            else
-//            {
-//                spc_update.append("=============================  GPSR 0  ================================\n");
-//            }
-
-//            break; // header
-//        case 1:
-//            data_inp = ui->spc_cur_gps_samptime->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
-//            break;
-//        case 2:
-//            data_inp = ui->spc_cur_gps_posnoise->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Position Noise, m RMS\n");
-//            break;
-//        case 3:
-//            data_inp = ui->spc_cur_gps_velnoise->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Velocity Noise, m/sec RMS\n");
-//            break;
-//        case 4:
-//            data_inp = ui->spc_cur_gps_timenoise->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Time Noise, sec RMS\n");
-//            break;
-//        case 5:
-//            data_inp = ui->spc_cur_strack_node->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
-//            break;
-//        }
-//    }
-
-//    spc_update.append("*************************** Accelerometer *******************************\n");
-//    spc_update.append(dsm_gui_lib::whitespace(QString::number(accels)) + "! Number of Accel Axes\n");
-
-//    for (int line_num = reset_ind_acc + accel_headers; line_num<spc_data.length(); line_num++)
-//    {
-//        QString data_inp = "";
-
-//        long acc_line_num = line_num - reset_ind_acc - accel_headers;
-//        long cur_item = floor(acc_line_num/acc_entries);
-//        long cur_entry = acc_line_num % acc_entries;
-
-//        ui->spc_cur_accel_list->setCurrentRow(cur_item);
-
-//        switch (cur_entry){
-//        case 0:
-//            if (ui->spc_cur_accel_list->count() > 0)
-//            {
-//                spc_update.append("=============================  " + ui->spc_cur_accel_list->currentItem()->text() + "  ================================\n");
-//                accels = 0;
-//            }
-//            else
-//            {
-//                spc_update.append("=============================  Axis 0  ================================\n");
-//            }
-
-//            break; // header
-//        case 1:
-//            data_inp = ui->spc_cur_acc_samptime->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
-//            break;
-//        case 2:
-//            data_inp = ui->spc_cur_acc_axis_1->text() + " " + ui->spc_cur_acc_axis_2->text() + " " + ui->spc_cur_acc_axis_3->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Axis expressed in Body Frame\n");
-//            break;
-//        case 3:
-//            data_inp = ui->spc_cur_acc_maxacc->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Max Acceleration (m/s^2)\n");
-//            break;
-//        case 4:
-//            data_inp = ui->spc_cur_acc_scaleerror->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Scale Factor Error, ppm\n");
-//            break;
-//        case 5:
-//            data_inp = ui->spc_cur_acc_quant->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization, m/s^2\n");
-//            break;
-//        case 6:
-//            data_inp = ui->spc_cur_acc_dvrandwalk->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! DV Random Walk (m/s/rt-hr)\n");
-//            break;
-//        case 7:
-//            data_inp = ui->spc_cur_acc_bias_stab->text() + " " + ui->spc_cur_acc_bias_tspan->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Bias Stability (m/s^2) over timespan (hr)\n");
-//            break;
-//        case 8:
-//            data_inp = ui->spc_cur_acc_dvnoise->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! DV Noise, m/s\n");
-//            break;
-//        case 9:
-//            data_inp = ui->spc_cur_acc_dvnoise->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! DV Noise, m/s\n");
-//            break;
-//        case 10:
-//            data_inp = ui->spc_cur_acc_initbias->text();
-//            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Bias (m/s^2)\n");
-//            break;
-//        }
-//    }
+            break; // header
+        case 1:
+            data_inp = current_data[1];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
+            break;
+        case 2:
+            data_inp =  current_data[2] + " " +  current_data[3] + " " +  current_data[4];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Axis expressed in Body Frame\n");
+            break;
+        case 3:
+            data_inp =  current_data[5];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Half-cone Angle, deg\n");
+            break;
+        case 4:
+            data_inp =  current_data[6];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Scale Factor\n");
+            break;
+        case 5:
+            data_inp =  current_data[7];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization\n");
+            break;
+        case 6:
+            data_inp =  current_data[8];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Body\n");
+            break;
+        case 7:
+            data_inp =  current_data[9];
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            break;
+        }
+    }
 
     write_data();
 }
@@ -2751,9 +2316,8 @@ void SPC_submenu::on_sections_tabBarClicked(int index)
 
 void SPC_submenu::on_spc_cur_wheel_remove_clicked()
 {
-    ui->spc_cur_wheel_list->removeItemWidget(ui->spc_cur_wheel_list->currentItem());
+    delete ui->spc_cur_wheel_list->currentItem();
     wheels -= 1;
-    ui->spc_cur_wheel_list->setCurrentRow(ui->spc_cur_wheel_list->count()-1);
 }
 
 void SPC_submenu::on_spc_cur_wheel_add_clicked()
@@ -2943,6 +2507,7 @@ void SPC_submenu::on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item)
     ui->spc_cur_thruster_node->setValue(current_data[7].toInt());
 }
 
+// Gyro buttons
 
 void SPC_submenu::on_spc_cur_gyro_remove_clicked()
 {
@@ -2998,7 +2563,7 @@ void SPC_submenu::on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item)
     receive_data();
 
     QStringList current_data = item->data(1).toStringList();
-    item->setText(item->data(0).toString());
+    item->setText(item->data(0).toString());  
 
     ui->spc_cur_gyro_samptime->setText(current_data[1]);
 
@@ -3022,5 +2587,147 @@ void SPC_submenu::on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item)
     ui->spc_cur_gyro_initbias->setText(current_data[12]);
 
     ui->spc_cur_gyro_node->setValue(current_data[13].toInt());
+}
+
+// Magnetometer buttons
+
+void SPC_submenu::on_spc_cur_mag_remove_clicked()
+{
+    delete ui->spc_cur_css_list->currentItem();
+    mags -= 1;
+}
+
+
+void SPC_submenu::on_spc_cur_mag_add_clicked()
+{
+    mags += 1;
+
+    QStringList tmp_data = {};
+
+    tmp_data.append("blankline");
+    tmp_data.append("0.1");
+    tmp_data.append("1.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("60.0E-6");
+    tmp_data.append("0.0");
+    tmp_data.append("1.0E-6");
+    tmp_data.append("1.0E-6");
+    tmp_data.append("0");
+
+    ui->spc_cur_mag_list->addItem("Axis " + QString::number(mags - 1));
+    ui->spc_cur_mag_list->setCurrentRow(ui->spc_cur_mag_list->count()-1);
+
+    ui->spc_cur_mag_list->currentItem()->setData(0, "Axis " + QString::number(mags - 1));
+    ui->spc_cur_mag_list->currentItem()->setData(1, tmp_data);
+    on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->currentItem());
+}
+
+
+void SPC_submenu::on_spc_cur_mag_duplicate_clicked()
+{
+    mags += 1;
+
+    QStringList old_data = ui->spc_cur_mag_list->currentItem()->data(1).toStringList();
+
+    ui->spc_cur_mag_list->addItem("Axis " + QString::number(mags - 1));
+    ui->spc_cur_mag_list->setCurrentRow(ui->spc_cur_mag_list->count()-1);
+    ui->spc_cur_mag_list->currentItem()->setData(1, old_data);
+}
+
+
+void SPC_submenu::on_spc_cur_mag_list_itemClicked(QListWidgetItem *item)
+{
+    receive_data();
+
+    QStringList current_data = item->data(1).toStringList();
+    item->setText(item->data(0).toString());
+
+    ui->spc_cur_mag_samptime->setText(current_data[1]);
+
+    ui->spc_cur_mag_axis_1->setText(current_data[2]);
+    ui->spc_cur_mag_axis_2->setText(current_data[3]);
+    ui->spc_cur_mag_axis_3->setText(current_data[4]);
+
+    ui->spc_cur_mag_sat->setText(current_data[5]);
+
+    ui->spc_cur_mag_scaleferror->setText(current_data[6]);
+
+    ui->spc_cur_mag_quant->setText(current_data[7]);
+
+    ui->spc_cur_mag_noise->setText(current_data[8]);
+
+    ui->spc_cur_mag_node->setValue(current_data[9].toInt());
+}
+
+// CSS buttons
+
+void SPC_submenu::on_spc_cur_css_remove_clicked()
+{
+    delete ui->spc_cur_css_list->currentItem();
+    css_s -= 1;
+}
+
+
+void SPC_submenu::on_spc_cur_css_add_clicked()
+{
+    css_s += 1;
+
+    QStringList tmp_data = {};
+
+    tmp_data.append("blankline");
+    tmp_data.append("0.1");
+    tmp_data.append("1.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("90.0");
+    tmp_data.append("1.0");
+    tmp_data.append("0.001");
+    tmp_data.append("0");
+    tmp_data.append("0");
+
+    ui->spc_cur_css_list->addItem("CSS " + QString::number(css_s - 1));
+    ui->spc_cur_css_list->setCurrentRow(ui->spc_cur_css_list->count()-1);
+
+    ui->spc_cur_css_list->currentItem()->setData(0, "CSS " + QString::number(css_s - 1));
+    ui->spc_cur_css_list->currentItem()->setData(1, tmp_data);
+    on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->currentItem());
+}
+
+
+void SPC_submenu::on_spc_cur_css_duplicate_clicked()
+{
+    css_s += 1;
+
+    QStringList old_data = ui->spc_cur_css_list->currentItem()->data(1).toStringList();
+
+    ui->spc_cur_css_list->addItem("CSS " + QString::number(css_s - 1));
+    ui->spc_cur_css_list->setCurrentRow(ui->spc_cur_css_list->count()-1);
+    ui->spc_cur_css_list->currentItem()->setData(1, old_data);
+}
+
+
+void SPC_submenu::on_spc_cur_css_list_itemClicked(QListWidgetItem *item)
+{
+    receive_data();
+
+    QStringList current_data = item->data(1).toStringList();
+    item->setText(item->data(0).toString());
+
+    ui->spc_cur_css_samptime->setText(current_data[1]);
+
+    ui->spc_cur_css_axis_1->setText(current_data[2]);
+    ui->spc_cur_css_axis_2->setText(current_data[3]);
+    ui->spc_cur_css_axis_3->setText(current_data[4]);
+
+    ui->spc_cur_css_halfcone->setText(current_data[5]);
+
+    ui->spc_cur_css_scale->setText(current_data[6]);
+
+    ui->spc_cur_css_quant->setText(current_data[7]);
+
+    ui->spc_cur_css_body->setValue(current_data[8].toInt());
+
+    ui->spc_cur_css_node->setValue(current_data[9].toInt());
 }
 

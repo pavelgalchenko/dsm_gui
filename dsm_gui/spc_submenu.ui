@@ -1897,7 +1897,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideLeft</enum>
@@ -3445,12 +3445,12 @@
  <resources/>
  <connections/>
  <buttongroups>
+  <buttongroup name="spc_cur_2flex"/>
   <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>
    </property>
   </buttongroup>
-  <buttongroup name="spc_cur_2flex"/>
  </buttongroups>
 </ui>

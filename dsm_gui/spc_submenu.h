@@ -80,6 +80,22 @@ private slots:
 
     void on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item);
 
+    void on_spc_cur_mag_remove_clicked();
+
+    void on_spc_cur_mag_add_clicked();
+
+    void on_spc_cur_mag_duplicate_clicked();
+
+    void on_spc_cur_mag_list_itemClicked(QListWidgetItem *item);
+
+    void on_spc_cur_css_remove_clicked();
+
+    void on_spc_cur_css_add_clicked();
+
+    void on_spc_cur_css_duplicate_clicked();
+
+    void on_spc_cur_css_list_itemClicked(QListWidgetItem *item);
+
 private:
     Ui::SPC_submenu *ui;
     QString spc_cur_name;
