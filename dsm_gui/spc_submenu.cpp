@@ -92,6 +92,9 @@ void SPC_submenu::receive_data()
     // Otherwise return everything after ! (exclamation point) as second group
     static QRegularExpression rx3("(?:(?=^[^[:alnum:]|\"])([^[:alnum:]|\"].*)|(!.*))");
 
+    // used to capture the name of the item between equal signs (any number of equal signs, one space, then any string, then one space, then any number of equal signs)
+    static QRegularExpression rx4("=+\\s([A-Za-z0-9 ]+)\\s=+");
+
     QFile file(file_path);
     if(!file.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0, "error", file.errorString());
@@ -116,6 +119,9 @@ void SPC_submenu::receive_data()
             if (!capture.isEmpty()) capture += "\n";
             spc_file_descrip.append(capture);
         }
+
+        QRegularExpressionMatch match4 = rx4.match(line);
+        spc_item_names.append(match4.captured(1));
 
     }
     file.close();
@@ -1301,11 +1307,13 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             spc_update.append(spc_file_headers[line_num-1]);
     }
 
+    /****************************** SETUP ***************/
+    QStringList tmp_data = {}; // Update the list widget data of the body tab we are currently on.
+
     /************************************* BODY SECTION ***********************************/
 
     reset_ind_joint = reset_ind_body + body_entries*bodies;
 
-    QStringList tmp_data = {}; // Update the list widget data of the body tab we are currently on.
     if (ui->sections->currentIndex() == 3)
     {
         cur_item_row = ui->spc_cur_body_list->currentRow();

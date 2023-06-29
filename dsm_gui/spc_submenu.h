@@ -143,6 +143,7 @@ private:
     QStringList spc_string;
     QStringList spc_data;
     QStringList spc_update;
+    QStringList spc_item_names;
     int spc_name_index;
 
     QStringList spc_file_headers; // section headers in the file
