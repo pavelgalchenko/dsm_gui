@@ -150,6 +150,8 @@ private slots:
 
     void on_spc_cur_flex_select_clicked();
 
+    void on_spc_cur_joint_param_select_clicked();
+
 private:
     Ui::SPC_submenu *ui;
     QString spc_cur_name;
