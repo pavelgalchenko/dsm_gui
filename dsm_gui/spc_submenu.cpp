@@ -1193,7 +1193,8 @@ void SPC_submenu::on_spc_cur_save_clicked()
 
 void SPC_submenu::on_spc_cur_close_clicked()
 {
-    SPC_submenu::close();
+    if (joints_valid == 1) SPC_submenu::close();
+    else dsm_gui_lib::error_message("The number of joints must equal number of bodies minus one.");
 }
 
 
@@ -1496,7 +1497,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     spc_update.append("************************************************************************\n");
     spc_update.append("         (Number of Joints is Number of Bodies minus one)\n");
 
-    if (joints != bodies - 1) dsm_gui_lib::error_message("The number of joints must equal number of bodies minus one.");
+    if (joints != bodies - 1){
+        joints_valid = 0;
+        dsm_gui_lib::error_message("The number of joints must equal number of bodies minus one.");
+    }
+    else joints_valid = 1;
 
     reset_ind_wheel = reset_ind_joint + joint_headers + joint_entries*joints;
 

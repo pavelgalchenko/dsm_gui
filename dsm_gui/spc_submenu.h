@@ -225,6 +225,8 @@ private:
     long gps_entries = 6;
     long acc_entries = 11;
 
+    int joints_valid;
+
 };
 
 #endif // SPC_SUBMENU_H
