@@ -331,17 +331,18 @@
            <item row="5" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_64">
              <item>
-              <widget class="QCheckBox" name="spc_cur_shaker_enab">
+              <widget class="QPushButton" name="spc_cur_shaker_select">
                <property name="text">
-                <string>None</string>
-               </property>
-               <property name="checked">
-                <bool>false</bool>
+                <string>Select File</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="spc_cur_shaker_file"/>
+              <widget class="QLineEdit" name="spc_cur_shaker_file">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -782,14 +783,18 @@
              <item row="7" column="1">
               <layout class="QHBoxLayout" name="horizontalLayout_21">
                <item>
-                <widget class="QCheckBox" name="spc_cur_node_enab">
+                <widget class="QPushButton" name="spc_cur_node_select">
                  <property name="text">
-                  <string>None</string>
+                  <string>Select File</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="spc_cur_node_file"/>
+                <widget class="QLineEdit" name="spc_cur_node_file">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -819,14 +824,18 @@
              <item row="8" column="1">
               <layout class="QHBoxLayout" name="horizontalLayout_22">
                <item>
-                <widget class="QCheckBox" name="spc_cur_flex_enab">
+                <widget class="QPushButton" name="spc_cur_flex_select">
                  <property name="text">
-                  <string>None</string>
+                  <string>Select File</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="spc_cur_flex_file"/>
+                <widget class="QLineEdit" name="spc_cur_flex_file">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -1309,9 +1318,9 @@
              <item row="17" column="1">
               <layout class="QHBoxLayout" name="horizontalLayout_73">
                <item>
-                <widget class="QCheckBox" name="spc_cur_joint_param_none">
+                <widget class="QPushButton" name="spc_cur_joint_param_select">
                  <property name="text">
-                  <string>None</string>
+                  <string>PushButton</string>
                  </property>
                 </widget>
                </item>
@@ -3446,11 +3455,11 @@
  <connections/>
  <buttongroups>
   <buttongroup name="spc_cur_2flex"/>
-  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>
    </property>
   </buttongroup>
+  <buttongroup name="spc_cur_flex"/>
  </buttongroups>
 </ui>

@@ -2,15 +2,6 @@
 #include "ui_spc_submenu.h"
 #include "dsm_gui_lib.h"
 
-#include <QFile>
-#include <QTextStream>
-#include <QMessageBox>
-#include <QComboBox>
-#include <QRegularExpression>
-#include <QDir>
-#include <QDebug>
-#include <QList>
-
 SPC_submenu::SPC_submenu(QWidget *parent):
     QDialog(parent),
     ui(new Ui::SPC_submenu)
@@ -32,6 +23,8 @@ void SPC_submenu::receive_spc_sm_path(QString name, QString path)
     spc_cur_name = name; // store name
     spc_cur_file = path + "SC_" + spc_cur_name + ".txt";
     file_path = spc_cur_file;
+
+    inout_path = path;
 
     receive_data();
     apply_data();
@@ -268,20 +261,10 @@ void SPC_submenu::apply_data()
         case 22: // include 2nd order flex terms
             if (!QString::compare(line_items[0], "TRUE")) ui->spc_cur_2flex_on->setChecked(true);
             else ui->spc_cur_2flex_off->setChecked(true);
-
+            break;
         case 23: // Shaker file name
-            if (!QString::compare(line_items[0], "NONE"))
-            {
-                ui->spc_cur_shaker_enab->setCheckState(Qt::Checked);
-                ui->spc_cur_shaker_file->setText("");
-                ui->spc_cur_shaker_file->setEnabled(false);
-            }
-            else
-            {
-                ui->spc_cur_shaker_enab->setCheckState(Qt::Unchecked);
-                ui->spc_cur_shaker_file->setText(line_items[0]);
-                ui->spc_cur_shaker_file->setEnabled(true);
-            }
+            if (!QString::compare(line_items[0], "NONE")) ui->spc_cur_shaker_file->setText("");
+            else ui->spc_cur_shaker_file->setText(line_items[0]);
             break;
         case 24: // Drag coefficient
             ui->spc_cur_drag->setText(line_items[0]);
@@ -360,30 +343,9 @@ void SPC_submenu::apply_data()
             break;
         case 8: // Node
             tmp_data.append(line_items[0]);
-            if (!QString::compare(line_items[0], "NONE"))
-            {
-                ui->spc_cur_node_enab->setCheckState(Qt::Checked);
-            }
-            else
-            {
-                ui->spc_cur_node_enab->setCheckState(Qt::Unchecked);
-                ui->spc_cur_node_file->setText(line_items[0]);
-            }
             break;
         case 9: // Flex
             tmp_data.append(line_items[0]);
-            if (!QString::compare(line_items[0], "NONE"))
-            {
-                ui->spc_cur_flex_enab->setCheckState(Qt::Checked);
-                ui->spc_cur_flex_file->setEnabled(false);
-            }
-            else
-            {
-                ui->spc_cur_flex_enab->setCheckState(Qt::Unchecked);
-                ui->spc_cur_flex_file->setEnabled(true);
-                ui->spc_cur_flex_file->setText(line_items[0]);
-            }
-            break;
         }
         if (cur_entry==body_entries-1){
             ui->spc_cur_body_list->setCurrentRow(cur_item);
@@ -503,14 +465,6 @@ void SPC_submenu::apply_data()
             case 15: // Joint parameter file
                 tmp_data.append(line_items[0]);
                 if (!QString::compare(line_items[0], "NONE"))
-                {
-                    ui->spc_cur_joint_param_none->setCheckState(Qt::Checked);
-                }
-                else
-                {
-                    ui->spc_cur_joint_param_none->setCheckState(Qt::Unchecked);
-                    ui->spc_cur_joint_param_file->setText(line_items[0]);
-                }
                 break;
             }
             if (cur_entry==joint_entries-1){
@@ -1324,9 +1278,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         case 22: // include 2nd order flex terms
             if (ui->spc_cur_2flex_on->isChecked()) data_inp = "TRUE";
             else data_inp = "FALSE";
-
+            break;
         case 23: // Shaker file name
-            if (ui->spc_cur_shaker_enab->isChecked()) data_inp = "NONE";
+            if (!QString::compare(ui->spc_cur_shaker_file->text(), "")) data_inp = "NONE";
             else data_inp = ui->spc_cur_shaker_file->text();
             break;
         case 24: // Drag coefficient
@@ -1402,31 +1356,14 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     tmp_data.append(ui->spc_cur_body_geom->text());
                     break;
                 case 8:
-                    if (ui->spc_cur_node_enab->isChecked())
-                    {
-                        tmp_data.append("NONE");
-                        ui->spc_cur_node_file->setEnabled(false);
-                    }
-                    else
-                    {
-                        tmp_data.append(ui->spc_cur_node_file->text());
-                        ui->spc_cur_node_file->setEnabled(true);
-                        ui->spc_cur_node_file->setText(ui->spc_cur_node_file->text());
-                    }
+                    if (!QString::compare(ui->spc_cur_node_file->text(), "")) tmp_data.append("NONE");
+                    else tmp_data.append(ui->spc_cur_node_file->text());
+
                     break;
                 case 9:
-                    tmp_data.append(ui->spc_cur_flex_file->text());
-                    if (ui->spc_cur_flex_enab->isChecked())
-                    {
-                        tmp_data.append("NONE");
-                        ui->spc_cur_flex_file->setEnabled(false);
-                    }
-                    else
-                    {
-                        tmp_data.append(ui->spc_cur_flex_file->text());
-                        ui->spc_cur_flex_file->setEnabled(true);
-                        ui->spc_cur_flex_file->setText(ui->spc_cur_flex_file->text());
-                    }
+                    if (!QString::compare(ui->spc_cur_flex_file->text(), "")) tmp_data.append("NONE");
+                    else tmp_data.append(ui->spc_cur_flex_file->text());
+
                     break;
                 }
             }
@@ -1631,7 +1568,8 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
                     break;
                 case 15: // Joint parameter file
-                    tmp_data.append(ui->spc_cur_joint_param_file->text());
+                    if (!QString::compare(ui->spc_cur_joint_param_file->text(), "")) tmp_data.append("NONE");
+                    else tmp_data.append(ui->spc_cur_joint_param_file->text());
                     break;
                 }
             }
@@ -3052,25 +2990,11 @@ void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item)
 
     ui->spc_cur_body_geom->setText(current_data[17]);
 
-    if (!QString::compare(current_data[18], "NONE"))
-    {
-        ui->spc_cur_node_enab->setCheckState(Qt::Checked);
-    }
-    else
-    {
-        ui->spc_cur_node_enab->setCheckState(Qt::Unchecked);
-        ui->spc_cur_node_file->setText(current_data[18]);
-    }
+    if (!QString::compare(current_data[18], "NONE")) ui->spc_cur_node_file->setText("");
+    else ui->spc_cur_node_file->setText(current_data[18]);
 
-    if (!QString::compare(current_data[19], "NONE"))
-    {
-        ui->spc_cur_flex_enab->setCheckState(Qt::Checked);
-    }
-    else
-    {
-        ui->spc_cur_flex_enab->setCheckState(Qt::Unchecked);
-        ui->spc_cur_flex_file->setText(current_data[19]);
-    }
+    if (!QString::compare(current_data[19], "NONE")) ui->spc_cur_flex_file->setText("");
+    else ui->spc_cur_node_file->setText(current_data[19]);
 }
 
 // Joint
@@ -3956,5 +3880,60 @@ void SPC_submenu::on_sections_tabBarClicked(int index)
 {
     if (index == 3) on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
     else if (index == 4 && ui->spc_cur_joint_list->count() > 0) on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->currentItem());
+}
+
+
+void SPC_submenu::on_spc_cur_shaker_select_clicked()
+{
+    QString file_name = QFileDialog::getOpenFileName(this, tr("Choose Folder"), inout_path, QString(), nullptr,  QFileDialog::DontUseNativeDialog);
+
+    QDir dir(inout_path);
+    QString rel_file_path = dir.relativeFilePath(file_name);
+
+    if (file_name.isEmpty())
+        return;
+
+    ui->spc_cur_shaker_file->setText(rel_file_path);
+}
+
+
+void SPC_submenu::on_spc_cur_node_select_clicked()
+{
+    QString file_name = QFileDialog::getOpenFileName(this, tr("Choose Folder"), inout_path, QString(), nullptr,  QFileDialog::DontUseNativeDialog);
+
+    QDir dir(inout_path);
+    QString rel_file_path = dir.relativeFilePath(file_name);
+
+    if (file_name.isEmpty())
+        return;
+
+    ui->spc_cur_node_file->setText(rel_file_path);
+}
+
+void SPC_submenu::on_spc_cur_flex_select_clicked()
+{
+    QString file_name = QFileDialog::getOpenFileName(this, tr("Choose Folder"), inout_path, QString(), nullptr,  QFileDialog::DontUseNativeDialog);
+
+    QDir dir(inout_path);
+    QString rel_file_path = dir.relativeFilePath(file_name);
+
+    if (file_name.isEmpty())
+        return;
+
+    ui->spc_cur_flex_file->setText(rel_file_path);
+}
+
+
+void SPC_submenu::on_spc_cur_joint_param_select_clicked()
+{
+    QString file_name = QFileDialog::getOpenFileName(this, tr("Choose Folder"), inout_path, QString(), nullptr,  QFileDialog::DontUseNativeDialog);
+
+    QDir dir(inout_path);
+    QString rel_file_path = dir.relativeFilePath(file_name);
+
+    if (file_name.isEmpty())
+        return;
+
+    ui->spc_cur_joint_param_file->setText(rel_file_path);
 }
 

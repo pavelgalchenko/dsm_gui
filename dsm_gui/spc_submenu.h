@@ -6,6 +6,15 @@
 #include <QButtonGroup>
 #include <QListWidgetItem>
 #include <QHash>
+#include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
+#include <QMessageBox>
+#include <QComboBox>
+#include <QRegularExpression>
+#include <QDir>
+#include <QDebug>
+#include <QList>
 
 namespace Ui {
 class SPC_submenu;
@@ -135,6 +144,12 @@ private slots:
 
     void on_spc_cur_joint_duplicate_clicked();
 
+    void on_spc_cur_shaker_select_clicked();
+
+    void on_spc_cur_node_select_clicked();
+
+    void on_spc_cur_flex_select_clicked();
+
 private:
     Ui::SPC_submenu *ui;
     QString spc_cur_name;
@@ -225,7 +240,7 @@ private:
     long gps_entries = 6;
     long acc_entries = 11;
 
-    int joints_valid;
+    int joints_valid = 1;
 
 };
 
