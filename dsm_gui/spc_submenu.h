@@ -45,112 +45,75 @@ private slots:
     void setQComboBox(QComboBox *comboBox, QString string);
 
     void on_spc_cur_body_remove_clicked();
-
     void on_spc_cur_body_add_clicked();
-
     void on_spc_cur_body_duplicate_clicked();
-
     void on_spc_cur_body_list_itemClicked(QListWidgetItem *item);
-
 
     void on_sections_tabBarClicked(int index);
 
     void on_spc_cur_joint_list_itemClicked(QListWidgetItem *item);
-
     void on_spc_cur_wheel_add_clicked();
-
     void on_spc_cur_wheel_remove_clicked();
-
     void on_spc_cur_wheel_duplicate_clicked();
-
     void on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item);
 
     void on_spc_cur_mtb_remove_clicked();
-
     void on_spc_cur_mtb_add_clicked();
-
     void on_spc_cur_mtb_duplicate_clicked();
-
     void on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item);
 
     void on_spc_cur_thruster_remove_clicked();
-
     void on_spc_cur_thruster_add_clicked();
-
     void on_spc_cur_thruster_duplicate_clicked();
-
     void on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item);
 
     void on_spc_cur_gyro_remove_clicked();
-
     void on_spc_cur_gyro_add_clicked();
-
     void on_spc_cur_gyro_duplicate_clicked();
-
     void on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item);
 
     void on_spc_cur_mag_remove_clicked();
-
     void on_spc_cur_mag_add_clicked();
-
     void on_spc_cur_mag_duplicate_clicked();
-
     void on_spc_cur_mag_list_itemClicked(QListWidgetItem *item);
 
     void on_spc_cur_css_remove_clicked();
-
     void on_spc_cur_css_add_clicked();
-
     void on_spc_cur_css_duplicate_clicked();
-
     void on_spc_cur_css_list_itemClicked(QListWidgetItem *item);
 
     void on_spc_cur_fss_remove_clicked();
-
     void on_spc_cur_fss_add_clicked();
-
     void on_spc_cur_fss_duplicate_clicked();
-
     void on_spc_cur_fss_list_itemClicked(QListWidgetItem *item);
 
     void on_spc_cur_strack_remove_clicked();
-
     void on_spc_cur_strack_add_clicked();
-
     void on_spc_cur_strack_duplicate_clicked();
-
     void on_spc_cur_strack_list_itemClicked(QListWidgetItem *item);
 
-
     void on_spc_cur_gps_remove_clicked();
-
     void on_spc_cur_gps_add_clicked();
-
     void on_spc_cur_gps_duplicate_clicked();
-
     void on_spc_cur_gps_list_itemClicked(QListWidgetItem *item);
 
     void on_spc_cur_accel_remove_clicked();
-
     void on_spc_cur_accel_add_clicked();
-
     void on_spc_cur_accel_duplicate_clicked();
-
     void on_spc_cur_accel_list_itemClicked(QListWidgetItem *item);
 
     void on_spc_cur_joint_remove_clicked();
-
     void on_spc_cur_joint_add_clicked();
-
     void on_spc_cur_joint_duplicate_clicked();
-
     void on_spc_cur_shaker_select_clicked();
 
     void on_spc_cur_node_select_clicked();
-
     void on_spc_cur_flex_select_clicked();
-
     void on_spc_cur_joint_param_select_clicked();
+
+    void on_spc_cur_whel_drjit_select_clicked();
+
+    void on_spc_cur_att_param_currentTextChanged(const QString &arg1);
 
 private:
     Ui::SPC_submenu *ui;
@@ -171,10 +134,7 @@ private:
     const QStringList thruster_mode = {"PULSED", "PROPORTIONAL"};
     const QStringList axis = {"X_AXIS", "Y_AXIS", "Z_AXIS"};
 
-    int global_spc_index = -1;
-    int global_spc_ignore = 0;
-
-    int global_body_index = -1;
+    int cur_item_row;
 
     QString inout_path;
     QString file_path;

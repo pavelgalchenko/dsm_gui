@@ -38,7 +38,7 @@ void SPC_submenu::set_validators()
     ui->spc_cur_pos_ref->addItems(dsm_gui_lib::sortStringList(pos_wrt_F));
 
     ui->spc_cur_angvel_frame1->addItems(dsm_gui_lib::sortStringList(angvel_wrt));
-    ui->spc_cur_angvel_frame2->addItems(dsm_gui_lib::sortStringList(angvel_wrt));
+    ui->spc_cur_angvel_frame2->addItems(dsm_gui_lib::sortStringList(att_wrt));
     ui->spc_cur_att_param->addItems(dsm_gui_lib::sortStringList(att_params));
 
     ui->spc_cur_initeul_seq->addItems(dsm_gui_lib::sortStringList(euler_seq));
@@ -464,7 +464,6 @@ void SPC_submenu::apply_data()
                 break;
             case 15: // Joint parameter file
                 tmp_data.append(line_items[0]);
-                if (!QString::compare(line_items[0], "NONE"))
                 break;
             }
             if (cur_entry==joint_entries-1){
@@ -526,15 +525,6 @@ void SPC_submenu::apply_data()
                 break;
             case 7: // wheel drag/jitter file
                 tmp_data.append(line_items[0]);
-                if (!QString::compare(line_items[0], "NONE"))
-                {
-                    ui->spc_cur_wheel_drjit_on->setCheckState(Qt::Checked);
-                }
-                else
-                {
-                    ui->spc_cur_wheel_drjit_on->setCheckState(Qt::Unchecked);
-                    ui->spc_cur_joint_param_file->setText(line_items[0]);
-                }
                 break;
             }
             if (cur_entry==wheel_entries-1){
@@ -1148,7 +1138,15 @@ void SPC_submenu::on_spc_cur_save_clicked()
 void SPC_submenu::on_spc_cur_close_clicked()
 {
     if (joints_valid == 1) SPC_submenu::close();
-    else dsm_gui_lib::error_message("The number of joints must equal number of bodies minus one.");
+    else {
+        int response = dsm_gui_lib::warning_message("The number of joints must equal number of bodies minus one. Click \"OK\" to disregard this warning and close.");
+        if (response == QMessageBox::Cancel) {
+            return;
+        }
+        else if (response == QMessageBox::Ok) {
+            SPC_submenu::close();
+        }
+    }
 }
 
 
@@ -1310,6 +1308,8 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     QStringList tmp_data = {}; // Update the list widget data of the body tab we are currently on.
     if (ui->sections->currentIndex() == 3)
     {
+        cur_item_row = ui->spc_cur_body_list->currentRow();
+
         for (int line_num = reset_ind_body; line_num<reset_ind_joint; line_num++)
         {
 
@@ -1427,6 +1427,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    if (ui->sections->currentIndex() == 3) {
+        ui->spc_cur_body_list->setCurrentRow(cur_item_row);
+        on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->item(cur_item_row));
+    }
+
     /************************************* JOINT SECTION ***********************************/
 
     spc_update.append("************************************************************************\n");
@@ -1464,6 +1469,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 4)
     {
+
+        cur_item_row = ui->spc_cur_joint_list->currentRow();
+
         for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
         {
 
@@ -1673,6 +1681,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     }
 
+    if (ui->sections->currentIndex() == 3) {
+        ui->spc_cur_body_list->setCurrentRow(cur_item_row);
+        on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->item(cur_item_row));
+    }
+
     /*************************** WHEELS SECTION ****************************/
 
     reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
@@ -1717,6 +1730,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==0)
     {
+
+        cur_item_row = ui->spc_cur_wheel_list->currentRow();
+
         for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
         {
 
@@ -1756,8 +1772,8 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
                     break;
                 case 7:
-                    if (ui->spc_cur_wheel_drjit_on->isChecked()) tmp_data.append("NONE");
-                    else tmp_data.append(ui->spc_cur_wheel_drjit_on->text());
+                    if (!QString::compare(ui->spc_cur_wheel_drjit_file->text(), "")) tmp_data.append("NONE");
+                    else tmp_data.append(ui->spc_cur_wheel_drjit_file->text());
                     break;
                 }
             }
@@ -1813,6 +1829,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==0) {
+        ui->spc_cur_wheel_list->setCurrentRow(cur_item_row);
+        on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->item(cur_item_row));
+    }
+
     /***************************** MTB SECTION ******************************/
     reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries*mtbs;
 
@@ -1831,6 +1852,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==1)
     {
+
+        cur_item_row = ui->spc_cur_mtb_list->currentRow();
+
         for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
         {
 
@@ -1903,6 +1927,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==1) {
+        ui->spc_cur_mtb_list->setCurrentRow(cur_item_row);
+        on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->item(cur_item_row));
+    }
+
     /***************************** THRUSTER SECTION ******************************/
     reset_ind_gyro = reset_ind_thr + thr_headers + thr_entries*thrusters;
 
@@ -1921,6 +1950,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==2)
     {
+
+        cur_item_row = ui->spc_cur_thruster_list->currentRow();
+
         for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
         {
 
@@ -2006,6 +2038,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==2) {
+        ui->spc_cur_thruster_list->setCurrentRow(cur_item_row);
+        on_spc_cur_thruster_list_itemClicked(ui->spc_cur_thruster_list->item(cur_item_row));
+    }
+
     /***************************** GYRO SECTION ******************************/
     reset_ind_mag = reset_ind_gyro + gyro_headers + gyro_entries*gyros;
 
@@ -2029,6 +2066,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==0)
     {
+
+        cur_item_row = ui->spc_cur_gyro_list->currentRow();
+
         for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
         {
 
@@ -2151,6 +2191,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==0) {
+        ui->spc_cur_gyro_list->setCurrentRow(cur_item_row);
+        on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->item(cur_item_row));
+    }
+
     /***************************** MAGNETOMETER SECTION ******************************/
     reset_ind_css = reset_ind_mag + mag_headers + mag_entries*mags;
 
@@ -2173,6 +2218,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==1)
     {
+
+        cur_item_row = ui->spc_cur_mag_list->currentRow();
+
         for (int line_num = reset_ind_mag + mag_headers; line_num<reset_ind_css; line_num++)
         {
 
@@ -2273,6 +2321,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==1) {
+        ui->spc_cur_mag_list->setCurrentRow(cur_item_row);
+        on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->item(cur_item_row));
+    }
+
     /***************************** CSS SECTION ******************************/
     reset_ind_fss = reset_ind_css + css_headers + css_entries*css_s;
 
@@ -2294,6 +2347,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==2)
     {
+
+        cur_item_row = ui->spc_cur_css_list->currentRow();
+
         for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
         {
 
@@ -2394,6 +2450,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==2) {
+        ui->spc_cur_css_list->setCurrentRow(cur_item_row);
+        on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->item(cur_item_row));
+    }
+
     /***************************** FSS SECTION ******************************/
     reset_ind_strack = reset_ind_fss + fss_headers + fss_entries*fss_s;
 
@@ -2414,6 +2475,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==3)
     {
+
+        cur_item_row = ui->spc_cur_fss_list->currentRow();
+
         for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
         {
 
@@ -2516,6 +2580,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==3) {
+        ui->spc_cur_fss_list->setCurrentRow(cur_item_row);
+        on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->item(cur_item_row));
+    }
+
     /***************************** STAR TRACKER SECTION ******************************/
     reset_ind_gps = reset_ind_strack + strack_headers + strack_entries*stracks;
 
@@ -2536,6 +2605,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==4)
     {
+
+        cur_item_row = ui->spc_cur_strack_list->currentRow();
+
         for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
         {
 
@@ -2642,6 +2714,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==4) {
+        ui->spc_cur_strack_list->setCurrentRow(cur_item_row);
+        on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->item(cur_item_row));
+    }
+
     /***************************** GPS SECTION ******************************/
     reset_ind_acc = reset_ind_gps + gps_headers + gps_entries*gps_s;
 
@@ -2660,6 +2737,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==5)
     {
+
+        cur_item_row = ui->spc_cur_gps_list->currentRow();
+
         for (int line_num = reset_ind_gps + gps_headers; line_num<reset_ind_acc; line_num++)
         {
 
@@ -2748,6 +2828,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==5) {
+        ui->spc_cur_gps_list->setCurrentRow(cur_item_row);
+        on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->item(cur_item_row));
+    }
+
     /***************************** ACCELEROMETER SECTION ******************************/
     reset_ind_end = reset_ind_acc + accel_headers + acc_entries*accels;
 
@@ -2771,6 +2856,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==6)
     {
+
+        cur_item_row = ui->spc_cur_accel_list->currentRow();
+
         for (int line_num = reset_ind_acc + accel_headers; line_num<reset_ind_end; line_num++)
         {
 
@@ -2893,6 +2981,11 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==6) {
+        ui->spc_cur_accel_list->setCurrentRow(cur_item_row);
+        on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->item(cur_item_row));
+    }
+
     write_data();
 }
 
@@ -2906,7 +2999,7 @@ void SPC_submenu::setQComboBox(QComboBox *comboBox, QString string) {
 void SPC_submenu::on_spc_cur_body_remove_clicked()
 {
     delete ui->spc_cur_body_list->currentItem();
-    bodies -= 1;
+    if (bodies > 0) bodies -= 1;
 
 }
 
@@ -2961,6 +3054,7 @@ void SPC_submenu::on_spc_cur_body_duplicate_clicked()
 
 void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item)
 {
+
     receive_data();
 
     QStringList current_data = item->data(1).toStringList();
@@ -3002,7 +3096,7 @@ void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item)
 void SPC_submenu::on_spc_cur_joint_remove_clicked()
 {
     delete ui->spc_cur_joint_list->currentItem();
-    joints -= 1;
+    if (joints > 0) joints -= 1;
 }
 
 
@@ -3148,7 +3242,8 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item)
     ui->spc_cur_joint_poswrt_out_2->setText(current_data[39]);
     ui->spc_cur_joint_poswrt_out_3->setText(current_data[40]);
 
-    ui->spc_cur_joint_param_file->setText(current_data[41]);
+    if (!QString::compare(current_data[41], "NONE")) ui->spc_cur_joint_param_file->setText("");
+    else ui->spc_cur_joint_param_file->setText(current_data[41]);
 
 }
 
@@ -3157,7 +3252,7 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item)
 void SPC_submenu::on_spc_cur_wheel_remove_clicked()
 {
     delete ui->spc_cur_wheel_list->currentItem();
-    wheels -= 1;
+    if (wheels > 0) wheels -= 1;
 }
 
 void SPC_submenu::on_spc_cur_wheel_add_clicked()
@@ -3219,7 +3314,8 @@ void SPC_submenu::on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item)
     ui->spc_cur_wheel_body->setValue(current_data[8].toInt());
     ui->spc_cur_wheel_node->setValue(current_data[9].toInt());
 
-    ui->spc_cur_wheel_drjit_file->setText(current_data[10]);
+    if (!QString::compare(current_data[10], "NONE")) ui->spc_cur_wheel_drjit_file->setText("");
+    else ui->spc_cur_wheel_drjit_file->setText(current_data[10]);
 }
 
 // MTB buttons
@@ -3228,7 +3324,7 @@ void SPC_submenu::on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item)
 void SPC_submenu::on_spc_cur_mtb_remove_clicked()
 {
     delete ui->spc_cur_mtb_list->currentItem();
-    mtbs -= 1;
+    if (mtbs > 0) mtbs -= 1;
 }
 
 
@@ -3288,7 +3384,7 @@ void SPC_submenu::on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item)
 void SPC_submenu::on_spc_cur_thruster_remove_clicked()
 {
     delete ui->spc_cur_thruster_list->currentItem();
-    thrusters -= 1;
+    if (thrusters > 0) thrusters -= 1;
 }
 
 
@@ -3352,7 +3448,7 @@ void SPC_submenu::on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item)
 void SPC_submenu::on_spc_cur_gyro_remove_clicked()
 {
     delete ui->spc_cur_gyro_list->currentItem();
-    gyros -= 1;
+    if (gyros > 0) gyros -= 1;
 }
 
 
@@ -3434,7 +3530,7 @@ void SPC_submenu::on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item)
 void SPC_submenu::on_spc_cur_mag_remove_clicked()
 {
     delete ui->spc_cur_css_list->currentItem();
-    mags -= 1;
+    if (mags > 0) mags -= 1;
 }
 
 
@@ -3505,7 +3601,7 @@ void SPC_submenu::on_spc_cur_mag_list_itemClicked(QListWidgetItem *item)
 void SPC_submenu::on_spc_cur_css_remove_clicked()
 {
     delete ui->spc_cur_css_list->currentItem();
-    css_s -= 1;
+    if (css_s > 0) css_s -= 1;
 }
 
 
@@ -3576,7 +3672,7 @@ void SPC_submenu::on_spc_cur_css_list_itemClicked(QListWidgetItem *item)
 void SPC_submenu::on_spc_cur_fss_remove_clicked()
 {
     delete ui->spc_cur_fss_list->currentItem();
-    fss_s -= 1;
+    if (fss_s > 0) fss_s -= 1;
 }
 
 
@@ -3651,7 +3747,7 @@ void SPC_submenu::on_spc_cur_fss_list_itemClicked(QListWidgetItem *item)
 void SPC_submenu::on_spc_cur_strack_remove_clicked()
 {
     delete ui->spc_cur_strack_list->currentItem();
-    stracks -= 1;
+    if (stracks > 0) stracks -= 1;
 }
 
 
@@ -3735,7 +3831,7 @@ void SPC_submenu::on_spc_cur_strack_list_itemClicked(QListWidgetItem *item)
 void SPC_submenu::on_spc_cur_gps_remove_clicked()
 {
     delete ui->spc_cur_gps_list->currentItem();
-    gps_s -= 1;
+    if (gps_s > 0) gps_s -= 1;
 }
 
 
@@ -3798,7 +3894,7 @@ void SPC_submenu::on_spc_cur_gps_list_itemClicked(QListWidgetItem *item)
 void SPC_submenu::on_spc_cur_accel_remove_clicked()
 {
     delete ui->spc_cur_accel_list->currentItem();
-    accels -= 1;
+    if (accels > 0) accels -= 1;
 }
 
 
@@ -3935,5 +4031,50 @@ void SPC_submenu::on_spc_cur_joint_param_select_clicked()
         return;
 
     ui->spc_cur_joint_param_file->setText(rel_file_path);
+}
+
+
+void SPC_submenu::on_spc_cur_whel_drjit_select_clicked()
+{
+    QString file_name = QFileDialog::getOpenFileName(this, tr("Choose Folder"), inout_path, QString(), nullptr,  QFileDialog::DontUseNativeDialog);
+
+    QDir dir(inout_path);
+    QString rel_file_path = dir.relativeFilePath(file_name);
+
+    if (file_name.isEmpty())
+        return;
+
+    ui->spc_cur_wheel_drjit_file->setText(rel_file_path);
+}
+
+// Q and A switcher in Attitude
+void SPC_submenu::on_spc_cur_att_param_currentTextChanged(const QString &arg1)
+{
+    if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q"))
+    {
+        ui->spc_cur_initeul_1->setEnabled(false);
+        ui->spc_cur_initeul_2->setEnabled(false);
+        ui->spc_cur_initeul_3->setEnabled(false);
+
+        ui->spc_cur_initeul_seq->setEnabled(false);
+
+        ui->spc_cur_q1->setEnabled(true);
+        ui->spc_cur_q2->setEnabled(true);
+        ui->spc_cur_q3->setEnabled(true);
+        ui->spc_cur_q4->setEnabled(true);
+    }
+    else
+    {
+        ui->spc_cur_initeul_1->setEnabled(true);
+        ui->spc_cur_initeul_2->setEnabled(true);
+        ui->spc_cur_initeul_3->setEnabled(true);
+
+        ui->spc_cur_initeul_seq->setEnabled(true);
+
+        ui->spc_cur_q1->setEnabled(false);
+        ui->spc_cur_q2->setEnabled(false);
+        ui->spc_cur_q3->setEnabled(false);
+        ui->spc_cur_q4->setEnabled(false);
+    }
 }
 
