@@ -129,6 +129,12 @@ private slots:
 
     void on_spc_cur_accel_list_itemClicked(QListWidgetItem *item);
 
+    void on_spc_cur_joint_remove_clicked();
+
+    void on_spc_cur_joint_add_clicked();
+
+    void on_spc_cur_joint_duplicate_clicked();
+
 private:
     Ui::SPC_submenu *ui;
     QString spc_cur_name;

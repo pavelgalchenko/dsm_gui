@@ -10,6 +10,7 @@ public:
     dsm_gui_lib();
 
     static int warning_message(QString warningText);
+    static int error_message(QString errorText);
     static QString whitespace(QString data);
     static QStringList sortStringList(QStringList unsorted);
 };

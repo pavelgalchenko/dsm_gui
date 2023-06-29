@@ -260,6 +260,7 @@ void SPC_submenu::apply_data()
             break;
         case 20: // mass props referenced to ...
             setQComboBox(ui->spc_cur_masspropref, line_items[0]);
+            break;
         case 21: // Flex active
             if (!QString::compare(line_items[0], "TRUE")) ui->spc_cur_flex_on->setChecked(true);
             else ui->spc_cur_flex_off->setChecked(true);
@@ -1314,6 +1315,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             break;
         case 20: // mass props referenced to ...
             data_inp = ui->spc_cur_masspropref->currentText();
+            break;
         case 21: // Flex active
             if (ui->spc_cur_flex_on->isChecked()) data_inp = "TRUE";
             else data_inp = "FALSE";
@@ -1494,14 +1496,36 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     spc_update.append("************************************************************************\n");
     spc_update.append("         (Number of Joints is Number of Bodies minus one)\n");
 
+    if (joints != bodies - 1) dsm_gui_lib::error_message("The number of joints must equal number of bodies minus one.");
+
     reset_ind_wheel = reset_ind_joint + joint_headers + joint_entries*joints;
+
+    if (joints == 0)
+    {
+        spc_update.append("============================== Joint 0 ================================\n");
+        spc_update.append("PASSIVE                     ! Type of joint (PASSIVE, ACTUATED, others)\n");
+        spc_update.append("0 1                         ! Inner, outer body indices\n");
+        spc_update.append("1   213   GIMBAL            ! RotDOF, Seq, GIMBAL or SPHERICAL\n");
+        spc_update.append("0   123                     ! TrnDOF, Seq\n");
+        spc_update.append("FALSE  FALSE  FALSE         ! RotDOF Locked\n");
+        spc_update.append("FALSE  FALSE  FALSE         ! TrnDOF Locked\n");
+        spc_update.append("0.0    0.0    0.0           ! Initial Angles [deg]\n");
+        spc_update.append("0.0    0.0    0.0           ! Initial Rates, deg/sec\n");
+        spc_update.append("0.0    0.0    0.0           ! Initial Displacements [m]\n");
+        spc_update.append("0.0    0.0    0.0           ! Initial Displacement Rates, m/sec\n");
+        spc_update.append("0.0   0.0  0.0  312         ! Bi to Gi Static Angles [deg] & Seq\n");
+        spc_update.append("0.0   0.0  0.0  312         ! Go to Bo Static Angles [deg] & Seq\n");
+        spc_update.append("0.0   0.0  0.0              ! Position wrt inner body origin, m\n");
+        spc_update.append("0.0   0.0  0.0              ! Position wrt outer body origin, m\n");
+        spc_update.append("NONE                        ! Parameter File Name\n");
+    }
 
     if (ui->sections->currentIndex() == 4)
     {
         for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
         {
 
-            long joint_line_num = line_num - reset_ind_joint;
+            long joint_line_num = line_num - reset_ind_joint - joint_headers;
             long cur_item = floor(joint_line_num/joint_entries);
             long cur_entry = joint_line_num % joint_entries;
 
@@ -1625,14 +1649,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry) {
         case 0: // Joint X Header
-            if (ui->spc_cur_joint_list->count() > 0)
-            {
-                spc_update.append("============================== " + ui->spc_cur_joint_list->currentItem()->text() + " ================================\n");
-            }
-            else
-            {
-                spc_update.append("============================== Joint 0 ================================\n");
-            }
+            spc_update.append("============================== " + ui->spc_cur_joint_list->currentItem()->text() + " ================================\n");
             break;
         case 1:
             data_inp = current_data[1];
@@ -1654,23 +1671,23 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             if (ui->spc_cur_joint_rlock1->isChecked()) data_inp = "TRUE";
             else data_inp = "FALSE";
 
-            if (ui->spc_cur_joint_rlock2->isChecked()) data_inp = "TRUE";
-            else data_inp = "FALSE";
+            if (ui->spc_cur_joint_rlock2->isChecked()) data_inp += " TRUE";
+            else data_inp += " FALSE";
 
-            if (ui->spc_cur_joint_rlock3->isChecked()) data_inp = "TRUE";
-            else data_inp = "FALSE";
+            if (ui->spc_cur_joint_rlock3->isChecked()) data_inp = " TRUE";
+            else data_inp += " FALSE";
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! RotDOF Locked\n");
             break;
 
         case 6:
             if (ui->spc_cur_joint_tlock1->isChecked()) data_inp = "TRUE";
-            else data_inp = "FALSE";
+            else data_inp += "FALSE";
 
-            if (ui->spc_cur_joint_tlock2->isChecked()) data_inp = "TRUE";
-            else data_inp = "FALSE";
+            if (ui->spc_cur_joint_tlock2->isChecked()) data_inp = " TRUE";
+            else data_inp += " FALSE";
 
-            if (ui->spc_cur_joint_tlock3->isChecked()) data_inp = "TRUE";
-            else data_inp = "FALSE";
+            if (ui->spc_cur_joint_tlock3->isChecked()) data_inp = " TRUE";
+            else data_inp += " FALSE";
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! TrnDOF Locked\n");
             break;
         case 7:
@@ -1710,6 +1727,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Parameter File Name\n");
             break;
         }
+
     }
 
     /*************************** WHEELS SECTION ****************************/
@@ -1741,6 +1759,18 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     }
 
     spc_update.append(dsm_gui_lib::whitespace(QString::number(wheels)) + "! Number of wheels\n");
+
+    if (wheels == 0)
+    {
+        spc_update.append("=============================  Wheel 0  ================================\n");
+        spc_update.append("0.0                         ! Initial Momentum, N-m-sec\n");
+        spc_update.append("1.0   0.0   0.0             ! Wheel Axis Components, [X, Y, Z]\n");
+        spc_update.append("0.14   50.0                 ! Max Torque (N-m), Momentum (N-m-sec)\n");
+        spc_update.append("0.012                       ! Wheel Rotor Inertia, kg-m^2\n");
+        spc_update.append("0                           ! Body\n");
+        spc_update.append("0                           ! Node\n");
+        spc_update.append("NONE                        ! Drag/Jitter Input File Name\n");
+    }
 
     if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==0)
     {
@@ -1805,18 +1835,9 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         ui->spc_cur_wheel_list->setCurrentRow(cur_item);
         QStringList current_data = ui->spc_cur_wheel_list->item(cur_item)->data(1).toStringList();
 
-
         switch (cur_entry){
         case 0:
-            if (ui->spc_cur_wheel_list->count() > 0)
-            {
-                spc_update.append("=============================  " + ui->spc_cur_wheel_list->currentItem()->text() + "  ================================\n");
-            }
-            else
-            {
-                spc_update.append("=============================  Wheel 0  ================================\n");
-            }
-
+            spc_update.append("=============================  " + ui->spc_cur_wheel_list->currentItem()->text() + "  ================================\n");
             break; // header
         case 1:
             data_inp = current_data[1];
@@ -1854,6 +1875,17 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     spc_update.append("**************************** MTB Parameters ****************************\n");
     spc_update.append(dsm_gui_lib::whitespace(QString::number(mtbs)) + "! Number of MTBs\n");
+
+
+    if (mtbs == 0)
+    {
+        spc_update.append("==============================  MTB 0  =================================\n");
+        spc_update.append("180.0                       ! Saturation (A-m^2)\n");
+        spc_update.append("1.0   0.0   0.0             ! Wheel Axis Components, [X, Y, Z]\n");
+        spc_update.append("1.0   0.0   0.0             ! MTB Axis Components, [X, Y, Z]\n");
+        spc_update.append("0                           ! Node\n");
+    }
+
     if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==1)
     {
         for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
@@ -1933,6 +1965,17 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     spc_update.append("************************* Thruster Parameters **************************\n");
     spc_update.append(dsm_gui_lib::whitespace(QString::number(thrusters)) + "! Number of Thrusters\n");
+
+    if (thrusters == 0)
+    {
+        spc_update.append("==============================  Thr 0  =================================\n");
+        spc_update.append("PULSED                      ! Mode (PULSED or PROPORTIONAL)\n");
+        spc_update.append("1.0                         ! Thrust Force (N)\n");
+        spc_update.append("-1.0  0.0  0.0              ! Thrust Axis \n");
+        spc_update.append("0                           ! Body\n");
+        spc_update.append("0                           ! Node\n");
+    }
+
     if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==2)
     {
         for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
@@ -2025,6 +2068,22 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     spc_update.append("******************************* Gyro ************************************\n");
     spc_update.append(dsm_gui_lib::whitespace(QString::number(gyros)) + "! Number of Gyro Axes\n");
+
+    if (gyros == 0)
+    {
+        spc_update.append("============================== Axis 0 ===================================\n");
+        spc_update.append("0.1                         ! Sample Time,sec\n");
+        spc_update.append("1.0  0.0  0.0               ! Axis expressed in Body Frame\n");
+        spc_update.append("1000.0                      ! Max Rate, deg/sec\n");
+        spc_update.append("100.0                       ! Scale Factor Error, ppm\n");
+        spc_update.append("1.0                         ! Quantization, arcsec \n");
+        spc_update.append("0.07                        ! Angle Random Walk (deg/rt-hr)\n");
+        spc_update.append("0.1  1.0                    ! Bias Stability (deg/hr) over timespan (hr)\n");
+        spc_update.append("0.1                         ! Angle Noise, arcsec RMS\n");
+        spc_update.append("0.1                         ! Initial Bias (deg/hr)\n");
+        spc_update.append("0                           ! Node\n");
+    }
+
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==0)
     {
         for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
@@ -2154,6 +2213,21 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     spc_update.append("*************************** Magnetometer ********************************\n");
     spc_update.append(dsm_gui_lib::whitespace(QString::number(mags)) + "! Number of Magnetometer Axes\n");
+
+    if (mags == 0)
+    {
+        spc_update.append("============================== Axis 0 ===================================\n");
+        spc_update.append("0.1                         ! Sample Time,sec\n");
+        spc_update.append("1.0  0.0  0.0               ! Axis expressed in Body Frame\n");
+        spc_update.append("60.0E-6                     ! Saturation, Tesla\n");
+        spc_update.append("0.0                         ! Scale Factor Error, ppm\n");
+        spc_update.append("1.0                         ! Quantization, arcsec \n");
+        spc_update.append("1.0E-6                      ! Quantization, Tesla \n");
+        spc_update.append("1.0E-6                      ! Noise, Tesla RMS\n");
+        spc_update.append("0                           ! Node\n");
+    }
+
+
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==1)
     {
         for (int line_num = reset_ind_mag + mag_headers; line_num<reset_ind_css; line_num++)
@@ -2261,6 +2335,20 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     spc_update.append("*********************** Coarse Sun Sensor *******************************\n");
     spc_update.append(dsm_gui_lib::whitespace(QString::number(css_s)) + "! Number of Coarse Sun Sensors\n");
+
+    if (css_s == 0)
+    {
+        spc_update.append("============================== CSS 0 ====================================\n");
+        spc_update.append("0.1                         ! Sample Time,sec\n");
+        spc_update.append("1.0  0.0  0.0               ! Axis expressed in Body Frame\n");
+        spc_update.append("90.0                        ! Half-cone Angle, deg\n");
+        spc_update.append("1.0                         ! Scale Factor\n");
+        spc_update.append("0.001                       ! Quantization\n");
+        spc_update.append("0                           ! Body");
+        spc_update.append("0                           ! Node\n");
+    }
+
+
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==2)
     {
         for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
@@ -2368,6 +2456,19 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     spc_update.append("************************* Fine Sun Sensor *******************************\n");
     spc_update.append(dsm_gui_lib::whitespace(QString::number(fss_s)) + "! Number of Fine Sun Sensors\n");
+
+    if (fss_s == 0)
+    {
+        spc_update.append("=============================== FSS 0 ===================================\n");
+        spc_update.append("0.2                         ! Sample Time,sec\n");
+        spc_update.append("70.0  0.0  0.0  231         ! Mounting Angles (deg), Seq in Body\n");
+        spc_update.append("Z_AXIS                      ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
+        spc_update.append("32.0   32.0                 ! H, V FOV Size, deg\n");
+        spc_update.append("0.1                         ! Noise Equivalent Angle, deg RMS\n");
+        spc_update.append("0.5                         ! Quantization, deg");
+        spc_update.append("0                           ! Node\n");
+    }
+
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==3)
     {
         for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
@@ -2477,6 +2578,19 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     spc_update.append("************************** Star Tracker *********************************\n");
     spc_update.append(dsm_gui_lib::whitespace(QString::number(stracks)) + "! Number of Star Trackers\n");
+
+    if (stracks == 0)
+    {
+        spc_update.append("=============================== ST 0 ====================================\n");
+        spc_update.append("0.25                        ! Sample Time,sec\n");
+        spc_update.append("-90.0  90.0  00.0  321      ! Mounting Angles (deg), Seq in Body\n");
+        spc_update.append("Z_AXIS                      ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
+        spc_update.append("8.0   8.0                   ! H, V FOV Size, deg\n");
+        spc_update.append("30.0  10.0  10.0            ! Sun, Earth, Moon Exclusion Angles, deg\n");
+        spc_update.append("2.0  2.0  20.0              ! Noise Equivalent Angle, arcsec RMS");
+        spc_update.append("0                           ! Node\n");
+    }
+
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==4)
     {
         for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
@@ -2590,6 +2704,17 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     spc_update.append("****************************** GPS **************************************\n");
     spc_update.append(dsm_gui_lib::whitespace(QString::number(gps_s)) + "! Number of GPS Receivers\n");
+
+    if (gps_s == 0)
+    {
+        spc_update.append("============================= GPSR 0 ====================================\n");
+        spc_update.append("0.25                        ! Sample Time,sec\n");
+        spc_update.append("4.0                         ! Position Noise, m RMS\n");
+        spc_update.append("0.02                        ! Velocity Noise, m/sec RMS\n");
+        spc_update.append("20.0E-9                     ! Time Noise, sec RMS\n");
+        spc_update.append("0                           ! Node\n");
+    }
+
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==5)
     {
         for (int line_num = reset_ind_gps + gps_headers; line_num<reset_ind_acc; line_num++)
@@ -2685,6 +2810,22 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     spc_update.append("*************************** Accelerometer *******************************\n");
     spc_update.append(dsm_gui_lib::whitespace(QString::number(accels)) + "! Number of Accel Axes\n");
+
+    if (accels == 0)
+    {
+        spc_update.append("============================== Axis 0 ===================================\n");
+        spc_update.append("0.1                         ! Sample Time,sec\n");
+        spc_update.append("1.0  0.0  0.0               ! Axis expressed in Body Frame\n");
+        spc_update.append("1.0                         ! Max Acceleration (m/s^2)\n");
+        spc_update.append("0.0                         ! Scale Factor Error, ppm\n");
+        spc_update.append("0.05                        ! Quantization, m/s^2\n");
+        spc_update.append("0.0                         ! DV Random Walk (m/s/rt-hr)\n");
+        spc_update.append("0.0 1.0                     ! Bias Stability (m/s^2) over timespan (hr)\n");
+        spc_update.append("0.0                         ! DV Noise, m/s\n");
+        spc_update.append("0.5                         ! Initial Bias (m/s^2)\n");
+        spc_update.append("0                           ! Node\n");
+    }
+
     if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==6)
     {
         for (int line_num = reset_ind_acc + accel_headers; line_num<reset_ind_end; line_num++)
@@ -2693,8 +2834,6 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             long acc_line_num = line_num - reset_ind_acc - accel_headers;
             long cur_item = floor(acc_line_num/acc_entries);
             long cur_entry = acc_line_num % acc_entries;
-
-            qDebug() << tmp_data;
 
             if (ui->spc_cur_accel_list->count() > 0 && ui->spc_cur_accel_list->currentRow() == cur_item)
             {
@@ -2929,7 +3068,83 @@ void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item)
     }
 }
 
-// Joint (item clicked)
+// Joint
+
+void SPC_submenu::on_spc_cur_joint_remove_clicked()
+{
+    delete ui->spc_cur_joint_list->currentItem();
+    joints -= 1;
+}
+
+
+void SPC_submenu::on_spc_cur_joint_add_clicked()
+{
+    joints += 1;
+
+    QStringList tmp_data = {};
+
+    tmp_data.append("blankline");
+    tmp_data.append("PASSIVE");
+    tmp_data.append("0");
+    tmp_data.append("1");
+    tmp_data.append("1");
+    tmp_data.append("213");
+    tmp_data.append("GIMBAL");
+    tmp_data.append("0");
+    tmp_data.append("123");
+    tmp_data.append("FALSE");
+    tmp_data.append("FALSE");
+    tmp_data.append("FALSE");
+    tmp_data.append("FALSE");
+    tmp_data.append("FALSE");
+    tmp_data.append("FALSE");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("312");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("312");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("0.0");
+    tmp_data.append("NONE");
+
+    ui->spc_cur_joint_list->addItem("Joint " + QString::number(joints - 1));
+    ui->spc_cur_joint_list->setCurrentRow(ui->spc_cur_joint_list->count()-1);
+
+    ui->spc_cur_joint_list->currentItem()->setData(0, "Joint " + QString::number(joints - 1));
+    ui->spc_cur_joint_list->currentItem()->setData(1, tmp_data);
+    on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
+}
+
+
+void SPC_submenu::on_spc_cur_joint_duplicate_clicked()
+{
+    joints += 1;
+
+    QStringList old_data = ui->spc_cur_body_list->currentItem()->data(1).toStringList();
+
+    ui->spc_cur_joint_list->addItem("Joint " + QString::number(joints - 1));
+    ui->spc_cur_joint_list->setCurrentRow(ui->spc_cur_joint_list->count()-1);
+    ui->spc_cur_joint_list->currentItem()->setData(1, old_data);
+}
 
 void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item)
 {
@@ -3006,12 +3221,6 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item)
 
     ui->spc_cur_joint_param_file->setText(current_data[41]);
 
-}
-
-void SPC_submenu::on_sections_tabBarClicked(int index)
-{
-    if (index == 3) on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
-    else if (index == 4) on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->currentItem());
 }
 
 // Wheels -/+/Duplicate/Item Clicked
@@ -3735,5 +3944,12 @@ void SPC_submenu::on_spc_cur_accel_list_itemClicked(QListWidgetItem *item)
     ui->spc_cur_acc_initbias->setText(current_data[12]);
 
     ui->spc_cur_gps_node->setValue(current_data[13].toInt());
+}
+
+// Misc
+void SPC_submenu::on_sections_tabBarClicked(int index)
+{
+    if (index == 3) on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
+    else if (index == 4 && ui->spc_cur_joint_list->count() > 0) on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->currentItem());
 }
 

@@ -16,6 +16,15 @@ int dsm_gui_lib::warning_message(QString warningText) {
     return ret;
 }
 
+int dsm_gui_lib::error_message(QString errorText) {
+    QMessageBox errorMsg;
+    errorMsg.setIcon(QMessageBox::Critical);
+    errorMsg.setText(errorText);
+    errorMsg.setStandardButtons(QMessageBox::Ok);
+    int ret = errorMsg.exec();
+    return ret;
+}
+
 QString dsm_gui_lib::whitespace(QString data) {
     QString empty_space = "                              ";
     int data_len = empty_space.count()-data.count();
