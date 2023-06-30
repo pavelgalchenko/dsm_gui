@@ -139,7 +139,7 @@ private:
     const QStringList euler_seq = {"123", "231", "312", "132", "213", "321", "121", "131", "212", "232", "313","323"};
     const QStringList solve_dynamics = {"GAUSS_ELIM", "ORDER_N"};
     const QStringList mass_prop_ref = {"REFPT_CM", "REFPT_JOINT"};
-    const QStringList joint_type = {"PASSIVE", "ACTUATED"};
+    const QStringList joint_type = {"PASSIVE", "ACTUATED", "STEPPER_MOTOR", "TVC_JOINT", "VIBRATION_ISOLATOR", "SLOSH", "STEERING_MIRROR", "AD_HOC_JOINT"};
     const QStringList rot_joint_seqtype = {"GIMBAL", "SPHERICAL"};
     const QStringList thruster_mode = {"PULSED", "PROPORTIONAL"};
     const QStringList axis = {"X_AXIS", "Y_AXIS", "Z_AXIS"};

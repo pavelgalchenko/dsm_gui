@@ -181,8 +181,8 @@ void SPC_Menu::on_spc_apply_clicked()
         case 2: // Spacecraft Description
             data_inp = ui->spc_desc->text();
             break;
-        case 3: // Spacecraft Name
-            data_inp = "\"" + ui->spc_name->text() + "\"";
+        case 3: // Spacecraft label
+            data_inp = "\"" + ui->spc_label->text() + "\"";
             break;
         case 4: // Sprite File Name
             data_inp = ui->spc_sprite->text();

@@ -179,9 +179,9 @@ void SPC_submenu::apply_data()
             setQComboBox(ui->spc_cur_att_param, line_items[1]);
             break;
         case 14:
-            ui->spc_cur_angvel_x->setText(line_items[0]);
-            ui->spc_cur_angvel_y->setText(line_items[1]);
-            ui->spc_cur_angvel_z->setText(line_items[2]);
+            ui->spc_cur_angvel_1->setText(line_items[0]);
+            ui->spc_cur_angvel_2->setText(line_items[1]);
+            ui->spc_cur_angvel_3->setText(line_items[2]);
             break;
         case 15:
             ui->spc_cur_q1->setText(line_items[0]);
@@ -1181,7 +1181,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             data_inp = ui->spc_cur_angvel_frame1->currentText() + ui->spc_cur_att_param->currentText() + ui->spc_cur_angvel_frame2->currentText();
             break;
         case 14:
-            data_inp = ui->spc_cur_angvel_x->text() + " " + ui->spc_cur_angvel_y->text() + " " + ui->spc_cur_angvel_z->text();
+            data_inp = ui->spc_cur_angvel_1->text() + " " + ui->spc_cur_angvel_2->text() + " " + ui->spc_cur_angvel_3->text();
             break;
         case 15:
             data_inp = ui->spc_cur_q1->text() + " " +  ui->spc_cur_q2->text() + " " + ui->spc_cur_q3->text() + " " + ui->spc_cur_q4->text();
@@ -2953,10 +2953,10 @@ void SPC_submenu::on_spc_cur_body_add_clicked()
     tmp_data.append("NONE");
     tmp_data.append("NONE");
 
-    ui->spc_cur_body_list->addItem("Body " + QString::number(bodies - 1));
+    ui->spc_cur_body_list->addItem("New Body");
     ui->spc_cur_body_list->setCurrentRow(ui->spc_cur_body_list->count()-1);
 
-    ui->spc_cur_body_list->currentItem()->setData(0, "Body " + QString::number(bodies - 1));
+    ui->spc_cur_body_list->currentItem()->setData(0, "New Body");
     ui->spc_cur_body_list->currentItem()->setData(1, tmp_data);
     on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
 }
@@ -2964,13 +2964,16 @@ void SPC_submenu::on_spc_cur_body_add_clicked()
 
 void SPC_submenu::on_spc_cur_body_duplicate_clicked()
 {
+    if (bodies == 0) return;
+
     bodies += 1;
 
     QStringList old_data = ui->spc_cur_body_list->currentItem()->data(1).toStringList();
 
-    ui->spc_cur_body_list->addItem("Body " + QString::number(bodies - 1));
+    ui->spc_cur_body_list->addItem("New Body");
     ui->spc_cur_body_list->setCurrentRow(ui->spc_cur_body_list->count()-1);
     ui->spc_cur_body_list->currentItem()->setData(1, old_data);
+    on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
 }
 
 
@@ -3073,10 +3076,10 @@ void SPC_submenu::on_spc_cur_joint_add_clicked()
     tmp_data.append("0.0");
     tmp_data.append("NONE");
 
-    ui->spc_cur_joint_list->addItem("Joint " + QString::number(joints - 1));
+    ui->spc_cur_joint_list->addItem("New Joint");
     ui->spc_cur_joint_list->setCurrentRow(ui->spc_cur_joint_list->count()-1);
 
-    ui->spc_cur_joint_list->currentItem()->setData(0, "Joint " + QString::number(joints - 1));
+    ui->spc_cur_joint_list->currentItem()->setData(0, "New Joint");
     ui->spc_cur_joint_list->currentItem()->setData(1, tmp_data);
     on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
 }
@@ -3084,13 +3087,15 @@ void SPC_submenu::on_spc_cur_joint_add_clicked()
 
 void SPC_submenu::on_spc_cur_joint_duplicate_clicked()
 {
+    if (joints == 0) return;
     joints += 1;
 
-    QStringList old_data = ui->spc_cur_body_list->currentItem()->data(1).toStringList();
+    QStringList old_data = ui->spc_cur_joint_list->currentItem()->data(1).toStringList();
 
-    ui->spc_cur_joint_list->addItem("Joint " + QString::number(joints - 1));
+    ui->spc_cur_joint_list->addItem("New Joint");
     ui->spc_cur_joint_list->setCurrentRow(ui->spc_cur_joint_list->count()-1);
     ui->spc_cur_joint_list->currentItem()->setData(1, old_data);
+    on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->currentItem());
 }
 
 void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item)
@@ -3199,23 +3204,25 @@ void SPC_submenu::on_spc_cur_wheel_add_clicked()
     tmp_data.append("0");
     tmp_data.append("NONE");
 
-    ui->spc_cur_wheel_list->addItem("Wheel " + QString::number(wheels - 1));
+    ui->spc_cur_wheel_list->addItem("New Wheel");
     ui->spc_cur_wheel_list->setCurrentRow(ui->spc_cur_wheel_list->count()-1);
 
-    ui->spc_cur_wheel_list->currentItem()->setData(0, "Wheel " + QString::number(wheels - 1));
+    ui->spc_cur_wheel_list->currentItem()->setData(0, "New Wheel");
     ui->spc_cur_wheel_list->currentItem()->setData(1, tmp_data);
     on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->currentItem());
 }
 
 void SPC_submenu::on_spc_cur_wheel_duplicate_clicked()
 {
+    if (wheels == 0) return;
     wheels += 1;
 
     QStringList old_data = ui->spc_cur_wheel_list->currentItem()->data(1).toStringList();
 
-    ui->spc_cur_wheel_list->addItem("Wheel " + QString::number(wheels - 1));
+    ui->spc_cur_wheel_list->addItem("New Wheel");
     ui->spc_cur_wheel_list->setCurrentRow(ui->spc_cur_wheel_list->count()-1);
     ui->spc_cur_wheel_list->currentItem()->setData(1, old_data);
+    on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->currentItem());
 }
 
 
@@ -3269,10 +3276,10 @@ void SPC_submenu::on_spc_cur_mtb_add_clicked()
     tmp_data.append("0.0");
     tmp_data.append("0");
 
-    ui->spc_cur_mtb_list->addItem("MTB " + QString::number(mtbs - 1));
+    ui->spc_cur_mtb_list->addItem("New MTB");
     ui->spc_cur_mtb_list->setCurrentRow(ui->spc_cur_mtb_list->count()-1);
 
-    ui->spc_cur_mtb_list->currentItem()->setData(0, "MTB " + QString::number(mtbs - 1));
+    ui->spc_cur_mtb_list->currentItem()->setData(0, "New MTB");
     ui->spc_cur_mtb_list->currentItem()->setData(1, tmp_data);
     on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->currentItem());
 }
@@ -3280,13 +3287,15 @@ void SPC_submenu::on_spc_cur_mtb_add_clicked()
 
 void SPC_submenu::on_spc_cur_mtb_duplicate_clicked()
 {
+    if (mtbs == 0) return;
     mtbs += 1;
 
     QStringList old_data = ui->spc_cur_mtb_list->currentItem()->data(1).toStringList();
 
-    ui->spc_cur_mtb_list->addItem("MTB " + QString::number(mtbs - 1));
+    ui->spc_cur_mtb_list->addItem("New MTB");
     ui->spc_cur_mtb_list->setCurrentRow(ui->spc_cur_mtb_list->count()-1);
     ui->spc_cur_mtb_list->currentItem()->setData(1, old_data);
+    on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->currentItem());
 }
 
 
@@ -3333,10 +3342,10 @@ void SPC_submenu::on_spc_cur_thruster_add_clicked()
     tmp_data.append("0");
     tmp_data.append("0");
 
-    ui->spc_cur_thruster_list->addItem("Thr " + QString::number(thrusters - 1));
+    ui->spc_cur_thruster_list->addItem("New Thr");
     ui->spc_cur_thruster_list->setCurrentRow(ui->spc_cur_thruster_list->count()-1);
 
-    ui->spc_cur_thruster_list->currentItem()->setData(0, "Thr " + QString::number(thrusters - 1));
+    ui->spc_cur_thruster_list->currentItem()->setData(0, "New Thr");
     ui->spc_cur_thruster_list->currentItem()->setData(1, tmp_data);
     on_spc_cur_thruster_list_itemClicked(ui->spc_cur_thruster_list->currentItem());
 }
@@ -3344,6 +3353,7 @@ void SPC_submenu::on_spc_cur_thruster_add_clicked()
 
 void SPC_submenu::on_spc_cur_thruster_duplicate_clicked()
 {
+    if (thrusters == 0) return;
     thrusters += 1;
 
     QStringList old_data = ui->spc_cur_thruster_list->currentItem()->data(1).toStringList();
@@ -3351,6 +3361,7 @@ void SPC_submenu::on_spc_cur_thruster_duplicate_clicked()
     ui->spc_cur_thruster_list->addItem("Thr " + QString::number(mtbs - 1));
     ui->spc_cur_thruster_list->setCurrentRow(ui->spc_cur_thruster_list->count()-1);
     ui->spc_cur_thruster_list->currentItem()->setData(1, old_data);
+    on_spc_cur_body_list_itemClicked(ui->spc_cur_thruster_list->currentItem());
 }
 
 
@@ -3405,10 +3416,10 @@ void SPC_submenu::on_spc_cur_gyro_add_clicked()
     tmp_data.append("0.1");
     tmp_data.append("0");
 
-    ui->spc_cur_gyro_list->addItem("Axis " + QString::number(gyros - 1));
+    ui->spc_cur_gyro_list->addItem("New Gyro");
     ui->spc_cur_gyro_list->setCurrentRow(ui->spc_cur_gyro_list->count()-1);
 
-    ui->spc_cur_gyro_list->currentItem()->setData(0, "Axis " + QString::number(gyros - 1));
+    ui->spc_cur_gyro_list->currentItem()->setData(0, "New Gyro");
     ui->spc_cur_gyro_list->currentItem()->setData(1, tmp_data);
     on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->currentItem());
 }
@@ -3416,13 +3427,15 @@ void SPC_submenu::on_spc_cur_gyro_add_clicked()
 
 void SPC_submenu::on_spc_cur_gyro_duplicate_clicked()
 {
+    if (gyros == 0) return;
     gyros += 1;
 
     QStringList old_data = ui->spc_cur_gyro_list->currentItem()->data(1).toStringList();
 
-    ui->spc_cur_gyro_list->addItem("Axis " + QString::number(gyros - 1));
+    ui->spc_cur_gyro_list->addItem("New Gyro");
     ui->spc_cur_gyro_list->setCurrentRow(ui->spc_cur_gyro_list->count()-1);
     ui->spc_cur_gyro_list->currentItem()->setData(1, old_data);
+    on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->currentItem());
 }
 
 
@@ -3485,10 +3498,10 @@ void SPC_submenu::on_spc_cur_mag_add_clicked()
     tmp_data.append("1.0E-6");
     tmp_data.append("0");
 
-    ui->spc_cur_mag_list->addItem("Axis " + QString::number(mags - 1));
+    ui->spc_cur_mag_list->addItem("New Mag");
     ui->spc_cur_mag_list->setCurrentRow(ui->spc_cur_mag_list->count()-1);
 
-    ui->spc_cur_mag_list->currentItem()->setData(0, "Axis " + QString::number(mags - 1));
+    ui->spc_cur_mag_list->currentItem()->setData(0, "New Mag");
     ui->spc_cur_mag_list->currentItem()->setData(1, tmp_data);
     on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->currentItem());
 }
@@ -3496,13 +3509,15 @@ void SPC_submenu::on_spc_cur_mag_add_clicked()
 
 void SPC_submenu::on_spc_cur_mag_duplicate_clicked()
 {
+    if (mags == 0) return;
     mags += 1;
 
     QStringList old_data = ui->spc_cur_mag_list->currentItem()->data(1).toStringList();
 
-    ui->spc_cur_mag_list->addItem("Axis " + QString::number(mags - 1));
+    ui->spc_cur_mag_list->addItem("New Mag");
     ui->spc_cur_mag_list->setCurrentRow(ui->spc_cur_mag_list->count()-1);
     ui->spc_cur_mag_list->currentItem()->setData(1, old_data);
+    on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->currentItem());
 }
 
 
@@ -3558,10 +3573,10 @@ void SPC_submenu::on_spc_cur_css_add_clicked()
     tmp_data.append("0");
     tmp_data.append("0");
 
-    ui->spc_cur_css_list->addItem("CSS " + QString::number(css_s - 1));
+    ui->spc_cur_css_list->addItem("New CSS");
     ui->spc_cur_css_list->setCurrentRow(ui->spc_cur_css_list->count()-1);
 
-    ui->spc_cur_css_list->currentItem()->setData(0, "CSS " + QString::number(css_s - 1));
+    ui->spc_cur_css_list->currentItem()->setData(0, "New CSS");
     ui->spc_cur_css_list->currentItem()->setData(1, tmp_data);
     on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->currentItem());
 }
@@ -3569,13 +3584,15 @@ void SPC_submenu::on_spc_cur_css_add_clicked()
 
 void SPC_submenu::on_spc_cur_css_duplicate_clicked()
 {
+    if (css_s == 0) return;
     css_s += 1;
 
     QStringList old_data = ui->spc_cur_css_list->currentItem()->data(1).toStringList();
 
-    ui->spc_cur_css_list->addItem("CSS " + QString::number(css_s - 1));
+    ui->spc_cur_css_list->addItem("New CSS");
     ui->spc_cur_css_list->setCurrentRow(ui->spc_cur_css_list->count()-1);
     ui->spc_cur_css_list->currentItem()->setData(1, old_data);
+    on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->currentItem());
 }
 
 
@@ -3633,10 +3650,10 @@ void SPC_submenu::on_spc_cur_fss_add_clicked()
     tmp_data.append("0.5");
     tmp_data.append("0");
 
-    ui->spc_cur_fss_list->addItem("FSS " + QString::number(fss_s - 1));
+    ui->spc_cur_fss_list->addItem("New FSS");
     ui->spc_cur_fss_list->setCurrentRow(ui->spc_cur_fss_list->count()-1);
 
-    ui->spc_cur_fss_list->currentItem()->setData(0, "FSS " + QString::number(fss_s - 1));
+    ui->spc_cur_fss_list->currentItem()->setData(0, "New FSS");
     ui->spc_cur_fss_list->currentItem()->setData(1, tmp_data);
     on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->currentItem());
 }
@@ -3644,13 +3661,15 @@ void SPC_submenu::on_spc_cur_fss_add_clicked()
 
 void SPC_submenu::on_spc_cur_fss_duplicate_clicked()
 {
+    if (fss_s == 0) return;
     fss_s += 1;
 
     QStringList old_data = ui->spc_cur_fss_list->currentItem()->data(1).toStringList();
 
-    ui->spc_cur_fss_list->addItem("FSS " + QString::number(fss_s - 1));
+    ui->spc_cur_fss_list->addItem("New FSS");
     ui->spc_cur_fss_list->setCurrentRow(ui->spc_cur_fss_list->count()-1);
     ui->spc_cur_fss_list->currentItem()->setData(1, old_data);
+    on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->currentItem());
 }
 
 
@@ -3714,10 +3733,10 @@ void SPC_submenu::on_spc_cur_strack_add_clicked()
     tmp_data.append("20.0");
     tmp_data.append("0");
 
-    ui->spc_cur_strack_list->addItem("ST " + QString::number(stracks - 1));
+    ui->spc_cur_strack_list->addItem("New ST");
     ui->spc_cur_strack_list->setCurrentRow(ui->spc_cur_strack_list->count()-1);
 
-    ui->spc_cur_strack_list->currentItem()->setData(0, "ST " + QString::number(stracks - 1));
+    ui->spc_cur_strack_list->currentItem()->setData(0, "New ST");
     ui->spc_cur_strack_list->currentItem()->setData(1, tmp_data);
     on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->currentItem());
 }
@@ -3725,13 +3744,15 @@ void SPC_submenu::on_spc_cur_strack_add_clicked()
 
 void SPC_submenu::on_spc_cur_strack_duplicate_clicked()
 {
+    if (stracks == 0) return;
     stracks += 1;
 
     QStringList old_data = ui->spc_cur_fss_list->currentItem()->data(1).toStringList();
 
-    ui->spc_cur_strack_list->addItem("FSS " + QString::number(stracks - 1));
+    ui->spc_cur_strack_list->addItem("New ST");
     ui->spc_cur_strack_list->setCurrentRow(ui->spc_cur_strack_list->count()-1);
     ui->spc_cur_strack_list->currentItem()->setData(1, old_data);
+    on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->currentItem());
 }
 
 
@@ -3790,10 +3811,10 @@ void SPC_submenu::on_spc_cur_gps_add_clicked()
     tmp_data.append("20.0E-9");
     tmp_data.append("0");
 
-    ui->spc_cur_gps_list->addItem("GPSR " + QString::number(gps_s - 1));
+    ui->spc_cur_gps_list->addItem("New GPS");
     ui->spc_cur_gps_list->setCurrentRow(ui->spc_cur_gps_list->count()-1);
 
-    ui->spc_cur_gps_list->currentItem()->setData(0, "GPSR " + QString::number(gps_s - 1));
+    ui->spc_cur_gps_list->currentItem()->setData(0, "New GPS");
     ui->spc_cur_gps_list->currentItem()->setData(1, tmp_data);
     on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->currentItem());
 }
@@ -3801,6 +3822,7 @@ void SPC_submenu::on_spc_cur_gps_add_clicked()
 
 void SPC_submenu::on_spc_cur_gps_duplicate_clicked()
 {
+    if (gps_s == 0) return;
     gps_s += 1;
 
     QStringList old_data = ui->spc_cur_gps_list->currentItem()->data(1).toStringList();
@@ -3808,6 +3830,7 @@ void SPC_submenu::on_spc_cur_gps_duplicate_clicked()
     ui->spc_cur_gps_list->addItem("FSS " + QString::number(gps_s - 1));
     ui->spc_cur_gps_list->setCurrentRow(ui->spc_cur_gps_list->count()-1);
     ui->spc_cur_gps_list->currentItem()->setData(1, old_data);
+    on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->currentItem());
 }
 
 
@@ -3863,10 +3886,10 @@ void SPC_submenu::on_spc_cur_accel_add_clicked()
     tmp_data.append("0.5");
     tmp_data.append("0");
 
-    ui->spc_cur_accel_list->addItem("Axis " + QString::number(accels - 1));
+    ui->spc_cur_accel_list->addItem("New Acc");
     ui->spc_cur_accel_list->setCurrentRow(ui->spc_cur_accel_list->count()-1);
 
-    ui->spc_cur_accel_list->currentItem()->setData(0, "Axis " + QString::number(accels - 1));
+    ui->spc_cur_accel_list->currentItem()->setData(0, "New Acc");
     ui->spc_cur_accel_list->currentItem()->setData(1, tmp_data);
     on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->currentItem());
 }
@@ -3874,13 +3897,15 @@ void SPC_submenu::on_spc_cur_accel_add_clicked()
 
 void SPC_submenu::on_spc_cur_accel_duplicate_clicked()
 {
+    if (accels == 0) return;
     accels += 1;
 
-    QStringList old_data = ui->spc_cur_gps_list->currentItem()->data(1).toStringList();
+    QStringList old_data = ui->spc_cur_accel_list->currentItem()->data(1).toStringList();
 
-    ui->spc_cur_gps_list->addItem("FSS " + QString::number(gps_s - 1));
-    ui->spc_cur_gps_list->setCurrentRow(ui->spc_cur_gps_list->count()-1);
-    ui->spc_cur_gps_list->currentItem()->setData(1, old_data);
+    ui->spc_cur_accel_list->addItem("New Acc");
+    ui->spc_cur_accel_list->setCurrentRow(ui->spc_cur_accel_list->count()-1);
+    ui->spc_cur_accel_list->currentItem()->setData(1, old_data);
+    on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->currentItem());
 }
 
 

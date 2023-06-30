@@ -115,7 +115,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>5</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="dynamics">
          <attribute name="title">
@@ -521,13 +521,13 @@
            <item row="1" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_62">
              <item>
-              <widget class="QLineEdit" name="spc_cur_angvel_x"/>
+              <widget class="QLineEdit" name="spc_cur_angvel_1"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="spc_cur_angvel_z"/>
+              <widget class="QLineEdit" name="spc_cur_angvel_2"/>
              </item>
              <item>
-              <widget class="QLineEdit" name="spc_cur_angvel_y"/>
+              <widget class="QLineEdit" name="spc_cur_angvel_3"/>
              </item>
             </layout>
            </item>
@@ -3664,11 +3664,11 @@
  <connections/>
  <buttongroups>
   <buttongroup name="spc_cur_flex"/>
-  <buttongroup name="spc_cur_2flex"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>
    </property>
   </buttongroup>
+  <buttongroup name="spc_cur_2flex"/>
  </buttongroups>
 </ui>
