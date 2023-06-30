@@ -115,7 +115,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>6</number>
+         <number>5</number>
         </property>
         <widget class="QWidget" name="dynamics">
          <attribute name="title">
@@ -1090,7 +1090,11 @@
              <item row="8" column="1">
               <layout class="QHBoxLayout" name="horizontalLayout_26">
                <item>
-                <widget class="QSpinBox" name="spc_cur_joint_trndof"/>
+                <widget class="QSpinBox" name="spc_cur_joint_trndof">
+                 <property name="maximum">
+                  <number>3</number>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -1137,7 +1141,7 @@
                <item>
                 <widget class="QSpinBox" name="spc_cur_joint_rotdof">
                  <property name="minimum">
-                  <number>1</number>
+                  <number>0</number>
                  </property>
                  <property name="maximum">
                   <number>3</number>
@@ -1418,7 +1422,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideLeft</enum>
@@ -1436,7 +1440,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_70">
+            <layout class="QHBoxLayout" name="horizontalLayout_70" stretch="1,3">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -1515,20 +1519,17 @@
                <property name="bottomMargin">
                 <number>12</number>
                </property>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_49">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_14">
                  <property name="text">
-                  <string>Max Torque [Nm]</string>
+                  <string>Wheel Name</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="1">
-                <widget class="QLineEdit" name="spc_cur_wheel_maxtrq"/>
-               </item>
-               <item row="8" column="0">
-                <widget class="QLabel" name="label_54">
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_48">
                  <property name="text">
-                  <string>Drag/Jitter Input File Name</string>
+                  <string>Wheel Axis Components [X. Y, Z]</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
@@ -1542,22 +1543,60 @@
                  </property>
                 </widget>
                </item>
-               <item row="7" column="1">
-                <widget class="QSpinBox" name="spc_cur_wheel_node"/>
+               <item row="5" column="1">
+                <widget class="QLineEdit" name="spc_cur_wheel_inertia"/>
                </item>
-               <item row="4" column="1">
-                <widget class="QLineEdit" name="spc_cur_wheel_maxmom"/>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="spc_cur_wheel_name"/>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_48">
+               <item row="7" column="0">
+                <widget class="QLabel" name="label_53">
                  <property name="text">
-                  <string>Wheel Axis Components [X. Y, Z]</string>
+                  <string>Node</string>
                  </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QLineEdit" name="spc_cur_wheel_maxtrq"/>
+               </item>
+               <item row="8" column="1">
+                <layout class="QHBoxLayout" name="horizontalLayout_35">
+                 <property name="spacing">
+                  <number>5</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="spc_cur_whel_drjit_select">
+                   <property name="text">
+                    <string>Select</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pushButton_2">
+                   <property name="text">
+                    <string>Clear</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item row="10" column="0">
+                <spacer name="verticalSpacer_3">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="spc_cur_wheel_initmom"/>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_49">
+                 <property name="text">
+                  <string>Max Torque [Nm]</string>
                  </property>
                 </widget>
                </item>
@@ -1568,8 +1607,17 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
-                <widget class="QLineEdit" name="spc_cur_wheel_initmom"/>
+               <item row="6" column="1">
+                <widget class="QSpinBox" name="spc_cur_wheel_body"/>
+               </item>
+               <item row="4" column="1">
+                <widget class="QLineEdit" name="spc_cur_wheel_maxmom"/>
+               </item>
+               <item row="7" column="1">
+                <widget class="QSpinBox" name="spc_cur_wheel_node"/>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="spc_cur_wheel_name"/>
                </item>
                <item row="2" column="1">
                 <layout class="QHBoxLayout" name="horizontalLayout_34">
@@ -1591,6 +1639,16 @@
                  </property>
                 </widget>
                </item>
+               <item row="8" column="0">
+                <widget class="QLabel" name="label_54">
+                 <property name="text">
+                  <string>Drag/Jitter Input File Name</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
                <item row="5" column="0">
                 <widget class="QLabel" name="label_51">
                  <property name="text">
@@ -1601,66 +1659,12 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_14">
-                 <property name="text">
-                  <string>Wheel Name</string>
+               <item row="9" column="1">
+                <widget class="QLineEdit" name="spc_cur_wheel_drjit_file">
+                 <property name="enabled">
+                  <bool>false</bool>
                  </property>
                 </widget>
-               </item>
-               <item row="8" column="1">
-                <layout class="QHBoxLayout" name="horizontalLayout_35">
-                 <property name="spacing">
-                  <number>5</number>
-                 </property>
-                 <item>
-                  <widget class="QPushButton" name="spc_cur_whel_drjit_select">
-                   <property name="text">
-                    <string>Select</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="pushButton_2">
-                   <property name="text">
-                    <string>Clear</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="spc_cur_wheel_drjit_file">
-                   <property name="enabled">
-                    <bool>false</bool>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item row="7" column="0">
-                <widget class="QLabel" name="label_53">
-                 <property name="text">
-                  <string>Node</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="1">
-                <widget class="QSpinBox" name="spc_cur_wheel_body"/>
-               </item>
-               <item row="5" column="1">
-                <widget class="QLineEdit" name="spc_cur_wheel_inertia"/>
-               </item>
-               <item row="9" column="0">
-                <spacer name="verticalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
               </layout>
              </item>
@@ -1680,7 +1684,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_18">
+            <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="1,3">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -1843,7 +1847,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_63">
+            <layout class="QHBoxLayout" name="horizontalLayout_63" stretch="1,3">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -2041,7 +2045,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>6</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideLeft</enum>
@@ -2059,7 +2063,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_72">
+            <layout class="QHBoxLayout" name="horizontalLayout_72" stretch="0,0">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -2304,7 +2308,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_71">
+            <layout class="QHBoxLayout" name="horizontalLayout_71" stretch="0,0">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -2503,7 +2507,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_69">
+            <layout class="QHBoxLayout" name="horizontalLayout_69" stretch="0,0">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -2705,7 +2709,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_68">
+            <layout class="QHBoxLayout" name="horizontalLayout_68" stretch="0,0">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -2927,7 +2931,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_67">
+            <layout class="QHBoxLayout" name="horizontalLayout_67" stretch="0,0">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -2947,14 +2951,14 @@
                  <item>
                   <widget class="QListWidget" name="spc_cur_strack_list">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>200</width>
+                     <width>1000</width>
                      <height>16777215</height>
                     </size>
                    </property>
@@ -3182,7 +3186,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_66">
+            <layout class="QHBoxLayout" name="horizontalLayout_66" stretch="1,3">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -3202,14 +3206,14 @@
                  <item>
                   <widget class="QListWidget" name="spc_cur_gps_list">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>200</width>
+                     <width>1000</width>
                      <height>16777215</height>
                     </size>
                    </property>
@@ -3361,7 +3365,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_65">
+            <layout class="QHBoxLayout" name="horizontalLayout_65" stretch="0,0">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -3381,14 +3385,14 @@
                  <item>
                   <widget class="QListWidget" name="spc_cur_accel_list">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
                    </property>
                    <property name="maximumSize">
                     <size>
-                     <width>200</width>
+                     <width>1000</width>
                      <height>16777215</height>
                     </size>
                    </property>
@@ -3659,12 +3663,12 @@
  <resources/>
  <connections/>
  <buttongroups>
+  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_2flex"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>
    </property>
   </buttongroup>
-  <buttongroup name="spc_cur_flex"/>
  </buttongroups>
 </ui>

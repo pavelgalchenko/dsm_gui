@@ -1608,26 +1608,12 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! TrnDOF, Seq\n");
             break;
         case 5:
-            if (ui->spc_cur_joint_rlock1->isChecked()) data_inp = "TRUE";
-            else data_inp = "FALSE";
-
-            if (ui->spc_cur_joint_rlock2->isChecked()) data_inp += " TRUE";
-            else data_inp += " FALSE";
-
-            if (ui->spc_cur_joint_rlock3->isChecked()) data_inp = " TRUE";
-            else data_inp += " FALSE";
+            data_inp = current_data[9] + " " + current_data[10] + " " + current_data[11];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! RotDOF Locked\n");
             break;
 
         case 6:
-            if (ui->spc_cur_joint_tlock1->isChecked()) data_inp = "TRUE";
-            else data_inp += "FALSE";
-
-            if (ui->spc_cur_joint_tlock2->isChecked()) data_inp = " TRUE";
-            else data_inp += " FALSE";
-
-            if (ui->spc_cur_joint_tlock3->isChecked()) data_inp = " TRUE";
-            else data_inp += " FALSE";
+            data_inp = current_data[12] + " " + current_data[13] + " " + current_data[14];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! TrnDOF Locked\n");
             break;
         case 7:
