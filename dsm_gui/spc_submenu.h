@@ -115,6 +115,16 @@ private slots:
 
     void on_spc_cur_att_param_currentTextChanged(const QString &arg1);
 
+    void on_spc_cur_shaker_clear_clicked();
+
+    void on_spc_cur_node_clear_clicked();
+
+    void on_spc_cur_flex_clear_clicked();
+
+    void on_spc_cur_joint_param_clear_clicked();
+
+    void on_pushButton_2_clicked();
+
 private:
     Ui::SPC_submenu *ui;
     QString spc_cur_name;

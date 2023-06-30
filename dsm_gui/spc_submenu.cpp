@@ -3938,6 +3938,7 @@ void SPC_submenu::on_sections_tabBarClicked(int index)
     else if (index == 4 && ui->spc_cur_joint_list->count() > 0) on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->currentItem());
 }
 
+// File Selection Buttons
 
 void SPC_submenu::on_spc_cur_shaker_select_clicked()
 {
@@ -4036,5 +4037,35 @@ void SPC_submenu::on_spc_cur_att_param_currentTextChanged(const QString &arg1)
         ui->spc_cur_q3->setEnabled(false);
         ui->spc_cur_q4->setEnabled(false);
     }
+}
+
+
+void SPC_submenu::on_spc_cur_shaker_clear_clicked()
+{
+    ui->spc_cur_shaker_file->setText("");
+}
+
+
+void SPC_submenu::on_spc_cur_node_clear_clicked()
+{
+    ui->spc_cur_node_file->setText("");
+}
+
+
+void SPC_submenu::on_spc_cur_flex_clear_clicked()
+{
+    ui->spc_cur_flex_file->setText("");
+}
+
+
+void SPC_submenu::on_spc_cur_joint_param_clear_clicked()
+{
+    ui->spc_cur_joint_param_file->setText("");
+}
+
+
+void SPC_submenu::on_pushButton_2_clicked()
+{
+    ui->spc_cur_wheel_drjit_file->setText("");
 }
 
