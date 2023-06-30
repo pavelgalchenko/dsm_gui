@@ -138,6 +138,8 @@ void SPC_submenu::apply_data()
     long cur_item;
     long cur_entry;
 
+    QString cur_item_name;
+
     QStringList tmp_line_item;
     QStringList tmp_data = {};
 
@@ -301,12 +303,10 @@ void SPC_submenu::apply_data()
         cur_item = floor(body_line_num/body_entries);
         cur_entry = body_line_num % body_entries;
 
-        if (cur_entry == 0){
-            ui->spc_cur_body_list->addItem("Body " + QString::number(cur_item));
-        }
-
         switch (cur_entry) {
         case 0: // Body X Header
+            cur_item_name = spc_item_names[line_num - 1];
+            ui->spc_cur_body_list->addItem(cur_item_name);
             tmp_data.append("blankline");
             break;
         case 1: // Mass
@@ -355,7 +355,7 @@ void SPC_submenu::apply_data()
         }
         if (cur_entry==body_entries-1){
             ui->spc_cur_body_list->setCurrentRow(cur_item);
-            ui->spc_cur_body_list->currentItem()->setData(0, "Body " + QString::number(cur_item));
+            ui->spc_cur_body_list->currentItem()->setData(0, cur_item_name);
             ui->spc_cur_body_list->currentItem()->setData(1, tmp_data);
             tmp_data.clear();
         }
@@ -377,16 +377,15 @@ void SPC_submenu::apply_data()
             line_string = spc_string[line_num-1];
             line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
 
+
             long joint_line_num = line_num - reset_ind_joint - joint_headers;
             cur_item = floor(joint_line_num/joint_entries);
             cur_entry = joint_line_num % joint_entries;
 
-            if (cur_entry == 0){
-                ui->spc_cur_joint_list->addItem("Joint " + QString::number(cur_item));
-            }
-
             switch (cur_entry) {
             case 0: // Joint X Header
+                cur_item_name = spc_item_names[line_num - 1];
+                ui->spc_cur_joint_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
                 break;
             case 1: // Joint Type
@@ -474,7 +473,7 @@ void SPC_submenu::apply_data()
             }
             if (cur_entry==joint_entries-1){
                 ui->spc_cur_joint_list->setCurrentRow(cur_item);
-                ui->spc_cur_joint_list->currentItem()->setData(0, "Joint " + QString::number(cur_item));
+                ui->spc_cur_joint_list->currentItem()->setData(0, cur_item_name);
                 ui->spc_cur_joint_list->currentItem()->setData(1, tmp_data);
                 tmp_data.clear();
             }
@@ -483,7 +482,7 @@ void SPC_submenu::apply_data()
 
     /********************** WHEELS *************************/
 
-    wheels = spc_data[reset_ind_wheel].toInt();
+    wheels = spc_data[reset_ind_wheel + 2].toInt();
 
     if (wheels == 0) reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries; // SC_Simple has an example wheel
     else reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
@@ -500,12 +499,10 @@ void SPC_submenu::apply_data()
             cur_item = floor(wheel_line_num/wheel_entries);
             cur_entry = wheel_line_num % wheel_entries;
 
-            if (cur_entry == 0){
-                ui->spc_cur_wheel_list->addItem("Wheel " + QString::number(cur_item));
-            }
-
             switch (cur_entry){
             case 0:
+                cur_item_name = spc_item_names[line_num - 1];
+                ui->spc_cur_wheel_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
                 break; // header
             case 1:
@@ -535,7 +532,7 @@ void SPC_submenu::apply_data()
             }
             if (cur_entry==wheel_entries-1){
                 ui->spc_cur_wheel_list->setCurrentRow(cur_item);
-                ui->spc_cur_wheel_list->currentItem()->setData(0, "Wheel " + QString::number(cur_item));
+                ui->spc_cur_wheel_list->currentItem()->setData(0, cur_item_name);
                 ui->spc_cur_wheel_list->currentItem()->setData(1, tmp_data);
                 tmp_data.clear();
             }
@@ -562,12 +559,10 @@ void SPC_submenu::apply_data()
             cur_item = floor(mtb_line_num/mtb_entries);
             cur_entry = mtb_line_num % mtb_entries;
 
-            if (cur_entry == 0){
-                ui->spc_cur_mtb_list->addItem("MTB " + QString::number(cur_item));
-            }
-
             switch (cur_entry){
             case 0:
+                cur_item_name = spc_item_names[line_num - 1];
+                ui->spc_cur_mtb_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
                 break; // header
             case 1:
@@ -584,7 +579,7 @@ void SPC_submenu::apply_data()
             }
             if (cur_entry==mtb_entries-1){
                 ui->spc_cur_mtb_list->setCurrentRow(cur_item);
-                ui->spc_cur_mtb_list->currentItem()->setData(0, "MTB " + QString::number(cur_item));
+                ui->spc_cur_mtb_list->currentItem()->setData(0, cur_item_name);
                 ui->spc_cur_mtb_list->currentItem()->setData(1, tmp_data);
                 tmp_data.clear();
             }
@@ -611,12 +606,10 @@ void SPC_submenu::apply_data()
             cur_item = floor(thr_line_num/thr_entries);
             cur_entry = thr_line_num % thr_entries;
 
-            if (cur_entry == 0){
-                ui->spc_cur_thruster_list->addItem("Thr " + QString::number(cur_item));
-            }
-
             switch (cur_entry){
             case 0:
+                cur_item_name = spc_item_names[line_num - 1];
+                ui->spc_cur_thruster_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
                 break; // header
             case 1:
@@ -624,6 +617,7 @@ void SPC_submenu::apply_data()
                 break;
             case 2:
                 tmp_data.append(line_items[0]);
+                break;
             case 3:
                 tmp_data.append(line_items[0]);
                 tmp_data.append(line_items[1]);
@@ -638,7 +632,7 @@ void SPC_submenu::apply_data()
             }
             if (cur_entry==thr_entries-1){
                 ui->spc_cur_thruster_list->setCurrentRow(cur_item);
-                ui->spc_cur_thruster_list->currentItem()->setData(0, "Thr " + QString::number(cur_item));
+                ui->spc_cur_thruster_list->currentItem()->setData(0, cur_item_name);
                 ui->spc_cur_thruster_list->currentItem()->setData(1, tmp_data);
                 tmp_data.clear();
             }
@@ -665,12 +659,10 @@ void SPC_submenu::apply_data()
             cur_item = floor(gyro_line_num/gyro_entries);
             cur_entry = gyro_line_num % gyro_entries;
 
-            if (cur_entry == 0){
-                ui->spc_cur_gyro_list->addItem("Axis " + QString::number(cur_item));
-            }
-
             switch (cur_entry){
             case 0:
+                cur_item_name = spc_item_names[line_num - 1];
+                ui->spc_cur_gyro_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
                 break; // header
             case 1:
@@ -709,7 +701,7 @@ void SPC_submenu::apply_data()
             }
             if (cur_entry==gyro_entries-1){
                 ui->spc_cur_gyro_list->setCurrentRow(cur_item);
-                ui->spc_cur_gyro_list->currentItem()->setData(0, "Axis " + QString::number(cur_item));
+                ui->spc_cur_gyro_list->currentItem()->setData(0, cur_item_name);
                 ui->spc_cur_gyro_list->currentItem()->setData(1, tmp_data);
                 tmp_data.clear();
             }
@@ -736,12 +728,10 @@ void SPC_submenu::apply_data()
             cur_item = floor(mag_line_num/mag_entries);
             cur_entry = mag_line_num % mag_entries;
 
-            if (cur_entry == 0){
-                ui->spc_cur_mag_list->addItem("Axis " + QString::number(cur_item));
-            }
-
             switch (cur_entry){
             case 0:
+                cur_item_name = spc_item_names[line_num - 1];
+                ui->spc_cur_mag_list->addItem("Axis " + QString::number(cur_item));
                 tmp_data.append("blankline");
                 break; // header
             case 1:
@@ -770,7 +760,7 @@ void SPC_submenu::apply_data()
             }
             if (cur_entry==mag_entries-1){
                 ui->spc_cur_mag_list->setCurrentRow(cur_item);
-                ui->spc_cur_mag_list->currentItem()->setData(0, "Axis " + QString::number(cur_item));
+                ui->spc_cur_mag_list->currentItem()->setData(0, cur_item_name);
                 ui->spc_cur_mag_list->currentItem()->setData(1, tmp_data);
                 tmp_data.clear();
             }
@@ -797,12 +787,10 @@ void SPC_submenu::apply_data()
             cur_item = floor(css_line_num/css_entries);
             cur_entry = css_line_num % css_entries;
 
-            if (cur_entry == 0){
-                ui->spc_cur_css_list->addItem("CSS " + QString::number(cur_item));
-            }
-
             switch (cur_entry){
             case 0:
+                cur_item_name = spc_item_names[line_num - 1];
+                ui->spc_cur_css_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
                 break; // header
             case 1:
@@ -831,7 +819,7 @@ void SPC_submenu::apply_data()
             }
             if (cur_entry==css_entries-1){
                 ui->spc_cur_css_list->setCurrentRow(cur_item);
-                ui->spc_cur_css_list->currentItem()->setData(0, "Axis " + QString::number(cur_item));
+                ui->spc_cur_css_list->currentItem()->setData(0, cur_item_name);
                 ui->spc_cur_css_list->currentItem()->setData(1, tmp_data);
                 tmp_data.clear();
             }
@@ -858,12 +846,10 @@ void SPC_submenu::apply_data()
             cur_item = floor(fss_line_num/fss_entries);
             cur_entry = fss_line_num % fss_entries;
 
-            if (cur_entry == 0){
-                ui->spc_cur_fss_list->addItem("FSS " + QString::number(cur_item));
-            }
-
             switch (cur_entry){
             case 0:
+                cur_item_name = spc_item_names[line_num - 1];
+                ui->spc_cur_fss_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
                 break; // header
             case 1:
@@ -894,7 +880,7 @@ void SPC_submenu::apply_data()
             }
             if (cur_entry==fss_entries-1){
                 ui->spc_cur_fss_list->setCurrentRow(cur_item);
-                ui->spc_cur_fss_list->currentItem()->setData(0, "Axis " + QString::number(cur_item));
+                ui->spc_cur_fss_list->currentItem()->setData(0, cur_item_name);
                 ui->spc_cur_fss_list->currentItem()->setData(1, tmp_data);
                 tmp_data.clear();
             }
@@ -921,12 +907,10 @@ void SPC_submenu::apply_data()
             cur_item = floor(strack_line_num/strack_entries);
             cur_entry = strack_line_num % strack_entries;
 
-            if (cur_entry == 0){
-                ui->spc_cur_strack_list->addItem("ST " + QString::number(cur_item));
-            }
-
             switch (cur_entry){
             case 0:
+                cur_item_name = spc_item_names[line_num - 1];
+                ui->spc_cur_strack_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
                 break; // header
             case 1:
@@ -961,7 +945,7 @@ void SPC_submenu::apply_data()
             }
             if (cur_entry==strack_entries-1){
                 ui->spc_cur_strack_list->setCurrentRow(cur_item);
-                ui->spc_cur_strack_list->currentItem()->setData(0, "ST " + QString::number(cur_item));
+                ui->spc_cur_strack_list->currentItem()->setData(0, cur_item_name);
                 ui->spc_cur_strack_list->currentItem()->setData(1, tmp_data);
                 tmp_data.clear();
             }
@@ -988,12 +972,10 @@ void SPC_submenu::apply_data()
             cur_item = floor(gps_line_num/gps_entries);
             cur_entry = gps_line_num % gps_entries;
 
-            if (cur_entry == 0){
-                ui->spc_cur_gps_list->addItem("GPSR " + QString::number(cur_item));
-            }
-
             switch (cur_entry){
             case 0:
+                cur_item_name = spc_item_names[line_num - 1];
+                ui->spc_cur_gps_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
                 break; // header
             case 1:
@@ -1014,7 +996,7 @@ void SPC_submenu::apply_data()
             }
             if (cur_entry==gps_entries-1){
                 ui->spc_cur_gps_list->setCurrentRow(cur_item);
-                ui->spc_cur_gps_list->currentItem()->setData(0, "GPSR " + QString::number(cur_item));
+                ui->spc_cur_gps_list->currentItem()->setData(0, cur_item_name);
                 ui->spc_cur_gps_list->currentItem()->setData(1, tmp_data);
                 tmp_data.clear();
             }
@@ -1041,12 +1023,10 @@ void SPC_submenu::apply_data()
             cur_item = floor(acc_line_num/acc_entries);
             cur_entry = acc_line_num % acc_entries;
 
-            if (cur_entry == 0){
-                ui->spc_cur_accel_list->addItem("Axis " + QString::number(cur_item));
-            }
-
             switch (cur_entry){
             case 0:
+                cur_item_name = spc_item_names[line_num - 1];
+                ui->spc_cur_accel_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
                 break; // header
             case 1:
@@ -1085,7 +1065,7 @@ void SPC_submenu::apply_data()
             }
             if (cur_entry==acc_entries-1){
                 ui->spc_cur_accel_list->setCurrentRow(cur_item);
-                ui->spc_cur_accel_list->currentItem()->setData(0, "Axis " + QString::number(cur_item));
+                ui->spc_cur_accel_list->currentItem()->setData(0, cur_item_name);
                 ui->spc_cur_accel_list->currentItem()->setData(1, tmp_data);
                 tmp_data.clear();
             }
@@ -1329,6 +1309,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             {
                 switch (cur_entry) {
                 case 0: // Body X Header
+                    ui->spc_cur_body_list->currentItem()->setText(ui->spc_cur_body_name->text());
                     tmp_data.append("blankline");
                     break;
                 case 1:
@@ -1491,6 +1472,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             {
                 switch (cur_entry) {
                 case 0: // Joint X Header
+                    ui->spc_cur_joint_list->currentItem()->setText(ui->spc_cur_joint_name->text());
                     tmp_data.append("blankline");
                     break;
                 case 1: // Joint Type
@@ -1752,6 +1734,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             {
                 switch (cur_entry){
                 case 0:
+                    ui->spc_cur_wheel_list->currentItem()->setText(ui->spc_cur_wheel_name->text());
                     tmp_data.append("blankline");
 
                     break; // header
@@ -1874,6 +1857,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             {
                 switch (cur_entry){
                 case 0:
+                    ui->spc_cur_mtb_list->currentItem()->setText(ui->spc_cur_mtb_name->text());
                     tmp_data.append("blankline");
 
                     break; // header
@@ -1972,6 +1956,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             {
                 switch (cur_entry){
                 case 0:
+                    ui->spc_cur_thruster_list->currentItem()->setText(ui->spc_cur_thruster_name->text());
                     tmp_data.append("blankline");
 
                     break; // header
@@ -2088,6 +2073,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             {
                 switch (cur_entry){
                 case 0:
+                    ui->spc_cur_gyro_list->currentItem()->setText(ui->spc_cur_gyro_name->text());
                     tmp_data.append("blankline");
 
                     break; // header
@@ -2240,6 +2226,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             {
                 switch (cur_entry){
                 case 0:
+                    ui->spc_cur_mag_list->currentItem()->setText(ui->spc_cur_mag_name->text());
                     tmp_data.append("blankline");
 
                     break; // header
@@ -2348,7 +2335,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         spc_update.append("90.0                        ! Half-cone Angle, deg\n");
         spc_update.append("1.0                         ! Scale Factor\n");
         spc_update.append("0.001                       ! Quantization\n");
-        spc_update.append("0                           ! Body");
+        spc_update.append("0                           ! Body\n");
         spc_update.append("0                           ! Node\n");
     }
 
@@ -2369,6 +2356,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             {
                 switch (cur_entry){
                 case 0:
+                    ui->spc_cur_css_list->currentItem()->setText(ui->spc_cur_css_name->text());
                     tmp_data.append("blankline");
 
                     break; // header
@@ -2477,7 +2465,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         spc_update.append("Z_AXIS                      ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
         spc_update.append("32.0   32.0                 ! H, V FOV Size, deg\n");
         spc_update.append("0.1                         ! Noise Equivalent Angle, deg RMS\n");
-        spc_update.append("0.5                         ! Quantization, deg");
+        spc_update.append("0.5                         ! Quantization, deg\n");
         spc_update.append("0                           ! Node\n");
     }
 
@@ -2497,6 +2485,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             {
                 switch (cur_entry){
                 case 0:
+                    ui->spc_cur_fss_list->currentItem()->setText(ui->spc_cur_fss_name->text());
                     tmp_data.append("blankline");
 
                     break; // header
@@ -2607,7 +2596,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         spc_update.append("Z_AXIS                      ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
         spc_update.append("8.0   8.0                   ! H, V FOV Size, deg\n");
         spc_update.append("30.0  10.0  10.0            ! Sun, Earth, Moon Exclusion Angles, deg\n");
-        spc_update.append("2.0  2.0  20.0              ! Noise Equivalent Angle, arcsec RMS");
+        spc_update.append("2.0  2.0  20.0              ! Noise Equivalent Angle, arcsec RMS\n");
         spc_update.append("0                           ! Node\n");
     }
 
@@ -2627,6 +2616,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             {
                 switch (cur_entry){
                 case 0:
+                    ui->spc_cur_strack_list->currentItem()->setText(ui->spc_cur_strack_name->text());
                     tmp_data.append("blankline");
 
                     break; // header
@@ -2759,6 +2749,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             {
                 switch (cur_entry){
                 case 0:
+                    ui->spc_cur_gps_list->currentItem()->setText(ui->spc_cur_gps_name->text());
                     tmp_data.append("blankline");
 
                     break; // header
@@ -2878,6 +2869,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             {
                 switch (cur_entry){
                 case 0:
+                    ui->spc_cur_accel_list->currentItem()->setText(ui->spc_cur_acc_name->text());
                     tmp_data.append("blankline");
 
                     break; // header
@@ -3068,6 +3060,8 @@ void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item)
     QStringList current_data = item->data(1).toStringList();
     item->setText(item->data(0).toString());
 
+    ui->spc_cur_body_name->setText(item->data(0).toString());
+
     ui->spc_cur_body_mass->setText(current_data[1]);
 
     ui->spc_cur_body_pmoi_x->setText(current_data[2]);
@@ -3183,6 +3177,8 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item)
 
     QStringList current_data = item->data(1).toStringList();
     item->setText(item->data(0).toString());
+
+    ui->spc_cur_joint_name->setText(item->data(0).toString());
 
     setQComboBox(ui->spc_cur_joint_type, current_data[1]);
 
@@ -3308,6 +3304,8 @@ void SPC_submenu::on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item)
     QStringList current_data = item->data(1).toStringList();
     item->setText(item->data(0).toString());
 
+    ui->spc_cur_wheel_name->setText(item->data(0).toString());
+
     ui->spc_cur_wheel_initmom->setText(current_data[1]);
 
     ui->spc_cur_wheel_axis_1->setText(current_data[2]);
@@ -3377,6 +3375,8 @@ void SPC_submenu::on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item)
     QStringList current_data = item->data(1).toStringList();
     item->setText(item->data(0).toString());
 
+    ui->spc_cur_mtb_name->setText(item->data(0).toString());
+
     ui->spc_cur_mtb_sat->setText(current_data[1]);
 
     ui->spc_cur_mtb_axis_1->setText(current_data[2]);
@@ -3438,6 +3438,8 @@ void SPC_submenu::on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item)
 
     QStringList current_data = item->data(1).toStringList();
     item->setText(item->data(0).toString());
+
+    ui->spc_cur_thruster_name->setText(item->data(0).toString());
 
     setQComboBox(ui->spc_cur_thruster_mode, current_data[1]);
 
@@ -3507,7 +3509,9 @@ void SPC_submenu::on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item)
     receive_data();
 
     QStringList current_data = item->data(1).toStringList();
-    item->setText(item->data(0).toString());  
+    item->setText(item->data(0).toString());
+
+    ui->spc_cur_gyro_name->setText(item->data(0).toString());
 
     ui->spc_cur_gyro_samptime->setText(current_data[1]);
 
@@ -3587,6 +3591,8 @@ void SPC_submenu::on_spc_cur_mag_list_itemClicked(QListWidgetItem *item)
     QStringList current_data = item->data(1).toStringList();
     item->setText(item->data(0).toString());
 
+    ui->spc_cur_mag_name->setText(item->data(0).toString());
+
     ui->spc_cur_mag_samptime->setText(current_data[1]);
 
     ui->spc_cur_mag_axis_1->setText(current_data[2]);
@@ -3657,6 +3663,8 @@ void SPC_submenu::on_spc_cur_css_list_itemClicked(QListWidgetItem *item)
 
     QStringList current_data = item->data(1).toStringList();
     item->setText(item->data(0).toString());
+
+    ui->spc_cur_css_name->setText(item->data(0).toString());
 
     ui->spc_cur_css_samptime->setText(current_data[1]);
 
@@ -3730,6 +3738,8 @@ void SPC_submenu::on_spc_cur_fss_list_itemClicked(QListWidgetItem *item)
 
     QStringList current_data = item->data(1).toStringList();
     item->setText(item->data(0).toString());
+
+    ui->spc_cur_fss_name->setText(item->data(0).toString());
 
     ui->spc_cur_fss_samptime->setText(current_data[1]);
 
@@ -3810,6 +3820,8 @@ void SPC_submenu::on_spc_cur_strack_list_itemClicked(QListWidgetItem *item)
     QStringList current_data = item->data(1).toStringList();
     item->setText(item->data(0).toString());
 
+    ui->spc_cur_strack_name->setText(item->data(0).toString());
+
     ui->spc_cur_strack_samptime->setText(current_data[1]);
 
     ui->spc_cur_strack_mount_1->setText(current_data[2]);
@@ -3884,6 +3896,8 @@ void SPC_submenu::on_spc_cur_gps_list_itemClicked(QListWidgetItem *item)
     QStringList current_data = item->data(1).toStringList();
     item->setText(item->data(0).toString());
 
+     ui->spc_cur_gps_name->setText(item->data(0).toString());
+
     ui->spc_cur_gps_samptime->setText(current_data[1]);
 
     ui->spc_cur_gps_posnoise->setText(current_data[2]);
@@ -3954,6 +3968,8 @@ void SPC_submenu::on_spc_cur_accel_list_itemClicked(QListWidgetItem *item)
 
     QStringList current_data = item->data(1).toStringList();
     item->setText(item->data(0).toString());
+
+    ui->spc_cur_acc_name->setText(item->data(0).toString());
 
     ui->spc_cur_acc_samptime->setText(current_data[1]);
 
