@@ -1289,7 +1289,6 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     /****************************** SETUP ***************/
     QStringList tmp_data = {}; // Update the list widget data of the body tab we are currently on.
-
     /************************************* BODY SECTION ***********************************/
 
     reset_ind_joint = reset_ind_body + body_entries*bodies;
@@ -1671,13 +1670,12 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     }
 
-    if (ui->sections->currentIndex() == 3) {
+    if (ui->sections->currentIndex() == 3 && joints > 0) {
         ui->spc_cur_body_list->setCurrentRow(cur_item_row);
         on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->item(cur_item_row));
     }
 
     /*************************** WHEELS SECTION ****************************/
-
     reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
 
     long num_drjit = 0;
@@ -1732,6 +1730,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
             if (ui->spc_cur_wheel_list->count() > 0 && ui->spc_cur_wheel_list->currentRow() == cur_item)
             {
+
                 switch (cur_entry){
                 case 0:
                     ui->spc_cur_wheel_list->currentItem()->setText(ui->spc_cur_wheel_name->text());
@@ -1820,7 +1819,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==0) {
+    if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==0 && wheels > 0) {
         ui->spc_cur_wheel_list->setCurrentRow(cur_item_row);
         on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->item(cur_item_row));
     }
@@ -1894,14 +1893,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            if (ui->spc_cur_mtb_list->count() > 0)
-            {
-                spc_update.append("=============================  " + ui->spc_cur_mtb_list->currentItem()->text() + "  ================================\n");
-            }
-            else
-            {
-                spc_update.append("=============================  MTB 0  ================================\n");
-            }
+            spc_update.append("=============================  " + ui->spc_cur_mtb_list->currentItem()->text() + "  ================================\n");
 
             break; // header
         case 1:
@@ -1919,7 +1911,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==1) {
+    if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==1 && mtbs > 0) {
         ui->spc_cur_mtb_list->setCurrentRow(cur_item_row);
         on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->item(cur_item_row));
     }
@@ -1998,14 +1990,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            if (ui->spc_cur_thruster_list->count() > 0)
-            {
-                spc_update.append("=============================  " + ui->spc_cur_thruster_list->currentItem()->text() + "  ================================\n");
-            }
-            else
-            {
-                spc_update.append("=============================  Thr 0  ================================\n");
-            }
+            spc_update.append("=============================  " + ui->spc_cur_thruster_list->currentItem()->text() + "  ================================\n");
 
             break; // header
         case 1:
@@ -2031,7 +2016,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==2) {
+    if (ui->sections->currentIndex() == 5 && ui->actuator_sections->currentIndex()==2 && thrusters > 0) {
         ui->spc_cur_thruster_list->setCurrentRow(cur_item_row);
         on_spc_cur_thruster_list_itemClicked(ui->spc_cur_thruster_list->item(cur_item_row));
     }
@@ -2132,14 +2117,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            if (ui->spc_cur_gyro_list->count() > 0)
-            {
-                spc_update.append("=============================  " + ui->spc_cur_gyro_list->currentItem()->text() + "  ================================\n");
-            }
-            else
-            {
-                spc_update.append("=============================  Axis 0  ================================\n");
-            }
+            spc_update.append("=============================  " + ui->spc_cur_gyro_list->currentItem()->text() + "  ================================\n");
 
             break; // header
         case 1:
@@ -2185,7 +2163,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==0) {
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==0 && gyros > 0) {
         ui->spc_cur_gyro_list->setCurrentRow(cur_item_row);
         on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->item(cur_item_row));
     }
@@ -2275,14 +2253,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            if (ui->spc_cur_mag_list->count() > 0)
-            {
-                spc_update.append("=============================  " + ui->spc_cur_mag_list->currentItem()->text() + "  ================================\n");
-            }
-            else
-            {
-                spc_update.append("=============================  Axis 0  ================================\n");
-            }
+            spc_update.append("=============================  " + ui->spc_cur_mag_list->currentItem()->text() + "  ================================\n");
 
             break; // header
         case 1:
@@ -2316,7 +2287,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==1) {
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==1 && mags > 0) {
         ui->spc_cur_mag_list->setCurrentRow(cur_item_row);
         on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->item(cur_item_row));
     }
@@ -2405,14 +2376,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            if (ui->spc_cur_css_list->count() > 0)
-            {
-                spc_update.append("=============================  " + ui->spc_cur_css_list->currentItem()->text() + "  ================================\n");
-            }
-            else
-            {
-                spc_update.append("=============================  CSS 0  ================================\n");
-            }
+            spc_update.append("=============================  " + ui->spc_cur_css_list->currentItem()->text() + "  ================================\n");
 
             break; // header
         case 1:
@@ -2446,7 +2410,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==2) {
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==2 && css_s > 0) {
         ui->spc_cur_css_list->setCurrentRow(cur_item_row);
         on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->item(cur_item_row));
     }
@@ -2536,14 +2500,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            if (ui->spc_cur_fss_list->count() > 0)
-            {
-                spc_update.append("=============================  " + ui->spc_cur_fss_list->currentItem()->text() + "  ================================\n");
-            }
-            else
-            {
-                spc_update.append("=============================  FSS 0  ================================\n");
-            }
+            spc_update.append("=============================  " + ui->spc_cur_fss_list->currentItem()->text() + "  ================================\n");
 
             break; // header
         case 1:
@@ -2577,7 +2534,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==3) {
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==3 && fss_s > 0) {
         ui->spc_cur_fss_list->setCurrentRow(cur_item_row);
         on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->item(cur_item_row));
     }
@@ -2671,14 +2628,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            if (ui->spc_cur_strack_list->count() > 0)
-            {
-                spc_update.append("=============================  " + ui->spc_cur_strack_list->currentItem()->text() + "  ================================\n");
-            }
-            else
-            {
-                spc_update.append("=============================  ST 0  ================================\n");
-            }
+            spc_update.append("=============================  " + ui->spc_cur_strack_list->currentItem()->text() + "  ================================\n");
 
             break; // header
         case 1:
@@ -2712,7 +2662,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==4) {
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==4 && stracks > 0) {
         ui->spc_cur_strack_list->setCurrentRow(cur_item_row);
         on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->item(cur_item_row));
     }
@@ -2790,14 +2740,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            if (ui->spc_cur_gps_list->count() > 0)
-            {
-                spc_update.append("=============================  " + ui->spc_cur_gps_list->currentItem()->text() + "  ================================\n");
-            }
-            else
-            {
-                spc_update.append("=============================  GPSR 0  ================================\n");
-            }
+            spc_update.append("=============================  " + ui->spc_cur_gps_list->currentItem()->text() + "  ================================\n");
 
             break; // header
         case 1:
@@ -2827,7 +2770,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==5) {
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==5 && gps_s > 0) {
         ui->spc_cur_gps_list->setCurrentRow(cur_item_row);
         on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->item(cur_item_row));
     }
@@ -2928,14 +2871,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            if (ui->spc_cur_accel_list->count() > 0)
-            {
-                spc_update.append("=============================  " + ui->spc_cur_accel_list->currentItem()->text() + "  ================================\n");
-            }
-            else
-            {
-                spc_update.append("=============================  Axis 0  ================================\n");
-            }
+            spc_update.append("=============================  " + ui->spc_cur_accel_list->currentItem()->text() + "  ================================\n");
 
             break; // header
         case 1:
@@ -2981,7 +2917,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==6) {
+    if (ui->sections->currentIndex() == 6 && ui->sensor_sections->currentIndex()==6 && accels > 0) {
         ui->spc_cur_accel_list->setCurrentRow(cur_item_row);
         on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->item(cur_item_row));
     }
