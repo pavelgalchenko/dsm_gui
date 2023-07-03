@@ -51,6 +51,8 @@ private slots:
 
     void setQComboBox(QComboBox *comboBox, QString string);
 
+    void on_spc_cur_att_param_currentTextChanged(const QString &arg1);
+
 private:
     Ui::SPC_Menu *ui;
 

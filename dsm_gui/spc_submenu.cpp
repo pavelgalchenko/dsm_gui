@@ -1,6 +1,7 @@
 #include "spc_submenu.h"
 #include "ui_spc_submenu.h"
 #include "dsm_gui_lib.h"
+#include "spc_menu.h"
 
 SPC_submenu::SPC_submenu(QWidget *parent):
     QDialog(parent),
@@ -1123,7 +1124,9 @@ void SPC_submenu::on_spc_cur_save_clicked()
 
 void SPC_submenu::on_spc_cur_close_clicked()
 {
-    if (joints_valid == 1) SPC_submenu::close();
+    if (joints_valid == 1) {
+        SPC_submenu::close();
+    }
     else {
         int response = dsm_gui_lib::warning_message("The number of joints must equal number of bodies minus one. Click \"OK\" to disregard this warning and close.");
         if (response == QMessageBox::Cancel) {
@@ -1131,6 +1134,7 @@ void SPC_submenu::on_spc_cur_close_clicked()
         }
         else if (response == QMessageBox::Ok) {
             SPC_submenu::close();
+
         }
     }
 }
@@ -1296,6 +1300,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     if (ui->sections->currentIndex() == 3)
     {
         cur_item_row = ui->spc_cur_body_list->currentRow();
+        if (cur_item_row == -1) return;
 
         for (int line_num = reset_ind_body; line_num<reset_ind_joint; line_num++)
         {
@@ -1459,6 +1464,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     {
 
         cur_item_row = ui->spc_cur_joint_list->currentRow();
+        if (cur_item_row == -1) return;
 
         for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
         {
@@ -1706,6 +1712,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     {
 
         cur_item_row = ui->spc_cur_wheel_list->currentRow();
+        if (cur_item_row == -1) return;
 
         for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
         {
@@ -1830,6 +1837,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     {
 
         cur_item_row = ui->spc_cur_mtb_list->currentRow();
+        if (cur_item_row == -1) return;
 
         for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
         {
@@ -1922,6 +1930,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     {
 
         cur_item_row = ui->spc_cur_thruster_list->currentRow();
+        if (cur_item_row == -1) return;
 
         for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
         {
@@ -2032,6 +2041,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     {
 
         cur_item_row = ui->spc_cur_gyro_list->currentRow();
+        if (cur_item_row == -1) return;
 
         for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
         {
@@ -2178,6 +2188,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     {
 
         cur_item_row = ui->spc_cur_mag_list->currentRow();
+        if (cur_item_row == -1) return;
 
         for (int line_num = reset_ind_mag + mag_headers; line_num<reset_ind_css; line_num++)
         {
@@ -2301,6 +2312,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     {
 
         cur_item_row = ui->spc_cur_css_list->currentRow();
+        if (cur_item_row == -1) return;
 
         for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
         {
@@ -2423,6 +2435,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     {
 
         cur_item_row = ui->spc_cur_fss_list->currentRow();
+        if (cur_item_row == -1) return;
 
         for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
         {
@@ -2547,6 +2560,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     {
 
         cur_item_row = ui->spc_cur_strack_list->currentRow();
+        if (cur_item_row == -1) return;
 
         for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
         {
@@ -2673,6 +2687,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     {
 
         cur_item_row = ui->spc_cur_gps_list->currentRow();
+        if (cur_item_row == -1) return;
 
         for (int line_num = reset_ind_gps + gps_headers; line_num<reset_ind_acc; line_num++)
         {
@@ -2786,6 +2801,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     {
 
         cur_item_row = ui->spc_cur_accel_list->currentRow();
+        if (cur_item_row == -1) return;
 
         for (int line_num = reset_ind_acc + accel_headers; line_num<reset_ind_end; line_num++)
         {
@@ -4006,7 +4022,7 @@ void SPC_submenu::on_spc_cur_joint_param_select_clicked()
 }
 
 
-void SPC_submenu::on_spc_cur_whel_drjit_select_clicked()
+void SPC_submenu::on_spc_cur_wheel_drjit_select_clicked()
 {
     QString file_name = QFileDialog::getOpenFileName(this, tr("Choose Folder"), inout_path, QString(), nullptr,  QFileDialog::DontUseNativeDialog);
 
@@ -4075,7 +4091,7 @@ void SPC_submenu::on_spc_cur_joint_param_clear_clicked()
 }
 
 
-void SPC_submenu::on_pushButton_2_clicked()
+void SPC_submenu::on_spc_cur_wheel_drjit_clear_clicked()
 {
     ui->spc_cur_wheel_drjit_file->setText("");
 }

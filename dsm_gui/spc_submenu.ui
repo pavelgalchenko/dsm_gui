@@ -115,7 +115,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>5</number>
         </property>
         <widget class="QWidget" name="dynamics">
          <attribute name="title">
@@ -1562,14 +1562,14 @@
                   <number>5</number>
                  </property>
                  <item>
-                  <widget class="QPushButton" name="spc_cur_whel_drjit_select">
+                  <widget class="QPushButton" name="spc_cur_wheel_drjit_select">
                    <property name="text">
                     <string>Select</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pushButton_2">
+                  <widget class="QPushButton" name="spc_cur_wheel_drjit_clear">
                    <property name="text">
                     <string>Clear</string>
                    </property>
@@ -3663,8 +3663,8 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_2flex"/>
+  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>

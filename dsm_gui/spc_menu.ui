@@ -90,7 +90,7 @@
       <item>
        <widget class="QTabWidget" name="quick_tabs">
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="general">
          <attribute name="title">
@@ -322,7 +322,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>411</width>
+            <width>420</width>
             <height>511</height>
            </rect>
           </property>

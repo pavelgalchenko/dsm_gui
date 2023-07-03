@@ -111,8 +111,6 @@ private slots:
     void on_spc_cur_flex_select_clicked();
     void on_spc_cur_joint_param_select_clicked();
 
-    void on_spc_cur_whel_drjit_select_clicked();
-
     void on_spc_cur_att_param_currentTextChanged(const QString &arg1);
 
     void on_spc_cur_shaker_clear_clicked();
@@ -123,7 +121,9 @@ private slots:
 
     void on_spc_cur_joint_param_clear_clicked();
 
-    void on_pushButton_2_clicked();
+    void on_spc_cur_wheel_drjit_select_clicked();
+
+    void on_spc_cur_wheel_drjit_clear_clicked();
 
 private:
     Ui::SPC_submenu *ui;
@@ -214,6 +214,9 @@ private:
     long acc_entries = 11;
 
     int joints_valid = 1;
+
+public slots:
+
 
 };
 
