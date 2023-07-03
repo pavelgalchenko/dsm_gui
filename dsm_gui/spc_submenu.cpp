@@ -485,6 +485,9 @@ void SPC_submenu::apply_data()
 
     wheels = spc_data[reset_ind_wheel + 2].toInt();
 
+    wheel_drag = spc_data[reset_ind_wheel + 0].split(QRegExp("\\s"), Qt::SkipEmptyParts)[0];
+    wheel_jitter = spc_data[reset_ind_wheel + 1].split(QRegExp("\\s"), Qt::SkipEmptyParts)[0];
+
     if (wheels == 0) reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries; // SC_Simple has an example wheel
     else reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
 
@@ -532,6 +535,7 @@ void SPC_submenu::apply_data()
                 break;
             }
             if (cur_entry==wheel_entries-1){
+
                 ui->spc_cur_wheel_list->setCurrentRow(cur_item);
                 ui->spc_cur_wheel_list->currentItem()->setData(0, cur_item_name);
                 ui->spc_cur_wheel_list->currentItem()->setData(1, tmp_data);
@@ -1670,29 +1674,13 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     /*************************** WHEELS SECTION ****************************/
     reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
 
-    long num_drjit = 0;
+    spc_update.append("*************************** Wheel Parameters ***************************\n");
 
-    for (int i=0; i<ui->spc_cur_wheel_list->count(); i++)
-    {
-        QString is_none = ui->spc_cur_wheel_list->item(i)->data(1).toStringList()[10];
-        if (QString::compare(is_none, "NONE"))
-        {
-            num_drjit += 1;
-        }
-    }
+    if (!QString::compare(wheel_drag, "FALSE")) spc_update.append("FALSE                         ! Wheel Drag Active\n");
+    else spc_update.append("TRUE                          ! Wheel Drag Active\n");
 
-    if (num_drjit == 0)
-    {
-        spc_update.append("*************************** Wheel Parameters ***************************\n");
-        spc_update.append("FALSE                         ! Wheel Drag Active\n");
-        spc_update.append("FALSE                         ! Wheel Jitter Active\n");
-    }
-    else
-    {
-        spc_update.append("*************************** Wheel Parameters ***************************\n");
-        spc_update.append("TRUE                          ! Wheel Drag Active\n");
-        spc_update.append("TRUE                          ! Wheel Jitter Active\n");
-    }
+    if (!QString::compare(wheel_jitter, "FALSE")) spc_update.append("FALSE                         ! Wheel Jitter Active\n");
+    else spc_update.append("TRUE                          ! Wheel Jitter Active\n");
 
     spc_update.append(dsm_gui_lib::whitespace(QString::number(wheels)) + "! Number of wheels\n");
 
@@ -3267,6 +3255,12 @@ void SPC_submenu::on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item)
 
     if (!QString::compare(current_data[10], "NONE")) ui->spc_cur_wheel_drjit_file->setText("");
     else ui->spc_cur_wheel_drjit_file->setText(current_data[10]);
+
+    if (!QString::compare(wheel_drag, "FALSE")) ui->spc_cur_wheel_glob_drag_off->setChecked(Qt::Checked);
+    else ui->spc_cur_wheel_glob_drag_on->setChecked(Qt::Checked);
+
+    if (!QString::compare(wheel_jitter, "FALSE")) ui->spc_cur_wheel_glob_jitter_off->setChecked(Qt::Checked);
+    else ui->spc_cur_wheel_glob_jitter_on->setChecked(Qt::Checked);
 }
 
 // MTB buttons

@@ -159,6 +159,9 @@ private:
     QStringList spc_file_headers; // section headers in the file
     QStringList spc_file_descrip; // data descriptors in the file
 
+    QString wheel_drag = "FALSE";
+    QString wheel_jitter= "FALSE";
+
     int bodies;
     int joints;
     int wheels;
