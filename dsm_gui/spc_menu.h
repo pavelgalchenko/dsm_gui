@@ -61,11 +61,15 @@ private:
     QString file_path;
     QStringList file_paths;
 
+    QStringList file_paths_default;
+    QStringList spc_names_default;
+
     QStringList spc_names;
     QStringList spc_string;
     QStringList spc_data;
     QStringList spc_update;
     int spc_name_index;
+
 
     QStringList spc_file_headers; // section headers in the file
     QStringList spc_file_descrip; // data descriptors in the file
@@ -73,6 +77,12 @@ private:
     SPC_submenu *spc_submenu;
 
     const QStringList fswid_types = {"PASSIVE_FSW", "PROTOTYPE_FSW", "AD_HOC_FSW", "SPINNER_FSW", "MOMBIAS_FSW", "THREE_AXIS_FSW", "ISS_FSW", "CMG_FSW", "THR_FSW", "DSM_FSW", "CFS_FSW"}; //"PASSIVE_FSW", "PROTOTYPE_FSW", "AD_HOC_FSW", "SPINNER_FSW", "MOMBIAS_FSW", "THREE_AXIS_FSW", "ISS_FSW", "CMG_FSW", "THR_FSW", "DSM_FSW", "CFS_FSW"
+    const QStringList orbit_type = {"FIXED", "EULER_HILL", "ENCKE", "COWELL"};
+    const QStringList pos_wrt_F = {"CM", "ORIGIN"};
+    const QStringList angvel_wrt = {"N", "L"};
+    const QStringList att_params = {"Q", "A"};
+    const QStringList att_wrt = {"N", "L", "F"};
+    const QStringList euler_seq = {"123", "231", "312", "132", "213", "321", "121", "131", "212", "232", "313","323"};
 };
 
 #endif // SPC_Menu_H
