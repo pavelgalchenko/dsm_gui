@@ -115,7 +115,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>5</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="dynamics">
          <attribute name="title">
@@ -352,243 +352,6 @@
               <string>Second Order Flex</string>
              </property>
             </widget>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-        <widget class="QWidget" name="orbit">
-         <attribute name="title">
-          <string>Orbit</string>
-         </attribute>
-         <widget class="QWidget" name="gridLayoutWidget_3">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>10</y>
-            <width>671</width>
-            <height>681</height>
-           </rect>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_4">
-           <property name="leftMargin">
-            <number>12</number>
-           </property>
-           <property name="topMargin">
-            <number>12</number>
-           </property>
-           <property name="rightMargin">
-            <number>12</number>
-           </property>
-           <property name="bottomMargin">
-            <number>12</number>
-           </property>
-           <item row="4" column="0">
-            <spacer name="verticalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="spc_cur_pos_ref"/>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_212">
-             <property name="text">
-              <string>Propagation Type:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_16">
-             <property name="text">
-              <string>Pos wrt Formation [m], in F</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
-             <item>
-              <widget class="QLineEdit" name="spc_cur_xpos_form"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_ypos_form"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_zpos_form"/>
-             </item>
-            </layout>
-           </item>
-           <item row="3" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_9">
-             <item>
-              <widget class="QLineEdit" name="spc_cur_xvel_form"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_yvel_form"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_zvel_form"/>
-             </item>
-            </layout>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="spc_cur_orb_type"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_15">
-             <property name="text">
-              <string>Pos of CM or ORIGIN, wrt F</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_17">
-             <property name="text">
-              <string>Vel wrt Formation [m/s], in F</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </widget>
-        <widget class="QWidget" name="Attitude">
-         <attribute name="title">
-          <string>Attitude</string>
-         </attribute>
-         <widget class="QWidget" name="gridLayoutWidget_13">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>10</y>
-            <width>671</width>
-            <height>681</height>
-           </rect>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_15">
-           <property name="leftMargin">
-            <number>12</number>
-           </property>
-           <property name="topMargin">
-            <number>12</number>
-           </property>
-           <property name="rightMargin">
-            <number>12</number>
-           </property>
-           <property name="bottomMargin">
-            <number>12</number>
-           </property>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_125">
-             <property name="text">
-              <string>Initial Attitude Parameter</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_61">
-             <item>
-              <widget class="QComboBox" name="spc_cur_angvel_frame1"/>
-             </item>
-             <item>
-              <widget class="QComboBox" name="spc_cur_angvel_frame2"/>
-             </item>
-            </layout>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_122">
-             <property name="text">
-              <string>Initial Quaternion</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="label_124">
-             <property name="text">
-              <string>Ang Vel wrt [NL] wrt [NLF]</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QComboBox" name="spc_cur_att_param"/>
-           </item>
-           <item row="1" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_62">
-             <item>
-              <widget class="QLineEdit" name="spc_cur_angvel_1"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_angvel_2"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_angvel_3"/>
-             </item>
-            </layout>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_118">
-             <property name="text">
-              <string>Ang Vel [deg/s]</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_121">
-             <property name="text">
-              <string>Initial Euler Angles [deg], Seq</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_58">
-             <item>
-              <widget class="QLineEdit" name="spc_cur_initeul_1"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_initeul_2"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_initeul_3"/>
-             </item>
-             <item>
-              <widget class="QComboBox" name="spc_cur_initeul_seq"/>
-             </item>
-            </layout>
-           </item>
-           <item row="3" column="1">
-            <layout class="QHBoxLayout" name="horizontalLayout_60">
-             <item>
-              <widget class="QLineEdit" name="spc_cur_q1"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_q2"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_q3"/>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="spc_cur_q4"/>
-             </item>
-            </layout>
-           </item>
-           <item row="5" column="0">
-            <spacer name="verticalSpacer_14">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </widget>
@@ -994,6 +757,9 @@
              <property name="bottomMargin">
               <number>12</number>
              </property>
+             <property name="spacing">
+              <number>-1</number>
+             </property>
              <item row="16" column="1">
               <layout class="QHBoxLayout" name="horizontalLayout_31">
                <item>
@@ -1010,7 +776,7 @@
              <item row="15" column="0">
               <widget class="QLabel" name="label_41">
                <property name="text">
-                <string>Go to Bo Static Angles [deg]</string>
+                <string>Go to Bo Static Angles [deg], Seq</string>
                </property>
                <property name="wordWrap">
                 <bool>true</bool>
@@ -1975,7 +1741,7 @@
                  <item>
                   <widget class="QListWidget" name="spc_cur_thruster_list">
                    <property name="sizePolicy">
-                    <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                    <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
@@ -3772,13 +3538,13 @@
  <connections/>
  <buttongroups>
   <buttongroup name="spc_cur_2flex"/>
-  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>
    </property>
   </buttongroup>
-  <buttongroup name="spc_cur_wheel_glob_drag"/>
   <buttongroup name="spc_cur_wheel_glob_jitter"/>
+  <buttongroup name="spc_cur_wheel_glob_drag"/>
+  <buttongroup name="spc_cur_flex"/>
  </buttongroups>
 </ui>

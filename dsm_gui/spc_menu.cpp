@@ -25,6 +25,10 @@ SPC_Menu::~SPC_Menu()
 
 void SPC_Menu::set_validators()
 {
+    QRegularExpression rx("[^\"]*");
+    QValidator *noQuotes = new QRegularExpressionValidator(rx,this);
+
+    // Combo Boxes
     ui->spc_fswid->addItems(dsm_gui_lib::sortStringList(fswid_types));
 
     ui->spc_cur_orb_type->addItems(dsm_gui_lib::sortStringList(orbit_type));
@@ -35,6 +39,38 @@ void SPC_Menu::set_validators()
     ui->spc_cur_att_param->addItems(dsm_gui_lib::sortStringList(att_params));
 
     ui->spc_cur_initeul_seq->addItems(dsm_gui_lib::sortStringList(euler_seq));
+
+    // Data Type Validators
+    ui->spc_name->setValidator(noQuotes);
+    ui->spc_label->setValidator(noQuotes);
+    ui->spc_desc->setValidator(noQuotes);
+    ui->spc_sprite->setValidator(noQuotes);
+
+    ui->spc_fswsamp->setValidator(new QDoubleValidator(0, INFINITY, 5));
+
+
+    ui->spc_cur_xpos_form->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_ypos_form->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_zpos_form->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+
+    ui->spc_cur_xvel_form->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_yvel_form->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_zvel_form->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+
+
+    ui->spc_cur_angvel_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_angvel_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_angvel_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+
+    ui->spc_cur_q1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_q2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_q3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_q4->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+
+    ui->spc_cur_initeul_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_initeul_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_initeul_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+
 }
 
 void SPC_Menu::receive_spcpath(QString path)
@@ -703,6 +739,7 @@ void SPC_Menu::on_spc_close_clicked()
 
 void SPC_Menu::on_spc_conf_clicked()
 {
+    on_spc_apply_clicked();
     spc_submenu = new SPC_submenu(this);
     spc_submenu->setModal(true);
     spc_submenu->show();
