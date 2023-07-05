@@ -763,11 +763,13 @@ void SIM_Menu::on_simGSMinorBodyNum_textChanged(const QString &arg1) {
 void SIM_Menu::on_simAeroPertShadow_toggled(bool checked) {
     if (checked)
         ui->simAeroPertEn->setChecked(true);
+    ui->simAeroPertEn->setEnabled(!checked);
 }
 
 
 void SIM_Menu::on_simSRPPertShadow_toggled(bool checked) {
     if (checked)
         ui->simSRPPertEn->setChecked(true);
+    ui->simSRPPertEn->setEnabled(!checked);
 }
 
