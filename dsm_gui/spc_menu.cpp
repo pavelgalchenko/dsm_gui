@@ -112,7 +112,7 @@ void SPC_Menu::receive_data()
     // Return everything up to and including ! (exclamation point)
     static QRegularExpression rx1("(.*?)!");
 
-    // Return everything between a set of "   " (quotation marks)
+    // Return everything between a set of "  " (quotation marks)
     static QRegularExpression rx2("\"(.*?)\"");
 
     // If the line does NOT start with an alphanumeric character or " (single quotation), then return the line as first group.
@@ -421,10 +421,10 @@ void SPC_Menu::on_spc_apply_clicked()
             data_inp = ui->spc_cur_pos_ref->currentText();
             break;
         case 10: // Pos wrt Formation (m) expressed in F
-            data_inp = ui->spc_cur_xpos_form->text() + "   " + ui->spc_cur_ypos_form->text() + "   " + ui->spc_cur_zpos_form->text();
+            data_inp = ui->spc_cur_xpos_form->text() + "  " + ui->spc_cur_ypos_form->text() + "  " + ui->spc_cur_zpos_form->text();
             break;
         case 11: // Vel wrt Formation (m) expressed in F
-            data_inp = ui->spc_cur_xvel_form->text() + "   " + ui->spc_cur_yvel_form->text() + "   " + ui->spc_cur_zvel_form->text();
+            data_inp = ui->spc_cur_xvel_form->text() + "  " + ui->spc_cur_yvel_form->text() + "  " + ui->spc_cur_zvel_form->text();
             break;
         case 12: // Initial Attitude Header
             break;
@@ -432,10 +432,10 @@ void SPC_Menu::on_spc_apply_clicked()
             data_inp = ui->spc_cur_angvel_frame1->currentText() + ui->spc_cur_att_param->currentText() + ui->spc_cur_angvel_frame2->currentText();
             break;
         case 14:
-            data_inp = ui->spc_cur_angvel_1->text() + "   " + ui->spc_cur_angvel_2->text() + "   " + ui->spc_cur_angvel_3->text();
+            data_inp = ui->spc_cur_angvel_1->text() + "  " + ui->spc_cur_angvel_2->text() + "  " + ui->spc_cur_angvel_3->text();
             break;
         case 15:
-            data_inp = ui->spc_cur_q1->text() + "   " +  ui->spc_cur_q2->text() + "   " + ui->spc_cur_q3->text() + "   " + ui->spc_cur_q4->text();
+            data_inp = ui->spc_cur_q1->text() + "  " +  ui->spc_cur_q2->text() + "  " + ui->spc_cur_q3->text() + "  " + ui->spc_cur_q4->text();
 
             if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q"))
             {
@@ -465,7 +465,7 @@ void SPC_Menu::on_spc_apply_clicked()
             }
             break;
         case 16:
-            data_inp = ui->spc_cur_initeul_1->text() + "   " + ui->spc_cur_initeul_2->text() + "   " + ui->spc_cur_initeul_3->text() + "   " + ui->spc_cur_initeul_seq->currentText();
+            data_inp = ui->spc_cur_initeul_1->text() + "  " + ui->spc_cur_initeul_2->text() + "  " + ui->spc_cur_initeul_3->text() + "  " + ui->spc_cur_initeul_seq->currentText();
 
             if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q"))
             {
