@@ -10,6 +10,18 @@
     <height>710</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>700</width>
+    <height>710</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>700</width>
+    <height>710</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Simulation Menu</string>
   </property>
@@ -1616,7 +1628,20 @@
        </spacer>
       </item>
       <item>
-       <widget class="QComboBox" name="simTimeMode"/>
+       <widget class="QComboBox" name="simTimeMode">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>80</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -1960,7 +1985,20 @@
        </spacer>
       </item>
       <item>
-       <widget class="QComboBox" name="simEphem"/>
+       <widget class="QComboBox" name="simEphem">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>80</width>
+          <height>16777215</height>
+         </size>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

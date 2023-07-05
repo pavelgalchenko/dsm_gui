@@ -37,7 +37,7 @@ void SIM_Menu::set_validators() {
     ui->simDate->setCalendarPopup(true);
     ui->simDate->setDisplayFormat("MM/dd/yyyy");
     ui->simTime->setTimeSpec(Qt::UTC);
-    ui->simTime->setDisplayFormat("hh:mm:ss.zz");
+    ui->simTime->setDisplayFormat("hh:mm:ss.zzz");
     ui->simLeapSec->setValidator(new QDoubleValidator);
     ui->simF107Ap->addItems(dsm_gui_lib::sortStringList(f107Inputs.values()));
     ui->simF107->setValidator(new QDoubleValidator);
