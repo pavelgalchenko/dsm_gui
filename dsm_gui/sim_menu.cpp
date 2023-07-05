@@ -513,7 +513,7 @@ void SIM_Menu::on_applyButton_clicked() {
             dataInp = ui->simDate->date().toString("MM dd yyyy");
             break;
         case 2:
-            dataInp = ui->simTime->time().toString("HH mm ss.zz");
+            dataInp = ui->simTime->time().toString("HH mm ss.zzz");
             break;
         case 3:
             dataInp = ui->simLeapSec->text();

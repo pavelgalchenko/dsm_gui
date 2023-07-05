@@ -78,6 +78,10 @@ private slots:
 
     void on_simGSMinorBodyNum_textChanged(const QString &arg1);
 
+    void on_simAeroPertShadow_toggled(bool checked);
+
+    void on_simSRPPertShadow_toggled(bool checked);
+
 private:
     Ui::SIM_Menu *ui;
 
