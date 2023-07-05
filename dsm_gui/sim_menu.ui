@@ -568,7 +568,7 @@
         <item>
          <widget class="QLabel" name="label_21">
           <property name="text">
-           <string>Albedo Effects CSS:</string>
+           <string>Albedo Effects on CSS:</string>
           </property>
          </widget>
         </item>
@@ -1732,30 +1732,6 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <item>
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Command Script File:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item>
      <layout class="QHBoxLayout" name="horizontalLayout_9">
       <item>
        <widget class="QLabel" name="label_9">
@@ -1879,7 +1855,7 @@
     <rect>
      <x>10</x>
      <y>660</y>
-     <width>661</width>
+     <width>701</width>
      <height>41</height>
     </rect>
    </property>

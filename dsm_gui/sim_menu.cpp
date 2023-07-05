@@ -16,14 +16,13 @@ SIM_Menu::~SIM_Menu()
 
 void SIM_Menu::set_validators() {
     QRegularExpression rx("[^\"]*");
-    QValidator *noQuotes = new QRegularExpressionValidator(rx,this);
+    QValidator *noQuotes = new QRegularExpressionValidator(rx);
 
     ui->simTimeMode->addItems(dsm_gui_lib::sortStringList(timeModeInputs.values()));
     ui->simSimDur->setValidator(new QDoubleValidator);
     ui->simSimStep->setValidator(new QDoubleValidator);
     ui->simFileInterval->setValidator(new QDoubleValidator);
     ui->simRNGSeed->setValidator(new QIntValidator);
-    // ui->simCmdFile->setValidattor(noQuotes);
 
     ui->simOrbList->setSortingEnabled(true);
     ui->simOrbList->sortItems(Qt::AscendingOrder);
@@ -69,7 +68,7 @@ void SIM_Menu::set_validators() {
 
 void SIM_Menu::receive_simpath(QString path) {
     inoutPath = path;
-    filePath = inoutPath+"Inp_Sim.txt"; // Maybe add ability for multiple sim files?
+    filePath = inoutPath+"Inp_Sim.txt";
 
     receive_data();
     apply_data();
@@ -92,11 +91,12 @@ void SIM_Menu::receive_data() {
     for (int i = 0; i<orbFiles.length(); i++) {
         newKey = orbFiles[i].chopped(4).mid(4);
         orbFileHash.insert(newKey,orbFiles[i].remove("\""));
-        ui->simOrbList->addItem(newKey);
-        ui->simOrbList->findItems(newKey,Qt::MatchExactly).at(0)->setData(Qt::UserRole+0,false);
-        ui->simOrbList->findItems(newKey,Qt::MatchExactly).at(0)->setData(Qt::UserRole+1,-1);
+        QListWidgetItem* newOrb = new QListWidgetItem(newKey);
+        newOrb->setData(orbEnabledRole,false);
+        newOrb->setData(orbNumberRole,-1);
+        ui->simOrbList->addItem(newOrb);
     }
-    ui->simSCOrbit->addItems(orbFileHash.keys());
+    ui->simSCOrbit->addItems(dsm_gui_lib::sortStringList(orbFileHash.keys()));
 
     QStringList scFiles = QDir(inoutPath).entryList({"SC_*"});
 
@@ -106,9 +106,10 @@ void SIM_Menu::receive_data() {
     for (int i = 0; i<scFiles.length(); i++) {
         newKey = scFiles[i].chopped(4).mid(3);
         scFileHash.insert(newKey,scFiles[i].remove("\""));
-        ui->simSCList->addItem(newKey);
-        ui->simSCList->findItems(newKey,Qt::MatchExactly).at(0)->setData(Qt::UserRole+0,false);
-        ui->simSCList->findItems(newKey,Qt::MatchExactly).at(0)->setData(Qt::UserRole+1,"");
+        QListWidgetItem* newSC = new QListWidgetItem(newKey);
+        newSC->setData(scEnabledRole,false);
+        newSC->setData(scOrbNameRole,"");
+        ui->simSCList->addItem(newSC);
     }
 
     // Return everything up to and including ! (exclamation point)
@@ -158,9 +159,9 @@ void SIM_Menu::receive_data() {
             simFileDescrip.append(capture);
         }
     }
-    orbDescription = simFileDescrip[headerLines["ORBITS"]+1].replace(rx4,"%1");
-    scDescription = simFileDescrip[headerLines["SPACECRAFT"]+1].replace(rx4,"%1");
-    gsDescription = simFileDescrip[headerLines["GROUND"]+1];
+    orbDescription = simFileDescrip[headerLines[toString(headerLineNames::ORBITS)]+1].replace(rx4,"%1");
+    scDescription  = simFileDescrip[headerLines[toString(headerLineNames::SPACECRAFT)]+1].replace(rx4,"%1");
+    gsDescription  = simFileDescrip[headerLines[toString(headerLineNames::GROUND)]+1];
 
     file.close();
 }
@@ -177,8 +178,8 @@ void SIM_Menu::apply_data() {
     for(int lineNum=1; lineNum<=simData.length(); lineNum++) {
         line_string = simString[lineNum-1];
         line_items = simData[lineNum-1].remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
-        if (lineNum < headerLines["ORBITS"]) {
-            switch (lineNum-headerLines["CONTROL"]) {
+        if (lineNum < headerLines[toString(headerLineNames::ORBITS)]) {
+            switch (lineNum-headerLines[toString(headerLineNames::CONTROL)]) {
             case 1:
                 setQComboBox(ui->simTimeMode,timeModeInputs.value(line_items[0]));
                 break;
@@ -202,36 +203,34 @@ void SIM_Menu::apply_data() {
                 break;
             }
         }
-        else if (lineNum > headerLines["ORBITS"] && lineNum < headerLines["SPACECRAFT"]) {
+        else if (lineNum > headerLines[toString(headerLineNames::ORBITS)] && lineNum < headerLines[toString(headerLineNames::SPACECRAFT)]) {
             refs = orbFileHash.keys();
-            if (lineNum - headerLines["ORBITS"] >= 2) {
+            if (lineNum - headerLines[toString(headerLineNames::ORBITS)] >= 2) {
                 label = line_items[1].chopped(4).mid(4);
                 if (refs.contains(label)) {
                     item = ui->simOrbList->findItems(label,Qt::MatchExactly).at(0);
-                    item->setData(Qt::UserRole+0,QVariant(line_items[0]).toBool());
-                    item->setData(Qt::UserRole+1,lineNum-headerLines["ORBITS"]-2);
+                    item->setData(orbEnabledRole,QVariant(line_items[0]).toBool());
+                    item->setData(orbNumberRole,lineNum-headerLines[toString(headerLineNames::ORBITS)]-2);
                 }
             }
         }
-        else if (lineNum > headerLines["SPACECRAFT"] && lineNum < headerLines["ENVIRONMENT"]) {
-            // Right now, cannot have duplicate spacecraft in the list
+        else if (lineNum > headerLines[toString(headerLineNames::SPACECRAFT)] && lineNum < headerLines[toString(headerLineNames::ENVIRONMENT)]) {
             refs = scFileHash.keys();
-            if (lineNum - headerLines["SPACECRAFT"] >= 2) {
+            if (lineNum - headerLines[toString(headerLineNames::SPACECRAFT)] >= 2) {
                 label = line_items[2].chopped(4).mid(3);
                 if (refs.contains(label)) {
                     item = ui->simSCList->findItems(label,Qt::MatchExactly).at(0);
-                    item->setData(Qt::UserRole+0,QVariant(line_items[0]).toBool());
+                    item->setData(scEnabledRole,QVariant(line_items[0]).toBool());
                     foreach (QListWidgetItem* orbItem, ui->simOrbList->findItems("*",Qt::MatchWildcard)) {
-                        if (orbItem->data(Qt::UserRole+1).toInt() == line_items[1].toInt()) {
-                            item->setData(Qt::UserRole+1,orbItem->text());
+                        if (orbItem->data(scOrbNameRole).toInt() == line_items[1].toInt()) {
+                            item->setData(scOrbNameRole,orbItem->text());
                         }
-
                 }
                 }
             }
         }
-        else if (lineNum > headerLines["ENVIRONMENT"] && lineNum < headerLines["BODIES"]) {
-            switch (lineNum-headerLines["ENVIRONMENT"]) {
+        else if (lineNum > headerLines[toString(headerLineNames::ENVIRONMENT)] && lineNum < headerLines[toString(headerLineNames::BODIES)]) {
+            switch (lineNum-headerLines[toString(headerLineNames::ENVIRONMENT)]) {
             case 1:
                 ui->simDateTime->setDate(QDate::fromString(line_items[2]+"-"+line_items[0]+"-"+line_items[1],Qt::ISODate));
                 break;
@@ -305,34 +304,33 @@ void SIM_Menu::apply_data() {
                 break;
             }
         }
-        else if (lineNum > headerLines["BODIES"] && lineNum < headerLines["LAGRANGE"]) {
-            switch (lineNum-headerLines["BODIES"]) {
+        else if (lineNum > headerLines[toString(headerLineNames::BODIES)] && lineNum < headerLines[toString(headerLineNames::LAGRANGE)]) {
+            switch (lineNum-headerLines[toString(headerLineNames::BODIES)]) {
             case 1:
                 setQComboBox(ui->simEphem,ephemInputs.value(line_items[0]));
                 break;
             default:
-                celestialBodies[lineNum-headerLines["BODIES"]-2]->setChecked(QVariant(line_items[0]).toBool());
+                celestialBodies[lineNum-headerLines[toString(headerLineNames::BODIES)]-2]->setChecked(QVariant(line_items[0]).toBool());
                 break;
             }
         }
-        else if (lineNum > headerLines["LAGRANGE"] && lineNum < headerLines["GROUND"]) {
-            lagrangeSystems[lineNum-headerLines["LAGRANGE"]-1]->setChecked(QVariant(line_items[0]).toBool());
+        else if (lineNum > headerLines[toString(headerLineNames::LAGRANGE)] && lineNum < headerLines[toString(headerLineNames::GROUND)]) {
+            lagrangeSystems[lineNum-headerLines[toString(headerLineNames::LAGRANGE)]-1]->setChecked(QVariant(line_items[0]).toBool());
         }
-        else if (lineNum > headerLines["GROUND"]) {
-            if (lineNum - headerLines["GROUND"] >=2) {
+        else if (lineNum > headerLines[toString(headerLineNames::GROUND)]) {
+            if (lineNum - headerLines[toString(headerLineNames::GROUND)] >=2) {
                 ui->simGSList->addItem(line_string);
                 item = ui->simGSList->findItems(line_string,Qt::MatchExactly).at(0);
-                item->setData(Qt::UserRole+0,QVariant(line_items[0]).toBool());
-                item->setData(Qt::UserRole+1,line_items[1]);
-                item->setData(Qt::UserRole+2,line_items[2].toDouble());
-                item->setData(Qt::UserRole+3,line_items[3].toDouble());
+                item->setData(gsEnabledRole,QVariant(line_items[0]).toBool());
+                item->setData(gsWorldRole,line_items[1]);
+                item->setData(gsLongRole,line_items[2].toDouble());
+                item->setData(gsLatRole,line_items[3].toDouble());
             }
         }
     }
 }
 
-void SIM_Menu::write_data()
-{
+void SIM_Menu::write_data() {
     QFile::remove(filePath);
     QFile file(filePath);
     if(!file.open(QFile::WriteOnly)) {
@@ -354,7 +352,6 @@ void SIM_Menu::clear_data() {
     ui->simFileInterval->clear();
     ui->simRNGSeed->clear();
     ui->simGraphicsEn->setChecked(false);
-    // ui->simCmdFile->clear();
 
     ui->simOrbList->clear();
     ui->simOrbitEn->setChecked(false);
@@ -396,6 +393,10 @@ void SIM_Menu::clear_data() {
     for (int i=0; i<lagrangeSystems.count(); i++) lagrangeSystems[i]->setChecked(false);
 
     ui->simGSList->clear();
+    ui->simGSEn->setChecked(false);
+    ui->simGSLat->clear();
+    ui->simGSLong->clear();
+    ui->simGSLabel->clear();
 
     orbFileHash.clear();
     scFileHash.clear();
@@ -432,10 +433,19 @@ void SIM_Menu::on_applyButton_clicked() {
     QStringList refs;
     QString dataInp;
 
-    simUpdate.append(simFileHeaders[headerLines["HEADER"]-1]);
-    simUpdate.append(simFileHeaders[headerLines["CONTROL"]-1]);
+    simUpdate.append(simFileHeaders[headerLines[toString(headerLineNames::HEADER)]-1]);
+    simUpdate.append(simFileHeaders[headerLines[toString(headerLineNames::CONTROL)]-1]);
 
-    for (int lineNum=1; lineNum<headerLines["ORBITS"]-headerLines["CONTROL"]; lineNum++) {
+    // enable orbits associated with enabled spacecraft
+    foreach (QListWidgetItem* scItem, ui->simSCList->findItems("*",Qt::MatchWildcard)) {
+        if (scItem->data(scEnabledRole).toBool()) {
+            QString scOrb = scItem->data(scOrbNameRole).toString();
+            QListWidgetItem* orbItem = ui->simOrbList->findItems(scOrb,Qt::MatchExactly).at(0);
+            orbItem->setData(orbEnabledRole,true);
+        }
+    }
+
+    for (int lineNum=1; lineNum<headerLines[toString(headerLineNames::ORBITS)]-headerLines[toString(headerLineNames::CONTROL)]; lineNum++) {
         switch (lineNum) {
         case 1:
             dataInp = timeModeInputs.key(ui->simTimeMode->currentText());
@@ -450,7 +460,7 @@ void SIM_Menu::on_applyButton_clicked() {
             dataInp = ui->simRNGSeed->text();
             break;
         case 5:
-            dataInp = QVariant(ui->simGraphicsEn->isChecked()).toString().toUpper();
+            dataInp = toString(ui->simGraphicsEn);
             break;
         case 6:
             dataInp = "Inp_Cmd.txt";
@@ -458,38 +468,37 @@ void SIM_Menu::on_applyButton_clicked() {
         default:
             break;
         }
-        simUpdate.append(dsm_gui_lib::whitespace(dataInp)+simFileDescrip[lineNum-1+headerLines["CONTROL"]]);
+        simUpdate.append(dsm_gui_lib::whitespace(dataInp)+simFileDescrip[lineNum-1+headerLines[toString(headerLineNames::CONTROL)]]);
     }
 
-    simUpdate.append(simFileHeaders[headerLines["ORBITS"]-1]);
+    simUpdate.append(simFileHeaders[headerLines[toString(headerLineNames::ORBITS)]-1]);
     dataInp = dsm_gui_lib::whitespace(QString::number(ui->simOrbList->count()));
-    simUpdate.append(dataInp+simFileDescrip[headerLines["ORBITS"]]);
+    simUpdate.append(dataInp+simFileDescrip[headerLines[toString(headerLineNames::ORBITS)]]);
     for (int i=0; i<ui->simOrbList->count(); i++) {
         QListWidgetItem* curItem = ui->simOrbList->item(i);
 
-        curItem->setData(Qt::UserRole+1,i); // so Spacecraft can reference the number
-        dataInp  = curItem->data(Qt::UserRole+0).toString().toUpper() + "  ";
+        curItem->setData(orbNumberRole,i); // so Spacecraft can reference the number
+        dataInp  = curItem->data(orbEnabledRole).toString().toUpper() + "  ";
         dataInp += orbFileHash[curItem->text()];
 
         simUpdate.append(dsm_gui_lib::whitespace(dataInp)+orbDescription.arg(i));
     }
-
-    simUpdate.append(simFileHeaders[headerLines["SPACECRAFT"]-1]);
+    simUpdate.append(simFileHeaders[headerLines[toString(headerLineNames::SPACECRAFT)]-1]);
     dataInp = dsm_gui_lib::whitespace(QString::number(ui->simSCList->count()));
-    simUpdate.append(dataInp+simFileDescrip[headerLines["SPACECRAFT"]]);
+    simUpdate.append(dataInp+simFileDescrip[headerLines[toString(headerLineNames::SPACECRAFT)]]);
     for (int i=0; i<ui->simSCList->count(); i++) {
         QListWidgetItem* curItem = ui->simSCList->item(i);
 
-        dataInp  = curItem->data(Qt::UserRole+0).toString().toUpper() + "  ";
-        dataInp += ui->simOrbList->findItems(curItem->data(Qt::UserRole+1).toString(),Qt::MatchExactly).at(0)->data(Qt::UserRole+1).toString() + "  ";
+        dataInp  = curItem->data(scEnabledRole).toString().toUpper() + "  ";
+        dataInp += ui->simOrbList->findItems(curItem->data(scOrbNameRole).toString(),Qt::MatchExactly).at(0)->data(scOrbNameRole).toString() + "  ";
         dataInp += scFileHash[curItem->text()];
 
         simUpdate.append(dsm_gui_lib::whitespace(dataInp)+scDescription.arg(i));
     }
 
-    simUpdate.append(simFileHeaders[headerLines["ENVIRONMENT"]-1]);
+    simUpdate.append(simFileHeaders[headerLines[toString(headerLineNames::ENVIRONMENT)]-1]);
 
-    for (int lineNum=1; lineNum<headerLines["BODIES"]-headerLines["ENVIRONMENT"]; lineNum++) {
+    for (int lineNum=1; lineNum<headerLines[toString(headerLineNames::BODIES)]-headerLines[toString(headerLineNames::ENVIRONMENT)]; lineNum++) {
         switch (lineNum) {
         case 1:
             dataInp = ui->simDateTime->date().toString("MM dd yyyy");
@@ -510,7 +519,7 @@ void SIM_Menu::on_applyButton_clicked() {
             dataInp = ui->simAp->text();
             break;
         case 7:
-            dataInp = ui->simMagfieldType->currentText();
+            dataInp = magfieldInputs.key(ui->simMagfieldType->currentText());
             break;
         case 8:
             dataInp = ui->simIGRFDegree->text() + "  " + ui->simIGRFOrder->text();
@@ -525,65 +534,65 @@ void SIM_Menu::on_applyButton_clicked() {
             dataInp = ui->simLunaHarmN->text() + "  " + ui->simLunaHarmM->text();
             break;
         case 12:
-            dataInp = QVariant(ui->simAeroPertEn->isChecked()).toString().toUpper() + "  ";
-            dataInp += QVariant(ui->simAeroPertShadow->isChecked()).toString().toUpper();
+            dataInp = toString(ui->simAeroPertEn) + "  ";
+            dataInp += toString(ui->simAeroPertShadow);
             break;
         case 13:
-            dataInp = QVariant(ui->simGravGradientEn->isChecked()).toString().toUpper();
+            dataInp = toString(ui->simGravGradientEn);
             break;
         case 14:
-            dataInp = QVariant(ui->simSRPPertEn->isChecked()).toString().toUpper() + "  ";
-            dataInp += QVariant(ui->simSRPPertShadow->isChecked()).toString().toUpper();
+            dataInp = toString(ui->simSRPPertEn) + "  ";
+            dataInp += toString(ui->simSRPPertShadow);
             break;
         case 15:
-            dataInp = QVariant(ui->simResidualMagEn->isChecked()).toString().toUpper();
+            dataInp = toString(ui->simResidualMagEn);
             break;
         case 16:
-            dataInp = QVariant(ui->simGravPertEn->isChecked()).toString().toUpper();
+            dataInp = toString(ui->simGravPertEn);
             break;
         case 17:
-            dataInp = QVariant(ui->simThrusterPlumeEn->isChecked()).toString().toUpper();
+            dataInp = toString(ui->simThrusterPlumeEn);
             break;
         case 18:
-            dataInp = QVariant(ui->simContactEn->isChecked()).toString().toUpper();
+            dataInp = toString(ui->simContactEn);
             break;
         case 19:
-            dataInp = QVariant(ui->simSloshEn->isChecked()).toString().toUpper();
+            dataInp = toString(ui->simSloshEn);
             break;
         case 20:
-            dataInp = QVariant(ui->simAlbedoEn->isChecked()).toString().toUpper();
+            dataInp = toString(ui->simAlbedoEn);
             break;
         case 21:
-            dataInp = QVariant(ui->simOutputTorqueEn->isChecked()).toString().toUpper();
+            dataInp = toString(ui->simOutputTorqueEn);
             break;
         default:
             break;
         }
-        simUpdate.append(dsm_gui_lib::whitespace(dataInp)+simFileDescrip[lineNum-1+headerLines["ENVIRONMENT"]]);
+        simUpdate.append(dsm_gui_lib::whitespace(dataInp)+simFileDescrip[lineNum-1+headerLines[toString(headerLineNames::ENVIRONMENT)]]);
     }
 
-    simUpdate.append(simFileHeaders[headerLines["BODIES"]-1]);
+    simUpdate.append(simFileHeaders[headerLines[toString(headerLineNames::BODIES)]-1]);
     dataInp = dsm_gui_lib::whitespace(ephemInputs.key(ui->simEphem->currentText()));
-    simUpdate.append(dataInp+simFileDescrip[headerLines["BODIES"]]);
+    simUpdate.append(dataInp+simFileDescrip[headerLines[toString(headerLineNames::BODIES)]]);
     for (int i = 0; i<celestialBodies.count(); i++) {
-        dataInp = QVariant(celestialBodies[i]->isChecked()).toString().toUpper();
-        simUpdate.append(dsm_gui_lib::whitespace(dataInp)+simFileDescrip[i+headerLines["BODIES"]+1]);
+        dataInp = toString(celestialBodies[i]);
+        simUpdate.append(dsm_gui_lib::whitespace(dataInp)+simFileDescrip[i+headerLines[toString(headerLineNames::BODIES)]+1]);
     }
 
-    simUpdate.append(simFileHeaders[headerLines["LAGRANGE"]-1]);
+    simUpdate.append(simFileHeaders[headerLines[toString(headerLineNames::LAGRANGE)]-1]);
     for (int i = 0; i<lagrangeSystems.count(); i++) {
         dataInp = QVariant(lagrangeSystems[i]->isChecked()).toString().toUpper();
-        simUpdate.append(dsm_gui_lib::whitespace(dataInp)+simFileDescrip[i+headerLines["LAGRANGE"]]);
+        simUpdate.append(dsm_gui_lib::whitespace(dataInp)+simFileDescrip[i+headerLines[toString(headerLineNames::LAGRANGE)]]);
     }
 
-    simUpdate.append(simFileHeaders[headerLines["GROUND"]-1]);
+    simUpdate.append(simFileHeaders[headerLines[toString(headerLineNames::GROUND)]-1]);
     dataInp = dsm_gui_lib::whitespace(QString::number(ui->simGSList->count()));
-    simUpdate.append(dataInp+simFileDescrip[headerLines["GROUND"]]);
+    simUpdate.append(dataInp+simFileDescrip[headerLines[toString(headerLineNames::GROUND)]]);
     for (int i=0; i<ui->simGSList->count(); i++) {
         QListWidgetItem* curItem = ui->simGSList->item(i);
-        dataInp = curItem->data(Qt::UserRole+0).toString().toUpper() + " ";
-        for (int j=1; j<4; j++)
-            dataInp += curItem->data(Qt::UserRole+j).toString() + " ";
+        dataInp = curItem->data(gsEnabledRole).toString().toUpper() + " ";
+        for (int j=gsWorldRole; j<=gsLatRole; j++)
+            dataInp += curItem->data(j).toString() + " ";
         dataInp += "\"" + curItem->text() + "\"";
 
         simUpdate.append(dsm_gui_lib::whitespace(dataInp)+gsDescription);
@@ -599,65 +608,138 @@ void SIM_Menu::setQComboBox(QComboBox *comboBox, QString string) {
 QStringList SIM_Menu::getTextFromList(QListWidget *list){
     QStringList output;
     foreach(QListWidgetItem *item, list->findItems("*",Qt::MatchWildcard))
-        output.append(item->text());
+        output << item->text();
     output.sort(Qt::CaseInsensitive);
     return output;
 }
 
 
 void SIM_Menu::on_simOrbList_itemClicked(QListWidgetItem *item) {
-    ui->simOrbitEn->setChecked(item->data(Qt::UserRole+0).toBool());
+    ui->simOrbitEn->setChecked(item->data(orbEnabledRole).toBool());
 }
 
 void SIM_Menu::on_simOrbitEn_toggled(bool checked) {
     if (ui->simOrbList->currentRow()==-1) return;
-    ui->simOrbList->currentItem()->setData(Qt::UserRole+0,checked);
+    ui->simOrbList->currentItem()->setData(orbEnabledRole,checked);
 }
 
 void SIM_Menu::on_simSCList_itemClicked(QListWidgetItem *item) {
-    ui->simSCEn->setChecked(item->data(Qt::UserRole+0).toBool());
-    ui->simSCOrbit->setCurrentText(item->data(Qt::UserRole+1).toString());
+    ui->simSCEn->setChecked(item->data(scEnabledRole).toBool());
+    ui->simSCOrbit->setCurrentText(item->data(scOrbNameRole).toString());
 }
 
 void SIM_Menu::on_simSCEn_toggled(bool checked) {
     if (ui->simSCList->currentRow()==-1) return;
-    ui->simSCList->currentItem()->setData(Qt::UserRole+0,checked);
+    ui->simSCList->currentItem()->setData(scEnabledRole,checked);
 }
 
 void SIM_Menu::on_simSCOrbit_currentTextChanged(const QString &arg1) {
     if (ui->simSCList->currentRow()==-1) return;
-    ui->simSCList->currentItem()->setData(Qt::UserRole+1,arg1);
+    ui->simSCList->currentItem()->setData(scOrbNameRole,arg1);
 }
 
 void SIM_Menu::on_simGSList_itemClicked(QListWidgetItem *item) {
-    ui->simGSEn->setChecked(item->data(Qt::UserRole+0).toBool());
-    ui->simGSWorld->setCurrentText(item->data(Qt::UserRole+1).toString());
-    ui->simGSLong->setText(item->data(Qt::UserRole+2).toString());
-    ui->simGSLat->setText(item->data(Qt::UserRole+3).toString());
+    ui->simGSEn->setChecked(item->data(gsEnabledRole).toBool());
+    ui->simGSWorld->setCurrentText(item->data(gsWorldRole).toString());
+    ui->simGSLat->setText(item->data(gsLatRole).toString());
+    ui->simGSLong->setText(item->data(gsLongRole).toString());
     ui->simGSLabel->setText(item->text());
 }
 
 void SIM_Menu::on_simGSEn_toggled(bool checked) {
     if (ui->simGSList->currentRow()==-1) return;
-    ui->simGSList->currentItem()->setData(Qt::UserRole+0,checked);
+    ui->simGSList->currentItem()->setData(gsEnabledRole,checked);
 }
 
 void SIM_Menu::on_simGSWorld_currentTextChanged(const QString &arg1) {
     if (ui->simGSList->currentRow()==-1) return;
-    ui->simGSList->currentItem()->setData(Qt::UserRole+1,arg1);
+    ui->simGSList->currentItem()->setData(gsWorldRole,arg1);
 }
 
 void SIM_Menu::on_simGSLat_textEdited(const QString &arg1) {
     if (ui->simGSList->currentRow()==-1) return;
-    ui->simGSList->currentItem()->setData(Qt::UserRole+2,arg1.toDouble());
+    ui->simGSList->currentItem()->setData(gsLatRole,arg1.toDouble());
 }
 
 void SIM_Menu::on_simGSLong_textEdited(const QString &arg1) {
     if (ui->simGSList->currentRow()==-1) return;
-    ui->simGSList->currentItem()->setData(Qt::UserRole+3,arg1.toDouble());
+    ui->simGSList->currentItem()->setData(gsLongRole,arg1.toDouble());
 }
 
 void SIM_Menu::on_simGSLabel_textEdited(const QString &arg1) {
     if (ui->simGSList->currentRow()==-1) return;
     ui->simGSList->currentItem()->setText(arg1);
 }
+
+void SIM_Menu::on_simGSListRemove_clicked() {
+    int removeItem = ui->simGSList->currentRow();
+    QString removeGS;
+    if (removeItem == -1) return;
+    else {
+        removeGS = ui->simGSList->currentItem()->text();
+        ui->simGSList->takeItem(removeItem);
+        ui->simGSList->setCurrentRow(-1);
+    }
+}
+
+void SIM_Menu::on_simGSListAdd_clicked() {
+    QString newGS = "GSFC";
+    QStringList curGSNames = getTextFromList(ui->simGSList);
+
+    if (ui->simGSList->count() != 0) {
+        for(int i = 0; i <= 50; i++) {
+            QString newGSTest = newGS;
+            if (i>0) newGSTest += "_" + QString::number(i);
+            if (!curGSNames.contains(newGSTest)) {
+                newGS = newGSTest;
+                break;
+            }
+            if (i==50) return; // Nothing happens if too many
+        }
+    }
+
+    QListWidgetItem* newGSItem = new QListWidgetItem(newGS);
+    newGSItem->setData(gsEnabledRole,true);
+    newGSItem->setData(gsWorldRole,"EARTH");
+    newGSItem->setData(gsLongRole,-76.852);
+    newGSItem->setData(gsLatRole,38.995);
+    ui->simGSList->addItem(newGSItem);
+
+}
+
+void SIM_Menu::on_simGSListDuplicate_clicked() {
+    int index = ui->simGSList->currentRow();
+    QListWidgetItem* curItem = ui->simGSList->currentItem();
+    QStringList curGSNames = getTextFromList(ui->simGSList);
+
+    if (index == -1) return;
+    QString oldGS = curItem->text();
+    QString newGS = oldGS +"_Copy";
+    for(int i = 0; i <= 30; i++) {
+        QString newGSTest = newGS;
+        if(i>0) newGSTest += "_" + QString::number(i);
+        if(!curGSNames.contains(newGSTest)) {
+            newGS = newGSTest;
+            break;
+        }
+    }
+    QListWidgetItem* newItem = curItem->clone();
+    newItem->setText(newGS);
+    ui->simGSList->addItem(newItem);
+
+}
+
+void SIM_Menu::on_simF107Ap_currentTextChanged(const QString &arg1) {
+    bool isUser = arg1 == f107Inputs["USER"];
+    ui->simF107->setEnabled(isUser);
+    ui->simAp->setEnabled(isUser);
+    ui->simUserF107ApLabel->setEnabled(isUser);
+}
+
+void SIM_Menu::on_simMagfieldType_currentTextChanged(const QString &arg1) {
+    bool isIGRF = arg1 == magfieldInputs["IGRF"];
+    ui->simIGRFDegree->setEnabled(isIGRF);
+    ui->simIGRFOrder->setEnabled(isIGRF);
+    ui->simIGRFLabel->setEnabled(isIGRF);
+}
+

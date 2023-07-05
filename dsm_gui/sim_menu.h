@@ -9,6 +9,7 @@
 #include <QRadioButton>
 #include <QComboBox>
 #include <QListWidget>
+#include <QCheckBox>
 
 namespace Ui {
 class SIM_Menu;
@@ -61,6 +62,20 @@ private slots:
 
     void on_simGSLabel_textEdited(const QString &arg1);
 
+    QString toString(QCheckBox* box) {
+        return QVariant(box->isChecked()).toString().toUpper();
+    }
+
+    void on_simGSListRemove_clicked();
+
+    void on_simGSListAdd_clicked();
+
+    void on_simGSListDuplicate_clicked();
+
+    void on_simF107Ap_currentTextChanged(const QString &arg1);
+
+    void on_simMagfieldType_currentTextChanged(const QString &arg1);
+
 private:
     Ui::SIM_Menu *ui;
 
@@ -104,14 +119,56 @@ private:
                                                  {"DE430", "DE430"},
                                                  {"DE440", "DE440"}};
 
-    QHash<QString, int> headerLines = {{"HEADER",-1},
-                                      {"CONTROL",-1},
-                                      {"ORBITS",-1},
-                                      {"SPACECRAFT",-1},
-                                      {"ENVIRONMENT",-1},
-                                      {"BODIES",-1},
-                                      {"LAGRANGE",-1},
-                                      {"GROUND",-1}};
+    enum class headerLineNames { // Doing this as a class so the values can be used as variables elsewhere
+        HEADER,
+        CONTROL,
+        ORBITS,
+        SPACECRAFT,
+        ENVIRONMENT,
+        BODIES,
+        LAGRANGE,
+        GROUND
+    };
+
+    // Here is the only place that we need to change text if inp sim headers change
+    static QString toString(const headerLineNames h) {
+        switch (h) {
+        case headerLineNames::HEADER: return "HEADER";
+        case headerLineNames::CONTROL: return "CONTROL";
+        case headerLineNames::ORBITS: return "ORBITS";
+        case headerLineNames::SPACECRAFT: return "SPACECRAFT";
+        case headerLineNames::ENVIRONMENT: return "ENVIRONMENT";
+        case headerLineNames::BODIES: return "BODIES";
+        case headerLineNames::LAGRANGE: return "LAGRANGE";
+        case headerLineNames::GROUND: return "GROUND";
+        }
+    }
+
+    enum orbListData {
+        orbEnabledRole = Qt::UserRole,
+        orbNumberRole
+    };
+
+    enum scListData {
+        scEnabledRole = Qt::UserRole,
+        scOrbNameRole
+    };
+
+    enum gsListData {
+        gsEnabledRole = Qt::UserRole,
+        gsWorldRole,
+        gsLongRole,
+        gsLatRole
+    };
+
+    QHash<QString, int> headerLines = {{toString(headerLineNames::HEADER),-1},
+                                       {toString(headerLineNames::CONTROL),-1},
+                                       {toString(headerLineNames::ORBITS),-1},
+                                       {toString(headerLineNames::SPACECRAFT),-1},
+                                       {toString(headerLineNames::ENVIRONMENT),-1},
+                                       {toString(headerLineNames::BODIES),-1},
+                                       {toString(headerLineNames::LAGRANGE),-1},
+                                       {toString(headerLineNames::GROUND),-1}};
 
     QHash<QString, QString> orbFileHash;
     QHash<QString, QString> scFileHash;
