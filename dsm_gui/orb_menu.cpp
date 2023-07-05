@@ -649,6 +649,7 @@ void ORB_Menu::on_applyButton_clicked() {
             orb_update.append(orb_file_headers[line_num-1]);
     }
 
+    global_orb_index = ui->orbList->currentRow();
     write_data(file_path);
 }
 
