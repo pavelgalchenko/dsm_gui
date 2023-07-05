@@ -380,11 +380,13 @@ void ORB_Menu::on_orbListAdd_clicked()
 {
 
     QString newOrb = "New";
+
+    QStringList orbFileHashKeys = orbFileHash.keys();
     if (ui->orbList->count() != 0) {
         for(int i = 0; i <= 50; i++) {
             QString newOrbTest = newOrb;
             if (i>0) newOrbTest += "_" + QString::number(i);
-            if (!orbFileHash.contains(newOrbTest)) {
+            if (!orbFileHashKeys.contains(newOrbTest,Qt::CaseInsensitive)) {
                 newOrb = newOrbTest;
                 break;
             }
@@ -474,9 +476,10 @@ void ORB_Menu::on_applyButton_clicked() {
 
     QString oldOrb = ui->orbList->currentItem()->text();
     QString oldOrbFile = orbFileHash.take(oldOrb);
+    QStringList orbFileHashKeys = orbFileHash.keys();
 
     QString newLabel = ui->orbLabel->text();
-    if (orbFileHash.contains(newLabel)) {
+    if (orbFileHashKeys.contains(newLabel,Qt::CaseInsensitive)) {
         dsm_gui_lib::warning_message("Orbit \"" + newLabel + "\" already exists. Orbit names are NOT case sensitive.");
         orbFileHash.insert(oldOrb,oldOrbFile);
         return;
@@ -653,8 +656,7 @@ void ORB_Menu::on_applyButton_clicked() {
     write_data(file_path);
 }
 
-void ORB_Menu::clear_data()
-{    
+void ORB_Menu::clear_data() {
     // If ui->orbList->currentRow()==1, set all fields to blank
     if (ui->orbList->currentRow()!=-1) return;
 
@@ -793,10 +795,11 @@ void ORB_Menu::on_orbListDuplicate_clicked() {
     if (index == -1) return;
     QString oldOrb = ui->orbList->currentItem()->text();
     QString newOrb = oldOrb +"_Copy";
+    QStringList orbFileHashKeys = orbFileHash.keys();
     for(int i = 0; i <= 30; i++) {
         QString newOrbTest = newOrb;
-        if(i>0) newOrbTest += "_" + QString::number(i);
-        if(!orbFileHash.contains(newOrbTest)) {
+        if (i>0) newOrbTest += "_" + QString::number(i);
+        if (!orbFileHashKeys.contains(newOrbTest,Qt::CaseInsensitive)) {
             newOrb = newOrbTest;
             break;
         }
