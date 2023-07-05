@@ -696,7 +696,7 @@ void SIM_Menu::on_simGSListRemove_clicked() {
 }
 
 void SIM_Menu::on_simGSListAdd_clicked() {
-    QString newGS = "GSFC";
+    QString newGS = "GroundStation";
     QStringList curGSNames = getTextFromList(ui->simGSList);
 
     if (ui->simGSList->count() != 0) {
