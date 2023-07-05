@@ -759,3 +759,15 @@ void SIM_Menu::on_simMagfieldType_currentTextChanged(const QString &arg1) {
 void SIM_Menu::on_simGSMinorBodyNum_textChanged(const QString &arg1) {
     ui->simGSList->currentItem()->setData(gsWorldRole,"MINORBODY_"+arg1);
 }
+
+void SIM_Menu::on_simAeroPertShadow_toggled(bool checked) {
+    if (checked)
+        ui->simAeroPertEn->setChecked(true);
+}
+
+
+void SIM_Menu::on_simSRPPertShadow_toggled(bool checked) {
+    if (checked)
+        ui->simSRPPertEn->setChecked(true);
+}
+
