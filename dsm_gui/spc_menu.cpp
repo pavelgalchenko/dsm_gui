@@ -83,17 +83,11 @@ void SPC_Menu::receive_spcpath(QString path)
         spc_names.append(spcFiles[i].chopped(4).mid(3)); // Everything between "SC_" and ".txt"
     }
 
-    //file_paths.sort();
-    //spc_names.sort();
-
     QStringList spcDefaultFiles = QDir(inout_path+"__default__/").entryList({"SC_*"});
     for (int i = 0; i<spcDefaultFiles.length(); i++) {
         file_paths_default.append(inout_path+"__default__/"+spcDefaultFiles[i]); // Full file path of SC file
         spc_names_default.append(spcDefaultFiles[i].chopped(4).mid(3)); // Everything between "SC_" and ".txt"
     }
-
-    //file_paths_default.sort();
-    //spc_names_default.sort();
 
     ui->spc_list->clear();
     for(int i=0; i<file_paths.length();i++) {
@@ -118,7 +112,7 @@ void SPC_Menu::receive_data()
     // Return everything up to and including ! (exclamation point)
     static QRegularExpression rx1("(.*?)!");
 
-    // Return everything between a set of " " (quotation marks)
+    // Return everything between a set of "   " (quotation marks)
     static QRegularExpression rx2("\"(.*?)\"");
 
     // If the line does NOT start with an alphanumeric character or " (single quotation), then return the line as first group.
@@ -241,8 +235,8 @@ void SPC_Menu::apply_data()
                 break;
             }
         }
-        ui->spc_list->currentItem()->setData(0, spc_names[spc_name_index]);
-        ui->spc_list->currentItem()->setData(1, tmp_data);
+        ui->spc_list->currentItem()->setData(256, spc_names[spc_name_index]);
+        ui->spc_list->currentItem()->setData(257, tmp_data);
 
     }
 
@@ -389,11 +383,11 @@ void SPC_Menu::on_spc_apply_clicked()
         }
     }
 
-    ui->spc_list->currentItem()->setData(1, tmp_data);
+    ui->spc_list->currentItem()->setData(257, tmp_data);
 
     tmp_data.clear();
 
-    QStringList current_data = ui->spc_list->currentItem()->data(1).toStringList();
+    QStringList current_data = ui->spc_list->currentItem()->data(257).toStringList();
 
     for(int line_num=1; line_num<17; line_num++)
     { // append data from "general" information
@@ -405,7 +399,7 @@ void SPC_Menu::on_spc_apply_clicked()
             data_inp = current_data[0];
             break;
         case 3:
-            data_inp = current_data[1];
+            data_inp = "\"" + current_data[1] + "\"";
             break;
         case 4:
             data_inp = current_data[2];
@@ -427,10 +421,10 @@ void SPC_Menu::on_spc_apply_clicked()
             data_inp = ui->spc_cur_pos_ref->currentText();
             break;
         case 10: // Pos wrt Formation (m) expressed in F
-            data_inp = ui->spc_cur_xpos_form->text() + " " + ui->spc_cur_ypos_form->text() + " " + ui->spc_cur_zpos_form->text();
+            data_inp = ui->spc_cur_xpos_form->text() + "   " + ui->spc_cur_ypos_form->text() + "   " + ui->spc_cur_zpos_form->text();
             break;
         case 11: // Vel wrt Formation (m) expressed in F
-            data_inp = ui->spc_cur_xvel_form->text() + " " + ui->spc_cur_yvel_form->text() + " " + ui->spc_cur_zvel_form->text();
+            data_inp = ui->spc_cur_xvel_form->text() + "   " + ui->spc_cur_yvel_form->text() + "   " + ui->spc_cur_zvel_form->text();
             break;
         case 12: // Initial Attitude Header
             break;
@@ -438,10 +432,10 @@ void SPC_Menu::on_spc_apply_clicked()
             data_inp = ui->spc_cur_angvel_frame1->currentText() + ui->spc_cur_att_param->currentText() + ui->spc_cur_angvel_frame2->currentText();
             break;
         case 14:
-            data_inp = ui->spc_cur_angvel_1->text() + " " + ui->spc_cur_angvel_2->text() + " " + ui->spc_cur_angvel_3->text();
+            data_inp = ui->spc_cur_angvel_1->text() + "   " + ui->spc_cur_angvel_2->text() + "   " + ui->spc_cur_angvel_3->text();
             break;
         case 15:
-            data_inp = ui->spc_cur_q1->text() + " " +  ui->spc_cur_q2->text() + " " + ui->spc_cur_q3->text() + " " + ui->spc_cur_q4->text();
+            data_inp = ui->spc_cur_q1->text() + "   " +  ui->spc_cur_q2->text() + "   " + ui->spc_cur_q3->text() + "   " + ui->spc_cur_q4->text();
 
             if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q"))
             {
@@ -471,7 +465,7 @@ void SPC_Menu::on_spc_apply_clicked()
             }
             break;
         case 16:
-            data_inp = ui->spc_cur_initeul_1->text() + " " + ui->spc_cur_initeul_2->text() + " " + ui->spc_cur_initeul_3->text() + " " + ui->spc_cur_initeul_seq->currentText();
+            data_inp = ui->spc_cur_initeul_1->text() + "   " + ui->spc_cur_initeul_2->text() + "   " + ui->spc_cur_initeul_3->text() + "   " + ui->spc_cur_initeul_seq->currentText();
 
             if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q"))
             {
@@ -559,8 +553,13 @@ void SPC_Menu::write_data()
 
 void SPC_Menu::on_spc_add_clicked() // Add S/C
 {
-
+    int dup_counter = 0;
     QString new_name = "Simple_"+QString::number(ui->spc_list->count());
+    while (spc_names.indexOf(new_name) > 0)
+    {
+        dup_counter++;
+        new_name = "Simple_"+QString::number(ui->spc_list->count() + dup_counter);
+    }
 
     QStringList tmp_data = {};
 
@@ -597,8 +596,8 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
     ui->spc_list->addItem(new_name);
     ui->spc_list->setCurrentRow(ui->spc_list->count()-1);
 
-    ui->spc_list->currentItem()->setData(0, new_name);
-    ui->spc_list->currentItem()->setData(1, tmp_data);
+    ui->spc_list->currentItem()->setData(256, new_name);
+    ui->spc_list->currentItem()->setData(257, tmp_data);
     on_spc_list_itemClicked(ui->spc_list->currentItem());
 
     spc_names.append(new_name);
@@ -613,15 +612,24 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
     int remove_Item = ui->spc_list->currentRow();
     if(remove_Item == -1) return;
     else{
-        delete ui->spc_list->item(remove_Item);
+        if (ui->spc_list->count() > 1)
+        {
+            delete ui->spc_list->item(remove_Item);
 
-        file_path = file_paths[remove_Item];
+            file_path = file_paths[remove_Item];
 
-        spc_names.removeAt(remove_Item);
-        file_paths.removeAt(remove_Item);
+            spc_names.removeAt(remove_Item);
+            file_paths.removeAt(remove_Item);
 
-        QFile::remove(file_path);
-        ui->spc_list->setCurrentRow(-1);
+            QFile::remove(file_path);
+            ui->spc_list->setCurrentRow(-1);
+        }
+        else
+        {
+            dsm_gui_lib::warning_message("At Least One Body is Required.");
+            return;
+        }
+
     }
 
     if (ui->spc_list->count() > 0) {
@@ -637,7 +645,7 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
     int index = ui->spc_list->currentRow();
     if (index == -1) return;
 
-    QStringList current_item_data = ui->spc_list->currentItem()->data(1).toStringList();
+    QStringList current_item_data = ui->spc_list->currentItem()->data(257).toStringList();
 
     QString old_spc = spc_names[index];
     QString new_spc = old_spc + "_" +QString::number(ui->spc_list->count()-1);
@@ -656,8 +664,8 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
     ui->spc_list->addItem(new_spc);
     ui->spc_list->setCurrentRow(ui->spc_list->count()-1); // add item, set it as current item
 
-    ui->spc_list->currentItem()->setData(0, new_spc);
-    ui->spc_list->currentItem()->setData(1,current_item_data); // set item data
+    ui->spc_list->currentItem()->setData(256, new_spc);
+    ui->spc_list->currentItem()->setData(257,current_item_data); // set item data
 
     on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count()-1)); // click the item
 
@@ -739,7 +747,9 @@ void SPC_Menu::on_spc_close_clicked()
 
 void SPC_Menu::on_spc_conf_clicked()
 {
-    on_spc_apply_clicked();
+    receive_data();
+    apply_data();
+
     spc_submenu = new SPC_submenu(this);
     spc_submenu->setModal(true);
     spc_submenu->show();
@@ -755,9 +765,9 @@ void SPC_Menu::on_spc_list_itemClicked(QListWidgetItem *item)
 {
     //receive_data();
 
-    QStringList current_data = item->data(1).toStringList();
+    QStringList current_data = item->data(257).toStringList();
 
-    ui->spc_name->setText(item->data(0).toString());
+    ui->spc_name->setText(item->data(256).toString());
 
     ui->spc_desc->setText(current_data[0]);
 
