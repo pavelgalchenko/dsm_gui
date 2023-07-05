@@ -15,9 +15,11 @@ ORB_Menu::~ORB_Menu() {
 
 void ORB_Menu::set_validators() {
     QRegularExpression rx("[^\"]*");
-    QValidator *noQuotes = new QRegularExpressionValidator(rx,this);
+    QRegularExpression rx1("[^\" ]*");
+    QValidator *noQuotes = new QRegularExpressionValidator(rx);
+    QValidator *noQuotesSpace = new QRegularExpressionValidator(rx1);
 
-    ui->orbLabel->setValidator(noQuotes);
+    ui->orbLabel->setValidator(noQuotesSpace);
     ui->orbDescription->setValidator(noQuotes);
     ui->orbType->addItems(dsm_gui_lib::sortStringList(orbTypeInputs.values()));
     ui->orbFormFrame->addItems(orbFrameInputs);
