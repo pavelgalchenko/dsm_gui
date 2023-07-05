@@ -29,13 +29,15 @@ void SIM_Menu::set_validators() {
 
     ui->simSCList->setSortingEnabled(true);
     ui->simSCList->sortItems(Qt::AscendingOrder);
+    ui->simSCOrbit->setMaxVisibleItems(10);
 
     ui->simGSList->setSortingEnabled(true);
     ui->simGSList->sortItems(Qt::AscendingOrder);
 
-    ui->simDateTime->setCalendarPopup(true);
-    ui->simDateTime->setTimeSpec(Qt::UTC);
-    ui->simDateTime->setDisplayFormat("MM/dd/yyyy hh:mm:ss.zz");
+    ui->simDate->setCalendarPopup(true);
+    ui->simDate->setDisplayFormat("MM/dd/yyyy");
+    ui->simTime->setTimeSpec(Qt::UTC);
+    ui->simTime->setDisplayFormat("hh:mm:ss.zz");
     ui->simLeapSec->setValidator(new QDoubleValidator);
     ui->simF107Ap->addItems(dsm_gui_lib::sortStringList(f107Inputs.values()));
     ui->simF107->setValidator(new QDoubleValidator);
@@ -228,14 +230,20 @@ void SIM_Menu::apply_data() {
                 }
                 }
             }
+            QString defaultOrbName = ui->simSCOrbit->currentText();
+            foreach (QListWidgetItem* item, ui->simSCList->findItems("*",Qt::MatchWildcard)) {
+                if (item->data(scOrbNameRole).toString().isEmpty()) {
+                    item->setData(scOrbNameRole,defaultOrbName);
+                }
+            }
         }
         else if (lineNum > headerLines[toString(headerLineNames::ENVIRONMENT)] && lineNum < headerLines[toString(headerLineNames::BODIES)]) {
             switch (lineNum-headerLines[toString(headerLineNames::ENVIRONMENT)]) {
             case 1:
-                ui->simDateTime->setDate(QDate::fromString(line_items[2]+"-"+line_items[0]+"-"+line_items[1],Qt::ISODate));
+                ui->simDate->setDate(QDate::fromString(line_items[2]+"-"+line_items[0]+"-"+line_items[1],Qt::ISODate));
                 break;
             case 2:
-                ui->simDateTime->setTime(QTime::fromString(line_items[0]+":"+line_items[1]+":"+line_items[2],Qt::TextDate));
+                ui->simTime->setTime(QTime::fromString(line_items[0]+":"+line_items[1]+":"+line_items[2],Qt::TextDate));
                 break;
             case 3:
                 ui->simLeapSec->setText(line_items[0]);
@@ -360,7 +368,8 @@ void SIM_Menu::clear_data() {
     ui->simSCEn->setChecked(false);
     ui->simSCOrbit->clear();
 
-    ui->simDateTime->clear();
+    ui->simDate->clear();
+    ui->simTime->clear();
     ui->simLeapSec->clear();
     ui->simF107Ap->setCurrentIndex(0);
     ui->simF107->clear();
@@ -501,10 +510,10 @@ void SIM_Menu::on_applyButton_clicked() {
     for (int lineNum=1; lineNum<headerLines[toString(headerLineNames::BODIES)]-headerLines[toString(headerLineNames::ENVIRONMENT)]; lineNum++) {
         switch (lineNum) {
         case 1:
-            dataInp = ui->simDateTime->date().toString("MM dd yyyy");
+            dataInp = ui->simDate->date().toString("MM dd yyyy");
             break;
         case 2:
-            dataInp = ui->simDateTime->time().toString("HH mm ss.zz");
+            dataInp = ui->simTime->time().toString("HH mm ss.zz");
             break;
         case 3:
             dataInp = ui->simLeapSec->text();
@@ -590,16 +599,15 @@ void SIM_Menu::on_applyButton_clicked() {
     simUpdate.append(dataInp+simFileDescrip[headerLines[toString(headerLineNames::GROUND)]]);
     for (int i=0; i<ui->simGSList->count(); i++) {
         QListWidgetItem* curItem = ui->simGSList->item(i);
-        dataInp = curItem->data(gsEnabledRole).toString().toUpper() + " ";
+        dataInp = curItem->data(gsEnabledRole).toString().toUpper() + "  ";
         for (int j=gsWorldRole; j<=gsLatRole; j++)
-            dataInp += curItem->data(j).toString() + " ";
+            dataInp += curItem->data(j).toString() + "  ";
         dataInp += "\"" + curItem->text() + "\"";
 
         simUpdate.append(dsm_gui_lib::whitespace(dataInp)+gsDescription);
     }
     write_data();
 }
-
 
 void SIM_Menu::setQComboBox(QComboBox *comboBox, QString string) {
     comboBox->setCurrentIndex(comboBox->findText(string));
@@ -652,8 +660,13 @@ void SIM_Menu::on_simGSEn_toggled(bool checked) {
 }
 
 void SIM_Menu::on_simGSWorld_currentTextChanged(const QString &arg1) {
+    QString worldName = arg1;
     if (ui->simGSList->currentRow()==-1) return;
-    ui->simGSList->currentItem()->setData(gsWorldRole,arg1);
+    ui->simGSMinorBodyLabel->setEnabled(!worldName.compare("MINORBODY"));
+    ui->simGSMinorBodyNum->setEnabled(!worldName.compare("MINORBODY"));
+    if (!worldName.compare("MINORBODY"))
+        worldName += "_" + ui->simGSMinorBodyNum->text();
+    ui->simGSList->currentItem()->setData(gsWorldRole,worldName);
 }
 
 void SIM_Menu::on_simGSLat_textEdited(const QString &arg1) {
@@ -743,3 +756,6 @@ void SIM_Menu::on_simMagfieldType_currentTextChanged(const QString &arg1) {
     ui->simIGRFLabel->setEnabled(isIGRF);
 }
 
+void SIM_Menu::on_simGSMinorBodyNum_textChanged(const QString &arg1) {
+    ui->simGSList->currentItem()->setData(gsWorldRole,"MINORBODY_"+arg1);
+}

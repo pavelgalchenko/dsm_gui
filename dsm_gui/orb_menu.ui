@@ -321,7 +321,7 @@
         <x>0</x>
         <y>0</y>
         <width>421</width>
-        <height>154</height>
+        <height>131</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -2402,11 +2402,11 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="orbTBodyModeSense"/>
-  <buttongroup name="orbCentPA"/>
   <buttongroup name="orbTBodyModeSense_2"/>
-  <buttongroup name="orbZeroPolyGrav"/>
   <buttongroup name="orbCentJ2"/>
+  <buttongroup name="orbCentPA"/>
   <buttongroup name="orbFlightPolyGrav"/>
+  <buttongroup name="orbTBodyModeSense"/>
+  <buttongroup name="orbZeroPolyGrav"/>
  </buttongroups>
 </ui>

@@ -10,6 +10,7 @@
 #include "ipc_menu.h"
 #include "orb_menu.h"
 #include "sim_menu.h"
+#include "dsm_gui_lib.h"
 
 #include <QDebug>
 
@@ -29,8 +30,6 @@ signals:
     void send_data(QString);
 
 private slots:
-
-    int warning_message(QString);
 
     void on_new_mission_clicked();
 

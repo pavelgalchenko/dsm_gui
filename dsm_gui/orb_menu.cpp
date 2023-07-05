@@ -469,14 +469,15 @@ void ORB_Menu::on_applyButton_clicked() {
     if(index == -1) {
         return;
     }
-    QString oldOrb = ui->orbList->currentItem()->text();
-    QString oldOrbFile = orbFileHash.take(oldOrb);
 
     QString newLabel = ui->orbLabel->text();
     if (orbFileHash.contains(newLabel)) {
         dsm_gui_lib::warning_message("Orbit \"" + newLabel + "\" already exists. Orbit names are NOT case sensitive.");
         return;
     }
+
+    QString oldOrb = ui->orbList->currentItem()->text();
+    QString oldOrbFile = orbFileHash.take(oldOrb);
 
     newLabel = newLabel.remove("\"");
     ui->orbList->currentItem()->setText(newLabel);

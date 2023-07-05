@@ -76,6 +76,8 @@ private slots:
 
     void on_simMagfieldType_currentTextChanged(const QString &arg1);
 
+    void on_simGSMinorBodyNum_textChanged(const QString &arg1);
+
 private:
     Ui::SIM_Menu *ui;
 
