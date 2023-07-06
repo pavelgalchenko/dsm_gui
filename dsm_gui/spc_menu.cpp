@@ -81,31 +81,33 @@ void SPC_Menu::receive_spcpath(QString path)
     inout_path = path;
 
     QStringList spcFiles = QDir(inout_path).entryList({"SC_*"});
-    for (int i = 0; i<spcFiles.length(); i++) {
-        file_paths.append(inout_path+spcFiles[i]); // Full file path of SC file
-        spc_names.append(spcFiles[i].chopped(4).mid(3)); // Everything between "SC_" and ".txt"
+    if (spcFiles.length() > 0){
+        for (int i = 0; i<spcFiles.length(); i++) {
+            file_paths.append(inout_path+spcFiles[i]); // Full file path of SC file
+            spc_names.append(spcFiles[i].chopped(4).mid(3)); // Everything between "SC_" and ".txt"
+        }
+
+        QStringList spcDefaultFiles = QDir(inout_path+"__default__/").entryList({"SC_*"});
+        for (int i = 0; i<spcDefaultFiles.length(); i++) {
+            file_paths_default.append(inout_path+"__default__/"+spcDefaultFiles[i]); // Full file path of SC file
+            spc_names_default.append(spcDefaultFiles[i].chopped(4).mid(3)); // Everything between "SC_" and ".txt"
+        }
+
+        ui->spc_list->clear();
+        for(int i=0; i<file_paths.length();i++) {
+            file_path = file_paths[i];
+            spc_name_index = i;
+
+            ui->spc_list->addItem(spc_names[i]);
+
+            ui->spc_list->setCurrentRow(spc_name_index);
+
+            receive_data();
+            apply_data();
+        }
+
+        on_spc_list_itemClicked(ui->spc_list->item(0));
     }
-
-    QStringList spcDefaultFiles = QDir(inout_path+"__default__/").entryList({"SC_*"});
-    for (int i = 0; i<spcDefaultFiles.length(); i++) {
-        file_paths_default.append(inout_path+"__default__/"+spcDefaultFiles[i]); // Full file path of SC file
-        spc_names_default.append(spcDefaultFiles[i].chopped(4).mid(3)); // Everything between "SC_" and ".txt"
-    }
-
-    ui->spc_list->clear();
-    for(int i=0; i<file_paths.length();i++) {
-        file_path = file_paths[i];
-        spc_name_index = i;
-
-        ui->spc_list->addItem(spc_names[i]);
-
-        ui->spc_list->setCurrentRow(spc_name_index);
-
-        receive_data();
-        apply_data();
-    }
-
-    on_spc_list_itemClicked(ui->spc_list->item(0));
 
 }
 
@@ -256,7 +258,7 @@ void SPC_Menu::on_spc_apply_clicked()
     other_names.removeAt(spc_names.indexOf(ui->spc_list->currentItem()->text()));
 
     QString cur_name = ui->spc_name->text();
-    if (other_names.contains(cur_name)) {
+    if (other_names.contains(cur_name, Qt::CaseInsensitive)) {
         dsm_gui_lib::warning_message("SC \"" + cur_name + "\" already exists. SC names are NOT case sensitive.");
         return;
     }
