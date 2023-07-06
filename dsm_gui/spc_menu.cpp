@@ -80,17 +80,17 @@ void SPC_Menu::receive_spcpath(QString path)
 {
     inout_path = path;
 
+    QStringList spcDefaultFiles = QDir(inout_path+"__default__/").entryList({"SC_*"});
+    for (int i = 0; i<spcDefaultFiles.length(); i++) {
+        file_paths_default.append(inout_path+"__default__/"+spcDefaultFiles[i]); // Full file path of SC file
+        spc_names_default.append(spcDefaultFiles[i].chopped(4).mid(3)); // Everything between "SC_" and ".txt"
+    }
+
     QStringList spcFiles = QDir(inout_path).entryList({"SC_*"});
     if (spcFiles.length() > 0){
         for (int i = 0; i<spcFiles.length(); i++) {
             file_paths.append(inout_path+spcFiles[i]); // Full file path of SC file
             spc_names.append(spcFiles[i].chopped(4).mid(3)); // Everything between "SC_" and ".txt"
-        }
-
-        QStringList spcDefaultFiles = QDir(inout_path+"__default__/").entryList({"SC_*"});
-        for (int i = 0; i<spcDefaultFiles.length(); i++) {
-            file_paths_default.append(inout_path+"__default__/"+spcDefaultFiles[i]); // Full file path of SC file
-            spc_names_default.append(spcDefaultFiles[i].chopped(4).mid(3)); // Everything between "SC_" and ".txt"
         }
 
         ui->spc_list->clear();
@@ -257,10 +257,8 @@ void SPC_Menu::on_spc_apply_clicked()
     spc_names.sort();
     file_paths.sort();
 
-    qDebug() << spc_names;
     QStringList other_names = spc_names;
     other_names.removeAt(spc_names.indexOf(ui->spc_list->currentItem()->text()));
-    qDebug() <<spc_names;
 
     QString cur_name = ui->spc_name->text();
     if (other_names.contains(cur_name, Qt::CaseInsensitive)) {
@@ -622,6 +620,7 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
     }
 
     ui->spc_list->addItem(new_name);
+
     ui->spc_list->setCurrentRow(ui->spc_list->count()-1);
 
     ui->spc_list->currentItem()->setData(256, new_name);
@@ -642,7 +641,7 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
 {
     int remove_Item = ui->spc_list->currentRow();
     int name_index = spc_names.indexOf(ui->spc_list->item(remove_Item)->text());
-    if(remove_Item == -1) return;
+    if (ui->spc_list->count() == 0) return;
     else{
         if (ui->spc_list->count() > 0)
         {
@@ -674,6 +673,7 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
 void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
 {
     int index = ui->spc_list->currentRow();
+    if (ui->spc_list->count() == 0) return;
 
     QStringList current_item_data = ui->spc_list->currentItem()->data(257).toStringList();
 
