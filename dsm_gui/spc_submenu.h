@@ -122,6 +122,10 @@ private slots:
 
     void on_sensor_sections_tabBarClicked(int index);
 
+    void proc_duplicates(QListWidget *cur_list);
+
+    void proc_add(QListWidget *cur_list, QStringList tmp_data);
+
 private:
     Ui::SPC_submenu *ui;
     QString spc_cur_name;

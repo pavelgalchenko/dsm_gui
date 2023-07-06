@@ -553,13 +553,6 @@ void SPC_Menu::write_data()
 
 void SPC_Menu::on_spc_add_clicked() // Add S/C
 {
-    int dup_counter = 0;
-    QString new_name = "New_"+QString::number(ui->spc_list->count());
-    while (spc_names.indexOf(new_name) > 0)
-    {
-        dup_counter++;
-        new_name = "New_"+QString::number(ui->spc_list->count() + dup_counter);
-    }
 
     QStringList tmp_data = {};
 
@@ -592,6 +585,25 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
     tmp_data.append("40.0");
     tmp_data.append("20.0");
     tmp_data.append("213");
+
+    QStringList all_names;
+    for (int i = 0; i < ui->spc_list->count(); i++)
+    {
+        all_names.append(ui->spc_list->item(i)->text());
+    }
+
+    QString new_name = "New";
+    if (ui->spc_list->count() != 0) {
+        for(int i = 0; i <= 50; i++) {
+            QString newNameTest = new_name;
+            if (i>0) newNameTest += "_" + QString::number(i);
+            if (!all_names.contains(newNameTest)) {
+                new_name = newNameTest;
+                break;
+            }
+            if (i==50) return; // Nothing happens if too many
+        }
+    }
 
     ui->spc_list->addItem(new_name);
     ui->spc_list->setCurrentRow(ui->spc_list->count()-1);
@@ -647,15 +659,18 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
 
     QStringList current_item_data = ui->spc_list->currentItem()->data(257).toStringList();
 
-    QString old_spc = spc_names[index];
-    QString new_spc = old_spc + "_" +QString::number(ui->spc_list->count()-1);
+    if (index == -1) return;
+    QString old_spc = ui->spc_list->currentItem()->text();
+    QString new_spc = old_spc +"_Copy";
     for(int i = 0; i <= 30; i++) {
-        QString new_spc_test = new_spc;
-        if(!spc_names.contains(new_spc_test)) {
-            new_spc = new_spc_test;
+        QString newSCTest = new_spc;
+        if(i>0) newSCTest += "_" + QString::number(i);
+        if(!spc_names.contains(newSCTest)) {
+            new_spc = newSCTest;
             break;
         }
     }
+
     spc_names.append(new_spc);
     file_path = inout_path+"SC_"+new_spc+".txt";
     QFile::copy(file_paths[index], file_path);
