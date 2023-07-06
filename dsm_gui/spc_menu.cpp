@@ -254,8 +254,13 @@ void SPC_Menu::on_spc_apply_clicked()
         return;
     }
 
+    spc_names.sort();
+    file_paths.sort();
+
+    qDebug() << spc_names;
     QStringList other_names = spc_names;
     other_names.removeAt(spc_names.indexOf(ui->spc_list->currentItem()->text()));
+    qDebug() <<spc_names;
 
     QString cur_name = ui->spc_name->text();
     if (other_names.contains(cur_name, Qt::CaseInsensitive)) {
@@ -608,7 +613,7 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
         for(int i = 0; i <= 50; i++) {
             QString newNameTest = new_name;
             if (i>0) newNameTest += "_" + QString::number(i);
-            if (!all_names.contains(newNameTest)) {
+            if (!all_names.contains(newNameTest, Qt::CaseInsensitive)) {
                 new_name = newNameTest;
                 break;
             }
@@ -678,7 +683,7 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
     for(int i = 0; i <= 30; i++) {
         QString newSCTest = new_spc;
         if(i>0) newSCTest += "_" + QString::number(i);
-        if(!spc_names.contains(newSCTest)) {
+        if(!spc_names.contains(newSCTest, Qt::CaseInsensitive)) {
             new_spc = newSCTest;
             break;
         }
