@@ -26,7 +26,10 @@ SPC_Menu::~SPC_Menu()
 void SPC_Menu::set_validators()
 {
     QRegularExpression rx("[^\"]*");
+    QRegularExpression rx1("[^\" ]*");
+
     QValidator *noQuotes = new QRegularExpressionValidator(rx,this);
+    QValidator *noQuotesSpaces = new QRegularExpressionValidator(rx1,this);
 
     // Combo Boxes
     ui->spc_fswid->addItems(dsm_gui_lib::sortStringList(fswid_types));
@@ -41,7 +44,7 @@ void SPC_Menu::set_validators()
     ui->spc_cur_initeul_seq->addItems(dsm_gui_lib::sortStringList(euler_seq));
 
     // Data Type Validators
-    ui->spc_name->setValidator(noQuotes);
+    ui->spc_name->setValidator(noQuotesSpaces);
     ui->spc_label->setValidator(noQuotes);
     ui->spc_desc->setValidator(noQuotes);
     ui->spc_sprite->setValidator(noQuotes);
