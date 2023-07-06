@@ -115,6 +115,13 @@ void MainWindow::on_TDR_Menu_clicked()
 
 void MainWindow::on_FOV_Menu_clicked()
 {
+    QStringList simFiles = QDir(path).entryList({"Inp_Sim**"});
+    QStringList scFiles = QDir(path).entryList({"SC_*"});
+    if (scFiles.isEmpty() || simFiles.isEmpty()){
+        dsm_gui_lib::warning_message("There must be both a Inp_Sim file and a Spacecraft file before editing the FOV file.");
+        return;
+    }
+
     fov_menu = new FOV_Menu(this);
     fov_menu->setModal(true);
     fov_menu->show();

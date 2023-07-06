@@ -2,10 +2,13 @@
 #define FOV_MENU_H
 
 #include "color_select.h"
+#include "dsm_gui_lib.h"
+#include "qcheckbox.h"
 
 #include <QDialog>
 #include <QListWidgetItem>
 #include <QDebug>
+#include <QFileDialog>
 
 namespace Ui {
 class FOV_Menu;
@@ -25,13 +28,9 @@ signals:
 private slots:
     void set_validators();
     void receive_fovpath(QString);
-    void receive_newrgbavalues(QStringList);
     void receive_data();
     void apply_data();
-    void populate_list();
     void write_data();
-    int warning_message(QString);
-    QString whitespace(QString);
 
     void on_fov_remove_clicked();
     void on_fov_add_clicked();
@@ -43,24 +42,63 @@ private slots:
 
     void on_pickcolor_clicked();
 
+    void sides_changed();
+    void dims_changed();
+    void color_changed();
+    void on_fov_name_textChanged(const QString &arg1);
+    void field_changed();
+    void scbody_changed();
+    void pos_changed();
+    void euler_changed();
+
+    void on_boresightaxis_currentTextChanged(const QString &arg1);
+
+    QString toString(QCheckBox* box) {
+        return QVariant(box->isChecked()).toString().toUpper();
+    }
+
+    void on_fov_type_currentTextChanged(const QString &arg1);
+    void clear_fields();
+
+    void on_fov_duplicate_clicked();
+
+    QStringList getTextFromList(QListWidget *list);
+
 private:
     Ui::FOV_Menu *ui;
 
-    COLOR_Select *color_menu;
+//    COLOR_Select *color_menu;
 
-    int global_fov_index = -1;
-    int global_fov_ignore = 0;
+    enum fovDataRoles {
+        Label = Qt::DisplayRole,
+        Sides = Qt::UserRole, // 2 element, n sides/ side length
+        Dims, // 2 element ; h width/ v height
+        Color, // 4 element ; rgb+alpha
+        Type,
+        DrawField, // 2 element ; near/far
+        SCBody,
+        BodyPos, // 3 element
+        Euler, // 4 element; euler angs/sequence
+        Boresight
+    };
+
+    const int fovNLines = 11;
+    QHash<QString,int> scNums;
 
     QString inout_path;
     QString file_path;
-    QStringList fov_names;
     QStringList fov_data;
     QStringList fov_update;
     QStringList fov_string;
 
-    QStringList axis_inputs = {"X_AXIS","Y_AXIS","Z_AXIS"};
-    QStringList fovtype_inputs = {"WIREFRAME","SOLID","VECTOR","PLANE"};
-    QStringList euler_inputs = {"121","123","131","132","212","213","231","232","312","313","321","323"};
+    const QHash<QString, QString> axis_inputs = {{"X_AXIS", "x-Axis"},
+                                                 {"Y_AXIS", "y-Axis"},
+                                                 {"Z_AXIS", "z-Axis"}};
+    const QHash<QString, QString> fovtype_inputs = {{"WIREFRAME", "Wireframe"},
+                                                    {"SOLID", "Solid"},
+                                                    {"VECTOR", "Vector"},
+                                                    {"PLANE", "Plane"}};
+    const QStringList euler_inputs = {"121","123","131","132","212","213","231","232","312","313","321","323"};
 
 };
 
