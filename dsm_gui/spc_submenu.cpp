@@ -1389,6 +1389,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_body_list->currentItem()->setData(256, ui->spc_cur_body_name->text());
             ui->spc_cur_body_list->currentItem()->setData(257, tmp_data);
         }
     }
@@ -1603,6 +1604,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_joint_list->currentItem()->setData(256, ui->spc_cur_joint_name->text());
             ui->spc_cur_joint_list->currentItem()->setData(257, tmp_data);
         }
     }
@@ -1737,6 +1739,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                 switch (cur_entry){
                 case 0:
                     ui->spc_cur_wheel_list->currentItem()->setText(ui->spc_cur_wheel_name->text());
+                    qDebug() << ui->spc_cur_wheel_name->text();
                     tmp_data.append("blankline");
 
                     break; // header
@@ -1769,6 +1772,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_wheel_list->currentItem()->setData(256, ui->spc_cur_wheel_name->text());
             ui->spc_cur_wheel_list->currentItem()->setData(257, tmp_data);
         }
     }
@@ -1874,6 +1878,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_mtb_list->currentItem()->setData(256, ui->spc_cur_mtb_name->text());
             ui->spc_cur_mtb_list->currentItem()->setData(257, tmp_data);
         }
     }
@@ -1971,6 +1976,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_thruster_list->currentItem()->setData(256, ui->spc_cur_thruster_name->text());
             ui->spc_cur_thruster_list->currentItem()->setData(257, tmp_data);
         }
     }
@@ -2098,6 +2104,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_gyro_list->currentItem()->setData(256, ui->spc_cur_gyro_name->text());
             ui->spc_cur_gyro_list->currentItem()->setData(257, tmp_data);
         }
     }
@@ -2233,6 +2240,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_mag_list->currentItem()->setData(256, ui->spc_cur_mag_name->text());
             ui->spc_cur_mag_list->currentItem()->setData(257, tmp_data);
         }
     }
@@ -2355,6 +2363,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_css_list->currentItem()->setData(256, ui->spc_cur_css_name->text());
             ui->spc_cur_css_list->currentItem()->setData(257, tmp_data);
         }
     }
@@ -2479,6 +2488,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_fss_list->currentItem()->setData(256, ui->spc_cur_fss_name->text());
             ui->spc_cur_fss_list->currentItem()->setData(257, tmp_data);
         }
     }
@@ -2608,6 +2618,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_strack_list->currentItem()->setData(256, ui->spc_cur_strack_name->text());
             ui->spc_cur_strack_list->currentItem()->setData(257, tmp_data);
         }
     }
@@ -2721,6 +2732,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_gps_list->currentItem()->setData(256, ui->spc_cur_gps_name->text());
             ui->spc_cur_gps_list->currentItem()->setData(257, tmp_data);
         }
     }
@@ -2853,6 +2865,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
                     break;
                 }
             }
+            ui->spc_cur_accel_list->currentItem()->setData(256, ui->spc_cur_acc_name->text());
             ui->spc_cur_accel_list->currentItem()->setData(257, tmp_data);
         }
     }

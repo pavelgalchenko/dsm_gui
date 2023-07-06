@@ -554,11 +554,11 @@ void SPC_Menu::write_data()
 void SPC_Menu::on_spc_add_clicked() // Add S/C
 {
     int dup_counter = 0;
-    QString new_name = "Simple_"+QString::number(ui->spc_list->count());
+    QString new_name = "New_"+QString::number(ui->spc_list->count());
     while (spc_names.indexOf(new_name) > 0)
     {
         dup_counter++;
-        new_name = "Simple_"+QString::number(ui->spc_list->count() + dup_counter);
+        new_name = "New_"+QString::number(ui->spc_list->count() + dup_counter);
     }
 
     QStringList tmp_data = {};
@@ -597,6 +597,7 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
     ui->spc_list->setCurrentRow(ui->spc_list->count()-1);
 
     ui->spc_list->currentItem()->setData(256, new_name);
+
     ui->spc_list->currentItem()->setData(257, tmp_data);
     on_spc_list_itemClicked(ui->spc_list->currentItem());
 
@@ -616,13 +617,13 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
         {
             delete ui->spc_list->item(remove_Item);
 
-            file_path = file_paths[remove_Item];
+            QString file_path_delete = file_paths[remove_Item];
 
             spc_names.removeAt(remove_Item);
             file_paths.removeAt(remove_Item);
 
-            QFile::remove(file_path);
-            ui->spc_list->setCurrentRow(-1);
+            QFile::remove(file_path_delete);
+
         }
         else
         {
@@ -633,8 +634,8 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
     }
 
     if (ui->spc_list->count() > 0) {
-        on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count() - 1));
         ui->spc_list->setCurrentRow(ui->spc_list->count() - 1);
+        on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count() - 1));
     }
 
 }
@@ -643,7 +644,6 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
 void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
 {
     int index = ui->spc_list->currentRow();
-    if (index == -1) return;
 
     QStringList current_item_data = ui->spc_list->currentItem()->data(257).toStringList();
 
@@ -675,8 +675,8 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
     QFile::copy(inout_path+"SC_" + old_spc + ".txt", inout_path+"SC_"+new_spc+".txt"); //create the file associated with the S/C and append the file information to the right variables
 
     if (ui->spc_list->count() > 0) {
-        on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count() - 1));
-        ui->spc_list->setCurrentRow(ui->spc_list->count() - 1);
+        on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count() - 2));
+        ui->spc_list->setCurrentRow(ui->spc_list->count() - 2);
     }
 }
 
@@ -763,7 +763,6 @@ void SPC_Menu::on_spc_conf_clicked()
 
 void SPC_Menu::on_spc_list_itemClicked(QListWidgetItem *item)
 {
-    //receive_data();
 
     QStringList current_data = item->data(257).toStringList();
 
@@ -852,4 +851,3 @@ void SPC_Menu::on_spc_cur_att_param_currentTextChanged(const QString &arg1)
         ui->spc_cur_q4->setEnabled(false);
     }
 }
-
