@@ -249,7 +249,14 @@ void SPC_Menu::on_spc_apply_clicked()
         return;
     }
 
+    QStringList other_names = spc_names;
+    other_names.removeAt(spc_names.indexOf(ui->spc_list->currentItem()->text()));
+
     QString cur_name = ui->spc_name->text();
+    if (other_names.contains(cur_name)) {
+        dsm_gui_lib::warning_message("SC \"" + cur_name + "\" already exists. SC names are NOT case sensitive.");
+        return;
+    }
 
     file_path = file_paths[index];
     ui->spc_list->currentItem()->setText(cur_name);
@@ -383,6 +390,7 @@ void SPC_Menu::on_spc_apply_clicked()
         }
     }
 
+    ui->spc_list->currentItem()->setData(256, cur_name);
     ui->spc_list->currentItem()->setData(257, tmp_data);
 
     tmp_data.clear();
@@ -616,6 +624,7 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
 
     QFile::copy(file_paths_default[0], inout_path+"SC_"+new_name+".txt");
     ui->spc_list->sortItems();
+    ui->spc_conf->setEnabled(true);
 }
 
 
@@ -625,7 +634,7 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
     int name_index = spc_names.indexOf(ui->spc_list->item(remove_Item)->text());
     if(remove_Item == -1) return;
     else{
-        if (ui->spc_list->count() > 1)
+        if (ui->spc_list->count() > 0)
         {
             delete ui->spc_list->item(remove_Item);
 
@@ -635,21 +644,19 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
             file_paths.removeAt(name_index);
 
             QFile::remove(file_path_delete);
-
         }
-        else
-        {
-            dsm_gui_lib::warning_message("At Least One Body is Required.");
-            return;
-        }
-
     }
 
     if (ui->spc_list->count() > 0) {
         ui->spc_list->setCurrentRow(ui->spc_list->count() - 1);
         on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count() - 1));
+        ui->spc_list->sortItems();
     }
-    ui->spc_list->sortItems();
+    else {
+        ui->spc_list->setCurrentRow(-1);
+        ui->spc_conf->setEnabled(false);
+    }
+
 
 }
 
