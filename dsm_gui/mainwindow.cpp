@@ -31,7 +31,7 @@ void MainWindow::on_new_mission_clicked()
     QDir dir(path);
 
     if (dir.exists()) {
-        int response = warning_message("Overwrite InOut in Selected Directory?");
+        int response = dsm_gui_lib::warning_message("Overwrite InOut in Selected Directory?");
         if (response == QMessageBox::Ok) {
             dir.removeRecursively();
             dir.mkpath(".");
@@ -87,16 +87,7 @@ void MainWindow::on_new_mission_clicked()
     ui->RGN_Menu->setEnabled(true);
     ui->IPC_Menu->setEnabled(true);
     ui->ORB_Menu->setEnabled(true);
-}
-
-int MainWindow::warning_message(QString warningText)
-{
-    QMessageBox warningMsg;
-    warningMsg.setIcon(QMessageBox::Warning);
-    warningMsg.setText(warningText);
-    warningMsg.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    int ret = warningMsg.exec();
-    return ret;
+    ui->SIM_Menu->setEnabled(true);
 }
 
 void MainWindow::on_GRH_Menu_clicked()
@@ -178,4 +169,21 @@ void MainWindow::on_ORB_Menu_clicked()
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 
+void MainWindow::on_SIM_Menu_clicked()
+{
+    QStringList orbFiles = QDir(path).entryList({"Orb_*"});
+    QStringList scFiles = QDir(path).entryList({"SC_*"});
+    if (scFiles.isEmpty() || orbFiles.isEmpty()){
+        dsm_gui_lib::warning_message("There must be both a Orbit file and a Spacecraft file before editing the Simulation file.");
+        return;
+    }
+
+    sim_menu = new SIM_Menu(this);
+    sim_menu->setModal(true);
+    sim_menu->show();
+
+    connect(this, SIGNAL(send_data(QString)), sim_menu, SLOT(receive_simpath(QString)));
+    emit send_data(path);
+    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+}
 

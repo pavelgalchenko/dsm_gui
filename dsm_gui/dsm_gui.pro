@@ -22,6 +22,7 @@ SOURCES += \
     nos_menu.cpp \
     orb_menu.cpp \
     rgn_menu.cpp \
+    sim_menu.cpp \
     tdr_menu.cpp
 
 HEADERS += \
@@ -34,6 +35,7 @@ HEADERS += \
     nos_menu.h \
     orb_menu.h \
     rgn_menu.h \
+    sim_menu.h \
     tdr_menu.h
 
 FORMS += \
@@ -45,6 +47,7 @@ FORMS += \
     nos_menu.ui \
     orb_menu.ui \
     rgn_menu.ui \
+    sim_menu.ui \
     tdr_menu.ui
 
 # Default rules for deployment.
