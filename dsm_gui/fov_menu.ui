@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
+    <width>710</width>
     <height>480</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>860</width>
+    <width>710</width>
     <height>480</height>
    </size>
   </property>
@@ -30,7 +30,7 @@
     <rect>
      <x>10</x>
      <y>430</y>
-     <width>841</width>
+     <width>691</width>
      <height>41</height>
     </rect>
    </property>
@@ -68,9 +68,9 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>249</x>
-     <y>9</y>
-     <width>601</width>
+     <x>210</x>
+     <y>10</y>
+     <width>491</width>
      <height>411</height>
     </rect>
    </property>
@@ -101,6 +101,9 @@
       <item>
        <widget class="QSpinBox" name="alphavalue">
         <property name="maximum">
+         <number>255</number>
+        </property>
+        <property name="value">
          <number>255</number>
         </property>
        </widget>
@@ -326,7 +329,7 @@
     <rect>
      <x>9</x>
      <y>9</y>
-     <width>218</width>
+     <width>181</width>
      <height>411</height>
     </rect>
    </property>
@@ -338,6 +341,12 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="fov_remove">
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
          <string>-</string>
         </property>
@@ -345,6 +354,12 @@
       </item>
       <item>
        <widget class="QPushButton" name="fov_add">
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
          <string>+</string>
         </property>
