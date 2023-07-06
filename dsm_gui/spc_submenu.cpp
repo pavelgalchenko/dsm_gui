@@ -4115,6 +4115,7 @@ void SPC_submenu::proc_duplicates(QListWidget *cur_list)
 
     cur_list->currentItem()->setData(256, new_item);
     cur_list->currentItem()->setData(257, old_data);
+    cur_list->sortItems();
 }
 
 void SPC_submenu::proc_add(QListWidget *cur_list, QStringList tmp_data)
@@ -4144,4 +4145,5 @@ void SPC_submenu::proc_add(QListWidget *cur_list, QStringList tmp_data)
 
     cur_list->currentItem()->setData(256, new_name);
     cur_list->currentItem()->setData(257, tmp_data);
+    cur_list->sortItems();
 }

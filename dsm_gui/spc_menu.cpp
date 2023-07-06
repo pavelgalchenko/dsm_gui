@@ -521,8 +521,6 @@ void SPC_Menu::on_spc_apply_clicked()
     }
     file.close();
 
-    //spc_names.sort();
-    //file_paths.sort();
     index = file_paths.indexOf(file_path);
     global_spc_index=index;
     spc_name_index=index;
@@ -617,22 +615,24 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
     file_paths.append(inout_path+"SC_"+new_name+".txt");
 
     QFile::copy(file_paths_default[0], inout_path+"SC_"+new_name+".txt");
+    ui->spc_list->sortItems();
 }
 
 
 void SPC_Menu::on_spc_remove_clicked() // Remove S/C
 {
     int remove_Item = ui->spc_list->currentRow();
+    int name_index = spc_names.indexOf(ui->spc_list->item(remove_Item)->text());
     if(remove_Item == -1) return;
     else{
         if (ui->spc_list->count() > 1)
         {
             delete ui->spc_list->item(remove_Item);
 
-            QString file_path_delete = file_paths[remove_Item];
+            QString file_path_delete = file_paths[name_index];
 
-            spc_names.removeAt(remove_Item);
-            file_paths.removeAt(remove_Item);
+            spc_names.removeAt(name_index);
+            file_paths.removeAt(name_index);
 
             QFile::remove(file_path_delete);
 
@@ -649,6 +649,7 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
         ui->spc_list->setCurrentRow(ui->spc_list->count() - 1);
         on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count() - 1));
     }
+    ui->spc_list->sortItems();
 
 }
 
@@ -693,6 +694,7 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
         on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count() - 2));
         ui->spc_list->setCurrentRow(ui->spc_list->count() - 2);
     }
+    ui->spc_list->sortItems();
 }
 
 
