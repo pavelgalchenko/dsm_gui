@@ -15,11 +15,9 @@ ORB_Menu::~ORB_Menu() {
 
 void ORB_Menu::set_validators() {
     QRegularExpression rx("[^\"]*");
-    QRegularExpression rx1("[^\" ]*");
-    QValidator *noQuotes = new QRegularExpressionValidator(rx);
-    QValidator *noQuotesSpace = new QRegularExpressionValidator(rx1);
+    QValidator *noQuotes = new QRegularExpressionValidator(rx,this);
 
-    ui->orbLabel->setValidator(noQuotesSpace);
+    ui->orbLabel->setValidator(noQuotes);
     ui->orbDescription->setValidator(noQuotes);
     ui->orbType->addItems(dsm_gui_lib::sortStringList(orbTypeInputs.values()));
     ui->orbFormFrame->addItems(orbFrameInputs);
@@ -380,13 +378,11 @@ void ORB_Menu::on_orbListAdd_clicked()
 {
 
     QString newOrb = "New";
-
-    QStringList orbFileHashKeys = orbFileHash.keys();
     if (ui->orbList->count() != 0) {
         for(int i = 0; i <= 50; i++) {
             QString newOrbTest = newOrb;
             if (i>0) newOrbTest += "_" + QString::number(i);
-            if (!orbFileHashKeys.contains(newOrbTest,Qt::CaseInsensitive)) {
+            if (!orbFileHash.contains(newOrbTest)) {
                 newOrb = newOrbTest;
                 break;
             }
@@ -473,15 +469,12 @@ void ORB_Menu::on_applyButton_clicked() {
     if(index == -1) {
         return;
     }
-
     QString oldOrb = ui->orbList->currentItem()->text();
     QString oldOrbFile = orbFileHash.take(oldOrb);
-    QStringList orbFileHashKeys = orbFileHash.keys();
 
     QString newLabel = ui->orbLabel->text();
-    if (orbFileHashKeys.contains(newLabel,Qt::CaseInsensitive)) {
+    if (orbFileHash.contains(newLabel)) {
         dsm_gui_lib::warning_message("Orbit \"" + newLabel + "\" already exists. Orbit names are NOT case sensitive.");
-        orbFileHash.insert(oldOrb,oldOrbFile);
         return;
     }
 
@@ -652,17 +645,17 @@ void ORB_Menu::on_applyButton_clicked() {
             orb_update.append(orb_file_headers[line_num-1]);
     }
 
-    global_orb_index = ui->orbList->currentRow();
     write_data(file_path);
 }
 
-void ORB_Menu::clear_data() {
+void ORB_Menu::clear_data()
+{    
     // If ui->orbList->currentRow()==1, set all fields to blank
     if (ui->orbList->currentRow()!=-1) return;
 
-    ui->orbLabel->clear();
+    ui->orbLabel->setText("");
 
-    ui->orbDescription->clear();
+    ui->orbDescription->setText("");
     ui->orbType->setCurrentIndex(0);
 
     ui->orbZeroWorld->setCurrentIndex(0);
@@ -677,56 +670,56 @@ void ORB_Menu::clear_data() {
     ui->orbCentJ2->button(0)->setChecked(true);
     ui->orbCentICParam->setCurrentIndex(0);
     ui->orbCentPA->button(0)->setChecked(true);
-    ui->orbCentKepPeriAlt->clear();
-    ui->orbCentKepApoAlt->clear();
-    ui->orbCentKepMinAlt->clear();
+    ui->orbCentKepPeriAlt->setText("");
+    ui->orbCentKepApoAlt->setText("");
+    ui->orbCentKepMinAlt->setText("");
     ui->orbCentKepEcc->setValue(0);
-    ui->orbCentKepInc->clear();
-    ui->orbCentKepRAAN->clear();
-    ui->orbCentKepArgPeri->clear();
-    ui->orbCentKepTA->clear();
-    ui->orbCentPVPos_1->clear();
-    ui->orbCentPVPos_2->clear();
-    ui->orbCentPVPos_3->clear();
-    ui->orbCentPVVel_1->clear();
-    ui->orbCentPVVel_2->clear();
-    ui->orbCentPVVel_3->clear();
+    ui->orbCentKepInc->setText("");
+    ui->orbCentKepRAAN->setText("");
+    ui->orbCentKepArgPeri->setText("");
+    ui->orbCentKepTA->setText("");
+    ui->orbCentPVPos_1->setText("");
+    ui->orbCentPVPos_2->setText("");
+    ui->orbCentPVPos_3->setText("");
+    ui->orbCentPVVel_1->setText("");
+    ui->orbCentPVVel_2->setText("");
+    ui->orbCentPVVel_3->setText("");
     ui->orbCentFileType->setCurrentIndex(0);
-    ui->orbCentFileName->clear();
-    ui->orbCentFileLabel->clear();
+    ui->orbCentFileName->setText("");
+    ui->orbCentFileLabel->setText("");
 
     ui->orbTBodyLSystem->setCurrentIndex(0);
     ui->orbTBodyProp->setCurrentIndex(0);
     ui->orbTBodyICParam->setCurrentIndex(0);
     ui->orbTBodyLPoint->setCurrentIndex(0);
 
-    ui->orbTBodyModeXYSMA->clear();
-    ui->orbTBodyModeXYPhase->clear();
+    ui->orbTBodyModeXYSMA->setText("");
+    ui->orbTBodyModeXYPhase->setText("");
     ui->orbTBodyModeSense->button(0)->setChecked(true);
-    ui->orbTBodyModeXYSMA_2->clear();
-    ui->orbTBodyModeXYPhase_2->clear();
+    ui->orbTBodyModeXYSMA_2->setText("");
+    ui->orbTBodyModeXYPhase_2->setText("");
     ui->orbTBodyModeSense_2->button(0)->setChecked(true);
-    ui->orbTBodyModeZSMA->clear();
-    ui->orbTBodyModeZPhase->clear();
-    ui->orbTBodyCowellPos_1->clear();
-    ui->orbTBodyCowellPos_2->clear();
-    ui->orbTBodyCowellPos_3->clear();
-    ui->orbTBodyCowellVel_1->clear();
-    ui->orbTBodyCowellVel_2->clear();
-    ui->orbTBodyCowellVel_3->clear();
+    ui->orbTBodyModeZSMA->setText("");
+    ui->orbTBodyModeZPhase->setText("");
+    ui->orbTBodyCowellPos_1->setText("");
+    ui->orbTBodyCowellPos_2->setText("");
+    ui->orbTBodyCowellPos_3->setText("");
+    ui->orbTBodyCowellVel_1->setText("");
+    ui->orbTBodyCowellVel_2->setText("");
+    ui->orbTBodyCowellVel_3->setText("");
     ui->orbTBodyFileType->setCurrentIndex(0);
-    ui->orbTBodyFileLabel->clear();
-    ui->orbTBodyFileName->clear();
+    ui->orbTBodyFileLabel->setText("");
+    ui->orbTBodyFileName->setText("");
 
     ui->orbFormFrame->setCurrentIndex(0);
     ui->orbFormFrameEulerSeq->setCurrentIndex(0);
-    ui->orbFormFrameEuler_1->clear();
-    ui->orbFormFrameEuler_2->clear();
-    ui->orbFormFrameEuler_3->clear();
+    ui->orbFormFrameEuler_1->setText("");
+    ui->orbFormFrameEuler_2->setText("");
+    ui->orbFormFrameEuler_3->setText("");
     ui->orbFormOrigin->setCurrentIndex(0);
-    ui->orbFormOriginPos_1->clear();
-    ui->orbFormOriginPos_2->clear();
-    ui->orbFormOriginPos_3->clear();
+    ui->orbFormOriginPos_1->setText("");
+    ui->orbFormOriginPos_2->setText("");
+    ui->orbFormOriginPos_3->setText("");
 }
 
 void ORB_Menu::string2radiobool(QString boolString, QButtonGroup *buttonGroup) {
@@ -795,11 +788,10 @@ void ORB_Menu::on_orbListDuplicate_clicked() {
     if (index == -1) return;
     QString oldOrb = ui->orbList->currentItem()->text();
     QString newOrb = oldOrb +"_Copy";
-    QStringList orbFileHashKeys = orbFileHash.keys();
     for(int i = 0; i <= 30; i++) {
         QString newOrbTest = newOrb;
-        if (i>0) newOrbTest += "_" + QString::number(i);
-        if (!orbFileHashKeys.contains(newOrbTest,Qt::CaseInsensitive)) {
+        if(i>0) newOrbTest += "_" + QString::number(i);
+        if(!orbFileHash.contains(newOrbTest)) {
             newOrb = newOrbTest;
             break;
         }

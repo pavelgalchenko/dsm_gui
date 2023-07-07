@@ -10,8 +10,6 @@
 #include "ipc_menu.h"
 #include "spc_menu.h"
 #include "orb_menu.h"
-#include "sim_menu.h"
-#include "dsm_gui_lib.h"
 
 #include <QDebug>
 
@@ -32,6 +30,8 @@ signals:
 
 private slots:
 
+    int warning_message(QString);
+
     void on_new_mission_clicked();
 
     void on_GRH_Menu_clicked();
@@ -40,9 +40,9 @@ private slots:
     void on_NOS_Menu_clicked();
     void on_RGN_Menu_clicked();
     void on_IPC_Menu_clicked();
+
     void on_SPC_Menu_clicked();
     void on_ORB_Menu_clicked();
-    void on_SIM_Menu_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -55,7 +55,6 @@ private:
     IPC_Menu *ipc_menu;
     SPC_Menu *spc_menu;
     ORB_Menu *orb_menu;
-    SIM_Menu *sim_menu;
     QString path;
 };
 #endif // MAINWINDOW_H

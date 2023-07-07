@@ -8,7 +8,7 @@ TRUE                            !  Graphics Front End?
 Inp_Cmd.txt                     !  Command Script File Name
 **************************  Reference Orbits  **************************
 1                               !  Number of Reference Orbits
-TRUE   Orb_Default.txt          !  Input file name for Orb 0
+TRUE   Orb_LEO.txt              !  Input file name for Orb 0
 *****************************  Spacecraft  *****************************
 1                               !  Number of Spacecraft
 TRUE  0 SC_Simple.txt           !  Existence, RefOrb, Input file for SC 0
