@@ -86,6 +86,7 @@ void MainWindow::on_new_mission_clicked()
     ui->NOS_Menu->setEnabled(true);
     ui->RGN_Menu->setEnabled(true);
     ui->IPC_Menu->setEnabled(true);
+    ui->SPC_Menu->setEnabled(true);
     ui->ORB_Menu->setEnabled(true);
     ui->SIM_Menu->setEnabled(true);
 }
@@ -154,6 +155,17 @@ void MainWindow::on_IPC_Menu_clicked()
     ipc_menu->show();
 
     connect(this, SIGNAL(send_data(QString)), ipc_menu, SLOT(receive_ipcpath(QString)));
+    emit send_data(path);
+    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+}
+
+void MainWindow::on_SPC_Menu_clicked()
+{
+    spc_menu = new SPC_Menu(this);
+    spc_menu->setModal(true);
+    spc_menu->show();
+
+    connect(this, SIGNAL(send_data(QString)), spc_menu, SLOT(receive_spcpath(QString)));
     emit send_data(path);
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }

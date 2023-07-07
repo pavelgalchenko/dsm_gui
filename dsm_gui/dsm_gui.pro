@@ -22,6 +22,8 @@ SOURCES += \
     nos_menu.cpp \
     orb_menu.cpp \
     rgn_menu.cpp \
+    spc_menu.cpp \
+    spc_submenu.cpp \
     sim_menu.cpp \
     tdr_menu.cpp
 
@@ -35,6 +37,8 @@ HEADERS += \
     nos_menu.h \
     orb_menu.h \
     rgn_menu.h \
+    spc_menu.h \
+    spc_submenu.h \
     sim_menu.h \
     tdr_menu.h
 
@@ -47,6 +51,8 @@ FORMS += \
     nos_menu.ui \
     orb_menu.ui \
     rgn_menu.ui \
+    spc_menu.ui \
+    spc_submenu.ui \
     sim_menu.ui \
     tdr_menu.ui
 

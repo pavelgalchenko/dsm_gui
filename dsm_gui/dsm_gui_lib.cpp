@@ -1,5 +1,6 @@
 #include "dsm_gui_lib.h"
 #include <QMessageBox>
+#include <QComboBox>
 
 dsm_gui_lib::dsm_gui_lib()
 {
@@ -12,6 +13,15 @@ int dsm_gui_lib::warning_message(QString warningText) {
     warningMsg.setText(warningText);
     warningMsg.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     int ret = warningMsg.exec();
+    return ret;
+}
+
+int dsm_gui_lib::error_message(QString errorText) {
+    QMessageBox errorMsg;
+    errorMsg.setIcon(QMessageBox::Critical);
+    errorMsg.setText(errorText);
+    errorMsg.setStandardButtons(QMessageBox::Ok);
+    int ret = errorMsg.exec();
     return ret;
 }
 
