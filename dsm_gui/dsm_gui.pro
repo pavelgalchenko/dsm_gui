@@ -23,6 +23,7 @@ SOURCES += \
     rgn_menu.cpp \
     spc_menu.cpp \
     spc_submenu.cpp \
+    sim_menu.cpp \
     tdr_menu.cpp
 
 HEADERS += \
