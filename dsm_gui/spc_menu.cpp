@@ -639,21 +639,21 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
 
 void SPC_Menu::on_spc_remove_clicked() // Remove S/C
 {
+    if (ui->spc_list->count() == 0) return;
+
     int remove_Item = ui->spc_list->currentRow();
     int name_index = spc_names.indexOf(ui->spc_list->item(remove_Item)->text());
-    if (ui->spc_list->count() == 0) return;
-    else{
-        if (ui->spc_list->count() > 0)
-        {
-            delete ui->spc_list->item(remove_Item);
 
-            QString file_path_delete = file_paths[name_index];
+    if (ui->spc_list->count() > 0)
+    {
+        delete ui->spc_list->item(remove_Item);
 
-            spc_names.removeAt(name_index);
-            file_paths.removeAt(name_index);
+        QString file_path_delete = file_paths[name_index];
 
-            QFile::remove(file_path_delete);
-        }
+        spc_names.removeAt(name_index);
+        file_paths.removeAt(name_index);
+
+        QFile::remove(file_path_delete);
     }
 
     if (ui->spc_list->count() > 0) {
