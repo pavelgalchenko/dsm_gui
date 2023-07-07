@@ -767,15 +767,19 @@ void SPC_Menu::on_spc_load_clicked() // Load default S/C
 
 void SPC_Menu::on_spc_save_clicked()
 {
+    if (ui->spc_list->count() == 0) return;
     int response = dsm_gui_lib::warning_message("Save All Current S/C to Defaults?");
     if (response == QMessageBox::Ok) {
+
+        for (int i = 0; i<file_paths_default.length(); i++) QFile::remove(file_paths_default[i]);
+
         spc_names_default.clear();
         file_paths_default.clear();
 
         for (int i = 0; i<ui->spc_list->count(); i++)
         {
             spc_names_default.append(spc_names[i]);
-            file_paths_default.append(inout_path + "__default__/" + "SC_"+spc_names[i]);
+            file_paths_default.append(inout_path + "__default__/" + "SC_"+spc_names[i]+".txt");
 
             QFile::copy(file_paths[i], file_paths_default[i]);
         }
