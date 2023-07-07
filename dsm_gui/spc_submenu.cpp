@@ -1507,7 +1507,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         spc_update.append("NONE                        ! Parameter File Name\n");
     }
 
-    if (ui->sections->currentIndex() == 2)
+    if (ui->sections->currentIndex() == 1)
     {
 
         cur_item_row = ui->spc_cur_joint_list->currentRow();
@@ -1708,7 +1708,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     }
 
-    if (ui->sections->currentIndex() == 2 && joints > 0) {
+    if (ui->sections->currentIndex() == 1 && joints > 0) {
         ui->spc_cur_joint_list->setCurrentRow(cur_item_row);
         on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->item(cur_item_row));
     }
@@ -1745,7 +1745,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     }
 
 
-    if (ui->sections->currentIndex() == 3  && ui->actuator_sections->currentIndex()==0)
+    if (ui->sections->currentIndex() == 2  && ui->actuator_sections->currentIndex()==0)
     {
 
         cur_item_row = ui->spc_cur_wheel_list->currentRow();
@@ -1847,7 +1847,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 3  && ui->actuator_sections->currentIndex()==0 && wheels > 0) {
+    if (ui->sections->currentIndex() == 2  && ui->actuator_sections->currentIndex()==0 && wheels > 0) {
         ui->spc_cur_wheel_list->setCurrentRow(cur_item_row);
         on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->item(cur_item_row));
     }
@@ -1867,7 +1867,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         spc_update.append("0                             ! Node\n");
     }
 
-    if (ui->sections->currentIndex() == 3  && ui->actuator_sections->currentIndex()==1)
+    if (ui->sections->currentIndex() == 2  && ui->actuator_sections->currentIndex()==1)
     {
 
         cur_item_row = ui->spc_cur_mtb_list->currentRow();
@@ -1939,7 +1939,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 3 && ui->actuator_sections->currentIndex()==1 && mtbs > 0) {
+    if (ui->sections->currentIndex() == 2&& ui->actuator_sections->currentIndex()==1 && mtbs > 0) {
         ui->spc_cur_mtb_list->setCurrentRow(cur_item_row);
         on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->item(cur_item_row));
     }
@@ -1960,7 +1960,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         spc_update.append("0                             ! Node\n");
     }
 
-    if (ui->sections->currentIndex() == 3  && ui->actuator_sections->currentIndex()==2)
+    if (ui->sections->currentIndex() == 2  && ui->actuator_sections->currentIndex()==2)
     {
 
         cur_item_row = ui->spc_cur_thruster_list->currentRow();
@@ -2045,7 +2045,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 3  && ui->actuator_sections->currentIndex()==2 && thrusters > 0) {
+    if (ui->sections->currentIndex() == 2  && ui->actuator_sections->currentIndex()==2 && thrusters > 0) {
         ui->spc_cur_thruster_list->setCurrentRow(cur_item_row);
         on_spc_cur_thruster_list_itemClicked(ui->spc_cur_thruster_list->item(cur_item_row));
     }
@@ -2071,7 +2071,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         spc_update.append("0                             ! Node\n");
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==0)
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==0)
     {
 
         cur_item_row = ui->spc_cur_gyro_list->currentRow();
@@ -2193,7 +2193,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==0 && gyros > 0) {
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==0 && gyros > 0) {
         ui->spc_cur_gyro_list->setCurrentRow(cur_item_row);
         on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->item(cur_item_row));
     }
@@ -2217,7 +2217,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     }
 
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==1)
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==1)
     {
 
         cur_item_row = ui->spc_cur_mag_list->currentRow();
@@ -2317,7 +2317,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==1 && mags > 0) {
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==1 && mags > 0) {
         ui->spc_cur_mag_list->setCurrentRow(cur_item_row);
         on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->item(cur_item_row));
     }
@@ -2340,7 +2340,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         spc_update.append("0                             ! Node\n");
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==2)
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==2)
     {
 
         cur_item_row = ui->spc_cur_css_list->currentRow();
@@ -2439,7 +2439,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==2 && css_s > 0) {
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==2 && css_s > 0) {
         ui->spc_cur_css_list->setCurrentRow(cur_item_row);
         on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->item(cur_item_row));
     }
@@ -2462,7 +2462,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         spc_update.append("0                             ! Node\n");
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==3)
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==3)
     {
 
         cur_item_row = ui->spc_cur_fss_list->currentRow();
@@ -2565,7 +2565,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==3 && fss_s > 0) {
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==3 && fss_s > 0) {
         ui->spc_cur_fss_list->setCurrentRow(cur_item_row);
         on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->item(cur_item_row));
     }
@@ -2588,7 +2588,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         spc_update.append("0                             ! Node\n");
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==4)
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==4)
     {
 
         cur_item_row = ui->spc_cur_strack_list->currentRow();
@@ -2695,7 +2695,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==4 && stracks > 0) {
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==4 && stracks > 0) {
         ui->spc_cur_strack_list->setCurrentRow(cur_item_row);
         on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->item(cur_item_row));
     }
@@ -2716,7 +2716,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         spc_update.append("0                             ! Node\n");
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==5)
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==5)
     {
 
         cur_item_row = ui->spc_cur_gps_list->currentRow();
@@ -2805,7 +2805,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==5 && gps_s > 0) {
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==5 && gps_s > 0) {
         ui->spc_cur_gps_list->setCurrentRow(cur_item_row);
         on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->item(cur_item_row));
     }
@@ -2831,7 +2831,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         spc_update.append("0                             ! Node\n");
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==6)
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==6)
     {
 
         cur_item_row = ui->spc_cur_accel_list->currentRow();
@@ -2954,7 +2954,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 4  && ui->sensor_sections->currentIndex()==6 && accels > 0) {
+    if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==6 && accels > 0) {
         ui->spc_cur_accel_list->setCurrentRow(cur_item_row);
         on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->item(cur_item_row));
     }
