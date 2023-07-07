@@ -19,6 +19,8 @@ RGN_Menu::~RGN_Menu() {
 }
 
 void RGN_Menu::set_validators() {
+    QRegularExpression rx("[^\"]*");
+
     ui->world->addItems(world_inputs);
     ui->location->addItems(dsm_gui_lib::sortStringList(location_inputs.values()));
     ui->posw_x->setValidator(new QDoubleValidator);
@@ -30,6 +32,8 @@ void RGN_Menu::set_validators() {
     ui->elasticity->setValidator(new QDoubleValidator);
     ui->damping->setValidator(new QDoubleValidator);
     ui->friction->setValidator(new QDoubleValidator);
+    ui->regionname->setValidator(new QRegularExpressionValidator(rx));
+    ui->geometryname->setValidator(new QRegularExpressionValidator(rx));
 
     ui->rgnlist->setSortingEnabled(true);
     ui->rgnlist->sortItems(Qt::AscendingOrder);

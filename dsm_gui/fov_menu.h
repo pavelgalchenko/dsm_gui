@@ -8,6 +8,11 @@
 #include <QListWidgetItem>
 #include <QDebug>
 #include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
+#include <QMessageBox>
+#include <QRegularExpression>
+#include <QColorDialog>
 
 namespace Ui {
 class FOV_Menu;

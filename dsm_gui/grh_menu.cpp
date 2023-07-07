@@ -30,7 +30,7 @@ void GRH_Menu::set_validators() {
     ui->targetBDY->setMaximum(INFINITY);
     ui->targetFrame->addItems(dsm_gui_lib::sortStringList(frame_inputs.values()));
     ui->boresightaxis->addItems(dsm_gui_lib::sortStringList(axis_inputs.values()));
-//    ui->upaxis->addItems(dsm_gui_lib::sortStringList(axis_inputs.values()));
+
     ui->povrange->setValidator(new QDoubleValidator);
     ui->povangle->setValidator(new QDoubleValidator);
     ui->povinhost_x->setValidator(new QDoubleValidator);

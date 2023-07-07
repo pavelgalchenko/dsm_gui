@@ -1,12 +1,6 @@
 #include "fov_menu.h"
 #include "ui_fov_menu.h"
 
-#include <QFile>
-#include <QTextStream>
-#include <QMessageBox>
-#include <QRegularExpression>
-#include <QColorDialog>
-
 FOV_Menu::FOV_Menu(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::FOV_Menu)
@@ -21,7 +15,6 @@ FOV_Menu::~FOV_Menu() {
 
 void FOV_Menu::set_validators() {
     QRegularExpression rx("[^\"]*");
-    QValidator *noQuotes = new QRegularExpressionValidator(rx);
 
     ui->fovlist->setSortingEnabled(true);
     ui->fovlist->sortItems(Qt::AscendingOrder);
@@ -30,7 +23,7 @@ void FOV_Menu::set_validators() {
     ui->length_sides->setValidator(new QDoubleValidator);
     ui->horizontal_width->setValidator(new QDoubleValidator);
     ui->vertical_height->setValidator(new QDoubleValidator);
-    ui->fov_name->setValidator(noQuotes);
+    ui->fov_name->setValidator(new QRegularExpressionValidator(rx));
     ui->fov_type->addItems(dsm_gui_lib::sortStringList(fovtype_inputs.values()));
     ui->bdy_num->setMinimum(0);
     ui->bdy_num->setMaximum(INFINITY);
@@ -159,15 +152,13 @@ void FOV_Menu::write_data() {
 
 void FOV_Menu::apply_data() {
     QStringList line_items;
-    QString line_item;
     QListWidgetItem* newFOV;
     int num_fov = 0;
 
     QStringList tmpData;
 
     line_items = fov_data[1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-    line_item = line_items[0];
-    num_fov = line_item.toInt();
+    num_fov = line_items[0].toInt();
 
     ui->fovlist->clear();
     clear_fields();
