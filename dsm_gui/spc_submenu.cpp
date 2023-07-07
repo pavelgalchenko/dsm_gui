@@ -2528,7 +2528,6 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         ui->spc_cur_fss_list->setCurrentRow(cur_item);
         QStringList current_data = ui->spc_cur_fss_list->currentItem()->data(257).toStringList();
-        qDebug() << current_data;
 
         switch (cur_entry){
         case 0:
