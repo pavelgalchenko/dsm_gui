@@ -36,6 +36,7 @@ HEADERS += \
     rgn_menu.h \
     spc_menu.h \
     spc_submenu.h \
+    sim_menu.h \
     tdr_menu.h
 
 FORMS += \
@@ -48,6 +49,7 @@ FORMS += \
     rgn_menu.ui \
     spc_menu.ui \
     spc_submenu.ui \
+    sim_menu.ui \
     tdr_menu.ui
 
 # Default rules for deployment.
