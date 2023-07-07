@@ -648,7 +648,16 @@ void SIM_Menu::on_simSCOrbit_currentTextChanged(const QString &arg1) {
 
 void SIM_Menu::on_simGSList_itemClicked(QListWidgetItem *item) {
     ui->simGSEn->setChecked(item->data(gsEnabledRole).toBool());
-    ui->simGSWorld->setCurrentText(item->data(gsWorldRole).toString());
+    QString gsWorld = item->data(gsWorldRole).toString();
+    if (gsWorld.contains("MINORBODY")) {
+        ui->simGSWorld->setCurrentText("MINORBODY");
+        QStringList split = gsWorld.split(QRegExp("_"),Qt::SkipEmptyParts);
+        ui->simGSMinorBodyNum->setValue(split[1].toInt());
+    }
+    else {
+        ui->simGSMinorBodyNum->setValue(0);
+        ui->simGSWorld->setCurrentText(gsWorld);
+    }
     ui->simGSLat->setText(item->data(gsLatRole).toString());
     ui->simGSLong->setText(item->data(gsLongRole).toString());
     ui->simGSLabel->setText(item->text());
@@ -662,10 +671,12 @@ void SIM_Menu::on_simGSEn_toggled(bool checked) {
 void SIM_Menu::on_simGSWorld_currentTextChanged(const QString &arg1) {
     QString worldName = arg1;
     if (ui->simGSList->currentRow()==-1) return;
-    ui->simGSMinorBodyLabel->setEnabled(!worldName.compare("MINORBODY"));
-    ui->simGSMinorBodyNum->setEnabled(!worldName.compare("MINORBODY"));
-    if (!worldName.compare("MINORBODY"))
+    bool isMinor = !worldName.compare("MINORBODY");
+    ui->simGSMinorBodyLabel->setEnabled(isMinor);
+    ui->simGSMinorBodyNum->setEnabled(isMinor);
+    if (isMinor)
         worldName += "_" + ui->simGSMinorBodyNum->text();
+    else ui->simGSMinorBodyNum->setValue(0);
     ui->simGSList->currentItem()->setData(gsWorldRole,worldName);
 }
 
@@ -717,7 +728,6 @@ void SIM_Menu::on_simGSListAdd_clicked() {
     newGSItem->setData(gsLongRole,-76.852);
     newGSItem->setData(gsLatRole,38.995);
     ui->simGSList->addItem(newGSItem);
-
 }
 
 void SIM_Menu::on_simGSListDuplicate_clicked() {
@@ -766,10 +776,8 @@ void SIM_Menu::on_simAeroPertShadow_toggled(bool checked) {
     ui->simAeroPertEn->setEnabled(!checked);
 }
 
-
 void SIM_Menu::on_simSRPPertShadow_toggled(bool checked) {
     if (checked)
         ui->simSRPPertEn->setChecked(true);
     ui->simSRPPertEn->setEnabled(!checked);
 }
-

@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Region Menu</string>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -147,23 +147,10 @@
        </spacer>
       </item>
       <item>
-       <widget class="QRadioButton" name="exists_on">
+       <widget class="QCheckBox" name="exists">
         <property name="text">
-         <string>On</string>
+         <string>Enabled?</string>
         </property>
-        <attribute name="buttonGroup">
-         <string notr="true">exists_toggle</string>
-        </attribute>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="exists_off">
-        <property name="text">
-         <string>Off</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">exists_toggle</string>
-        </attribute>
        </widget>
       </item>
      </layout>
@@ -258,7 +245,7 @@
     <item row="7" column="1">
      <layout class="QHBoxLayout" name="horizontalLayout_10">
       <item>
-       <widget class="QLineEdit" name="geometeryname"/>
+       <widget class="QLineEdit" name="geometryname"/>
       </item>
      </layout>
     </item>
@@ -281,6 +268,18 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="rgn_remove">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
          <string>-</string>
         </property>
@@ -288,8 +287,27 @@
       </item>
       <item>
        <widget class="QPushButton" name="rgn_add">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
          <string>+</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="rgn_duplicate">
+        <property name="text">
+         <string>Duplicate</string>
         </property>
        </widget>
       </item>
@@ -300,7 +318,4 @@
  </widget>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="exists_toggle"/>
- </buttongroups>
 </ui>

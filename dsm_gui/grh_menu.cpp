@@ -653,7 +653,7 @@ void GRH_Menu::on_applyButton_clicked() {
             break;
         case 55:
             data_inp = dsm_gui_lib::whitespace(dsm_gui_lib::toString(ui->showMinorConst));
-            data_inp += " ! Show Minor Constellations";
+            data_inp += " ! Show Minor Constellations\n";
             break;
         default:
             break;

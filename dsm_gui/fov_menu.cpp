@@ -229,7 +229,7 @@ void FOV_Menu::apply_data() {
                 tmpData.append(line_items[0]);
                 newFOV->setData(FOV_Menu::Boresight, tmpData);
                 break;
-            case 10: // Nothing of use here
+            default:
                 break;
             }
 
@@ -290,15 +290,15 @@ void FOV_Menu::on_fov_add_clicked() {
     }
 
     newData.append("");
-    newData.append("4   4.0                           !");
-    newData.append("8.0  4.0                          !");
-    newData.append("0.0 1.0 0.0 0.5                   !");
-    newData.append("SOLID                             !");
-    newData.append("TRUE  TRUE                        !");
-    newData.append("0  0                              !");
-    newData.append("0.0  0.0  1.0                     !");
-    newData.append("0.0  0.0  0.0  321                !");
-    newData.append("Z_AXIS                            !");
+    newData.append("4   4.0                           ");
+    newData.append("8.0  4.0                          ");
+    newData.append("0.0 1.0 0.0 0.5                   ");
+    newData.append("SOLID                             ");
+    newData.append("TRUE  TRUE                        ");
+    newData.append("0  0                              ");
+    newData.append("0.0  0.0  1.0                     ");
+    newData.append("0.0  0.0  0.0  321                ");
+    newData.append("Z_AXIS                            ");
     newData.append("");
 
     for (int j = 0; j < fovNLines-1; j++) {
@@ -356,7 +356,7 @@ void FOV_Menu::on_fov_add_clicked() {
             tmpData.append(line_items[0]);
             newFOV->setData(FOV_Menu::Boresight, tmpData);
             break;
-        case 10: // Nothing of use here
+        default:
             break;
         }
         tmpData.clear();
@@ -371,7 +371,7 @@ void FOV_Menu::on_fov_add_clicked() {
 void FOV_Menu::on_fovlist_itemClicked(QListWidgetItem *item) {
     QStringList tmpData = {};
 
-    for (int i =0; i < fovNLines; i++) {
+    for (int i=0; i<fovNLines; i++) {
         switch (i) {
         case 0:
             tmpData = item->data(FOV_Menu::Label).toStringList();
@@ -425,6 +425,8 @@ void FOV_Menu::on_fovlist_itemClicked(QListWidgetItem *item) {
             tmpData = item->data(FOV_Menu::Boresight).toStringList();
             ui->boresightaxis->setCurrentText(axis_inputs[tmpData[0]]);
             break;
+        default:
+            break;
         }
         tmpData.clear();
     }
@@ -465,11 +467,7 @@ void FOV_Menu::on_applyButton_clicked() {
     QStringList tmpData = {};
     QListWidgetItem* item;
 
-    int index = ui->fovlist->currentRow();
-
     int fov_num = ui->fovlist->count();
-
-    ui->fovlist->item(index)->setText(ui->fov_name->text());
 
     fov_update.append("************************* Fields of View ***************************\n");
 

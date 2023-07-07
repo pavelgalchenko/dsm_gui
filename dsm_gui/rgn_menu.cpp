@@ -14,15 +14,13 @@ RGN_Menu::RGN_Menu(QWidget *parent) :
     set_validators();
 }
 
-RGN_Menu::~RGN_Menu()
-{
+RGN_Menu::~RGN_Menu() {
     delete ui;
 }
 
-void RGN_Menu::set_validators()
-{
+void RGN_Menu::set_validators() {
     ui->world->addItems(world_inputs);
-    ui->location->addItems(location_inputs);
+    ui->location->addItems(dsm_gui_lib::sortStringList(location_inputs.values()));
     ui->posw_x->setValidator(new QDoubleValidator);
     ui->posw_y->setValidator(new QDoubleValidator);
     ui->posw_z->setValidator(new QDoubleValidator);
@@ -32,23 +30,42 @@ void RGN_Menu::set_validators()
     ui->elasticity->setValidator(new QDoubleValidator);
     ui->damping->setValidator(new QDoubleValidator);
     ui->friction->setValidator(new QDoubleValidator);
+
+    ui->rgnlist->setSortingEnabled(true);
+    ui->rgnlist->sortItems(Qt::AscendingOrder);
+
+    connect(ui->world, &QComboBox::currentTextChanged, this, &RGN_Menu::world_changed);
+    connect(ui->minorbodynum, &QSpinBox::textChanged, this, &RGN_Menu::world_changed);
+
+    connect(ui->location, &QComboBox::currentTextChanged, this, &RGN_Menu::location_changed);
+
+    connect(ui->posw_x, &QLineEdit::textChanged, this, &RGN_Menu::posw_changed);
+    connect(ui->posw_y, &QLineEdit::textChanged, this, &RGN_Menu::posw_changed);
+    connect(ui->posw_z, &QLineEdit::textChanged, this, &RGN_Menu::posw_changed);
+
+    connect(ui->lng, &QLineEdit::textChanged, this, &RGN_Menu::lla_changed);
+    connect(ui->lat, &QLineEdit::textChanged, this, &RGN_Menu::lla_changed);
+    connect(ui->alt, &QLineEdit::textChanged, this, &RGN_Menu::lla_changed);
+
+    connect(ui->elasticity, &QLineEdit::textChanged, this, &RGN_Menu::coeffs_changed);
+    connect(ui->damping, &QLineEdit::textChanged, this, &RGN_Menu::coeffs_changed);
+    connect(ui->friction, &QLineEdit::textChanged, this, &RGN_Menu::coeffs_changed);
+
+    connect(ui->geometryname, &QLineEdit::textChanged, this, &RGN_Menu::geometry_changed);
 }
 
-void RGN_Menu::receive_rgnpath(QString path)
-{
+void RGN_Menu::receive_rgnpath(QString path) {
     inout_path = path;
     file_path = path+"Inp_Region.txt";
     receive_data();
     apply_data();
-    populate_list();
 }
 
-void RGN_Menu::receive_data()
-{
+void RGN_Menu::receive_data() {
     rgn_data.clear();
     rgn_string.clear();
     rgn_update.clear();
-    static QRegularExpression rx1("(.*?)*!");
+    static QRegularExpression rx1("(.*?)!");
     static QRegularExpression rx2("\"(.*?)\"");
 
     QFile file(file_path);
@@ -60,29 +77,15 @@ void RGN_Menu::receive_data()
     while(!in.atEnd()) {
         QString line = in.readLine();
         QRegularExpressionMatch match1 = rx1.match(line);
-        if (match1.hasMatch()) {
-            QString capture = match1.captured(0);
-            rgn_data.append(capture);
-        }
-        else {
-            rgn_data.append("blankline");
-        }
+        rgn_data.append(match1.captured(1));
+
         QRegularExpressionMatch match2 = rx2.match(line);
-        if (match2.hasMatch()) {
-            QString capture = match2.captured(0);
-            rgn_string.append(capture);
-        }
-        else {
-            rgn_string.append("blankline");
-        }
-        line.append("\n");
-        rgn_update.append(line);
+        rgn_string.append(match2.captured(1));
     }
     file.close();
 }
 
-void RGN_Menu::write_data()
-{
+void RGN_Menu::write_data() {
     QFile::remove(file_path);
     QFile file(file_path);
     if(!file.open(QFile::WriteOnly)) {
@@ -95,199 +98,233 @@ void RGN_Menu::write_data()
         }
     }
     file.close();
+    rgn_update.clear();
 }
 
-
-void RGN_Menu::apply_data()
-{
+void RGN_Menu::apply_data() {
     QStringList line_items;
-    QString line_item;
+    QListWidgetItem* newRGN;
     int num_rgn = 0;
 
-    rgn_names.clear();
+    QStringList tmpData;
 
-    line_items = rgn_data[1].split(QRegExp("\\s"), QString::SkipEmptyParts);
-    line_item = line_items[0];
-    num_rgn = line_item.toInt();
+    line_items = rgn_data[1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+    num_rgn = line_items[0].toInt();
+
+    ui->rgnlist->clear();
+    clear_fields();
 
     for (int i=0; i < num_rgn; i++) {
-        line_item = rgn_string[9*i+4];
-        rgn_names.append(line_item);
+        newRGN = new QListWidgetItem();
+        for (int j = 0; j < rgnNLines-1; j++) {
+            int k = i*rgnNLines+3+j;
+            line_items = rgn_data[k].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+            switch (j) {
+            case 0:
+                tmpData.append(line_items[0]);
+                newRGN->setData(RGN_Menu::Exists,tmpData);
+                break;
+            case 1:
+                tmpData.append(rgn_string[k]);
+                newRGN->setData(RGN_Menu::Name,tmpData);
+                break;
+            case 2:
+                tmpData.append(line_items[0]);
+                newRGN->setData(RGN_Menu::World,tmpData);
+                break;
+            case 3:
+                tmpData.append(line_items[0]);
+                newRGN->setData(RGN_Menu::Location,tmpData);
+                break;
+            case 4:
+                tmpData.append(line_items[0]);
+                tmpData.append(line_items[1]);
+                tmpData.append(line_items[2]);
+                newRGN->setData(RGN_Menu::PosW,tmpData);
+                break;
+            case 5:
+                tmpData.append(line_items[0]);
+                tmpData.append(line_items[1]);
+                tmpData.append(line_items[2]);
+                newRGN->setData(RGN_Menu::LLA,tmpData);
+                break;
+            case 6:
+                tmpData.append(line_items[0]);
+                tmpData.append(line_items[1]);
+                tmpData.append(line_items[2]);
+                newRGN->setData(RGN_Menu::Coeffs,tmpData);
+                break;
+            case 7:
+                tmpData.append(line_items[0]);
+                newRGN->setData(RGN_Menu::GeometryFile,tmpData);
+                break;
+            default:
+                break;
+            }
+            tmpData.clear();
+        }
+        ui->rgnlist->addItem(newRGN);
     }
+
 }
 
-void RGN_Menu::populate_list()
-{
-    ui->rgnlist->clear();
-    ui->rgnlist->addItems(rgn_names);
-}
-
-void RGN_Menu::on_rgn_remove_clicked()
-{
+void RGN_Menu::on_rgn_remove_clicked() {
     int removeitem = ui->rgnlist->currentRow();
     if (removeitem == -1) {
         return;
     }
     else {
-        int rgn_index = 9*(removeitem)+2;
-        rgn_names.removeAt(removeitem);
-        for (int i = 0; i < 9; i++) {
-            rgn_data.removeAt(rgn_index);
-            rgn_string.removeAt(rgn_index);
-            rgn_update.removeAt(rgn_index);
-        }
-
-        delete ui->rgnlist->takeItem(removeitem);
-
-        QString data_inp;
-        int rgn_num = ui->rgnlist->count();
-
-        data_inp = QString::number(rgn_num);
-        rgn_update[1] = whitespace(data_inp) + " ! Number of Regions\n";
-
-        write_data();
-
+        ui->rgnlist->takeItem(removeitem);
         ui->rgnlist->setCurrentRow(-1);
-        global_rgn_index = -1;
+        clear_fields();
     }
 }
 
-void RGN_Menu::on_rgn_add_clicked()
-{
-    QString newrgn = "\"NEWREGION\"";
+void RGN_Menu::on_rgn_add_clicked() {
+    QListWidgetItem *newRGN = new QListWidgetItem();
+    QStringList line_items;
 
-    rgn_names.append(newrgn);
+    QStringList newData;
+    QStringList tmpData;
 
-    rgn_data.append("blankline");
-    rgn_data.append("TRUE                         !");
-    rgn_data.append("\"NEWREGION\"                  !");
-    rgn_data.append("EARTH                        !");
-    rgn_data.append("LLA                          !");
-    rgn_data.append("0.0   0.0  0.0               !");
-    rgn_data.append("-80.53  28.46 1000.0         !");
-    rgn_data.append("1.0E6  1.0E4  0.1            !");
-    rgn_data.append("Rgn_Terrain.obj              !");
-
-    rgn_string.append("blankline");
-    rgn_string.append("blankline");
-    rgn_string.append(newrgn);
-    for (int i = 0; i < 6; i++) rgn_string.append("blankline");
-
-    rgn_update.append("--------------------------------------------------------------------\n");
-    rgn_update.append("TRUE                         ! Exists\n");
-    rgn_update.append("\"NEWREGION\"                  ! Name\n");
-    rgn_update.append("EARTH                        ! World\n");
-    rgn_update.append("LLA                          ! POSW or LLA\n");
-    rgn_update.append("0.0   0.0  0.0               ! Position in W, m\n");
-    rgn_update.append("-80.53  28.46 1000.0         ! Lng, Lat (deg), Alt (m)\n");
-    rgn_update.append("1.0E6  1.0E4  0.1            ! Elasticity, Damping, Friction Coef\n");
-    rgn_update.append("Rgn_Terrain.obj              ! Geometry File Name\n");
-
-    ui->rgnlist->addItem(newrgn);
-
-    write_data();
-
-    ui->rgnlist->setCurrentRow(ui->rgnlist->count()-1);
-    on_rgnlist_itemClicked(ui->rgnlist->currentItem());
-}
-
-void RGN_Menu::on_rgnlist_itemClicked(QListWidgetItem *item)
-{
-    int index = ui->rgnlist->row(item);
-
-    if (index == global_rgn_index) {
-        return;
-    }
-    else {
-        if ( (global_rgn_index != -1) && (global_rgn_ignore == 0) ) {
-            int response = warning_message("Note that changes to the previous selected Region are lost unless you first select \"Apply\"! This is your only warning.");
-            if (response == QMessageBox::Cancel) {
-                ui->rgnlist->setCurrentRow(global_rgn_index);
-                global_rgn_ignore = 1;
-                return;
+    QString newName = "NEW REGION";
+    QStringList curNames = getTextFromList(ui->rgnlist);
+    if (ui->rgnlist->count() != 0) {
+        for(int i = 0; i <= 50; i++) {
+            QString newNameTest = newName;
+            if (i>0) newNameTest += "_" + QString::number(i);
+            if (!curNames.contains(newNameTest)) {
+                newName = newNameTest;
+                break;
             }
-            else if (response == QMessageBox::Ok) {
-                global_rgn_ignore = 1;
+            if (i==50) return; // Nothing happens if too many
+        }
+    }
+
+
+    newData.append("TRUE                         ");
+    newData.append("");
+    newData.append("EARTH                        ");
+    newData.append("LLA                          ");
+    newData.append("0.0   0.0  0.0               ");
+    newData.append("-80.53  28.46 1000.0         ");
+    newData.append("1.0E6  1.0E4  0.1            ");
+    newData.append("Rgn_Terrain.obj              ");
+    newData.append("");
+
+    for (int j = 0; j < rgnNLines-1; j++) {
+        line_items = newData[j].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+        switch (j) {
+        case 0:
+            tmpData.append(line_items[0]);
+            newRGN->setData(RGN_Menu::Exists,tmpData);
+            break;
+        case 1:
+            tmpData.append(newName);
+            newRGN->setData(RGN_Menu::Name,tmpData);
+            break;
+        case 2:
+            tmpData.append(line_items[0]);
+            newRGN->setData(RGN_Menu::World,tmpData);
+            break;
+        case 3:
+            tmpData.append(line_items[0]);
+            newRGN->setData(RGN_Menu::Location,tmpData);
+            break;
+        case 4:
+            tmpData.append(line_items[0]);
+            tmpData.append(line_items[1]);
+            tmpData.append(line_items[2]);
+            newRGN->setData(RGN_Menu::PosW,tmpData);
+            break;
+        case 5:
+            tmpData.append(line_items[0]);
+            tmpData.append(line_items[1]);
+            tmpData.append(line_items[2]);
+            newRGN->setData(RGN_Menu::LLA,tmpData);
+            break;
+        case 6:
+            tmpData.append(line_items[0]);
+            tmpData.append(line_items[1]);
+            tmpData.append(line_items[2]);
+            newRGN->setData(RGN_Menu::Coeffs,tmpData);
+            break;
+        case 7:
+            tmpData.append(line_items[0]);
+            newRGN->setData(RGN_Menu::GeometryFile,tmpData);
+            break;
+        default:
+            break;
+        }
+        tmpData.clear();
+    }
+
+    ui->rgnlist->addItem(newRGN);
+
+    ui->rgnlist->setCurrentRow(-1);
+    clear_fields();
+}
+
+void RGN_Menu::on_rgnlist_itemClicked(QListWidgetItem *item) {
+    QStringList tmpData = {};
+
+    for (int i=0; i<rgnNLines; i++) {
+        switch (i) {
+        case 0:
+            tmpData = item->data(RGN_Menu::Exists).toStringList();
+            ui->exists->setChecked(QVariant(tmpData[0]).toBool());
+            break;
+        case 1:
+            tmpData = item->data(RGN_Menu::Name).toStringList();
+            ui->regionname->setText(tmpData[0]);
+            break;
+        case 2:
+            tmpData = item->data(RGN_Menu::World).toStringList();
+            if (tmpData.contains("MINORBODY")) {
+                ui->world->setCurrentText("MINORBODY");
+                QStringList split = tmpData[0].split(QRegExp("_"),Qt::SkipEmptyParts);
+                ui->minorbodynum->setValue(split[1].toInt());
             }
+            else {
+                ui->minorbodynum->setValue(0);
+                ui->world->setCurrentText(tmpData[0]);
+            }
+            break;
+        case 3:
+            tmpData = item->data(RGN_Menu::Location).toStringList();
+            ui->location->setCurrentText(location_inputs[tmpData[0]]);
+            break;
+        case 4:
+            tmpData = item->data(RGN_Menu::PosW).toStringList();
+            ui->posw_x->setText(tmpData[0]);
+            ui->posw_y->setText(tmpData[1]);
+            ui->posw_z->setText(tmpData[2]);
+            break;
+        case 5:
+            tmpData = item->data(RGN_Menu::LLA).toStringList();
+            ui->lng->setText(tmpData[0]);
+            ui->lat->setText(tmpData[1]);
+            ui->alt->setText(tmpData[2]);
+            break;
+        case 6:
+            tmpData = item->data(RGN_Menu::Coeffs).toStringList();
+            ui->elasticity->setText(tmpData[0]);
+            ui->damping->setText(tmpData[1]);
+            ui->friction->setText(tmpData[2]);
+            break;
+        case 7:
+            tmpData = item->data(RGN_Menu::GeometryFile).toStringList();
+            ui->geometryname->setText(tmpData[0]);
+            break;
+        default:
+            break;
         }
-
-        receive_data();
-        apply_data();
-
-        global_rgn_index = index;
-
-        int string_index = 9*index+4;
-        int data_index = 9*index+3;
-        int line_num;
-
-        QStringList line_items;
-        QString line_item;
-
-        line_item = rgn_string[string_index];
-        ui->regionname->setText(line_item);
-
-        line_num = data_index+0;
-        line_items = rgn_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        if (line_items[0] == "TRUE") ui->exists_on->setChecked(true);
-        else ui->exists_off->setChecked(true);
-
-        line_num = data_index+2;
-        line_items = rgn_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        for( int i=0; i<world_inputs.count(); ++i )
-        {
-            if (line_items[0] == world_inputs[i]) ui->world->setCurrentIndex(i);
-        }
-        line_item = line_items[0];
-        if (line_item.left(9) == "MINORBODY") {
-            QString minorbodynum = line_item.right(1);
-            ui->minorbodynum->setValue(minorbodynum.toInt());
-            ui->world->setCurrentText("MINORBODY");
-        }
-
-        line_num = data_index+3;
-        line_items = rgn_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        for( int i=0; i<location_inputs.count(); ++i )
-        {
-            if (line_items[0] == location_inputs[i]) ui->location->setCurrentIndex(i);
-        }
-
-        line_num = data_index+4;
-        line_items = rgn_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        ui->posw_x->setText(line_items[0]);
-        ui->posw_y->setText(line_items[1]);
-        ui->posw_z->setText(line_items[2]);
-
-        line_num = data_index+5;
-        line_items = rgn_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        ui->lng->setText(line_items[0]);
-        ui->lat->setText(line_items[1]);
-        ui->alt->setText(line_items[2]);
-
-        line_num = data_index+6;
-        line_items = rgn_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        ui->elasticity->setText(line_items[0]);
-        ui->damping->setText(line_items[1]);
-        ui->friction->setText(line_items[2]);
-
-        line_num = data_index+7;
-        line_items = rgn_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        ui->geometeryname->setText(line_items[0]);
+        tmpData.clear();
     }
 }
 
-int RGN_Menu::warning_message(QString warningText)
-{
-    QMessageBox warningMsg;
-    warningMsg.setIcon(QMessageBox::Warning);
-    warningMsg.setText(warningText);
-    warningMsg.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    int ret = warningMsg.exec();
-    return ret;
-}
-
-void RGN_Menu::on_loaddefaultButton_clicked()
-{
-    int response = warning_message("Overwrite Region file?");
+void RGN_Menu::on_loaddefaultButton_clicked() {
+    int response = dsm_gui_lib::warning_message("Overwrite Region file?");
     if (response == QMessageBox::Ok) {
         QFile::remove(inout_path+"Inp_Region.txt");
         QFile::copy(inout_path+"__default__/Inp_Region.txt", inout_path+"Inp_Region.txt");
@@ -299,9 +336,8 @@ void RGN_Menu::on_loaddefaultButton_clicked()
     }
 }
 
-void RGN_Menu::on_savedefaultButton_clicked()
-{
-    int response = warning_message("Overwrite Default Region file?");
+void RGN_Menu::on_savedefaultButton_clicked() {
+    int response = dsm_gui_lib::warning_message("Overwrite Default Region file?");
     if (response == QMessageBox::Ok) {
         QFile::remove(inout_path+"__default__/Inp_Region.txt");
         QFile::copy(inout_path+"Inp_Region.txt",inout_path+"__default__/Inp_Region.txt");
@@ -313,86 +349,181 @@ void RGN_Menu::on_savedefaultButton_clicked()
     }
 }
 
-void RGN_Menu::on_closeButton_clicked()
-{
+void RGN_Menu::on_closeButton_clicked() {
     RGN_Menu::close();
 }
 
-void RGN_Menu::on_applyButton_clicked()
-{
+void RGN_Menu::on_applyButton_clicked() {
     QString data_inp;
-
-    int index = ui->rgnlist->currentRow();
-
-    if (index == -1) {
-        return;
-    }
+    QStringList tmpData = {};
+    QListWidgetItem* item;
 
     int rgn_num = ui->rgnlist->count();
 
-    int data_index = 9*index+2;
-
-    ui->rgnlist->item(index)->setText(ui->regionname->text());
-
-    rgn_update[0] = "********************  Regions for 42  *******************\n";
+    rgn_update.append("********************  Regions for 42  *******************\n");
 
     data_inp = QString::number(rgn_num);
-    rgn_update[1] = whitespace(data_inp) + " ! Number of Regions\n";
+    rgn_update.append(dsm_gui_lib::whitespace(data_inp) + " ! Number of Regions\n");
 
-    rgn_update[data_index+0] = "---------------------------------------------------------\n";
-
-    if (ui->exists_on->isChecked()) data_inp = "TRUE";
-    else data_inp = "FALSE";
-    rgn_update[data_index+1] = whitespace(data_inp) + " ! Exists\n";
-
-    data_inp = ui->regionname->text();
-    rgn_update[data_index+2] = whitespace(data_inp) + " ! Name\n";
-
-    data_inp = ui->world->currentText();
-    if (data_inp == "MINORBODY") {
-        data_inp.append("_"+QString::number(ui->minorbodynum->value()));
+    for (int i=0; i<rgn_num; i++) {
+        item = ui->rgnlist->item(i);
+        for (int j=0; j< rgnNLines; j++) {
+            switch (j) {
+            case 0:
+                data_inp = "---------------------------------------------------------\n";
+                break;
+            case 1:
+                tmpData = item->data(RGN_Menu::Exists).toStringList();
+                data_inp = dsm_gui_lib::whitespace(tmpData[0]);
+                data_inp += " ! Exists\n";
+                break;
+            case 2:
+                tmpData = item->data(RGN_Menu::Name).toStringList();
+                data_inp = dsm_gui_lib::whitespace("\"" + tmpData[0] + "\"");
+                data_inp += " ! Name\n";
+                break;
+            case 3:
+                tmpData = item->data(RGN_Menu::World).toStringList();
+                data_inp = dsm_gui_lib::whitespace(tmpData[0]);
+                data_inp += " ! World\n";
+                break;
+            case 4:
+                tmpData = item->data(RGN_Menu::Location).toStringList();
+                data_inp = dsm_gui_lib::whitespace(tmpData[0]);
+                data_inp += " ! POSW or LLA\n";
+                break;
+            case 5:
+                tmpData = item->data(RGN_Menu::PosW).toStringList();
+                data_inp = dsm_gui_lib::whitespace(tmpData.join("  "));
+                data_inp += " ! Position in W [m]\n";
+                break;
+            case 6:
+                tmpData = item->data(RGN_Menu::LLA).toStringList();
+                data_inp = dsm_gui_lib::whitespace(tmpData.join("  "));
+                data_inp += " ! Lng, Lat [deg], Alt [m]\n";
+                break;
+            case 7:
+                tmpData = item->data(RGN_Menu::Coeffs).toStringList();
+                data_inp = dsm_gui_lib::whitespace(tmpData.join("  "));
+                data_inp += " ! Elasticity, Damping, Friction Coef\n";
+                break;
+            case 8:
+                tmpData = item->data(RGN_Menu::GeometryFile).toStringList();
+                data_inp = dsm_gui_lib::whitespace(tmpData[0]);
+                data_inp += " ! Geometry File Name\n";
+                break;
+            }
+            rgn_update.append(data_inp);
+            data_inp.clear();
+        }
     }
-    rgn_update[data_index+3] = whitespace(data_inp) + " ! World\n";
-
-    data_inp = ui->location->currentText();
-    rgn_update[data_index+4] = whitespace(data_inp) + " ! POSW or LLA\n";
-
-    data_inp = ui->posw_x->text() + "  " + ui->posw_y->text()+ "  " + ui->posw_z->text();
-    rgn_update[data_index+5] = whitespace(data_inp) + " ! Position in W [m]\n";
-
-    data_inp = ui->lng->text() + "  " + ui->lat->text()+ "  " + ui->alt->text();
-    rgn_update[data_index+6] = whitespace(data_inp) + " ! Lng, Lat [deg], Alt [m]\n";
-
-    data_inp = ui->elasticity->text() + "  " + ui->damping->text()+ "  " + ui->friction->text();
-    rgn_update[data_index+7] = whitespace(data_inp) + " ! Elasticity, Damping, Friction Coef\n";
-
-    data_inp = ui->geometeryname->text();
-    rgn_update[data_index+8] = whitespace(data_inp) + " ! Geometry File Name\n";
-
     write_data();
 }
 
-QString RGN_Menu::whitespace(QString data)
-{
-    QString empty_space = "                              ";
-    int data_len = empty_space.count()-data.count();
-    if (data_len < 1) data_len = 1;
-    for (int i = 0; i < data_len; i++){
-        data.append(" ");
-    }
-    return data;
+QStringList RGN_Menu::getTextFromList(QListWidget *list) {
+    QStringList output;
+    foreach(QListWidgetItem *item, list->findItems("*",Qt::MatchWildcard))
+        output << item->text();
+    output.sort(Qt::CaseInsensitive);
+    return output;
 }
 
-void RGN_Menu::on_world_currentIndexChanged(int index)
-{
-    if (ui->world->currentText() == "MINORBODY") {
-        ui->minorbodylabel->setEnabled(true);
-        ui->minorbodynum->setEnabled(true);
-    }
-    else {
-        ui->minorbodylabel->setEnabled(false);
-        ui->minorbodynum->setEnabled(false);
-        ui->minorbodynum->setValue(0);
-    }
+void RGN_Menu::world_changed() {
+    if (ui->rgnlist->currentRow()==-1) return;
+    QString tmpData = {};
+    tmpData = ui->world->currentText();
+
+    bool isMinor = !tmpData.compare("MINORBODY");
+    ui->minorbodylabel->setEnabled(isMinor);
+    ui->minorbodynum->setEnabled(isMinor);
+
+    if (isMinor) tmpData += "_" + ui->minorbodynum->text();
+    else ui->minorbodynum->setValue(0);
+
+    ui->rgnlist->currentItem()->setData(RGN_Menu::World,tmpData);
 }
 
+void RGN_Menu::location_changed() {
+    if (ui->rgnlist->currentRow()==-1) return;
+    QString tmpData = {};
+    tmpData.append(location_inputs.key(ui->location->currentText()));
+    ui->rgnlist->currentItem()->setData(RGN_Menu::Location,tmpData);
+}
+
+void RGN_Menu::posw_changed() {
+    if (ui->rgnlist->currentRow()==-1) return;
+    QStringList tmpData = {};
+    tmpData.append(ui->posw_x->text());
+    tmpData.append(ui->posw_y->text());
+    tmpData.append(ui->posw_z->text());
+    ui->rgnlist->currentItem()->setData(RGN_Menu::PosW,tmpData);
+}
+
+void RGN_Menu::lla_changed() {
+    if (ui->rgnlist->currentRow()==-1) return;
+    QStringList tmpData = {};
+    tmpData.append(ui->lng->text());
+    tmpData.append(ui->lat->text());
+    tmpData.append(ui->alt->text());
+    ui->rgnlist->currentItem()->setData(RGN_Menu::LLA,tmpData);
+}
+
+void RGN_Menu::coeffs_changed() {
+    if (ui->rgnlist->currentRow()==-1) return;
+    QStringList tmpData = {};
+    tmpData.append(ui->elasticity->text());
+    tmpData.append(ui->damping->text());
+    tmpData.append(ui->friction->text());
+    ui->rgnlist->currentItem()->setData(RGN_Menu::Coeffs,tmpData);
+}
+
+void RGN_Menu::geometry_changed() {
+    if (ui->rgnlist->currentRow()==-1) return;
+    QString tmpData = {};
+    tmpData = ui->geometryname->text();
+    ui->rgnlist->currentItem()->setData(RGN_Menu::GeometryFile,tmpData);
+}
+
+void RGN_Menu::on_exists_toggled(bool checked) {
+    if (ui->rgnlist->currentRow()==-1) return;
+    ui->rgnlist->currentItem()->setData(RGN_Menu::Exists,QVariant(checked).toString().toUpper());
+}
+
+void RGN_Menu::on_regionname_textChanged(const QString &arg1) {
+    if (ui->rgnlist->currentRow()==-1) return;
+    ui->rgnlist->currentItem()->setData(RGN_Menu::Name,arg1);
+}
+
+void RGN_Menu::clear_fields() {
+    ui->exists->setChecked(false);
+    ui->regionname->clear();
+    ui->world->setCurrentIndex(0);
+    ui->minorbodynum->setValue(0);
+    ui->location->setCurrentIndex(0);
+    ui->posw_x->clear(); ui->posw_y->clear(); ui->posw_z->clear();
+    ui->lng->clear(); ui->lat->clear(); ui->alt->clear();
+    ui->elasticity->clear(); ui->damping->clear(); ui->friction->clear();
+    ui->geometryname->clear();
+}
+
+
+void RGN_Menu::on_rgn_duplicate_clicked() {
+    int index = ui->rgnlist->currentRow();
+    QListWidgetItem* curItem = ui->rgnlist->currentItem();
+    QStringList curNames = getTextFromList(ui->rgnlist);
+
+    if (index == -1) return;
+    QString oldName = curItem->text();
+    QString newName = oldName +"_Copy";
+    for(int i = 0; i <= 30; i++) {
+        QString newNameTest = newName;
+        if(i>0) newNameTest += "_" + QString::number(i);
+        if(!curNames.contains(newNameTest)) {
+            newName = newNameTest;
+            break;
+        }
+    }
+    QListWidgetItem* newItem = curItem->clone();
+    newItem->setData(RGN_Menu::Name,newName);
+    ui->rgnlist->addItem(newItem);
+}

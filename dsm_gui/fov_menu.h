@@ -1,7 +1,6 @@
 #ifndef FOV_MENU_H
 #define FOV_MENU_H
 
-#include "color_select.h"
 #include "qcheckbox.h"
 #include "dsm_gui_lib.h"
 
@@ -64,8 +63,6 @@ private slots:
 
 private:
     Ui::FOV_Menu *ui;
-
-//    COLOR_Select *color_menu;
 
     enum fovDataRoles {
         Label = Qt::DisplayRole,

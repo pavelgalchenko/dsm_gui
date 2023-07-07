@@ -1,6 +1,8 @@
 #ifndef RGN_MENU_H
 #define RGN_MENU_H
 
+#include "dsm_gui_lib.h"
+
 #include <QDialog>
 #include <QListWidgetItem>
 #include <QDebug>
@@ -22,10 +24,7 @@ private slots:
     void receive_rgnpath(QString);
     void receive_data();
     void apply_data();
-    void populate_list();
     void write_data();
-    int warning_message(QString);
-    QString whitespace(QString);
 
     void on_rgn_remove_clicked();
     void on_rgn_add_clicked();
@@ -35,23 +34,47 @@ private slots:
     void on_closeButton_clicked();
     void on_applyButton_clicked();
 
-    void on_world_currentIndexChanged(int index);
+    void clear_fields();
+    QStringList getTextFromList(QListWidget *list);
+
+    void world_changed();
+    void location_changed();
+    void posw_changed();
+    void lla_changed();
+    void coeffs_changed();
+    void geometry_changed();
+
+    void on_exists_toggled(bool checked);
+
+    void on_regionname_textChanged(const QString &arg1);
+
+    void on_rgn_duplicate_clicked();
 
 private:
     Ui::RGN_Menu *ui;
 
-    int global_rgn_index = -1;
-    int global_rgn_ignore = 0;
+    enum rgnDataRoles {
+        Name = Qt::DisplayRole,
+        Exists = Qt::UserRole,
+        World,
+        Location,
+        PosW,
+        LLA,
+        Coeffs,
+        GeometryFile
+    };
+
+    const int rgnNLines = 9;
 
     QString inout_path;
     QString file_path;
-    QStringList rgn_names;
     QStringList rgn_data;
     QStringList rgn_update;
     QStringList rgn_string;
 
-    QStringList location_inputs = {"POSW","LLA"};
-    QStringList world_inputs = {"SOL","MERCURY","VENUS","EARTH","MARS","JUPITER","SATURN","URANUS",
+    const QHash<QString, QString> location_inputs = {{"POSW","Position in World"},
+                                                    {"LLA","Lat, Long, Alt"}};
+    const QStringList world_inputs = {"SOL","MERCURY","VENUS","EARTH","MARS","JUPITER","SATURN","URANUS",
                                "NEPTUNE","PLUTO","LUNA","PHOBOS","DEIMOS","IO","EUROPA","GANYMEDE","CALLISTO",
                                "AMALTHEA","HIMALITA","ELARA","PASIPHAE","SINOPE","LYSITHEA","CARME","ANANKE",
                                "LEDA","THEBE","ADRASTEA","METIS","MIMAS","ENCELADUS","TETHYS","DIONE","RHEA",
