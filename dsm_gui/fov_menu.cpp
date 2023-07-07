@@ -580,8 +580,8 @@ void FOV_Menu::on_fov_name_textChanged(const QString &arg1) {
 void FOV_Menu::field_changed() {
     if (ui->fovlist->currentRow()==-1) return;
     QStringList tmpData;
-    tmpData.append(toString(ui->nearfield));
-    tmpData.append(toString(ui->farfield));
+    tmpData.append(dsm_gui_lib::toString(ui->nearfield));
+    tmpData.append(dsm_gui_lib::toString(ui->farfield));
     ui->fovlist->currentItem()->setData(FOV_Menu::DrawField,tmpData);
 }
 

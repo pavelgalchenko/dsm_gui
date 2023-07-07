@@ -469,7 +469,7 @@ void SIM_Menu::on_applyButton_clicked() {
             dataInp = ui->simRNGSeed->text();
             break;
         case 5:
-            dataInp = toString(ui->simGraphicsEn);
+            dataInp = dsm_gui_lib::toString(ui->simGraphicsEn);
             break;
         case 6:
             dataInp = "Inp_Cmd.txt";
@@ -543,36 +543,36 @@ void SIM_Menu::on_applyButton_clicked() {
             dataInp = ui->simLunaHarmN->text() + "  " + ui->simLunaHarmM->text();
             break;
         case 12:
-            dataInp = toString(ui->simAeroPertEn) + "  ";
-            dataInp += toString(ui->simAeroPertShadow);
+            dataInp = dsm_gui_lib::toString(ui->simAeroPertEn) + "  ";
+            dataInp += dsm_gui_lib::toString(ui->simAeroPertShadow);
             break;
         case 13:
-            dataInp = toString(ui->simGravGradientEn);
+            dataInp = dsm_gui_lib::toString(ui->simGravGradientEn);
             break;
         case 14:
-            dataInp = toString(ui->simSRPPertEn) + "  ";
-            dataInp += toString(ui->simSRPPertShadow);
+            dataInp = dsm_gui_lib::toString(ui->simSRPPertEn) + "  ";
+            dataInp += dsm_gui_lib::toString(ui->simSRPPertShadow);
             break;
         case 15:
-            dataInp = toString(ui->simResidualMagEn);
+            dataInp = dsm_gui_lib::toString(ui->simResidualMagEn);
             break;
         case 16:
-            dataInp = toString(ui->simGravPertEn);
+            dataInp = dsm_gui_lib::toString(ui->simGravPertEn);
             break;
         case 17:
-            dataInp = toString(ui->simThrusterPlumeEn);
+            dataInp = dsm_gui_lib::toString(ui->simThrusterPlumeEn);
             break;
         case 18:
-            dataInp = toString(ui->simContactEn);
+            dataInp = dsm_gui_lib::toString(ui->simContactEn);
             break;
         case 19:
-            dataInp = toString(ui->simSloshEn);
+            dataInp = dsm_gui_lib::toString(ui->simSloshEn);
             break;
         case 20:
-            dataInp = toString(ui->simAlbedoEn);
+            dataInp = dsm_gui_lib::toString(ui->simAlbedoEn);
             break;
         case 21:
-            dataInp = toString(ui->simOutputTorqueEn);
+            dataInp = dsm_gui_lib::toString(ui->simOutputTorqueEn);
             break;
         default:
             break;
@@ -584,7 +584,7 @@ void SIM_Menu::on_applyButton_clicked() {
     dataInp = dsm_gui_lib::whitespace(ephemInputs.key(ui->simEphem->currentText()));
     simUpdate.append(dataInp+simFileDescrip[headerLines[toString(headerLineNames::BODIES)]]);
     for (int i = 0; i<celestialBodies.count(); i++) {
-        dataInp = toString(celestialBodies[i]);
+        dataInp = dsm_gui_lib::toString(celestialBodies[i]);
         simUpdate.append(dsm_gui_lib::whitespace(dataInp)+simFileDescrip[i+headerLines[toString(headerLineNames::BODIES)]+1]);
     }
 

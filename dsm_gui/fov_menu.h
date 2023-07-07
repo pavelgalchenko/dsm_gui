@@ -2,8 +2,8 @@
 #define FOV_MENU_H
 
 #include "color_select.h"
-#include "dsm_gui_lib.h"
 #include "qcheckbox.h"
+#include "dsm_gui_lib.h"
 
 #include <QDialog>
 #include <QListWidgetItem>
@@ -52,10 +52,6 @@ private slots:
     void euler_changed();
 
     void on_boresightaxis_currentTextChanged(const QString &arg1);
-
-    QString toString(QCheckBox* box) {
-        return QVariant(box->isChecked()).toString().toUpper();
-    }
 
     void on_fov_type_currentTextChanged(const QString &arg1);
     void clear_fields();

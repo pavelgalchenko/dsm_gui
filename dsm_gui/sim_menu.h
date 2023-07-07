@@ -62,10 +62,6 @@ private slots:
 
     void on_simGSLabel_textEdited(const QString &arg1);
 
-    QString toString(QCheckBox* box) {
-        return QVariant(box->isChecked()).toString().toUpper();
-    }
-
     void on_simGSListRemove_clicked();
 
     void on_simGSListAdd_clicked();
