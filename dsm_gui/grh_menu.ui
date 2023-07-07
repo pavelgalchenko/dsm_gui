@@ -26,7 +26,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="generalTab">
        <attribute name="title">
@@ -1701,33 +1701,33 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="show_ngrid_toggle"/>
-  <buttongroup name="shownight_toggle"/>
-  <buttongroup name="show_truth_toggle"/>
-  <buttongroup name="show_astro_toggle"/>
   <buttongroup name="showmajorconst_toggle"/>
   <buttongroup name="showzodiac_toggle"/>
-  <buttongroup name="show_tdrs_toggle"/>
-  <buttongroup name="show_faxis_toggle"/>
-  <buttongroup name="show_milky_toggle"/>
-  <buttongroup name="show_proxops_toggle"/>
   <buttongroup name="showtlmclock_toggle"/>
-  <buttongroup name="pause_toggle"/>
-  <buttongroup name="showcredits_toggle"/>
-  <buttongroup name="show_naxis_toggle"/>
-  <buttongroup name="show_fgrid_toggle"/>
-  <buttongroup name="show_lgrid_toggle"/>
-  <buttongroup name="show_baxis_toggle"/>
-  <buttongroup name="mapwindow_toggle"/>
-  <buttongroup name="show_shdws_toggle"/>
-  <buttongroup name="show_fov_toggle"/>
-  <buttongroup name="show_fsw_toggle"/>
-  <buttongroup name="show_fermi_toggle"/>
-  <buttongroup name="show_laxis_toggle"/>
-  <buttongroup name="showclock_toggle"/>
-  <buttongroup name="show_bgrid_toggle"/>
   <buttongroup name="orreywindow_toggle"/>
   <buttongroup name="showminorconst_toggle"/>
+  <buttongroup name="show_naxis_toggle"/>
+  <buttongroup name="shownight_toggle"/>
+  <buttongroup name="show_fov_toggle"/>
+  <buttongroup name="show_tdrs_toggle"/>
+  <buttongroup name="show_faxis_toggle"/>
+  <buttongroup name="show_fsw_toggle"/>
+  <buttongroup name="showcredits_toggle"/>
+  <buttongroup name="pause_toggle"/>
+  <buttongroup name="show_fgrid_toggle"/>
+  <buttongroup name="show_laxis_toggle"/>
+  <buttongroup name="mapwindow_toggle"/>
+  <buttongroup name="show_astro_toggle"/>
   <buttongroup name="spherewindow_toggle"/>
+  <buttongroup name="show_baxis_toggle"/>
+  <buttongroup name="showclock_toggle"/>
+  <buttongroup name="show_shdws_toggle"/>
+  <buttongroup name="show_fermi_toggle"/>
+  <buttongroup name="show_milky_toggle"/>
+  <buttongroup name="show_ngrid_toggle"/>
+  <buttongroup name="show_truth_toggle"/>
+  <buttongroup name="show_lgrid_toggle"/>
+  <buttongroup name="show_proxops_toggle"/>
+  <buttongroup name="show_bgrid_toggle"/>
  </buttongroups>
 </ui>

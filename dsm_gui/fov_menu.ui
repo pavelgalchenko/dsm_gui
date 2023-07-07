@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>862</width>
-    <height>492</height>
+    <width>860</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>450</y>
+     <y>430</y>
      <width>841</width>
      <height>41</height>
     </rect>
@@ -59,61 +59,10 @@
      <x>249</x>
      <y>9</y>
      <width>601</width>
-     <height>441</height>
+     <height>411</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="10" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_13">
-      <item>
-       <widget class="QComboBox" name="boresightaxis"/>
-      </item>
-     </layout>
-    </item>
-    <item row="4" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_7">
-      <item>
-       <widget class="QComboBox" name="fov_type"/>
-      </item>
-     </layout>
-    </item>
-    <item row="5" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_8">
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="nearfield_on">
-        <property name="text">
-         <string>On</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">nearfield_toggle</string>
-        </attribute>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="nearfield_off">
-        <property name="text">
-         <string>Off</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">nearfield_toggle</string>
-        </attribute>
-       </widget>
-      </item>
-     </layout>
-    </item>
     <item row="3" column="1">
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
@@ -165,33 +114,24 @@
       </item>
      </layout>
     </item>
-    <item row="9" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_12">
-      <item>
-       <widget class="QLineEdit" name="rot1"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="rot2"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="rot3"/>
-      </item>
-      <item>
-       <widget class="QComboBox" name="euler_seq"/>
-      </item>
-     </layout>
-    </item>
-    <item row="9" column="0">
-     <widget class="QLabel" name="label_10">
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_8">
       <property name="text">
-       <string>Euler Anges [deg], Sequence:</string>
+       <string>Spacecraft, Body [#]</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_2">
+    <item row="5" column="0">
+     <widget class="QLabel" name="label_6">
       <property name="text">
-       <string>Number of Sides, Length [m]:</string>
+       <string>Draw Near Field</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0">
+     <widget class="QLabel" name="label_9">
+      <property name="text">
+       <string>Position in Body [m]:</string>
       </property>
      </widget>
     </item>
@@ -199,23 +139,6 @@
      <widget class="QLabel" name="label_4">
       <property name="text">
        <string>Color RGB + Alpha</string>
-      </property>
-     </widget>
-    </item>
-    <item row="7" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_10">
-      <item>
-       <widget class="QLineEdit" name="sc_num"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="bdy_num"/>
-      </item>
-     </layout>
-    </item>
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>FOV Label:</string>
       </property>
      </widget>
     </item>
@@ -228,71 +151,6 @@
        <widget class="QLineEdit" name="vertical_height"/>
       </item>
      </layout>
-    </item>
-    <item row="0" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <item>
-       <widget class="QLineEdit" name="fov_name"/>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <item>
-       <widget class="QLineEdit" name="num_sides"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="length_sides"/>
-      </item>
-     </layout>
-    </item>
-    <item row="10" column="0">
-     <widget class="QLabel" name="label_11">
-      <property name="text">
-       <string>Boresight Axis:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="0">
-     <widget class="QLabel" name="label_7">
-      <property name="text">
-       <string>Draw Far Field:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>H Width, V Height [deg]</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="1">
-     <layout class="QHBoxLayout" name="horizontalLayout_11">
-      <item>
-       <widget class="QLineEdit" name="pos_x"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="pos_y"/>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="pos_z"/>
-      </item>
-     </layout>
-    </item>
-    <item row="7" column="0">
-     <widget class="QLabel" name="label_8">
-      <property name="text">
-       <string>Spacecraft, Body [#]</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QLabel" name="label_5">
-      <property name="text">
-       <string>FOV Type</string>
-      </property>
-     </widget>
     </item>
     <item row="6" column="1">
      <layout class="QHBoxLayout" name="horizontalLayout_9">
@@ -331,19 +189,161 @@
       </item>
      </layout>
     </item>
-    <item row="5" column="0">
-     <widget class="QLabel" name="label_6">
+    <item row="7" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_10">
+      <item>
+       <widget class="QLineEdit" name="sc_num"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="bdy_num"/>
+      </item>
+     </layout>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label_5">
       <property name="text">
-       <string>Draw Near Field</string>
+       <string>FOV Type</string>
       </property>
      </widget>
     </item>
-    <item row="8" column="0">
-     <widget class="QLabel" name="label_9">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
       <property name="text">
-       <string>Position in Body [m]:</string>
+       <string>FOV Label:</string>
       </property>
      </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Number of Sides, Length [m]:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_11">
+      <item>
+       <widget class="QLineEdit" name="pos_x"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="pos_y"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="pos_z"/>
+      </item>
+     </layout>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label_7">
+      <property name="text">
+       <string>Draw Far Field:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="9" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_12">
+      <item>
+       <widget class="QLineEdit" name="rot1"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="rot2"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="rot3"/>
+      </item>
+      <item>
+       <widget class="QComboBox" name="euler_seq"/>
+      </item>
+     </layout>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>H Width, V Height [deg]</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QLineEdit" name="fov_name"/>
+      </item>
+     </layout>
+    </item>
+    <item row="9" column="0">
+     <widget class="QLabel" name="label_10">
+      <property name="text">
+       <string>Euler Anges [deg], Sequence:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QLineEdit" name="num_sides"/>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="length_sides"/>
+      </item>
+     </layout>
+    </item>
+    <item row="4" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
+      <item>
+       <widget class="QComboBox" name="fov_type"/>
+      </item>
+     </layout>
+    </item>
+    <item row="5" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="nearfield_on">
+        <property name="text">
+         <string>On</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">nearfield_toggle</string>
+        </attribute>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="nearfield_off">
+        <property name="text">
+         <string>Off</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">nearfield_toggle</string>
+        </attribute>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="10" column="0">
+     <widget class="QLabel" name="label_11">
+      <property name="text">
+       <string>Boresight Axis:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="10" column="1">
+     <layout class="QHBoxLayout" name="horizontalLayout_13">
+      <item>
+       <widget class="QComboBox" name="boresightaxis"/>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
