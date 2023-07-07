@@ -13,9 +13,6 @@ SPC_submenu::SPC_submenu(QWidget *parent):
     ui->sections->setCurrentIndex(0);
     ui->actuator_sections->setCurrentIndex(0);
     ui->sensor_sections->setCurrentIndex(0);
-
-    ui->spc_cur_wheel_glob_drag_off->setChecked(Qt::Checked);
-    ui->spc_cur_wheel_glob_jitter_off->setChecked(Qt::Checked);
 }
 
 SPC_submenu::~SPC_submenu()
@@ -38,7 +35,10 @@ void SPC_submenu::receive_spc_sm_path(QString name, QString path)
 void SPC_submenu::set_validators()
 {
     QRegularExpression rx("[^\"]*");
+    QRegularExpression rx1("[^\" ]*");
+
     QValidator *noQuotes = new QRegularExpressionValidator(rx,this);
+    QValidator *noQuotesSpaces = new QRegularExpressionValidator(rx1,this);
 
     // Combo Boxes
     // Fixed
@@ -88,6 +88,10 @@ void SPC_submenu::set_validators()
     ui->spc_cur_body_pmoi_y->setValidator(new QDoubleValidator(0, INFINITY, 5));
     ui->spc_cur_body_pmoi_z->setValidator(new QDoubleValidator(0, INFINITY, 5));
 
+    ui->spc_cur_body_poi_x->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_body_poi_y->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_body_poi_z->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+
     ui->spc_cur_body_com_x->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
     ui->spc_cur_body_com_y->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
     ui->spc_cur_body_com_z->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
@@ -96,7 +100,11 @@ void SPC_submenu::set_validators()
     ui->spc_cur_body_cem_y->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
     ui->spc_cur_body_cem_z->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
 
-    ui->spc_cur_body_geom->setValidator(noQuotes);
+    ui->spc_cur_body_cemd_x->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_body_cemd_y->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    ui->spc_cur_body_cemd_z->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+
+    ui->spc_cur_body_geom->setValidator(noQuotesSpaces);
 
     // Joints
     ui->spc_cur_joint_name->setValidator(noQuotes);
@@ -185,6 +193,9 @@ void SPC_submenu::set_validators()
     ui->spc_cur_gyro_angrwalk->setValidator(new QDoubleValidator(0, INFINITY, 5));
     ui->spc_cur_gyro_angnoise->setValidator(new QDoubleValidator(0, INFINITY, 5));
 
+    ui->spc_cur_gyro_bias_stab->setValidator(new QDoubleValidator(0, INFINITY, 5));
+    ui->spc_cur_gyro_bias_tspan->setValidator(new QDoubleValidator(0, INFINITY, 5));
+
     ui->spc_cur_gyro_initbias->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
 
     // Mags
@@ -272,8 +283,8 @@ void SPC_submenu::set_validators()
     ui->spc_cur_acc_samptime->setValidator(new QDoubleValidator(0, INFINITY, 5));
 
     ui->spc_cur_acc_axis_1->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_acc_axis_1->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_acc_axis_1->setValidator(new QDoubleValidator(-1, 1, 5));
+    ui->spc_cur_acc_axis_2->setValidator(new QDoubleValidator(-1, 1, 5));
+    ui->spc_cur_acc_axis_3->setValidator(new QDoubleValidator(-1, 1, 5));
 
     ui->spc_cur_acc_maxacc->setValidator(new QDoubleValidator(0, INFINITY, 5));
 
@@ -600,6 +611,12 @@ void SPC_submenu::apply_data()
 
     wheel_drag = spc_data[reset_ind_wheel + 0].split(QRegExp("\\s"), Qt::SkipEmptyParts)[0];
     wheel_jitter = spc_data[reset_ind_wheel + 1].split(QRegExp("\\s"), Qt::SkipEmptyParts)[0];
+
+    if (!QString::compare(wheel_drag, "FALSE")) ui->spc_cur_wheel_glob_drag_off->setChecked(Qt::Checked);
+    else ui->spc_cur_wheel_glob_drag_on->setChecked(Qt::Checked);
+
+    if (!QString::compare(wheel_jitter, "FALSE")) ui->spc_cur_wheel_glob_jitter_off->setChecked(Qt::Checked);
+    else ui->spc_cur_wheel_glob_jitter_on->setChecked(Qt::Checked);
 
     if (wheels == 0) reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries; // SC_Simple has an example wheel
     else reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
@@ -1701,6 +1718,12 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     spc_update.append("*************************** Wheel Parameters ***************************\n");
 
+    if (ui->spc_cur_wheel_glob_drag_on->isChecked()) wheel_drag = "TRUE";
+    else wheel_drag = "FALSE";
+
+    if (ui->spc_cur_wheel_glob_jitter_on->isChecked()) wheel_jitter = "TRUE";
+    else wheel_jitter = "FALSE";
+
     if (!QString::compare(wheel_drag, "FALSE")) spc_update.append("FALSE                         ! Wheel Drag Active\n");
     else spc_update.append("TRUE                          ! Wheel Drag Active\n");
 
@@ -2505,6 +2528,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         ui->spc_cur_fss_list->setCurrentRow(cur_item);
         QStringList current_data = ui->spc_cur_fss_list->currentItem()->data(257).toStringList();
+        qDebug() << current_data;
 
         switch (cur_entry){
         case 0:
@@ -2528,15 +2552,15 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! H, V FOV Size, deg\n");
             break;
         case 5:
-            data_inp =  current_data[8];
+            data_inp =  current_data[9];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Noise Equivalent Angle, deg RMS\n");
             break;
         case 6:
-            data_inp =  current_data[9];
+            data_inp =  current_data[10];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization, deg\n");
             break;
         case 7:
-            data_inp =  current_data[10];
+            data_inp =  current_data[11];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
             break;
         }
@@ -2658,15 +2682,15 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! H, V FOV Size, deg\n");
             break;
         case 5:
-            data_inp =  current_data[8] + "  " + current_data[9] + "  " + current_data[10];
+            data_inp =  current_data[9] + "  " + current_data[10] + "  " + current_data[11];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sun, Earth, Moon Exclusion Angles, deg\n");
             break;
         case 6:
-            data_inp =  current_data[11] + "  " + current_data[12] + "  " + current_data[13];
+            data_inp =  current_data[12] + "  " + current_data[13] + "  " + current_data[14];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Noise Equivalent Angle, arcsec RMS\n");
             break;
         case 7:
-            data_inp =  current_data[14];
+            data_inp =  current_data[15];
             spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
             break;
         }
@@ -2948,8 +2972,15 @@ void SPC_submenu::setQComboBox(QComboBox *comboBox, QString string) {
 
 void SPC_submenu::on_spc_cur_body_remove_clicked()
 {
+    if (bodies == 1){
+        dsm_gui_lib::error_message("Spacecraft must have at least one body!");
+        return;
+    }
+
     delete ui->spc_cur_body_list->currentItem();
-    if (bodies > 0) bodies -= 1;
+
+    if (bodies > 1) bodies -= 1;
+
     if (bodies > 0)
     {
         QListWidgetItem cur_item = *ui->spc_cur_body_list->item(bodies-1);
@@ -3142,21 +3173,21 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item)
     else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
 
     if (!QString::compare(current_data[10], "TRUE")) ui->spc_cur_joint_rlock2->setCheckState(Qt::Checked);
-    else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+    else ui->spc_cur_joint_rlock2->setCheckState(Qt::Unchecked);
 
     if (!QString::compare(current_data[11], "TRUE")) ui->spc_cur_joint_rlock3->setCheckState(Qt::Checked);
-    else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+    else ui->spc_cur_joint_rlock3->setCheckState(Qt::Unchecked);
 
 
 
     if (!QString::compare(current_data[12], "TRUE")) ui->spc_cur_joint_tlock1->setCheckState(Qt::Checked);
-    else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+    else ui->spc_cur_joint_tlock1->setCheckState(Qt::Unchecked);
 
     if (!QString::compare(current_data[13], "TRUE")) ui->spc_cur_joint_tlock2->setCheckState(Qt::Checked);
-    else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+    else ui->spc_cur_joint_tlock2->setCheckState(Qt::Unchecked);
 
     if (!QString::compare(current_data[14], "TRUE")) ui->spc_cur_joint_tlock3->setCheckState(Qt::Checked);
-    else ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
+    else ui->spc_cur_joint_tlock3->setCheckState(Qt::Unchecked);
 
     ui->spc_cur_joint_ang0_1->setText(current_data[15]);
     ui->spc_cur_joint_ang0_2->setText(current_data[16]);
