@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>710</width>
+    <width>730</width>
     <height>480</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>710</width>
+    <width>730</width>
     <height>480</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>860</width>
+    <width>800</width>
     <height>480</height>
    </size>
   </property>
@@ -30,7 +30,7 @@
     <rect>
      <x>10</x>
      <y>430</y>
-     <width>691</width>
+     <width>711</width>
      <height>41</height>
     </rect>
    </property>
@@ -70,7 +70,7 @@
     <rect>
      <x>210</x>
      <y>10</y>
-     <width>491</width>
+     <width>511</width>
      <height>411</height>
     </rect>
    </property>
@@ -185,7 +185,7 @@
        <widget class="QComboBox" name="sc_name"/>
       </item>
       <item>
-       <widget class="QLineEdit" name="bdy_num"/>
+       <widget class="QSpinBox" name="bdy_num"/>
       </item>
      </layout>
     </item>

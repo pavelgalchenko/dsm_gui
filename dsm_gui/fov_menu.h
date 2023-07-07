@@ -64,6 +64,8 @@ private slots:
 
     QStringList getTextFromList(QListWidget *list);
 
+    void on_sc_name_currentTextChanged(const QString &arg1);
+
 private:
     Ui::FOV_Menu *ui;
 

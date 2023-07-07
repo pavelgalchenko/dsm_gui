@@ -32,7 +32,8 @@ void FOV_Menu::set_validators() {
     ui->vertical_height->setValidator(new QDoubleValidator);
     ui->fov_name->setValidator(noQuotes);
     ui->fov_type->addItems(dsm_gui_lib::sortStringList(fovtype_inputs.values()));
-    ui->bdy_num->setValidator(new QIntValidator);
+    ui->bdy_num->setMinimum(0);
+    ui->bdy_num->setMaximum(INFINITY);
     ui->pos_x->setValidator(new QDoubleValidator);
     ui->pos_y->setValidator(new QDoubleValidator);
     ui->pos_z->setValidator(new QDoubleValidator);
@@ -57,7 +58,7 @@ void FOV_Menu::set_validators() {
     connect(ui->farfield, &QCheckBox::toggled, this, &FOV_Menu::field_changed);
 
     connect(ui->sc_name, &QComboBox::currentTextChanged, this, &FOV_Menu::scbody_changed);
-    connect(ui->bdy_num, &QLineEdit::textChanged, this, &FOV_Menu::scbody_changed);
+    connect(ui->bdy_num, &QSpinBox::textChanged, this, &FOV_Menu::scbody_changed);
 
     connect(ui->pos_x, &QLineEdit::textChanged, this, &FOV_Menu::pos_changed);
     connect(ui->pos_y, &QLineEdit::textChanged, this, &FOV_Menu::pos_changed);
@@ -405,7 +406,7 @@ void FOV_Menu::on_fovlist_itemClicked(QListWidgetItem *item) {
         case 6:
             tmpData = item->data(FOV_Menu::SCBody).toStringList();
             ui->sc_name->setCurrentText(scNums.key(tmpData[0].toInt()));
-            ui->bdy_num->setText(tmpData[1]);
+            ui->bdy_num->setValue(tmpData[1].toInt());
             break;
         case 7:
             tmpData = item->data(FOV_Menu::BodyPos).toStringList();
@@ -676,3 +677,29 @@ QStringList FOV_Menu::getTextFromList(QListWidget *list){
     output.sort(Qt::CaseInsensitive);
     return output;
 }
+
+void FOV_Menu::on_sc_name_currentTextChanged(const QString &arg1) {
+    QStringList scFileNames = QDir(inout_path).entryList({"SC_"+arg1+".txt"});
+    QString scFileName = scFileNames[0];
+
+    QFile scFile(inout_path + scFileName);
+    if(!scFile.open(QIODevice::ReadOnly))
+        QMessageBox::information(0, "error", scFile.errorString());
+    QTextStream in(&scFile);
+
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        if (line.contains("Body Parameters",Qt::CaseInsensitive)) {
+            line = in.readLine();
+            line = in.readLine();
+            QStringList line_items = line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
+            int nBodies = line_items[0].toInt();
+            ui->bdy_num->setMaximum(nBodies-1);
+            break;
+        }
+
+    }
+    scFile.close();
+
+}
+
