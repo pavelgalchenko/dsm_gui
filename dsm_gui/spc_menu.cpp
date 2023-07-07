@@ -107,6 +107,7 @@ void SPC_Menu::receive_spcpath(QString path)
         }
 
         on_spc_list_itemClicked(ui->spc_list->item(0));
+        ui->spc_list->setCurrentRow(0);
     }
 
     if (ui->spc_list->count() == 0) ui->spc_conf->setEnabled(false);
