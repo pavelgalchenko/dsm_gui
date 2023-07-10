@@ -661,6 +661,7 @@ void FOV_Menu::on_fov_duplicate_clicked() {
 
 void FOV_Menu::on_sc_name_currentTextChanged(const QString &arg1) {
     QStringList scFileNames = QDir(inout_path).entryList({"SC_"+arg1+".txt"});
+    if (scFileNames.isEmpty()) return;
     QString scFileName = scFileNames[0];
 
     QFile scFile(inout_path + scFileName);

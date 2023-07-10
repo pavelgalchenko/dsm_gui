@@ -66,6 +66,8 @@ void SIM_Menu::set_validators() {
                        ui->simSunEarthEn,
                        ui->simSunJupiterEn};
 
+
+    connect(ui->applyButton, SIGNAL(clicked(bool)), this->parent(), SLOT(enable_sub_menus()));
 }
 
 void SIM_Menu::receive_simpath(QString path) {

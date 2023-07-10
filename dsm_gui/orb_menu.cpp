@@ -94,6 +94,11 @@ void ORB_Menu::set_validators() {
     connect(ui->orbCentICParam, &QComboBox::currentTextChanged, this, &ORB_Menu::checkKepPA);
     connect(ui->orbCentPA, &QButtonGroup::idToggled, this, &ORB_Menu::checkKepPA);
     connect(ui->orbList, &QListWidget::currentRowChanged, this, &ORB_Menu::clear_data);
+
+    connect(ui->orbListAdd, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
+    connect(ui->orbListRemove, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
+    connect(ui->orbListDuplicate, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
+    connect(ui->loadDefaultButton, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
 }
 
 void ORB_Menu::receive_orbpath(QString path) {
@@ -849,3 +854,5 @@ void ORB_Menu::checkKepPA() {
     }
 }
 
+//void ORB_Menu::orbits_changed(bool clicked) {
+//}

@@ -38,7 +38,7 @@
       <x>30</x>
       <y>28</y>
       <width>331</width>
-      <height>161</height>
+      <height>179</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -101,7 +101,7 @@
       <x>30</x>
       <y>201</y>
       <width>331</width>
-      <height>331</height>
+      <height>350</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -111,6 +111,16 @@
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt; font-weight:700;&quot;&gt;Mission Configuration&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="Warning">
+         <property name="text">
+          <string>***Apply changes in Simulation before continuing!***</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>

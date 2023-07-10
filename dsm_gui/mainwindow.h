@@ -30,6 +30,10 @@ public:
 signals:
     void send_data(QString);
 
+public slots:
+    void enable_sub_menus();
+    void disable_sub_menus();
+
 private slots:
 
     void on_new_mission_clicked();
