@@ -35,7 +35,6 @@ private slots:
     void on_applyButton_clicked();
 
     void clear_fields();
-    QStringList getTextFromList(QListWidget *list);
 
     void world_changed();
     void location_changed();

@@ -124,7 +124,7 @@
       <item>
        <widget class="QPushButton" name="ipc_duplicate">
         <property name="text">
-         <string>PushButton</string>
+         <string>Duplicate</string>
         </property>
        </widget>
       </item>
@@ -357,8 +357,4 @@
  </widget>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="echo_toggle"/>
-  <buttongroup name="blocking_toggle"/>
- </buttongroups>
 </ui>

@@ -267,7 +267,7 @@ void FOV_Menu::on_fov_add_clicked() {
     QStringList tmpData;
 
     QString newName = "NEW FOV";
-    QStringList curNames = getTextFromList(ui->fovlist);
+    QStringList curNames = dsm_gui_lib::getTextFromList(ui->fovlist);
     if (ui->fovlist->count() != 0) {
         for(int i = 0; i <= 50; i++) {
             QString newNameTest = newName;
@@ -640,7 +640,7 @@ void FOV_Menu::clear_fields() {
 void FOV_Menu::on_fov_duplicate_clicked() {
     int index = ui->fovlist->currentRow();
     QListWidgetItem* curItem = ui->fovlist->currentItem();
-    QStringList curNames = getTextFromList(ui->fovlist);
+    QStringList curNames = dsm_gui_lib::getTextFromList(ui->fovlist);
 
     if (index == -1) return;
     QString oldName = curItem->text();
@@ -657,14 +657,6 @@ void FOV_Menu::on_fov_duplicate_clicked() {
     newItem->setText(newName);
     ui->fovlist->addItem(newItem);
 
-}
-
-QStringList FOV_Menu::getTextFromList(QListWidget *list){
-    QStringList output;
-    foreach(QListWidgetItem *item, list->findItems("*",Qt::MatchWildcard))
-        output << item->text();
-    output.sort(Qt::CaseInsensitive);
-    return output;
 }
 
 void FOV_Menu::on_sc_name_currentTextChanged(const QString &arg1) {

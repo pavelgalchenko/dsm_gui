@@ -62,8 +62,6 @@ private slots:
 
     void on_fov_duplicate_clicked();
 
-    QStringList getTextFromList(QListWidget *list);
-
     void on_sc_name_currentTextChanged(const QString &arg1);
 
 private:

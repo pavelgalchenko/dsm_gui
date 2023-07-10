@@ -39,11 +39,29 @@ private slots:
     void on_closeButton_clicked();
     void on_applyButton_clicked();
 
-    void on_prefixlist_itemClicked(QListWidgetItem *item);
     void on_prefix_remove_clicked();
     void on_prefix_add_clicked();
 
     void on_prefix_rename_clicked();
+
+    void on_ipc_duplicate_clicked();
+
+    void server_changed();
+
+    void on_ipcmode_currentTextChanged(const QString &arg1);
+
+    void on_acs_id_textChanged(const QString &arg1);
+
+    void on_filename_textChanged(const QString &arg1);
+
+    void on_socketrole_currentTextChanged(const QString &arg1);
+
+    void on_blocking_toggled(bool checked);
+
+    void on_echo_toggled(bool checked);
+
+    void on_prefixlist_currentRowChanged(int currentRow);
+    void update_prefixes(QListWidgetItem* item);
 
 private:
     Ui::IPC_Menu *ui;

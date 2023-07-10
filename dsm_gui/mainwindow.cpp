@@ -119,7 +119,7 @@ void MainWindow::on_FOV_Menu_clicked()
     QStringList simFiles = QDir(path).entryList({"Inp_Sim**"});
     QStringList scFiles = QDir(path).entryList({"SC_*"});
     if (scFiles.isEmpty() || simFiles.isEmpty()){
-        dsm_gui_lib::warning_message("There must be both a Inp_Sim file and a Spacecraft file before editing the FOV file.");
+        dsm_gui_lib::error_message("There must be both a Inp_Sim file and a Spacecraft file before editing the FOV file.");
         return;
     }
 
@@ -193,7 +193,7 @@ void MainWindow::on_SIM_Menu_clicked()
     QStringList orbFiles = QDir(path).entryList({"Orb_*"});
     QStringList scFiles = QDir(path).entryList({"SC_*"});
     if (scFiles.isEmpty() || orbFiles.isEmpty()){
-        dsm_gui_lib::warning_message("There must be both a Orbit file and a Spacecraft file before editing the Simulation file.");
+        dsm_gui_lib::error_message("There must be both a Orbit file and a Spacecraft file before editing the Simulation file.");
         return;
     }
 

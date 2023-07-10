@@ -37,8 +37,14 @@
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="maximumSize">
+       <size>
+        <width>530</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="generalTab">
        <attribute name="title">
@@ -306,7 +312,7 @@
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>510</width>
+          <width>481</width>
           <height>501</height>
          </rect>
         </property>
@@ -812,7 +818,7 @@
          <item row="15" column="0">
           <widget class="QLabel" name="label_41">
            <property name="text">
-            <string>Show Trusth Vectors:</string>
+            <string>Show Truth Vectors:</string>
            </property>
           </widget>
          </item>
@@ -1167,7 +1173,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_49">
            <property name="text">
-            <string>MAP Name</string>
+            <string>Map Name</string>
            </property>
           </widget>
          </item>
@@ -1194,7 +1200,7 @@
            <item>
             <widget class="QLabel" name="label_54">
              <property name="text">
-              <string>MAP Name</string>
+              <string>Map Label</string>
              </property>
             </widget>
            </item>

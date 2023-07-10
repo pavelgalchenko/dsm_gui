@@ -28,6 +28,9 @@ void IPC_Menu::set_validators() {
     ui->filename->setValidator(new QRegularExpressionValidator(rx));
     ui->acs_id->setValidator(new QIntValidator(0,INFINITY));
     ui->portnum->setValidator(new QIntValidator(0,INFINITY));
+
+    connect(ui->servername, &QLineEdit::textChanged, this, &IPC_Menu::server_changed);
+    connect(ui->portnum, &QLineEdit::textChanged, this, &IPC_Menu::server_changed);
 }
 
 void IPC_Menu::receive_ipcpath(QString path) {
@@ -59,13 +62,11 @@ void IPC_Menu::receive_data() {
         ipc_string.append(match2.captured(1));
 
         line.append("\n");
-        ipc_update.append(line);
     }
     file.close();
 }
 
-void IPC_Menu::write_data()
-{
+void IPC_Menu::write_data() {
     QFile::remove(file_path);
     QFile file(file_path);
     if(!file.open(QFile::WriteOnly)) {
@@ -78,12 +79,13 @@ void IPC_Menu::write_data()
         }
     }
     file.close();
+    ipc_update.clear();
 }
 
 void IPC_Menu::apply_data() {
+    const QString ipcName = "IPC ";
     QStringList line_items;
     QString line_string;
-    QString ipcName = "IPC ";
     QListWidgetItem* newIPC;
     int num_ipc = 0;
 
@@ -96,7 +98,7 @@ void IPC_Menu::apply_data() {
 
     for (int i=0; i < num_ipc; i++) {
         newIPC = new QListWidgetItem();
-        newIPC->setData(IPC_Menu::Name,ipcName + QString::number(i));
+        newIPC->setData(IPC_Menu::Name,ipcName + QString::number(i+1));
         for (int j=0; j<ipcNLines; j++) {
             line_items = ipc_data[current_index].split(QRegExp("\\s"), Qt::SkipEmptyParts);
             line_string = ipc_string[current_index];
@@ -131,8 +133,7 @@ void IPC_Menu::apply_data() {
                 newIPC->setData(IPC_Menu::Echo,tmpData);
                 break;
             case 8:
-                tmpData.append(line_items[0]);
-                newIPC->setData(IPC_Menu::nTX,tmpData);
+                newIPC->setData(IPC_Menu::nTX,line_items[0]);
                 tmpData.clear();
                 for (int k=0; k<line_items[0].toInt(); k++) {
                     current_index++;
@@ -148,7 +149,6 @@ void IPC_Menu::apply_data() {
         }
         ui->ipclist->addItem(newIPC);
     }
-    write_data();
 }
 
 void IPC_Menu::on_ipc_remove_clicked() {
@@ -158,33 +158,134 @@ void IPC_Menu::on_ipc_remove_clicked() {
         return;
     }
     else {
-        ui->ipclist->takeItem(removeitem);
+        delete ui->ipclist->takeItem(removeitem);
         ui->ipclist->setCurrentRow(-1);
         clear_fields();
     }
 }
 
 void IPC_Menu::on_ipc_add_clicked() {
-    int ipc_count = ui->ipclist->count();
+    QListWidgetItem *newIPC = new QListWidgetItem;
+    QStringList line_items;
 
-    QString data_inp = QString::number(ipc_count+1);
-    ipc_update[1] = dsm_gui_lib::whitespace(data_inp) + " ! Number of Sockets\n";
+    QStringList newData;
+    QStringList newStrings;
+    QStringList tmpData;
+    QString line_string;
 
-    ipc_update.append("********************************  IPC "+QString::number(ipc_count)+"  ********************************\n");
-    ipc_update.append("OFF                            ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)\n");
-    ipc_update.append("0                              ! AC.ID for ACS mode\n");
-    ipc_update.append("\"State0" + QString::number(ipc_count) + ".42\"                   ! File name for WRITE or READ\n");
-    ipc_update.append("CLIENT                         ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)\n");
-    ipc_update.append("localhost  10001               ! Server Host Name, Port\n");
-    ipc_update.append("TRUE                           ! Allow Blocking (i.e. wait on RX)\n");
-    ipc_update.append("FALSE                          ! Echo to stdout\n");
-    ipc_update.append("1                              ! Number of TX prefixes\n");
-    ipc_update.append("\"SC[0].AC\"                     ! Prefix 0\n");
+    QString newName = "IPC ";
+    QStringList curNames = dsm_gui_lib::getTextFromList(ui->ipclist);
+    int ipcNum = 1;
+    if (ui->ipclist->count() != 0) {
+        for(int i = 0; i <= 50; i++) {
+            ipcNum = i+1;
+            QString newNameTest = newName+QString::number(ipcNum);
+            if (!curNames.contains(newNameTest)) {
+                newName = newNameTest;
+                break;
+            }
+            if (i==50) return; // Nothing happens if too many
+        }
+    }
 
-    write_data();
+    newData.append("");
+    newData.append("OFF                            ");
+    newData.append("0                              ");
+    newData.append("");
+    newData.append("CLIENT                         ");
+    newData.append("localhost  10001               ");
+    newData.append("TRUE                           ");
+    newData.append("FALSE                          ");
+    newData.append("1                              ");
+    newData.append("");
 
-    receive_data();
-    apply_data();
+    newStrings.append("");
+    newStrings.append("");
+    newStrings.append("");
+    newStrings.append("State0" + QString::number(ipcNum) + ".42");
+    newStrings.append("");
+    newStrings.append("");
+    newStrings.append("");
+    newStrings.append("");
+    newStrings.append("");
+    newStrings.append("SC[0].AC");
+
+    for (int j=0; j<ipcNLines; j++) {
+        line_items = newData[j].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+        switch (j) {
+        case 0:
+            newIPC->setData(IPC_Menu::Name,newName);
+            break;
+        case 1:
+            tmpData.append(line_items[0]);
+            newIPC->setData(IPC_Menu::Mode,tmpData);
+            break;
+        case 2:
+            tmpData.append(line_items[0]);
+            newIPC->setData(IPC_Menu::ACID,tmpData);
+            break;
+        case 3:
+            tmpData.append(line_string);
+            newIPC->setData(IPC_Menu::FileName,tmpData);
+            break;
+        case 4:
+            tmpData.append(line_items[0]);
+            newIPC->setData(IPC_Menu::Role,tmpData);
+            break;
+        case 5:
+            tmpData.append(line_items[0]);
+            tmpData.append(line_items[1]);
+            newIPC->setData(IPC_Menu::Server,tmpData);
+            break;
+        case 6:
+            tmpData.append(line_items[0]);
+            newIPC->setData(IPC_Menu::Blocking,tmpData);
+            break;
+        case 7:
+            tmpData.append(line_items[0]);
+            newIPC->setData(IPC_Menu::Echo,tmpData);
+            break;
+        case 8:
+            newIPC->setData(IPC_Menu::nTX,line_items[0]);
+            tmpData.clear();
+            tmpData.append(newStrings[j+1]);
+            newIPC->setData(IPC_Menu::Prefixes,tmpData);
+            break;
+        default:
+            break;
+        }
+        tmpData.clear();
+    }
+    ui->ipclist->addItem(newIPC);
+
+    ui->ipclist->setCurrentRow(-1);
+    clear_fields();
+}
+
+void IPC_Menu::on_ipc_duplicate_clicked(){
+    int index = ui->ipclist->currentRow();
+    QListWidgetItem* curItem = ui->ipclist->currentItem();
+    QStringList curNames = dsm_gui_lib::getTextFromList(ui->ipclist);
+
+    if (index == -1) return;
+    QString newName = "IPC ";
+    int ipcNum;
+    if (ui->ipclist->count() != 0) {
+        for(int i = 0; i <= 50; i++) {
+            ipcNum = i+1;
+            QString newNameTest = newName+QString::number(ipcNum);
+            if (!curNames.contains(newNameTest)) {
+                newName = newNameTest;
+                break;
+            }
+            if (i==50) return; // Nothing happens if too many
+        }
+    }
+
+    QListWidgetItem* newItem = curItem->clone();
+    newItem->setText(newName);
+    ui->ipclist->addItem(newItem);
+
 }
 
 void IPC_Menu::on_ipclist_itemClicked(QListWidgetItem *item) {
@@ -267,186 +368,145 @@ void IPC_Menu::on_closeButton_clicked() {
 
 void IPC_Menu::on_applyButton_clicked() {
     QString data_inp;
-
-    int index = ui->ipclist->currentRow();
-
-    if (index == -1) {
-        return;
-    }
+    QString prefix_name;
+    QStringList tmpData = {};
+    QListWidgetItem* item;
 
     int ipc_num = ui->ipclist->count();
-    int data_index = ipc_name_index.at(index);
+    int nPrefixes;
 
-    ipc_update[0] = "<<<<<<<<<<<<<<< 42: InterProcess Comm Configuration File >>>>>>>>>>>>>>>>\n";
+    ipc_update.append("<<<<<<<<<<<<<<< 42: InterProcess Comm Configuration File >>>>>>>>>>>>>>>>\n");
 
     data_inp = QString::number(ipc_num);
-    ipc_update[1] = dsm_gui_lib::whitespace(data_inp) + " ! Number of Sockets\n";
+    ipc_update.append(dsm_gui_lib::whitespace(data_inp) + " ! Number of Sockets\n");
 
-    ipc_update[data_index+0] = "********************************  IPC "+QString::number(index)+"  ********************************\n";
+    for (int i=0; i<ipc_num; i++) {
+        item = ui->ipclist->item(i);
 
-    data_inp = ui->ipcmode->currentText();
-    ipc_update[data_index+1] = dsm_gui_lib::whitespace(data_inp) + " ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)\n";
-
-    data_inp = ui->acs_id->text();
-    ipc_update[data_index+2] = dsm_gui_lib::whitespace(data_inp) + " ! AC.ID for ACS mode\n";
-
-    data_inp = ui->filename->text();
-    ipc_update[data_index+3] = dsm_gui_lib::whitespace(data_inp) + " ! File name for WRITE or READ\n";
-
-    data_inp = ui->socketrole->currentText();
-    ipc_update[data_index+4] = dsm_gui_lib::whitespace(data_inp) + " ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)\n";
-
-    data_inp = ui->servername->text() + "  " + ui->portnum->text();
-    ipc_update[data_index+5] = dsm_gui_lib::whitespace(data_inp) + " ! Server Host Name, Port\n";
-
-    if (ui->blocking->isChecked()) data_inp = "TRUE";
-    else data_inp = "FALSE";
-    ipc_update[data_index+6] = dsm_gui_lib::whitespace(data_inp) + " ! Allow Blocking (i.e. wait on RX)\n";
-
-    if (ui->echo->isChecked()) data_inp = "TRUE";
-    else data_inp = "FALSE";
-    ipc_update[data_index+7] = dsm_gui_lib::whitespace(data_inp) + " ! Echo to stdout\n";
-
-    data_inp = QString::number(ui->prefixnum->value());
-    ipc_update[data_index+8] = dsm_gui_lib::whitespace(data_inp) + " ! Number of TX prefixes\n";
-
-    for (int i = 0; i < ipc_name_prefixes[index]; i++) {
-        data_inp = ui->prefixlist->item(i)->text();
-        ipc_update[data_index+9+i] = dsm_gui_lib::whitespace(data_inp) + " ! Prefix "+QString::number(i)+" \n";
+        for (int j=0; j<ipcNLines; j++) {
+            switch (j) {
+            case 0:
+                data_inp = "********************************  IPC "+QString::number(i+1)+"  ********************************\n";
+                break;
+            case 1:
+                tmpData = item->data(IPC_Menu::Mode).toStringList();
+                data_inp = tmpData[0];
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)\n";
+                break;
+            case 2:
+                tmpData = item->data(IPC_Menu::ACID).toStringList();
+                data_inp = tmpData[0];
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! AC.ID for ACS mode\n";
+                break;
+            case 3:
+                tmpData = item->data(IPC_Menu::FileName).toStringList();
+                data_inp = "\"" + tmpData[0] + "\"";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! File name for WRITE or READ\n";
+                break;
+            case 4:
+                tmpData = item->data(IPC_Menu::Role).toStringList();
+                data_inp = tmpData[0];
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)\n";
+                break;
+            case 5:
+                tmpData = item->data(IPC_Menu::Server).toStringList();
+                data_inp = tmpData.join("  ");
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Server Host Name, Port\n";
+                break;
+            case 6:
+                tmpData = item->data(IPC_Menu::Blocking).toStringList();
+                data_inp = tmpData[0];
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Allow Blocking (i.e. wait on RX)\n";
+                break;
+            case 7:
+                tmpData = item->data(IPC_Menu::Echo).toStringList();
+                data_inp = tmpData[0];
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Echo to stdout\n";
+                break;
+            case 8:
+                tmpData = item->data(IPC_Menu::nTX).toStringList();
+                nPrefixes = tmpData[0].toInt();
+                data_inp = tmpData[0];
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Number of TX prefixes\n";
+                if (nPrefixes>0) {
+                    tmpData = item->data(IPC_Menu::Prefixes).toStringList();
+                    for (int k=0; k<nPrefixes; k++) {
+                        prefix_name = "\"" + tmpData[k] + "\"";
+                        data_inp += dsm_gui_lib::whitespace(prefix_name) + " ! Prefix "+QString::number(k)+"\n";
+                    }
+                }
+                break;
+            default:
+                break;
+            }
+            ipc_update.append(data_inp);
+            data_inp.clear();
+        }
     }
 
     write_data();
 }
 
-void IPC_Menu::on_prefixlist_itemClicked(QListWidgetItem *item) {
-    ui->prefix_remove->setEnabled(true);
-    ui->prefix_rename->setEnabled(true);
+void IPC_Menu::on_prefixlist_currentRowChanged(int currentRow) {
+    bool isItem = !(currentRow == -1);
+    ui->prefix_remove->setEnabled(isItem);
+    ui->prefix_rename->setEnabled(isItem);
 }
 
-void IPC_Menu::on_prefix_remove_clicked()
-{
+void IPC_Menu::on_prefix_remove_clicked() {
     int removeitem = ui->prefixlist->currentRow();
     if (removeitem == -1) {
         return;
     }
     else {
         ui->prefixlist->setCurrentRow(-1);
-        ui->prefix_remove->setEnabled(false);
-        ui->prefix_rename->setEnabled(false);
         int ipcindex = ui->ipclist->currentRow();
-        int ipccount = ui->ipclist->count();
-        if (ipcindex == -1) {
-            return;
-        }
+        QListWidgetItem* curItem = ui->ipclist->currentItem();
+
+        if (ipcindex == -1) return;
         else if (ui->prefixlist->count() < 2) {
-            int response = dsm_gui_lib::warning_message("Must have at least one prefix declared!");
-            if (response == QMessageBox::Cancel) {
+            int response = dsm_gui_lib::error_message("Must have at least one prefix declared!");
+            if (response == QMessageBox::Ok)
                 return;
-            }
-            else if (response == QMessageBox::Ok) {
-                return;
-            }
         }
         else {
-
-            int prefix_index = ipc_name_index.at(ipcindex)+8;
-            int remove_index  = prefix_index+removeitem+1;
-
-            ipc_name_size[ipcindex] += -1;
-            ipc_name_prefixes[ipcindex] += -1;
-
-            QString data_inp;
-            int prefix_num = ipc_name_prefixes[ipcindex];
-
-            data_inp = QString::number(prefix_num);
-            ipc_update.replace(prefix_index,dsm_gui_lib::whitespace(data_inp)+" ! Number of TX Prefixes\n");
-            ipc_update.removeAt(remove_index);
-
-            for (int i = ipcindex+1; i < ipccount; i++){
-                ipc_name_index[i] += -1;
-            }
-
             delete ui->prefixlist->takeItem(removeitem);
-            ui->prefixnum->display(prefix_num);
 
-            write_data();
-
-            receive_data();
-            apply_data();
+            update_prefixes(curItem);
         }
     }
 }
 
-void IPC_Menu::on_prefix_add_clicked()
-{
+void IPC_Menu::on_prefix_add_clicked() {
     int ipcindex = ui->ipclist->currentRow();
-    int ipccount = ui->ipclist->count();
-    if (ipcindex == -1) {
-        return;
-    }
+
+    if (ipcindex == -1) return;
     else {
         ui->prefixlist->setCurrentRow(-1);
-        ui->prefix_remove->setEnabled(false);
-        ui->prefix_rename->setEnabled(false);
+        QListWidgetItem* curItem = ui->ipclist->currentItem();
 
-        QString newprefix = "\"SC[0].AC\"";
+        QString newprefix = "SC[0].AC";
 
         ui->prefixlist->addItem(newprefix);
-
-        ipc_name_size[ipcindex] += 1;
-        ipc_name_prefixes[ipcindex] += 1;
-
-        int prefix_num = ipc_name_prefixes[ipcindex];
-        int prefix_index = ipc_name_index.at(ipcindex)+8;
-        int addprefix_index  = prefix_index+prefix_num;
-
-        QString data_inp;
-
-        data_inp = QString::number(prefix_num);
-        ipc_update.replace(prefix_index,dsm_gui_lib::whitespace(data_inp)+" ! Number of TX Prefixes\n");
-        ipc_update.insert(addprefix_index,dsm_gui_lib::whitespace(newprefix) + " ! Prefix " + QString::number(prefix_num-1) + "\n");
-
-        for (int i = ipcindex+1; i < ipccount; i++){
-            ipc_name_index[i] += 1;
-        }
-
-        ui->prefixnum->display(prefix_num);
-
-        write_data();
-        receive_data();
-        apply_data();
+        update_prefixes(curItem);
     }
 }
 
-void IPC_Menu::on_prefix_rename_clicked()
-{
+void IPC_Menu::on_prefix_rename_clicked() {
     int renameitem = ui->prefixlist->currentRow();
-    if (renameitem == -1) {
-        return;
-    }
+    if (renameitem == -1) return;
     else {
-        //ui->prefixlist->setCurrentRow(-1);
         int ipcindex = ui->ipclist->currentRow();
-        if (ipcindex == -1) {
-            return;
-        }
+        if (ipcindex == -1) return;
         else {
+            QListWidgetItem* curIPC = ui->ipclist->currentItem();
             bool ok;
             QString text = QInputDialog::getText(this, tr("Input Prefix Name"), tr("Prefix:"), QLineEdit::Normal, ui->prefixlist->currentItem()->text(), &ok);
             if (ok && !text.isEmpty()) {
+                text.remove("\"");
+                ui->prefixlist->currentItem()->setText(text);
 
-                int prefix_index = ipc_name_index.at(ipcindex)+8;
-                int rename_index  = prefix_index+renameitem+1;
-
-                ipc_update.replace(rename_index,dsm_gui_lib::whitespace(text)+" ! Prefix " + QString::number(renameitem) + "\n");
-                ui->prefixlist->item(renameitem)->setText(text);
-
-                write_data();
-
-                receive_data();
-                apply_data();
-
-                //ui->prefixlist->repaint();
+                update_prefixes(curIPC);
             }
         }
     }
@@ -462,4 +522,71 @@ void IPC_Menu::clear_fields() {
     ui->blocking->setChecked(false);
     ui->echo->setChecked(false);
     ui->prefixlist->clear();
+}
+
+void IPC_Menu::on_ipcmode_currentTextChanged(const QString &arg1) {
+    int index = ui->ipclist->currentRow();
+    QListWidgetItem* curItem = ui->ipclist->currentItem();
+
+    if (index == -1) return;
+    curItem->setData(IPC_Menu::Mode,ipcmodeinputs.key(arg1));
+}
+
+void IPC_Menu::on_acs_id_textChanged(const QString &arg1) {
+    int index = ui->ipclist->currentRow();
+    QListWidgetItem* curItem = ui->ipclist->currentItem();
+
+    if (index == -1) return;
+    curItem->setData(IPC_Menu::ACID,arg1);
+}
+
+void IPC_Menu::on_filename_textChanged(const QString &arg1) {
+    int index = ui->ipclist->currentRow();
+    QListWidgetItem* curItem = ui->ipclist->currentItem();
+
+    if (index == -1) return;
+    curItem->setData(IPC_Menu::FileName,arg1);
+}
+
+void IPC_Menu::on_socketrole_currentTextChanged(const QString &arg1) {
+    int index = ui->ipclist->currentRow();
+    QListWidgetItem* curItem = ui->ipclist->currentItem();
+
+    if (index == -1) return;
+    curItem->setData(IPC_Menu::Role,socketrole_inputs.key(arg1));
+}
+
+void IPC_Menu::on_blocking_toggled(bool checked) {
+    int index = ui->ipclist->currentRow();
+    QListWidgetItem* curItem = ui->ipclist->currentItem();
+
+    if (index == -1) return;
+    curItem->setData(IPC_Menu::Blocking,QVariant(checked).toString().toUpper());
+}
+
+void IPC_Menu::on_echo_toggled(bool checked) {
+    int index = ui->ipclist->currentRow();
+    QListWidgetItem* curItem = ui->ipclist->currentItem();
+
+    if (index == -1) return;
+    curItem->setData(IPC_Menu::Echo,QVariant(checked).toString().toUpper());
+}
+
+void IPC_Menu::server_changed() {
+    int index = ui->ipclist->currentRow();
+    QListWidgetItem* curItem = ui->ipclist->currentItem();
+    QStringList serverPort;
+
+    if (index == -1) return;
+    serverPort.append(ui->servername->text());
+    serverPort.append(ui->portnum->text());
+    curItem->setData(IPC_Menu::Server,serverPort);
+}
+
+void IPC_Menu::update_prefixes(QListWidgetItem* item) {
+    QStringList prefixes = dsm_gui_lib::getTextFromList(ui->prefixlist);
+    int prefix_num = ui->prefixlist->count();
+    item->setData(IPC_Menu::Prefixes,prefixes);
+    item->setData(IPC_Menu::nTX,QString::number(prefix_num));
+    ui->prefixnum->display(prefix_num);
 }

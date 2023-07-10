@@ -192,7 +192,7 @@ void RGN_Menu::on_rgn_add_clicked() {
     QStringList tmpData;
 
     QString newName = "NEW REGION";
-    QStringList curNames = getTextFromList(ui->rgnlist);
+    QStringList curNames = dsm_gui_lib::getTextFromList(ui->rgnlist);
     if (ui->rgnlist->count() != 0) {
         for(int i = 0; i <= 50; i++) {
             QString newNameTest = newName;
@@ -424,14 +424,6 @@ void RGN_Menu::on_applyButton_clicked() {
     write_data();
 }
 
-QStringList RGN_Menu::getTextFromList(QListWidget *list) {
-    QStringList output;
-    foreach(QListWidgetItem *item, list->findItems("*",Qt::MatchWildcard))
-        output << item->text();
-    output.sort(Qt::CaseInsensitive);
-    return output;
-}
-
 void RGN_Menu::world_changed() {
     if (ui->rgnlist->currentRow()==-1) return;
     QString tmpData = {};
@@ -510,11 +502,10 @@ void RGN_Menu::clear_fields() {
     ui->geometryname->clear();
 }
 
-
 void RGN_Menu::on_rgn_duplicate_clicked() {
     int index = ui->rgnlist->currentRow();
     QListWidgetItem* curItem = ui->rgnlist->currentItem();
-    QStringList curNames = getTextFromList(ui->rgnlist);
+    QStringList curNames = dsm_gui_lib::getTextFromList(ui->rgnlist);
 
     if (index == -1) return;
     QString oldName = curItem->text();

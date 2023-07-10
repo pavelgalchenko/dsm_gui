@@ -613,15 +613,6 @@ void SIM_Menu::setQComboBox(QComboBox *comboBox, QString string) {
     comboBox->setCurrentIndex(comboBox->findText(string));
 }
 
-QStringList SIM_Menu::getTextFromList(QListWidget *list){
-    QStringList output;
-    foreach(QListWidgetItem *item, list->findItems("*",Qt::MatchWildcard))
-        output << item->text();
-    output.sort(Qt::CaseInsensitive);
-    return output;
-}
-
-
 void SIM_Menu::on_simOrbList_itemClicked(QListWidgetItem *item) {
     ui->simOrbitEn->setChecked(item->data(orbEnabledRole).toBool());
 }
@@ -708,7 +699,7 @@ void SIM_Menu::on_simGSListRemove_clicked() {
 
 void SIM_Menu::on_simGSListAdd_clicked() {
     QString newGS = "GroundStation";
-    QStringList curGSNames = getTextFromList(ui->simGSList);
+    QStringList curGSNames = dsm_gui_lib::getTextFromList(ui->simGSList);
 
     if (ui->simGSList->count() != 0) {
         for(int i = 0; i <= 50; i++) {
@@ -733,7 +724,7 @@ void SIM_Menu::on_simGSListAdd_clicked() {
 void SIM_Menu::on_simGSListDuplicate_clicked() {
     int index = ui->simGSList->currentRow();
     QListWidgetItem* curItem = ui->simGSList->currentItem();
-    QStringList curGSNames = getTextFromList(ui->simGSList);
+    QStringList curGSNames = dsm_gui_lib::getTextFromList(ui->simGSList);
 
     if (index == -1) return;
     QString oldGS = curItem->text();

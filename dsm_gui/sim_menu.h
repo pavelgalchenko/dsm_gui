@@ -38,8 +38,6 @@ private slots:
 
     void setQComboBox(QComboBox *comboBox, QString string);
 
-    QStringList getTextFromList(QListWidget *list);
-
     void on_simOrbList_itemClicked(QListWidgetItem *item);
 
     void on_simOrbitEn_toggled(bool checked);

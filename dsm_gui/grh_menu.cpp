@@ -19,6 +19,9 @@ GRH_Menu::~GRH_Menu() {
 }
 
 void GRH_Menu::set_validators() {
+    QRegularExpression rx("[^\"]*");
+
+    ui->star_catalog->setValidator(new QRegularExpressionValidator(rx));
     ui->gl_output->setValidator(new QDoubleValidator);
     ui->povMode->addItems(dsm_gui_lib::sortStringList(povMode_inputs.values()));
     ui->hostType->addItems(dsm_gui_lib::sortStringList(hosttarget_inputs.values()));
@@ -30,6 +33,33 @@ void GRH_Menu::set_validators() {
     ui->targetBDY->setMaximum(INFINITY);
     ui->targetFrame->addItems(dsm_gui_lib::sortStringList(frame_inputs.values()));
     ui->boresightaxis->addItems(dsm_gui_lib::sortStringList(axis_inputs.values()));
+
+    ui->camtitle->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_naxis_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_laxis_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_faxis_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_baxis_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_ngrid_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_lgrid_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_fgrid_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_bgrid_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_galgrid_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_fov_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_proxops_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_tdrs_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_shdws_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_astro_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_truth_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_fsw_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_milky_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->show_fermi_name->setValidator(new QRegularExpressionValidator(rx));
+
+
+    ui->maptitle->setValidator(new QRegularExpressionValidator(rx));
+    ui->showclock_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->showtlmclock_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->showcredits_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->shownight_name->setValidator(new QRegularExpressionValidator(rx));
 
     ui->povrange->setValidator(new QDoubleValidator);
     ui->povangle->setValidator(new QDoubleValidator);
@@ -666,6 +696,7 @@ void GRH_Menu::on_applyButton_clicked() {
 
 void GRH_Menu::on_hostSC_currentTextChanged(const QString &arg1) {
     QStringList scFileNames = QDir(inout_path).entryList({"SC_"+arg1+".txt"});
+    if (scFileNames.isEmpty()) return;
     QString scFileName = scFileNames[0];
 
     QFile scFile(inout_path + scFileName);
@@ -689,6 +720,7 @@ void GRH_Menu::on_hostSC_currentTextChanged(const QString &arg1) {
 
 void GRH_Menu::on_targetSC_currentTextChanged(const QString &arg1) {
     QStringList scFileNames = QDir(inout_path).entryList({"SC_"+arg1+".txt"});
+    if (scFileNames.isEmpty()) return;
     QString scFileName = scFileNames[0];
 
     QFile scFile(inout_path + scFileName);
