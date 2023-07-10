@@ -239,7 +239,7 @@ void FOV_Menu::on_pickcolor_clicked() {
     int a = ui->alphavalue->value();
 
     QColor color(r,g,b,a);
-    QColor newColor = QColorDialog::getColor(color,this,"Choose Color",QColorDialog::ShowAlphaChannel | QColorDialog::DontUseNativeDialog);
+    QColor newColor = QColorDialog::getColor(color,this,"Choose Color",QColorDialog::ShowAlphaChannel);
 
     ui->redvalue->setValue(newColor.red());
     ui->greenvalue->setValue(newColor.green());
