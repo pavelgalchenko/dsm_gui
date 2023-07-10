@@ -98,7 +98,7 @@ void IPC_Menu::apply_data() {
 
     for (int i=0; i < num_ipc; i++) {
         newIPC = new QListWidgetItem();
-        newIPC->setData(IPC_Menu::Name,ipcName + QString::number(i+1));
+        newIPC->setData(IPC_Menu::Name,ipcName + QString::number(i));
         for (int j=0; j<ipcNLines; j++) {
             line_items = ipc_data[current_index].split(QRegExp("\\s"), Qt::SkipEmptyParts);
             line_string = ipc_string[current_index];
@@ -175,10 +175,10 @@ void IPC_Menu::on_ipc_add_clicked() {
 
     QString newName = "IPC ";
     QStringList curNames = dsm_gui_lib::getTextFromList(ui->ipclist);
-    int ipcNum = 1;
+    int ipcNum = 0;
     if (ui->ipclist->count() != 0) {
         for(int i = 0; i <= 50; i++) {
-            ipcNum = i+1;
+            ipcNum = i;
             QString newNameTest = newName+QString::number(ipcNum);
             if (!curNames.contains(newNameTest)) {
                 newName = newNameTest;
@@ -272,7 +272,7 @@ void IPC_Menu::on_ipc_duplicate_clicked(){
     int ipcNum;
     if (ui->ipclist->count() != 0) {
         for(int i = 0; i <= 50; i++) {
-            ipcNum = i+1;
+            ipcNum = i;
             QString newNameTest = newName+QString::number(ipcNum);
             if (!curNames.contains(newNameTest)) {
                 newName = newNameTest;
@@ -290,7 +290,7 @@ void IPC_Menu::on_ipc_duplicate_clicked(){
 
 void IPC_Menu::on_ipclist_itemClicked(QListWidgetItem *item) {
     QStringList tmpData = {};
-    clear_fields();
+
     for (int i=0; i<ipcNLines; i++) {
         switch (i) {
         case 0:
@@ -326,6 +326,7 @@ void IPC_Menu::on_ipclist_itemClicked(QListWidgetItem *item) {
             tmpData = item->data(IPC_Menu::nTX).toStringList();
             ui->prefixnum->display(tmpData[0]);
             tmpData = item->data(IPC_Menu::Prefixes).toStringList();
+            ui->prefixlist->clear();
             ui->prefixlist->addItems(tmpData);
             break;
         default:
@@ -386,7 +387,7 @@ void IPC_Menu::on_applyButton_clicked() {
         for (int j=0; j<ipcNLines; j++) {
             switch (j) {
             case 0:
-                data_inp = "********************************  IPC "+QString::number(i+1)+"  ********************************\n";
+                data_inp = "********************************  IPC "+QString::number(i)+"  ********************************\n";
                 break;
             case 1:
                 tmpData = item->data(IPC_Menu::Mode).toStringList();
