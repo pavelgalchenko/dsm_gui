@@ -32,7 +32,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Spacecraft Configuration Menu</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
@@ -3839,6 +3839,7 @@
  <resources/>
  <connections/>
  <buttongroups>
+  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>
@@ -3846,7 +3847,6 @@
   </buttongroup>
   <buttongroup name="spc_cur_wheel_glob_drag"/>
   <buttongroup name="spc_cur_wheel_glob_jitter"/>
-  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_2flex"/>
  </buttongroups>
 </ui>

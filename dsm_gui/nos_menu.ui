@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>NOS3 Menu</string>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
