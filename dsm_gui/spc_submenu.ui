@@ -1678,6 +1678,9 @@
                      <property name="text">
                       <string>-</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -1697,12 +1700,18 @@
                      <property name="text">
                       <string>+</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_wheel_duplicate">
                      <property name="text">
                       <string>Duplicate</string>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -1749,12 +1758,18 @@
                    <property name="text">
                     <string>Select</string>
                    </property>
+                   <property name="autoDefault">
+                    <bool>false</bool>
+                   </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="spc_cur_wheel_drjit_clear">
                    <property name="text">
                     <string>Clear</string>
+                   </property>
+                   <property name="autoDefault">
+                    <bool>false</bool>
                    </property>
                   </widget>
                  </item>
@@ -2054,6 +2069,9 @@
                      <property name="text">
                       <string>-</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -2073,12 +2091,18 @@
                      <property name="text">
                       <string>+</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_mtb_duplicate">
                      <property name="text">
                       <string>Duplicate</string>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -2235,6 +2259,9 @@
                      <property name="text">
                       <string>-</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -2254,12 +2281,18 @@
                      <property name="text">
                       <string>+</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_thruster_duplicate">
                      <property name="text">
                       <string>Duplicate</string>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -2468,6 +2501,9 @@
                      <property name="text">
                       <string>-</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -2487,12 +2523,18 @@
                      <property name="text">
                       <string>+</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_gyro_duplicate">
                      <property name="text">
                       <string>Duplicate</string>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -2737,6 +2779,9 @@
                      <property name="text">
                       <string>-</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -2756,12 +2801,18 @@
                      <property name="text">
                       <string>+</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_mag_duplicate">
                      <property name="text">
                       <string>Duplicate</string>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -2960,6 +3011,9 @@
                      <property name="text">
                       <string>-</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -2979,12 +3033,18 @@
                      <property name="text">
                       <string>+</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_css_duplicate">
                      <property name="text">
                       <string>Duplicate</string>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -3186,6 +3246,9 @@
                      <property name="text">
                       <string>-</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -3205,12 +3268,18 @@
                      <property name="text">
                       <string>+</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_fss_duplicate">
                      <property name="text">
                       <string>Duplicate</string>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -3445,6 +3514,9 @@
                      <property name="text">
                       <string>-</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -3464,12 +3536,18 @@
                      <property name="text">
                       <string>+</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_strack_duplicate">
                      <property name="text">
                       <string>Duplicate</string>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -3724,6 +3802,9 @@
                      <property name="text">
                       <string>-</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -3743,12 +3824,18 @@
                      <property name="text">
                       <string>+</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_gps_duplicate">
                      <property name="text">
                       <string>Duplicate</string>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -3927,6 +4014,9 @@
                      <property name="text">
                       <string>-</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
@@ -3946,12 +4036,18 @@
                      <property name="text">
                       <string>+</string>
                      </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
+                     </property>
                     </widget>
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_accel_duplicate">
                      <property name="text">
                       <string>Duplicate</string>
+                     </property>
+                     <property name="autoDefault">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -4212,14 +4308,14 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_wheel_glob_drag"/>
-  <buttongroup name="spc_cur_wheel_glob_jitter"/>
-  <buttongroup name="spc_cur_2flex"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>
    </property>
   </buttongroup>
+  <buttongroup name="spc_cur_2flex"/>
+  <buttongroup name="spc_cur_flex"/>
+  <buttongroup name="spc_cur_wheel_glob_jitter"/>
  </buttongroups>
 </ui>
