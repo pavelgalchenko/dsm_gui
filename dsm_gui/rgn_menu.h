@@ -49,6 +49,8 @@ private slots:
 
     void on_rgn_duplicate_clicked();
 
+    void on_location_currentTextChanged(const QString &arg1);
+
 private:
     Ui::RGN_Menu *ui;
 

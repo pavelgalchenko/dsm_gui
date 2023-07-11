@@ -522,3 +522,16 @@ void RGN_Menu::on_rgn_duplicate_clicked() {
     newItem->setData(RGN_Menu::Name,newName);
     ui->rgnlist->addItem(newItem);
 }
+
+void RGN_Menu::on_location_currentTextChanged(const QString &arg1) {
+    bool isLLA = !location_inputs["LLA"].compare(arg1);
+
+    ui->posw_label->setEnabled(!isLLA);
+    ui->posw_x->setEnabled(!isLLA);
+    ui->posw_y->setEnabled(!isLLA);
+    ui->posw_z->setEnabled(!isLLA);
+    ui->lla_label->setEnabled(isLLA);
+    ui->lng->setEnabled(isLLA);
+    ui->lat->setEnabled(isLLA);
+    ui->alt->setEnabled(isLLA);
+}

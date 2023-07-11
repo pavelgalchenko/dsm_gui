@@ -115,7 +115,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="dynamics">
          <attribute name="title">
@@ -251,12 +251,18 @@
                <property name="text">
                 <string>Select File</string>
                </property>
+               <property name="autoDefault">
+                <bool>false</bool>
+               </property>
               </widget>
              </item>
              <item>
               <widget class="QPushButton" name="spc_cur_shaker_clear">
                <property name="text">
                 <string>Clear</string>
+               </property>
+               <property name="autoDefault">
+                <bool>false</bool>
                </property>
               </widget>
              </item>
@@ -399,6 +405,18 @@
                  </property>
                  <item>
                   <widget class="QPushButton" name="spc_cur_body_remove">
+                   <property name="minimumSize">
+                    <size>
+                     <width>30</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>30</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>-</string>
                    </property>
@@ -406,6 +424,18 @@
                  </item>
                  <item>
                   <widget class="QPushButton" name="spc_cur_body_add">
+                   <property name="minimumSize">
+                    <size>
+                     <width>30</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>30</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>+</string>
                    </property>
@@ -876,6 +906,18 @@
                  </property>
                  <item>
                   <widget class="QPushButton" name="spc_cur_joint_remove">
+                   <property name="minimumSize">
+                    <size>
+                     <width>30</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>30</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>-</string>
                    </property>
@@ -883,6 +925,18 @@
                  </item>
                  <item>
                   <widget class="QPushButton" name="spc_cur_joint_add">
+                   <property name="minimumSize">
+                    <size>
+                     <width>30</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>30</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
                    <property name="text">
                     <string>+</string>
                    </property>
@@ -1484,7 +1538,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <property name="elideMode">
            <enum>Qt::ElideLeft</enum>
@@ -1542,6 +1596,18 @@
                    </property>
                    <item>
                     <widget class="QPushButton" name="spc_cur_wheel_remove">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
@@ -1549,6 +1615,18 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_wheel_add">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>+</string>
                      </property>
@@ -1894,6 +1972,18 @@
                    </property>
                    <item>
                     <widget class="QPushButton" name="spc_cur_mtb_remove">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
@@ -1901,6 +1991,18 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_mtb_add">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>+</string>
                      </property>
@@ -2051,6 +2153,18 @@
                    </property>
                    <item>
                     <widget class="QPushButton" name="spc_cur_thruster_remove">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
@@ -2058,6 +2172,18 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_thruster_add">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>+</string>
                      </property>
@@ -2260,6 +2386,18 @@
                    </property>
                    <item>
                     <widget class="QPushButton" name="spc_cur_gyro_remove">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
@@ -2267,6 +2405,18 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_gyro_add">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>+</string>
                      </property>
@@ -2505,6 +2655,18 @@
                    </property>
                    <item>
                     <widget class="QPushButton" name="spc_cur_mag_remove">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
@@ -2512,6 +2674,18 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_mag_add">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>+</string>
                      </property>
@@ -2704,6 +2878,18 @@
                    </property>
                    <item>
                     <widget class="QPushButton" name="spc_cur_css_remove">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
@@ -2711,6 +2897,18 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_css_add">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>+</string>
                      </property>
@@ -2906,6 +3104,18 @@
                    </property>
                    <item>
                     <widget class="QPushButton" name="spc_cur_fss_remove">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
@@ -2913,6 +3123,18 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_fss_add">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>+</string>
                      </property>
@@ -3141,6 +3363,18 @@
                    </property>
                    <item>
                     <widget class="QPushButton" name="spc_cur_strack_remove">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
@@ -3148,6 +3382,18 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_strack_add">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>+</string>
                      </property>
@@ -3396,6 +3642,18 @@
                    </property>
                    <item>
                     <widget class="QPushButton" name="spc_cur_gps_remove">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
@@ -3403,6 +3661,18 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_gps_add">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>+</string>
                      </property>
@@ -3575,6 +3845,18 @@
                    </property>
                    <item>
                     <widget class="QPushButton" name="spc_cur_accel_remove">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>-</string>
                      </property>
@@ -3582,6 +3864,18 @@
                    </item>
                    <item>
                     <widget class="QPushButton" name="spc_cur_accel_add">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="text">
                       <string>+</string>
                      </property>
@@ -3802,6 +4096,9 @@
         <property name="text">
          <string>Load Default</string>
         </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -3809,12 +4106,18 @@
         <property name="text">
          <string>Save Default</string>
         </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="spc_cur_close">
         <property name="text">
          <string>Close</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -3829,6 +4132,9 @@
         <property name="text">
          <string>Apply</string>
         </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
      </layout>
@@ -3839,14 +4145,14 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="spc_cur_flex"/>
+  <buttongroup name="spc_cur_wheel_glob_jitter"/>
+  <buttongroup name="spc_cur_wheel_glob_drag"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>
    </property>
   </buttongroup>
-  <buttongroup name="spc_cur_wheel_glob_drag"/>
-  <buttongroup name="spc_cur_wheel_glob_jitter"/>
   <buttongroup name="spc_cur_2flex"/>
+  <buttongroup name="spc_cur_flex"/>
  </buttongroups>
 </ui>
