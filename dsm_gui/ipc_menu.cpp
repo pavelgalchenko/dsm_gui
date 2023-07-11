@@ -154,13 +154,18 @@ void IPC_Menu::apply_data() {
 void IPC_Menu::on_ipc_remove_clicked() {
     int removeitem = ui->ipclist->currentRow();
 
-    if (removeitem == -1) {
-        return;
-    }
+    if (removeitem == -1) return;
     else {
         delete ui->ipclist->takeItem(removeitem);
         ui->ipclist->setCurrentRow(-1);
         clear_fields();
+    }
+
+    if (ui->ipclist->count() != 0) {
+        QList<QListWidgetItem*> itemList = ui->ipclist->findItems("*",Qt::MatchWildcard);
+        for (int i=0; i<ui->ipclist->count(); i++) {
+            itemList[i]->setData(IPC_Menu::Name,"IPC "+QString::number(i));
+        }
     }
 }
 
@@ -176,16 +181,14 @@ void IPC_Menu::on_ipc_add_clicked() {
     QString newName = "IPC ";
     QStringList curNames = dsm_gui_lib::getTextFromList(ui->ipclist);
     int ipcNum = 0;
-    if (ui->ipclist->count() != 0) {
-        for(int i = 0; i <= 50; i++) {
-            ipcNum = i;
-            QString newNameTest = newName+QString::number(ipcNum);
-            if (!curNames.contains(newNameTest)) {
-                newName = newNameTest;
-                break;
-            }
-            if (i==50) return; // Nothing happens if too many
+    for(int i = 0; i <= 50; i++) {
+        ipcNum = i;
+        QString newNameTest = newName+QString::number(ipcNum);
+        if (!curNames.contains(newNameTest)) {
+            newName = newNameTest;
+            break;
         }
+        if (i==50) return; // Nothing happens if too many
     }
 
     newData.append("");
@@ -226,7 +229,7 @@ void IPC_Menu::on_ipc_add_clicked() {
             break;
         case 3:
             tmpData.append(line_string);
-            newIPC->setData(IPC_Menu::FileName,tmpData);
+            newIPC->setData(IPC_Menu::FileName,newStrings[j]);
             break;
         case 4:
             tmpData.append(line_items[0]);
