@@ -420,6 +420,9 @@
                    <property name="text">
                     <string>-</string>
                    </property>
+                   <property name="autoDefault">
+                    <bool>false</bool>
+                   </property>
                   </widget>
                  </item>
                  <item>
@@ -439,12 +442,18 @@
                    <property name="text">
                     <string>+</string>
                    </property>
+                   <property name="autoDefault">
+                    <bool>false</bool>
+                   </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="spc_cur_body_duplicate">
                    <property name="text">
                     <string>Duplicate</string>
+                   </property>
+                   <property name="autoDefault">
+                    <bool>false</bool>
                    </property>
                   </widget>
                  </item>
@@ -470,7 +479,7 @@
                   <rect>
                    <x>9</x>
                    <y>9</y>
-                   <width>381</width>
+                   <width>451</width>
                    <height>271</height>
                   </rect>
                  </property>
@@ -487,7 +496,7 @@
                     <item row="3" column="0">
                      <widget class="QLabel" name="label_11">
                       <property name="text">
-                       <string>Products of Inertia (xy, xz, yz)</string>
+                       <string>Products of Inertia [xy, xz, yz]</string>
                       </property>
                       <property name="wordWrap">
                        <bool>true</bool>
@@ -583,6 +592,9 @@
                     <property name="text">
                      <string>Node Editor</string>
                     </property>
+                    <property name="autoDefault">
+                     <bool>false</bool>
+                    </property>
                    </widget>
                   </item>
                   <item>
@@ -605,261 +617,301 @@
                 <attribute name="title">
                  <string>Tab 2</string>
                 </attribute>
-                <widget class="QWidget" name="gridLayoutWidget_3">
+                <widget class="QWidget" name="verticalLayoutWidget_3">
                  <property name="geometry">
                   <rect>
-                   <x>9</x>
-                   <y>9</y>
-                   <width>381</width>
+                   <x>10</x>
+                   <y>10</y>
+                   <width>451</width>
                    <height>271</height>
                   </rect>
                  </property>
-                 <layout class="QGridLayout" name="gridLayout_15" columnstretch="0,0">
-                  <item row="2" column="0">
-                   <widget class="QLabel" name="label_28">
-                    <property name="text">
-                     <string>Node File Name</string>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="3" column="1">
-                   <widget class="QLineEdit" name="spc_cur_node_file">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0">
-                   <widget class="QLabel" name="label_13">
-                    <property name="text">
-                     <string>Constant Embedded Momentum [Nms]</string>
-                    </property>
-                    <property name="scaledContents">
-                     <bool>false</bool>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="4" column="1">
-                   <layout class="QHBoxLayout" name="horizontalLayout_22">
-                    <item>
-                     <widget class="QPushButton" name="spc_cur_flex_select">
+                 <layout class="QVBoxLayout" name="verticalLayout_33">
+                  <item>
+                   <layout class="QGridLayout" name="gridLayout_15" columnstretch="0,1" columnminimumwidth="0,0">
+                    <item row="2" column="0">
+                     <widget class="QLabel" name="label_28">
                       <property name="text">
-                       <string>Select</string>
+                       <string>Node File Name</string>
+                      </property>
+                      <property name="wordWrap">
+                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>
-                    <item>
-                     <widget class="QPushButton" name="spc_cur_flex_clear">
-                      <property name="text">
-                       <string>Clear</string>
+                    <item row="3" column="1">
+                     <widget class="QLineEdit" name="spc_cur_node_file">
+                      <property name="enabled">
+                       <bool>false</bool>
                       </property>
                      </widget>
+                    </item>
+                    <item row="0" column="0">
+                     <widget class="QLabel" name="label_13">
+                      <property name="text">
+                       <string>Constant Embedded Momentum [Nms]</string>
+                      </property>
+                      <property name="scaledContents">
+                       <bool>false</bool>
+                      </property>
+                      <property name="wordWrap">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="4" column="1">
+                     <layout class="QHBoxLayout" name="horizontalLayout_22">
+                      <item>
+                       <widget class="QPushButton" name="spc_cur_flex_select">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string>Select</string>
+                        </property>
+                        <property name="autoDefault">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="spc_cur_flex_clear">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string>Clear</string>
+                        </property>
+                        <property name="autoDefault">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="1" column="1">
+                     <layout class="QHBoxLayout" name="horizontalLayout_19">
+                      <item>
+                       <widget class="QLineEdit" name="spc_cur_body_cemd_x">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="spc_cur_body_cemd_y">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="spc_cur_body_cemd_z">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="2" column="1">
+                     <layout class="QHBoxLayout" name="horizontalLayout_21">
+                      <item>
+                       <widget class="QPushButton" name="spc_cur_node_select">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string>Select</string>
+                        </property>
+                        <property name="autoDefault">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="spc_cur_node_clear">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="text">
+                         <string>Clear</string>
+                        </property>
+                        <property name="autoDefault">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="4" column="0">
+                     <widget class="QLabel" name="label_29">
+                      <property name="text">
+                       <string>Flex File Name</string>
+                      </property>
+                      <property name="wordWrap">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="label_26">
+                      <property name="text">
+                       <string>Constant Embedded Magnetic Dipole [A*m^2]</string>
+                      </property>
+                      <property name="wordWrap">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="5" column="1">
+                     <widget class="QLineEdit" name="spc_cur_flex_file">
+                      <property name="enabled">
+                       <bool>false</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="1">
+                     <layout class="QHBoxLayout" name="horizontalLayout_15">
+                      <item>
+                       <widget class="QLineEdit" name="spc_cur_body_cem_x">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="spc_cur_body_cem_y">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="spc_cur_body_cem_z">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>16777215</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="6" column="1">
+                     <spacer name="verticalSpacer_17">
+                      <property name="orientation">
+                       <enum>Qt::Vertical</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>20</width>
+                        <height>40</height>
+                       </size>
+                      </property>
+                     </spacer>
                     </item>
                    </layout>
-                  </item>
-                  <item row="1" column="1">
-                   <layout class="QHBoxLayout" name="horizontalLayout_19">
-                    <item>
-                     <widget class="QLineEdit" name="spc_cur_body_cemd_x">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>60</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>60</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="spc_cur_body_cemd_y">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>60</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>60</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="spc_cur_body_cemd_z">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>60</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>60</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item row="2" column="1">
-                   <layout class="QHBoxLayout" name="horizontalLayout_21">
-                    <item>
-                     <widget class="QPushButton" name="spc_cur_node_select">
-                      <property name="text">
-                       <string>Select</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QPushButton" name="spc_cur_node_clear">
-                      <property name="text">
-                       <string>Clear</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item row="4" column="0">
-                   <widget class="QLabel" name="label_29">
-                    <property name="text">
-                     <string>Flex File Name</string>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QLabel" name="label_26">
-                    <property name="text">
-                     <string>Constant Embedded Magnetic Dipole [A*m^2]</string>
-                    </property>
-                    <property name="wordWrap">
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="5" column="1">
-                   <widget class="QLineEdit" name="spc_cur_flex_file">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <layout class="QHBoxLayout" name="horizontalLayout_15">
-                    <item>
-                     <widget class="QLineEdit" name="spc_cur_body_cem_x">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>60</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>60</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="spc_cur_body_cem_y">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>60</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>60</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="spc_cur_body_cem_z">
-                      <property name="sizePolicy">
-                       <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-                        <horstretch>0</horstretch>
-                        <verstretch>0</verstretch>
-                       </sizepolicy>
-                      </property>
-                      <property name="minimumSize">
-                       <size>
-                        <width>60</width>
-                        <height>0</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>60</width>
-                        <height>16777215</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                  </item>
-                  <item row="6" column="1">
-                   <spacer name="verticalSpacer_17">
-                    <property name="orientation">
-                     <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                   </spacer>
                   </item>
                  </layout>
                 </widget>
@@ -921,6 +973,9 @@
                    <property name="text">
                     <string>-</string>
                    </property>
+                   <property name="autoDefault">
+                    <bool>false</bool>
+                   </property>
                   </widget>
                  </item>
                  <item>
@@ -940,12 +995,18 @@
                    <property name="text">
                     <string>+</string>
                    </property>
+                   <property name="autoDefault">
+                    <bool>false</bool>
+                   </property>
                   </widget>
                  </item>
                  <item>
                   <widget class="QPushButton" name="spc_cur_joint_duplicate">
                    <property name="text">
                     <string>Duplicate</string>
+                   </property>
+                   <property name="autoDefault">
+                    <bool>false</bool>
                    </property>
                   </widget>
                  </item>
@@ -971,7 +1032,7 @@
                   <rect>
                    <x>10</x>
                    <y>10</y>
-                   <width>381</width>
+                   <width>451</width>
                    <height>271</height>
                   </rect>
                  </property>
@@ -1039,12 +1100,18 @@
                         <property name="text">
                          <string>Select</string>
                         </property>
+                        <property name="autoDefault">
+                         <bool>false</bool>
+                        </property>
                        </widget>
                       </item>
                       <item>
                        <widget class="QPushButton" name="spc_cur_joint_param_clear">
                         <property name="text">
                          <string>Clear</string>
+                        </property>
+                        <property name="autoDefault">
+                         <bool>false</bool>
                         </property>
                        </widget>
                       </item>
@@ -1077,7 +1144,7 @@
                   <rect>
                    <x>10</x>
                    <y>10</y>
-                   <width>381</width>
+                   <width>451</width>
                    <height>271</height>
                   </rect>
                  </property>
@@ -1223,7 +1290,7 @@
                   <rect>
                    <x>10</x>
                    <y>10</y>
-                   <width>381</width>
+                   <width>451</width>
                    <height>271</height>
                   </rect>
                  </property>
@@ -1372,7 +1439,7 @@
                   <rect>
                    <x>10</x>
                    <y>10</y>
-                   <width>381</width>
+                   <width>451</width>
                    <height>271</height>
                   </rect>
                  </property>
@@ -2359,7 +2426,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_72" stretch="0,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_72" stretch="1,3">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -2628,7 +2695,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_71" stretch="0,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_71" stretch="1,3">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -2851,7 +2918,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_69" stretch="0,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_69" stretch="1,3">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -3077,7 +3144,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_68" stretch="0,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_68" stretch="1,3">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -3323,7 +3390,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_67" stretch="0,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_67" stretch="1,3">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -3805,7 +3872,7 @@
               <height>641</height>
              </rect>
             </property>
-            <layout class="QHBoxLayout" name="horizontalLayout_65" stretch="0,0">
+            <layout class="QHBoxLayout" name="horizontalLayout_65" stretch="1,3">
              <property name="leftMargin">
               <number>12</number>
              </property>
@@ -4145,14 +4212,14 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="spc_cur_wheel_glob_jitter"/>
+  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_wheel_glob_drag"/>
+  <buttongroup name="spc_cur_wheel_glob_jitter"/>
+  <buttongroup name="spc_cur_2flex"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>
    </property>
   </buttongroup>
-  <buttongroup name="spc_cur_2flex"/>
-  <buttongroup name="spc_cur_flex"/>
  </buttongroups>
 </ui>
