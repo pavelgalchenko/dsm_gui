@@ -41,3 +41,11 @@ QStringList dsm_gui_lib::sortStringList(QStringList unsorted) {
     sorted = unsorted;
     return sorted;
 }
+
+QStringList dsm_gui_lib::getTextFromList(QListWidget *list){
+    QStringList output;
+    foreach(QListWidgetItem *item, list->findItems("*",Qt::MatchWildcard))
+        output << item->text();
+    output.sort(Qt::CaseInsensitive);
+    return output;
+}

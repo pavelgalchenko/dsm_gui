@@ -74,6 +74,10 @@ void SPC_Menu::set_validators()
     ui->spc_cur_initeul_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
     ui->spc_cur_initeul_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
 
+    connect(ui->spc_add, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
+    connect(ui->spc_remove, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
+    connect(ui->spc_duplicate, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
+    connect(ui->spc_load, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
 }
 
 void SPC_Menu::receive_spcpath(QString path)

@@ -1,11 +1,6 @@
 #include "fov_menu.h"
 #include "ui_fov_menu.h"
 
-#include <QFile>
-#include <QTextStream>
-#include <QMessageBox>
-#include <QRegularExpression>
-
 FOV_Menu::FOV_Menu(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::FOV_Menu)
@@ -14,20 +9,24 @@ FOV_Menu::FOV_Menu(QWidget *parent) :
     set_validators();
 }
 
-FOV_Menu::~FOV_Menu()
-{
+FOV_Menu::~FOV_Menu() {
     delete ui;
 }
 
-void FOV_Menu::set_validators()
-{
+void FOV_Menu::set_validators() {
+    QRegularExpression rx("[^\"]*");
+
+    ui->fovlist->setSortingEnabled(true);
+    ui->fovlist->sortItems(Qt::AscendingOrder);
+
     ui->num_sides->setValidator(new QIntValidator);
     ui->length_sides->setValidator(new QDoubleValidator);
     ui->horizontal_width->setValidator(new QDoubleValidator);
     ui->vertical_height->setValidator(new QDoubleValidator);
-    ui->fov_type->addItems(fovtype_inputs);
-    ui->sc_num->setValidator(new QIntValidator);
-    ui->bdy_num->setValidator(new QIntValidator);
+    ui->fov_name->setValidator(new QRegularExpressionValidator(rx));
+    ui->fov_type->addItems(dsm_gui_lib::sortStringList(fovtype_inputs.values()));
+    ui->bdy_num->setMinimum(0);
+    ui->bdy_num->setMaximum(INFINITY);
     ui->pos_x->setValidator(new QDoubleValidator);
     ui->pos_y->setValidator(new QDoubleValidator);
     ui->pos_z->setValidator(new QDoubleValidator);
@@ -35,25 +34,49 @@ void FOV_Menu::set_validators()
     ui->rot2->setValidator(new QDoubleValidator);
     ui->rot3->setValidator(new QDoubleValidator);
     ui->euler_seq->addItems(euler_inputs);
-    ui->boresightaxis->addItems(axis_inputs);
+    ui->boresightaxis->addItems(dsm_gui_lib::sortStringList(axis_inputs.values()));
+
+    connect(ui->num_sides, &QLineEdit::textChanged, this, &FOV_Menu::sides_changed);
+    connect(ui->length_sides, &QLineEdit::textChanged, this, &FOV_Menu::sides_changed);
+
+    connect(ui->horizontal_width, &QLineEdit::textChanged, this, &FOV_Menu::dims_changed);
+    connect(ui->vertical_height, &QLineEdit::textChanged, this, &FOV_Menu::dims_changed);
+
+    connect(ui->redvalue, &QSpinBox::textChanged, this, &FOV_Menu::color_changed);
+    connect(ui->greenvalue, &QSpinBox::textChanged, this, &FOV_Menu::color_changed);
+    connect(ui->bluevalue, &QSpinBox::textChanged, this, &FOV_Menu::color_changed);
+    connect(ui->alphavalue, &QSpinBox::textChanged, this, &FOV_Menu::color_changed);
+
+    connect(ui->nearfield, &QCheckBox::toggled, this, &FOV_Menu::field_changed);
+    connect(ui->farfield, &QCheckBox::toggled, this, &FOV_Menu::field_changed);
+
+    connect(ui->sc_name, &QComboBox::currentTextChanged, this, &FOV_Menu::scbody_changed);
+    connect(ui->bdy_num, &QSpinBox::textChanged, this, &FOV_Menu::scbody_changed);
+
+    connect(ui->pos_x, &QLineEdit::textChanged, this, &FOV_Menu::pos_changed);
+    connect(ui->pos_y, &QLineEdit::textChanged, this, &FOV_Menu::pos_changed);
+    connect(ui->pos_z, &QLineEdit::textChanged, this, &FOV_Menu::pos_changed);
+
+    connect(ui->rot1, &QLineEdit::textChanged, this, &FOV_Menu::euler_changed);
+    connect(ui->rot2, &QLineEdit::textChanged, this, &FOV_Menu::euler_changed);
+    connect(ui->rot3, &QLineEdit::textChanged, this, &FOV_Menu::euler_changed);
+    connect(ui->euler_seq, &QComboBox::currentTextChanged, this, &FOV_Menu::euler_changed);
 }
 
-void FOV_Menu::receive_fovpath(QString path)
-{
+void FOV_Menu::receive_fovpath(QString path) {
     inout_path = path;
     file_path = path+"Inp_FOV.txt";
     receive_data();
     apply_data();
-    populate_list();
 }
 
-void FOV_Menu::receive_data()
-{
+void FOV_Menu::receive_data() {
     fov_data.clear();
     fov_string.clear();
     fov_update.clear();
-    static QRegularExpression rx1("(.*?)*!");
+    static QRegularExpression rx1("(.*?)!");
     static QRegularExpression rx2("\"(.*?)\"");
+    static QRegularExpression rx3("SC_(.*).txt");
 
     QFile file(file_path);
     if(!file.open(QIODevice::ReadOnly)) {
@@ -64,29 +87,54 @@ void FOV_Menu::receive_data()
     while(!in.atEnd()) {
         QString line = in.readLine();
         QRegularExpressionMatch match1 = rx1.match(line);
-        if (match1.hasMatch()) {
-            QString capture = match1.captured(0);
-            fov_data.append(capture);
-        }
-        else {
-            fov_data.append("blankline");
-        }
+        fov_data.append(match1.captured(1));
+
         QRegularExpressionMatch match2 = rx2.match(line);
-        if (match2.hasMatch()) {
-            QString capture = match2.captured(0);
-            fov_string.append(capture);
-        }
-        else {
-            fov_string.append("blankline");
-        }
-        line.append("\n");
-        fov_update.append(line);
+        fov_string.append(match2.captured(1));
     }
     file.close();
+
+    QStringList scFiles = QDir(inout_path).entryList({"SC_*"});
+    QStringList scNames;
+    for (int i = 0; i<scFiles.length(); i++)
+        scNames.append(scFiles[i].chopped(4).mid(3));
+    QSet<QString> scNamesSet(scNames.begin(),scNames.end());
+
+    QFile simFile(inout_path + "Inp_Sim.txt");
+    if(!simFile.open(QIODevice::ReadOnly))
+        QMessageBox::information(0, "error", simFile.errorString());
+    QTextStream simIn(&simFile);
+
+    QStringList simSCNames;
+    QHash<QString,int> simSCNum;
+    while (!simIn.atEnd()) {
+        QString line = simIn.readLine();
+        if (line.contains("Spacecraft",Qt::CaseInsensitive)) {
+            line = simIn.readLine();
+            QStringList line_items = line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
+            int nSC = line_items[0].toInt();
+            for (int i=0; i<nSC; i++) {
+                line = simIn.readLine();
+                QString name = rx3.match(line).captured(1);
+                simSCNames.append(name);
+                simSCNum.insert(name,i);
+            }
+            break;
+        }
+    }
+    simFile.close();
+    QSet<QString> simSCNamesSet(simSCNames.begin(),simSCNames.end());
+
+    scNums.clear();
+    QStringList spaceCrafts = scNamesSet.intersect(simSCNamesSet).values();
+    for (int i = 0; i < spaceCrafts.count(); i++)
+        scNums.insert(spaceCrafts[i],simSCNum[spaceCrafts[i]]);
+
+    ui->sc_name->clear();
+    ui->sc_name->addItems(dsm_gui_lib::sortStringList(scNums.keys()));
 }
 
-void FOV_Menu::write_data()
-{
+void FOV_Menu::write_data() {
     QFile::remove(file_path);
     QFile file(file_path);
     if(!file.open(QFile::WriteOnly)) {
@@ -98,251 +146,285 @@ void FOV_Menu::write_data()
             in << fov_update.at(i);
         }
     }
+    fov_update.clear();
     file.close();
 }
 
-
-void FOV_Menu::apply_data()
-{
+void FOV_Menu::apply_data() {
     QStringList line_items;
-    QString line_item;
+    QListWidgetItem* newFOV;
     int num_fov = 0;
 
-    fov_names.clear();
+    QStringList tmpData;
 
-    line_items = fov_data[1].split(QRegExp("\\s"), QString::SkipEmptyParts);
-    line_item = line_items[0];
-    num_fov = line_item.toInt();
+    line_items = fov_data[1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+    num_fov = line_items[0].toInt();
 
+    ui->fovlist->clear();
+    clear_fields();
     for (int i=0; i < num_fov; i++) {
-        line_item = fov_string[11*i+3];
-        fov_names.append(line_item);
+        newFOV = new QListWidgetItem();
+        for (int j = 0; j < fovNLines-1; j++) {
+            int k = i*fovNLines + 3 + j;
+            line_items = fov_data[k].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+            switch (j) {
+            case 0:
+                tmpData.append(fov_string[k]);
+                newFOV->setData(FOV_Menu::Label,tmpData);
+                break;
+            case 1:
+                tmpData.append(line_items[0]);
+                tmpData.append(line_items[1]);
+                newFOV->setData(FOV_Menu::Sides,tmpData);
+                break;
+            case 2:
+                tmpData.append(line_items[0]);
+                tmpData.append(line_items[1]);
+                newFOV->setData(FOV_Menu::Dims, tmpData);
+                break;
+            case 3:
+                for (int i=0; i<4; i++) {
+                    int colorChannel = line_items[i].toDouble()*255.0;
+                    tmpData.append(QString::number(colorChannel));
+                }
+                newFOV->setData(FOV_Menu::Color, tmpData);
+                break;
+            case 4:
+                tmpData.append(line_items[0]);
+                newFOV->setData(FOV_Menu::Type,tmpData);
+                break;
+            case 5:
+                tmpData.append(line_items[0]);
+                tmpData.append(line_items[1]);
+                newFOV->setData(FOV_Menu::DrawField, tmpData);
+                break;
+            case 6:
+                tmpData.append(line_items[0]);
+                tmpData.append(line_items[1]);
+                newFOV->setData(FOV_Menu::SCBody, tmpData);
+                break;
+            case 7:
+                tmpData.append(line_items[0]);
+                tmpData.append(line_items[1]);
+                tmpData.append(line_items[2]);
+                newFOV->setData(FOV_Menu::BodyPos, tmpData);
+                break;
+            case 8:
+                tmpData.append(line_items[0]);
+                tmpData.append(line_items[1]);
+                tmpData.append(line_items[2]);
+                tmpData.append(line_items[3]);
+                newFOV->setData(FOV_Menu::Euler, tmpData);
+                break;
+            case 9:
+                tmpData.append(line_items[0]);
+                newFOV->setData(FOV_Menu::Boresight, tmpData);
+                break;
+            default:
+                break;
+            }
+
+            tmpData.clear();
+        }
+        ui->fovlist->addItem(newFOV);
     }
 }
 
-void FOV_Menu::populate_list()
-{
-    ui->fovlist->clear();
-    ui->fovlist->addItems(fov_names);
-}
-
-void FOV_Menu::on_pickcolor_clicked()
-{
-    color_menu = new COLOR_Select(this);
-    color_menu->setModal(true);
-    color_menu->show();
+void FOV_Menu::on_pickcolor_clicked() {
 
     QStringList rgbavalues;
-    rgbavalues.append(ui->redvalue->text());
-    rgbavalues.append(ui->greenvalue->text());
-    rgbavalues.append(ui->bluevalue->text());
-    rgbavalues.append(ui->alphavalue->text());
+    int r = ui->redvalue->value();
+    int g = ui->greenvalue->value();
+    int b = ui->bluevalue->value();
+    int a = ui->alphavalue->value();
 
-    connect(this, SIGNAL(send_rgbavalues(QStringList)), color_menu, SLOT(receive_rgbavalues(QStringList)));
-    connect(color_menu, SIGNAL(send_newrgbavalues(QStringList)), this, SLOT(receive_newrgbavalues(QStringList)));
-    emit send_rgbavalues(rgbavalues);
-    disconnect(this, SIGNAL(send_rgbavalues(QStringList)), 0, 0);
+    QColor color(r,g,b,a);
+    QColor newColor = QColorDialog::getColor(color,this,"Choose Color",QColorDialog::ShowAlphaChannel);
+
+    ui->redvalue->setValue(newColor.red());
+    ui->greenvalue->setValue(newColor.green());
+    ui->bluevalue->setValue(newColor.blue());
+    ui->alphavalue->setValue(newColor.alpha());
 }
 
-void FOV_Menu::receive_newrgbavalues(QStringList newrgbavalues)
-{
-    QString color;;
-
-    color = newrgbavalues[0];
-    ui->redvalue->setValue(color.toDouble());
-    color = newrgbavalues[1];
-    ui->greenvalue->setValue(color.toDouble());
-    color = newrgbavalues[2];
-    ui->bluevalue->setValue(color.toDouble());
-    color = newrgbavalues[3];
-    ui->alphavalue->setValue(color.toDouble());
-}
-
-void FOV_Menu::on_fov_remove_clicked()
-{
+void FOV_Menu::on_fov_remove_clicked() {
     int removeitem = ui->fovlist->currentRow();
     if (removeitem == -1) {
         return;
     }
     else {
-        int fov_index = 11*(removeitem)+2;
-        fov_names.removeAt(removeitem);
-        for (int i = 0; i < 11; i++) {
-            fov_data.removeAt(fov_index);
-            fov_string.removeAt(fov_index);
-            fov_update.removeAt(fov_index);
-        }
-
-        delete ui->fovlist->takeItem(removeitem);
-
-        QString data_inp;
-        int fov_num = ui->fovlist->count();
-
-        data_inp = QString::number(fov_num);
-        fov_update[1] = whitespace(data_inp) + " ! Number of FOVs\n";
-
-        write_data();
-
+        ui->fovlist->takeItem(removeitem);
         ui->fovlist->setCurrentRow(-1);
-        global_fov_index = -1;
+        clear_fields();
     }
 }
 
-void FOV_Menu::on_fov_add_clicked()
-{
-    QString newfov = "\"NEWFOV\"";
+void FOV_Menu::on_fov_add_clicked() {
+    QListWidgetItem *newFOV = new QListWidgetItem();
+    QStringList line_items;
 
-    fov_names.append(newfov);
+    QStringList newData;
+    QStringList tmpData;
 
-    fov_data.append("blankline");
-    fov_data.append("\"NEWFOV\"                          !");
-    fov_data.append("4   4.0                           !");
-    fov_data.append("8.0  4.0                          !");
-    fov_data.append("0.0 1.0 0.0 0.5                   !");
-    fov_data.append("SOLID                             !");
-    fov_data.append("TRUE  TRUE                        !");
-    fov_data.append("0  0                              !");
-    fov_data.append("0.0  0.0  1.0                     !");
-    fov_data.append("0.0  0.0  0.0  321                !");
-    fov_data.append("Z_AXIS                            !");
-
-    fov_string.append("blankline");
-    fov_string.append(newfov);
-    for (int i = 0; i < 9; i++) fov_string.append("blankline");
-
-    fov_update.append("--------------------------------------------------------------------\n");
-    fov_update.append("\"NEWFOV\"                          ! Label\n");
-    fov_update.append("4   4.0                           ! Number of Sides, Length [m]\n");
-    fov_update.append("8.0  4.0                          ! H Width, V Height [deg]\n");
-    fov_update.append("0.0 1.0 0.0 0.5                   ! Color RGB+Alpha\n");
-    fov_update.append("SOLID                             ! WIREFRAME, SOLID, VECTOR, or PLANE\n");
-    fov_update.append("TRUE  TRUE                        ! Draw Near Field, Draw Far Field\n");
-    fov_update.append("0  0                              ! SC, Body\n");
-    fov_update.append("0.0  0.0  1.0                     ! Position in Body [m]\n");
-    fov_update.append("0.0  0.0  0.0  321                ! Euler Angles [deg], Sequence\n");
-    fov_update.append("Z_AXIS                            ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
-
-    ui->fovlist->addItem(newfov);
-
-    write_data();
-
-    ui->fovlist->setCurrentRow(ui->fovlist->count()-1);
-    on_fovlist_itemClicked(ui->fovlist->currentItem());
-}
-
-void FOV_Menu::on_fovlist_itemClicked(QListWidgetItem *item)
-{
-    int index = ui->fovlist->row(item);
-
-    if (index == global_fov_index) {
-        return;
-    }
-    else {
-        if ( (global_fov_index != -1) && (global_fov_ignore == 0) ) {
-            int response = warning_message("Note that changes to the previous selected FOV are lost unless you first select \"Apply\"! This is your only warning.");
-            if (response == QMessageBox::Cancel) {
-                ui->fovlist->setCurrentRow(global_fov_index);
-                global_fov_ignore = 1;
-                return;
+    QString newName = "NEW FOV";
+    QStringList curNames = dsm_gui_lib::getTextFromList(ui->fovlist);
+    if (ui->fovlist->count() != 0) {
+        for(int i = 0; i <= 50; i++) {
+            QString newNameTest = newName;
+            if (i>0) newNameTest += "_" + QString::number(i);
+            if (!curNames.contains(newNameTest)) {
+                newName = newNameTest;
+                break;
             }
-            else if (response == QMessageBox::Ok) {
-                global_fov_ignore = 1;
+            if (i==50) return; // Nothing happens if too many
+        }
+    }
+
+    newData.append("");
+    newData.append("4   4.0                           ");
+    newData.append("8.0  4.0                          ");
+    newData.append("0.0 1.0 0.0 0.5                   ");
+    newData.append("SOLID                             ");
+    newData.append("TRUE  TRUE                        ");
+    newData.append("0  0                              ");
+    newData.append("0.0  0.0  1.0                     ");
+    newData.append("0.0  0.0  0.0  321                ");
+    newData.append("Z_AXIS                            ");
+    newData.append("");
+
+    for (int j = 0; j < fovNLines-1; j++) {
+        line_items = newData[j].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+        switch (j) {
+        case 0:
+            tmpData.append(newName);
+            newFOV->setData(FOV_Menu::Label,tmpData);
+            break;
+        case 1:
+            tmpData.append(line_items[0]);
+            tmpData.append(line_items[1]);
+            newFOV->setData(FOV_Menu::Sides,tmpData);
+            break;
+        case 2:
+            tmpData.append(line_items[0]);
+            tmpData.append(line_items[1]);
+            newFOV->setData(FOV_Menu::Dims, tmpData);
+            break;
+        case 3:
+            for (int i=0; i<4; i++) {
+                int colorChannel = line_items[i].toDouble()*255.0;
+                tmpData.append(QString::number(colorChannel));
             }
+            newFOV->setData(FOV_Menu::Color, tmpData);
+            break;
+        case 4:
+            tmpData.append(line_items[0]);
+            newFOV->setData(FOV_Menu::Type,tmpData);
+            break;
+        case 5:
+            tmpData.append(line_items[0]);
+            tmpData.append(line_items[1]);
+            newFOV->setData(FOV_Menu::DrawField, tmpData);
+            break;
+        case 6:
+            tmpData.append(line_items[0]);
+            tmpData.append(line_items[1]);
+            newFOV->setData(FOV_Menu::SCBody, tmpData);
+            break;
+        case 7:
+            tmpData.append(line_items[0]);
+            tmpData.append(line_items[1]);
+            tmpData.append(line_items[2]);
+            newFOV->setData(FOV_Menu::BodyPos, tmpData);
+            break;
+        case 8:
+            tmpData.append(line_items[1]);
+            tmpData.append(line_items[2]);
+            tmpData.append(line_items[3]);
+            tmpData.append(line_items[3]);
+            newFOV->setData(FOV_Menu::Euler, tmpData);
+            break;
+        case 9:
+            tmpData.append(line_items[0]);
+            newFOV->setData(FOV_Menu::Boresight, tmpData);
+            break;
+        default:
+            break;
         }
+        tmpData.clear();
+    }
 
-        receive_data();
-        apply_data();
+    ui->fovlist->addItem(newFOV);
 
-        global_fov_index = index;
+    ui->fovlist->setCurrentRow(-1);
+    clear_fields();
+}
 
-        int string_index = 11*index+3;
-        int data_index = 11*index+4;
-        int line_num;
+void FOV_Menu::on_fovlist_itemClicked(QListWidgetItem *item) {
+    QStringList tmpData = {};
 
-        QStringList line_items;
-        QString line_item;
-
-        line_item = fov_string[string_index];
-        ui->fov_name->setText(line_item);
-
-        line_num = data_index+0;
-        line_items = fov_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        ui->num_sides->setText(line_items[0]);
-        ui->length_sides->setText(line_items[1]);
-
-        line_num = data_index+1;
-        line_items = fov_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        ui->horizontal_width->setText(line_items[0]);
-        ui->vertical_height->setText(line_items[1]);
-
-        line_num = data_index+2;
-        line_items = fov_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        line_item = line_items[0];
-        ui->redvalue->setValue(line_item.toDouble());
-        line_item = line_items[1];
-        ui->greenvalue->setValue(line_item.toDouble());
-        line_item = line_items[2];
-        ui->bluevalue->setValue(line_item.toDouble());
-        line_item = line_items[3];
-        ui->alphavalue->setValue(line_item.toDouble());
-
-        line_num = data_index+3;
-        line_items = fov_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        for( int i=0; i<fovtype_inputs.count(); ++i )
-        {
-            if (line_items[0] == fovtype_inputs[i]) ui->fov_type->setCurrentIndex(i);
+    for (int i=0; i<fovNLines; i++) {
+        switch (i) {
+        case 0:
+            tmpData = item->data(FOV_Menu::Label).toStringList();
+            ui->fov_name->setText(tmpData[0]);
+            break;
+        case 1:
+            tmpData = item->data(FOV_Menu::Sides).toStringList();
+            ui->num_sides->setText(tmpData[0]);
+            ui->length_sides->setText(tmpData[1]);
+            break;
+        case 2:
+            tmpData = item->data(FOV_Menu::Dims).toStringList();
+            ui->horizontal_width->setText(tmpData[0]);
+            ui->vertical_height->setText(tmpData[1]);
+            break;
+        case 3:
+            tmpData = item->data(FOV_Menu::Color).toStringList();
+            ui->redvalue->setValue(tmpData[0].toInt());
+            ui->greenvalue->setValue(tmpData[1].toInt());
+            ui->bluevalue->setValue(tmpData[2].toInt());
+            ui->alphavalue->setValue(tmpData[3].toInt());
+            break;
+        case 4:
+            tmpData = item->data(FOV_Menu::Type).toStringList();
+            ui->fov_type->setCurrentText(fovtype_inputs[tmpData[0]]);
+            break;
+        case 5:
+            tmpData = item->data(FOV_Menu::DrawField).toStringList();
+            ui->nearfield->setChecked(QVariant(tmpData[0]).toBool());
+            ui->farfield->setChecked(QVariant(tmpData[1]).toBool());
+            break;
+        case 6:
+            tmpData = item->data(FOV_Menu::SCBody).toStringList();
+            ui->sc_name->setCurrentText(scNums.key(tmpData[0].toInt()));
+            ui->bdy_num->setValue(tmpData[1].toInt());
+            break;
+        case 7:
+            tmpData = item->data(FOV_Menu::BodyPos).toStringList();
+            ui->pos_x->setText(tmpData[0]);
+            ui->pos_y->setText(tmpData[1]);
+            ui->pos_z->setText(tmpData[2]);
+            break;
+        case 8:
+            tmpData = item->data(FOV_Menu::Euler).toStringList();
+            ui->rot1->setText(tmpData[0]);
+            ui->rot2->setText(tmpData[1]);
+            ui->rot3->setText(tmpData[2]);
+            ui->euler_seq->setCurrentText(tmpData[3]);
+            break;
+        case 9:
+            tmpData = item->data(FOV_Menu::Boresight).toStringList();
+            ui->boresightaxis->setCurrentText(axis_inputs[tmpData[0]]);
+            break;
+        default:
+            break;
         }
-
-        line_num = data_index+4;
-        line_items = fov_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        if (line_items[0] == "TRUE") ui->nearfield_on->setChecked(true);
-        else ui->nearfield_off->setChecked(true);
-        if (line_items[1] == "TRUE") ui->farfield_on->setChecked(true);
-        else ui->farfield_off->setChecked(true);
-
-        line_num = data_index+5;
-        line_items = fov_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        ui->sc_num->setText(line_items[0]);
-        ui->bdy_num->setText(line_items[1]);
-
-        line_num = data_index+6;
-        line_items = fov_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        ui->pos_x->setText(line_items[0]);
-        ui->pos_y->setText(line_items[1]);
-        ui->pos_z->setText(line_items[2]);
-
-        line_num = data_index+7;
-        line_items = fov_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        ui->rot1->setText(line_items[0]);
-        ui->rot2->setText(line_items[1]);
-        ui->rot3->setText(line_items[2]);
-        for( int i=0; i<euler_inputs.count(); ++i )
-        {
-            if (line_items[3] == euler_inputs[i]) ui->euler_seq->setCurrentIndex(i);
-        }
-
-        line_num = data_index+8;
-        line_items = fov_data[line_num].split(QRegExp("\\s"), QString::SkipEmptyParts);
-        for( int i=0; i<axis_inputs.count(); ++i )
-        {
-            if (line_items[0] == axis_inputs[i]) ui->boresightaxis->setCurrentIndex(i);
-        }
+        tmpData.clear();
     }
 }
 
-int FOV_Menu::warning_message(QString warningText)
-{
-    QMessageBox warningMsg;
-    warningMsg.setIcon(QMessageBox::Warning);
-    warningMsg.setText(warningText);
-    warningMsg.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    int ret = warningMsg.exec();
-    return ret;
-}
-
-void FOV_Menu::on_loaddefaultButton_clicked()
-{
-    int response = warning_message("Overwrite FOV file?");
+void FOV_Menu::on_loaddefaultButton_clicked() {
+    int response = dsm_gui_lib::warning_message("Overwrite FOV file?");
     if (response == QMessageBox::Ok) {
         QFile::remove(inout_path+"Inp_FOV.txt");
         QFile::copy(inout_path+"__default__/Inp_FOV.txt", inout_path+"Inp_FOV.txt");
@@ -354,9 +436,8 @@ void FOV_Menu::on_loaddefaultButton_clicked()
     }
 }
 
-void FOV_Menu::on_savedefaultButton_clicked()
-{
-    int response = warning_message("Overwrite Default FOV file?");
+void FOV_Menu::on_savedefaultButton_clicked() {
+    int response = dsm_gui_lib::warning_message("Overwrite Default FOV file?");
     if (response == QMessageBox::Ok) {
         QFile::remove(inout_path+"__default__/Inp_FOV.txt");
         QFile::copy(inout_path+"Inp_FOV.txt",inout_path+"__default__/Inp_FOV.txt");
@@ -368,80 +449,239 @@ void FOV_Menu::on_savedefaultButton_clicked()
     }
 }
 
-void FOV_Menu::on_closeButton_clicked()
-{
+void FOV_Menu::on_closeButton_clicked() {
     FOV_Menu::close();
 }
 
-void FOV_Menu::on_applyButton_clicked()
-{
+void FOV_Menu::on_applyButton_clicked() {
     QString data_inp;
-
-    int index = ui->fovlist->currentRow();
-
-    if (index == -1) {
-        return;
-    }
+    QStringList tmpData = {};
+    QListWidgetItem* item;
 
     int fov_num = ui->fovlist->count();
 
-    int data_index = 11*index+2;
-
-    ui->fovlist->item(index)->setText(ui->fov_name->text());
-
-    fov_update[0] = "************************* Fields of View ***************************\n";
+    fov_update.append("************************* Fields of View ***************************\n");
 
     data_inp = QString::number(fov_num);
-    fov_update[1] = whitespace(data_inp) + " ! Number of FOVs\n";
+    fov_update.append(dsm_gui_lib::whitespace(data_inp) + " ! Number of FOVs\n");
 
-    fov_update[data_index+0] = "--------------------------------------------------------------------\n";
-
-    data_inp = ui->fov_name->text();
-    fov_update[data_index+1] = whitespace(data_inp) + " ! Label\n";
-
-    data_inp = ui->num_sides->text() + "  " + ui->length_sides->text();
-    fov_update[data_index+2] = whitespace(data_inp) + " ! Number of Sides, Length [m]\n";
-
-    data_inp = ui->horizontal_width->text() + "  " + ui->vertical_height->text();
-    fov_update[data_index+3] = whitespace(data_inp) + " ! H Width, V Height [deg]\n";
-
-    data_inp = ui->redvalue->text() + "  " + ui->greenvalue->text()+ "  " + ui->bluevalue->text()+ "  " + ui->alphavalue->text();
-    fov_update[data_index+4] = whitespace(data_inp) + " ! Color RGB+Alpha\n";
-
-    data_inp = ui->fov_type->currentText();
-    fov_update[data_index+5] = whitespace(data_inp) + " ! WIREFRAME, SOLID, VECTOR, or PLANE\n";
-
-    if (ui->nearfield_on->isChecked()) data_inp = "TRUE";
-    else data_inp = "FALSE";
-    data_inp.append("  ");
-    if (ui->farfield_on->isChecked()) data_inp.append("TRUE");
-    else data_inp.append("FALSE");
-    fov_update[data_index+6] = whitespace(data_inp) + " ! Draw Near Field, Draw Far Field\n";
-
-    data_inp = ui->sc_num->text() + "  " + ui->bdy_num->text();
-    fov_update[data_index+7] = whitespace(data_inp) + " ! SC, Body\n";
-
-    data_inp = ui->pos_x->text() + "  " + ui->pos_y->text()+ "  " + ui->pos_z->text();
-    fov_update[data_index+8] = whitespace(data_inp) + " ! Position in Body [m]\n";
-
-    data_inp = ui->rot1->text() + "  " + ui->rot2->text()+ "  " + ui->rot3->text()+ "  " + ui->euler_seq->currentText();
-    fov_update[data_index+9] = whitespace(data_inp) + " ! Euler Angles [deg], Sequence\n";
-
-    data_inp = ui->boresightaxis->currentText();
-    fov_update[data_index+10] = whitespace(data_inp) + " ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n";
+    for (int i=0; i<fov_num; i++) {
+        item = ui->fovlist->item(i);
+        for (int j=0; j<fovNLines; j++) {
+            switch (j) {
+            case 0:
+                data_inp = "--------------------------------------------------------------------\n";
+                break;
+            case 1:
+                tmpData = item->data(FOV_Menu::Label).toStringList();
+                data_inp = "\"" + tmpData[0] + "\"";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Label\n";
+                break;
+            case 2:
+                tmpData = item->data(FOV_Menu::Sides).toStringList();
+                data_inp = tmpData.join("  ");
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Number of Sides, Length [m]\n";
+                break;
+            case 3:
+                tmpData = item->data(FOV_Menu::Dims).toStringList();
+                data_inp = tmpData.join("  ");
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! H Width, V Height [deg]\n";
+                break;
+            case 4:
+                tmpData = item->data(FOV_Menu::Color).toStringList();
+                for (int k =0; k<4; k++) {
+                    double colorChannel = tmpData[k].toDouble()/255.0;
+                    data_inp += QString::number(colorChannel,'g',3) + "  ";
+                }
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Color RGB+Alpha\n";
+                break;
+            case 5:
+                tmpData = item->data(FOV_Menu::Type).toStringList();
+                data_inp = tmpData[0];
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! WIREFRAME, SOLID, VECTOR, or PLANE\n";
+                break;
+            case 6:
+                tmpData = item->data(FOV_Menu::DrawField).toStringList();
+                data_inp = tmpData.join("  ");
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Draw Near Field, Draw Far Field\n";
+                break;
+            case 7:
+                tmpData = item->data(FOV_Menu::SCBody).toStringList();
+                data_inp = tmpData.join("  ");
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! SC, Body\n";
+                break;
+            case 8:
+                tmpData = item->data(FOV_Menu::BodyPos).toStringList();
+                data_inp = tmpData.join("  ");
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Position in Body [m]\n";
+                break;
+            case 9:
+                tmpData = item->data(FOV_Menu::Euler).toStringList();
+                data_inp = tmpData.join("  ");
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Euler Angles [deg], Sequence\n";
+                break;
+            case 10:
+                tmpData = item->data(FOV_Menu::Boresight).toStringList();
+                data_inp = tmpData[0];
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n";
+                break;
+            }
+            fov_update.append(data_inp);
+            data_inp.clear();
+        }
+    }
 
     write_data();
 
 }
 
-QString FOV_Menu::whitespace(QString data)
-{
-    QString empty_space = "                              ";
-    int data_len = empty_space.count()-data.count();
-    if (data_len < 1) data_len = 1;
-    for (int i = 0; i < data_len; i++){
-        data.append(" ");
+void FOV_Menu::sides_changed() {
+    if (ui->fovlist->currentRow()==-1) return;
+    QStringList tmpData;
+    tmpData.append(ui->num_sides->text());
+    tmpData.append(ui->length_sides->text());
+    ui->fovlist->currentItem()->setData(FOV_Menu::Sides,tmpData);
+}
+
+void FOV_Menu::dims_changed() {
+    if (ui->fovlist->currentRow()==-1) return;
+    QStringList tmpData;
+    tmpData.append(ui->horizontal_width->text());
+    tmpData.append(ui->vertical_height->text());
+    ui->fovlist->currentItem()->setData(FOV_Menu::Dims,tmpData);
+}
+
+void FOV_Menu::color_changed() {
+    if (ui->fovlist->currentRow()==-1) return;
+    QStringList tmpData;
+    tmpData.append(ui->redvalue->text());
+    tmpData.append(ui->greenvalue->text());
+    tmpData.append(ui->bluevalue->text());
+    tmpData.append(ui->alphavalue->text());
+    ui->fovlist->currentItem()->setData(FOV_Menu::Color,tmpData);
+}
+
+void FOV_Menu::on_fov_name_textChanged(const QString &arg1) {
+    if (ui->fovlist->currentRow()==-1) return;
+    ui->fovlist->currentItem()->setData(FOV_Menu::Label,arg1);
+}
+
+void FOV_Menu::field_changed() {
+    if (ui->fovlist->currentRow()==-1) return;
+    QStringList tmpData;
+    tmpData.append(dsm_gui_lib::toString(ui->nearfield));
+    tmpData.append(dsm_gui_lib::toString(ui->farfield));
+    ui->fovlist->currentItem()->setData(FOV_Menu::DrawField,tmpData);
+}
+
+void FOV_Menu::scbody_changed() {
+    if (ui->fovlist->currentRow()==-1) return;
+    QStringList tmpData;
+    int scNum = scNums[ui->sc_name->currentText()];
+    tmpData.append(QString::number(scNum));
+    tmpData.append(ui->bdy_num->text());
+    ui->fovlist->currentItem()->setData(FOV_Menu::SCBody,tmpData);
+}
+
+void FOV_Menu::pos_changed() {
+    if (ui->fovlist->currentRow()==-1) return;
+    QStringList tmpData;
+    tmpData.append(ui->pos_x->text());
+    tmpData.append(ui->pos_y->text());
+    tmpData.append(ui->pos_z->text());
+    ui->fovlist->currentItem()->setData(FOV_Menu::BodyPos,tmpData);
+}
+
+void FOV_Menu::euler_changed() {
+    if (ui->fovlist->currentRow()==-1) return;
+    QStringList tmpData;
+    tmpData.append(ui->rot1->text());
+    tmpData.append(ui->rot2->text());
+    tmpData.append(ui->rot3->text());
+    tmpData.append(ui->euler_seq->currentText());
+    ui->fovlist->currentItem()->setData(FOV_Menu::Euler,tmpData);
+}
+
+void FOV_Menu::on_boresightaxis_currentTextChanged(const QString &arg1) {
+    if (ui->fovlist->currentRow()==-1) return;
+    ui->fovlist->currentItem()->setData(FOV_Menu::Boresight,axis_inputs.key(arg1));
+}
+
+void FOV_Menu::on_fov_type_currentTextChanged(const QString &arg1) {
+    if (ui->fovlist->currentRow()==-1) return;
+    ui->fovlist->currentItem()->setData(FOV_Menu::Type,fovtype_inputs.key(arg1));
+}
+
+void FOV_Menu::clear_fields() {
+    ui->fov_name->clear();
+    ui->num_sides->clear();
+    ui->length_sides->clear();
+    ui->horizontal_width->clear();
+    ui->vertical_height->clear();
+    ui->redvalue->setValue(0);
+    ui->greenvalue->setValue(0);
+    ui->bluevalue->setValue(0);
+    ui->alphavalue->setValue(0);
+    ui->fov_type->setCurrentIndex(0);
+    ui->nearfield->setChecked(false);
+    ui->farfield->setChecked(false);
+    ui->sc_name->setCurrentIndex(0);
+    ui->bdy_num->clear();
+    ui->pos_x->clear();
+    ui->pos_y->clear();
+    ui->pos_z->clear();
+    ui->rot1->clear();
+    ui->rot2->clear();
+    ui->rot3->clear();
+    ui->euler_seq->setCurrentIndex(0);
+    ui->boresightaxis->setCurrentIndex(0);
+}
+
+void FOV_Menu::on_fov_duplicate_clicked() {
+    int index = ui->fovlist->currentRow();
+    QListWidgetItem* curItem = ui->fovlist->currentItem();
+    QStringList curNames = dsm_gui_lib::getTextFromList(ui->fovlist);
+
+    if (index == -1) return;
+    QString oldName = curItem->text();
+    QString newName = oldName +"_Copy";
+    for(int i = 0; i <= 30; i++) {
+        QString newNameTest = newName;
+        if(i>0) newNameTest += "_" + QString::number(i);
+        if(!curNames.contains(newNameTest)) {
+            newName = newNameTest;
+            break;
+        }
     }
-    return data;
+    QListWidgetItem* newItem = curItem->clone();
+    newItem->setText(newName);
+    ui->fovlist->addItem(newItem);
+
+}
+
+void FOV_Menu::on_sc_name_currentTextChanged(const QString &arg1) {
+    QStringList scFileNames = QDir(inout_path).entryList({"SC_"+arg1+".txt"});
+    if (scFileNames.isEmpty()) return;
+    QString scFileName = scFileNames[0];
+
+    QFile scFile(inout_path + scFileName);
+    if(!scFile.open(QIODevice::ReadOnly))
+        QMessageBox::information(0, "error", scFile.errorString());
+    QTextStream in(&scFile);
+
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        if (line.contains("Body Parameters",Qt::CaseInsensitive)) {
+            line = in.readLine();
+            line = in.readLine();
+            QStringList line_items = line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
+            int nBodies = line_items[0].toInt();
+            ui->bdy_num->setMaximum(nBodies-1);
+            break;
+        }
+
+    }
+    scFile.close();
+
 }
 

@@ -6,25 +6,43 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>900</height>
+    <width>530</width>
+    <height>870</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>530</width>
+    <height>870</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>530</width>
+    <height>870</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Graphics Menu</string>
   </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
      <x>9</x>
      <y>9</y>
-     <width>571</width>
-     <height>881</height>
+     <width>511</width>
+     <height>851</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="maximumSize">
+       <size>
+        <width>530</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -35,8 +53,8 @@
        <widget class="QWidget" name="gridLayoutWidget">
         <property name="geometry">
          <rect>
-          <x>39</x>
-          <y>29</y>
+          <x>10</x>
+          <y>10</y>
           <width>481</width>
           <height>201</height>
          </rect>
@@ -79,23 +97,10 @@
             </spacer>
            </item>
            <item>
-            <widget class="QRadioButton" name="mapwindow_on">
+            <widget class="QCheckBox" name="mapWindow">
              <property name="text">
-              <string>On</string>
+              <string>Enabled?</string>
              </property>
-             <attribute name="buttonGroup">
-              <string notr="true">mapwindow_toggle</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="mapwindow_off">
-             <property name="text">
-              <string>Off</string>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">mapwindow_toggle</string>
-             </attribute>
             </widget>
            </item>
           </layout>
@@ -130,23 +135,10 @@
             </spacer>
            </item>
            <item>
-            <widget class="QRadioButton" name="orreywindown_on">
+            <widget class="QCheckBox" name="orreyWindow">
              <property name="text">
-              <string>On</string>
+              <string>Enabled?</string>
              </property>
-             <attribute name="buttonGroup">
-              <string notr="true">orreywindow_toggle</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="orreywindow_off">
-             <property name="text">
-              <string>Off</string>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">orreywindow_toggle</string>
-             </attribute>
             </widget>
            </item>
           </layout>
@@ -167,23 +159,10 @@
             </spacer>
            </item>
            <item>
-            <widget class="QRadioButton" name="spherewindow_on">
+            <widget class="QCheckBox" name="sphereWindow">
              <property name="text">
-              <string>On</string>
+              <string>Enabled?</string>
              </property>
-             <attribute name="buttonGroup">
-              <string notr="true">spherewindow_toggle</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="spherewindow_off">
-             <property name="text">
-              <string>Off</string>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">spherewindow_toggle</string>
-             </attribute>
             </widget>
            </item>
           </layout>
@@ -211,8 +190,8 @@
        <widget class="QWidget" name="gridLayoutWidget_7">
         <property name="geometry">
          <rect>
-          <x>39</x>
-          <y>269</y>
+          <x>10</x>
+          <y>220</y>
           <width>481</width>
           <height>191</height>
          </rect>
@@ -247,18 +226,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <layout class="QHBoxLayout" name="horizontalLayout_83">
-           <item>
-            <widget class="QLabel" name="label_60">
-             <property name="text">
-              <string>Enabled</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <layout class="QHBoxLayout" name="horizontalLayout_83"/>
          </item>
          <item row="1" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_84">
@@ -276,23 +244,10 @@
             </spacer>
            </item>
            <item>
-            <widget class="QRadioButton" name="showmajorconst_on">
+            <widget class="QCheckBox" name="showMajorConst">
              <property name="text">
-              <string>On</string>
+              <string>Enabled?</string>
              </property>
-             <attribute name="buttonGroup">
-              <string notr="true">showmajorconst_toggle</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="showmajorconst_off">
-             <property name="text">
-              <string>Off</string>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">showmajorconst_toggle</string>
-             </attribute>
             </widget>
            </item>
           </layout>
@@ -313,23 +268,10 @@
             </spacer>
            </item>
            <item>
-            <widget class="QRadioButton" name="showzodiac_on">
+            <widget class="QCheckBox" name="showZodiac">
              <property name="text">
-              <string>On</string>
+              <string>Enabled?</string>
              </property>
-             <attribute name="buttonGroup">
-              <string notr="true">showzodiac_toggle</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="showzodiac_off">
-             <property name="text">
-              <string>Off</string>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">showzodiac_toggle</string>
-             </attribute>
             </widget>
            </item>
           </layout>
@@ -350,23 +292,10 @@
             </spacer>
            </item>
            <item>
-            <widget class="QRadioButton" name="showminorconst_on">
+            <widget class="QCheckBox" name="showMinorConst">
              <property name="text">
-              <string>On</string>
+              <string>Enabled?</string>
              </property>
-             <attribute name="buttonGroup">
-              <string notr="true">showminorconst_toggle</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="showminorconst_off">
-             <property name="text">
-              <string>Off</string>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">showminorconst_toggle</string>
-             </attribute>
             </widget>
            </item>
           </layout>
@@ -381,9 +310,9 @@
        <widget class="QWidget" name="gridLayoutWidget_2">
         <property name="geometry">
          <rect>
-          <x>39</x>
-          <y>29</y>
-          <width>481</width>
+          <x>10</x>
+          <y>10</y>
+          <width>483</width>
           <height>501</height>
          </rect>
         </property>
@@ -454,23 +383,10 @@
          <item row="0" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_9">
            <item>
-            <widget class="QRadioButton" name="pause_on">
+            <widget class="QCheckBox" name="pause">
              <property name="text">
-              <string>On</string>
+              <string>Enabled?</string>
              </property>
-             <attribute name="buttonGroup">
-              <string notr="true">pause_toggle</string>
-             </attribute>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="pause_off">
-             <property name="text">
-              <string>Off</string>
-             </property>
-             <attribute name="buttonGroup">
-              <string notr="true">pause_toggle</string>
-             </attribute>
             </widget>
            </item>
           </layout>
@@ -499,10 +415,10 @@
          <item row="3" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_12">
            <item>
-            <widget class="QLineEdit" name="hostSC"/>
+            <widget class="QComboBox" name="hostSC"/>
            </item>
            <item>
-            <widget class="QLineEdit" name="hostBDY"/>
+            <widget class="QSpinBox" name="hostBDY"/>
            </item>
            <item>
             <widget class="QComboBox" name="hostFrame"/>
@@ -533,10 +449,10 @@
          <item row="5" column="1">
           <layout class="QHBoxLayout" name="horizontalLayout_14">
            <item>
-            <widget class="QLineEdit" name="targetSC"/>
+            <widget class="QComboBox" name="targetSC"/>
            </item>
            <item>
-            <widget class="QLineEdit" name="targetBDY"/>
+            <widget class="QSpinBox" name="targetBDY"/>
            </item>
            <item>
             <widget class="QComboBox" name="targetFrame"/>
@@ -601,8 +517,8 @@
        <widget class="QWidget" name="gridLayoutWidget_3">
         <property name="geometry">
          <rect>
-          <x>39</x>
-          <y>29</y>
+          <x>10</x>
+          <y>10</y>
           <width>481</width>
           <height>124</height>
          </rect>
@@ -685,8 +601,8 @@
        <widget class="QWidget" name="gridLayoutWidget_4">
         <property name="geometry">
          <rect>
-          <x>39</x>
-          <y>156</y>
+          <x>10</x>
+          <y>140</y>
           <width>481</width>
           <height>631</height>
          </rect>
@@ -700,23 +616,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_35">
              <item>
-              <widget class="QRadioButton" name="show_naxis_on">
+              <widget class="QCheckBox" name="showNAxis">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_naxis_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_naxis_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_naxis_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -731,23 +634,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_66">
              <item>
-              <widget class="QRadioButton" name="show_shdws_on">
+              <widget class="QCheckBox" name="showShadows">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_shdws_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_shdws_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_shdws_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -762,23 +652,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_65">
              <item>
-              <widget class="QRadioButton" name="show_tdrs_on">
+              <widget class="QCheckBox" name="showTDRS">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_tdrs_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_tdrs_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_tdrs_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -800,23 +677,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_63">
              <item>
-              <widget class="QRadioButton" name="show_fov_on">
+              <widget class="QCheckBox" name="showFOV">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_fov_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_fov_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_fov_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -838,23 +702,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_68">
              <item>
-              <widget class="QRadioButton" name="show_truth_on">
+              <widget class="QCheckBox" name="showTruth">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_truth_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_truth_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_truth_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -869,23 +720,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_54">
              <item>
-              <widget class="QRadioButton" name="show_laxis_on">
+              <widget class="QCheckBox" name="showLAxis">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_laxis_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_laxis_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_laxis_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -907,23 +745,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_57">
              <item>
-              <widget class="QRadioButton" name="show_baxis_on">
+              <widget class="QCheckBox" name="showBAxis">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_baxis_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_baxis_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_baxis_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -935,7 +760,7 @@
            <item>
             <widget class="QLabel" name="label_45">
              <property name="text">
-              <string>CAM Name</string>
+              <string>CAM Label</string>
              </property>
             </widget>
            </item>
@@ -952,13 +777,6 @@
              </property>
             </spacer>
            </item>
-           <item>
-            <widget class="QLabel" name="label_46">
-             <property name="text">
-              <string>Enabled</string>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
          <item row="17" column="1">
@@ -969,23 +787,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_70">
              <item>
-              <widget class="QRadioButton" name="show_milky_on">
+              <widget class="QCheckBox" name="showMilky">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_milky_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_milky_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_milky_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1000,23 +805,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_56">
              <item>
-              <widget class="QRadioButton" name="show_faxis_on">
+              <widget class="QCheckBox" name="showFAxis">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_faxis_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_faxis_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_faxis_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1026,7 +818,7 @@
          <item row="15" column="0">
           <widget class="QLabel" name="label_41">
            <property name="text">
-            <string>Show Trusth Vectors:</string>
+            <string>Show Truth Vectors:</string>
            </property>
           </widget>
          </item>
@@ -1059,23 +851,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_59">
              <item>
-              <widget class="QRadioButton" name="show_ngrid_on">
+              <widget class="QCheckBox" name="showNGrid">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_ngrid_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_ngrid_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_ngrid_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1097,23 +876,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_60">
              <item>
-              <widget class="QRadioButton" name="show_lgrid_on">
+              <widget class="QCheckBox" name="showLGrid">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_lgrid_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_lgrid_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_lgrid_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1128,23 +894,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_71">
              <item>
-              <widget class="QRadioButton" name="show_fermi_on">
+              <widget class="QCheckBox" name="showFermi">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_fermi_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_fermi_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_fermi_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1161,7 +914,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_27">
            <property name="text">
-            <string>CAM Label</string>
+            <string>CAM Name</string>
            </property>
           </widget>
          </item>
@@ -1180,23 +933,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_61">
              <item>
-              <widget class="QRadioButton" name="show_fgrid_on">
+              <widget class="QCheckBox" name="showFGrid">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_fgrid_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_fgrid_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_fgrid_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1239,23 +979,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_64">
              <item>
-              <widget class="QRadioButton" name="show_proxops_on">
+              <widget class="QCheckBox" name="showProxOps">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_proxops_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_proxops_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_proxops_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1277,23 +1004,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_67">
              <item>
-              <widget class="QRadioButton" name="show_astro_on">
+              <widget class="QCheckBox" name="showAstro">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_astro_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_astro_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_astro_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1308,23 +1022,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_69">
              <item>
-              <widget class="QRadioButton" name="show_fsw_on">
+              <widget class="QCheckBox" name="showFSW">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_fsw_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_fsw_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_fsw_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1346,23 +1047,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_62">
              <item>
-              <widget class="QRadioButton" name="show_bgrid_on">
+              <widget class="QCheckBox" name="showBGrid">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_bgrid_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_bgrid_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">show_bgrid_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1391,16 +1079,9 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_6">
              <item>
-              <widget class="QRadioButton" name="show_galgrid_on">
+              <widget class="QCheckBox" name="showGalGrid">
                <property name="text">
-                <string>On</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="show_galgrid_off">
-               <property name="text">
-                <string>Off</string>
+                <string>Enabled?</string>
                </property>
               </widget>
              </item>
@@ -1418,8 +1099,8 @@
        <widget class="QWidget" name="gridLayoutWidget_5">
         <property name="geometry">
          <rect>
-          <x>39</x>
-          <y>29</y>
+          <x>10</x>
+          <y>10</y>
           <width>481</width>
           <height>71</height>
          </rect>
@@ -1461,8 +1142,8 @@
        <widget class="QWidget" name="gridLayoutWidget_6">
         <property name="geometry">
          <rect>
-          <x>39</x>
-          <y>129</y>
+          <x>10</x>
+          <y>90</y>
           <width>481</width>
           <height>231</height>
          </rect>
@@ -1492,7 +1173,7 @@
          <item row="0" column="0">
           <widget class="QLabel" name="label_49">
            <property name="text">
-            <string>MAP Name</string>
+            <string>Map Name</string>
            </property>
           </widget>
          </item>
@@ -1504,23 +1185,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_79">
              <item>
-              <widget class="QRadioButton" name="showclock_on">
+              <widget class="QCheckBox" name="showClock">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">showclock_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="showclock_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">showclock_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1532,7 +1200,7 @@
            <item>
             <widget class="QLabel" name="label_54">
              <property name="text">
-              <string>MAP Name</string>
+              <string>Map Label</string>
              </property>
             </widget>
            </item>
@@ -1548,13 +1216,6 @@
               </size>
              </property>
             </spacer>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_55">
-             <property name="text">
-              <string>Enabled</string>
-             </property>
-            </widget>
            </item>
           </layout>
          </item>
@@ -1573,23 +1234,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_80">
              <item>
-              <widget class="QRadioButton" name="showtlmclock_on">
+              <widget class="QCheckBox" name="showTlmClock">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">showtlmclock_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="showtlmclock_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">showtlmclock_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1604,23 +1252,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_81">
              <item>
-              <widget class="QRadioButton" name="showcredits_on">
+              <widget class="QCheckBox" name="showCredits">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">showcredits_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="showcredits_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">showcredits_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1635,23 +1270,10 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_82">
              <item>
-              <widget class="QRadioButton" name="shownight_on">
+              <widget class="QCheckBox" name="showNight">
                <property name="text">
-                <string>On</string>
+                <string>Enabled?</string>
                </property>
-               <attribute name="buttonGroup">
-                <string notr="true">shownight_toggle</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="shownight_off">
-               <property name="text">
-                <string>Off</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">shownight_toggle</string>
-               </attribute>
               </widget>
              </item>
             </layout>
@@ -1670,12 +1292,18 @@
         <property name="text">
          <string>Load Default</string>
         </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="savedefaultButton">
         <property name="text">
          <string>Save Default</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -1684,12 +1312,18 @@
         <property name="text">
          <string>Close</string>
         </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="applyButton">
         <property name="text">
          <string>Apply</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -1700,34 +1334,4 @@
  </widget>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="showmajorconst_toggle"/>
-  <buttongroup name="showzodiac_toggle"/>
-  <buttongroup name="showtlmclock_toggle"/>
-  <buttongroup name="orreywindow_toggle"/>
-  <buttongroup name="showminorconst_toggle"/>
-  <buttongroup name="show_naxis_toggle"/>
-  <buttongroup name="shownight_toggle"/>
-  <buttongroup name="show_fov_toggle"/>
-  <buttongroup name="show_tdrs_toggle"/>
-  <buttongroup name="show_faxis_toggle"/>
-  <buttongroup name="show_fsw_toggle"/>
-  <buttongroup name="showcredits_toggle"/>
-  <buttongroup name="pause_toggle"/>
-  <buttongroup name="show_fgrid_toggle"/>
-  <buttongroup name="show_laxis_toggle"/>
-  <buttongroup name="mapwindow_toggle"/>
-  <buttongroup name="show_astro_toggle"/>
-  <buttongroup name="spherewindow_toggle"/>
-  <buttongroup name="show_baxis_toggle"/>
-  <buttongroup name="showclock_toggle"/>
-  <buttongroup name="show_shdws_toggle"/>
-  <buttongroup name="show_fermi_toggle"/>
-  <buttongroup name="show_milky_toggle"/>
-  <buttongroup name="show_ngrid_toggle"/>
-  <buttongroup name="show_truth_toggle"/>
-  <buttongroup name="show_lgrid_toggle"/>
-  <buttongroup name="show_proxops_toggle"/>
-  <buttongroup name="show_bgrid_toggle"/>
- </buttongroups>
 </ui>

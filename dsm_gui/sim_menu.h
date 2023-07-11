@@ -38,8 +38,6 @@ private slots:
 
     void setQComboBox(QComboBox *comboBox, QString string);
 
-    QStringList getTextFromList(QListWidget *list);
-
     void on_simOrbList_itemClicked(QListWidgetItem *item);
 
     void on_simOrbitEn_toggled(bool checked);
@@ -61,10 +59,6 @@ private slots:
     void on_simGSLong_textEdited(const QString &arg1);
 
     void on_simGSLabel_textEdited(const QString &arg1);
-
-    QString toString(QCheckBox* box) {
-        return QVariant(box->isChecked()).toString().toUpper();
-    }
 
     void on_simGSListRemove_clicked();
 

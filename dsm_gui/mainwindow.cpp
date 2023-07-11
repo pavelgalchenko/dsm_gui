@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->Warning->setVisible(false);
 }
 
 MainWindow::~MainWindow()
@@ -116,6 +117,13 @@ void MainWindow::on_TDR_Menu_clicked()
 
 void MainWindow::on_FOV_Menu_clicked()
 {
+    QStringList simFiles = QDir(path).entryList({"Inp_Sim**"});
+    QStringList scFiles = QDir(path).entryList({"SC_*"});
+    if (scFiles.isEmpty() || simFiles.isEmpty()){
+        dsm_gui_lib::error_message("There must be both a Inp_Sim file and a Spacecraft file before editing the FOV file.");
+        return;
+    }
+
     fov_menu = new FOV_Menu(this);
     fov_menu->setModal(true);
     fov_menu->show();
@@ -186,7 +194,7 @@ void MainWindow::on_SIM_Menu_clicked()
     QStringList orbFiles = QDir(path).entryList({"Orb_*"});
     QStringList scFiles = QDir(path).entryList({"SC_*"});
     if (scFiles.isEmpty() || orbFiles.isEmpty()){
-        dsm_gui_lib::warning_message("There must be both a Orbit file and a Spacecraft file before editing the Simulation file.");
+        dsm_gui_lib::error_message("There must be both a Orbit file and a Spacecraft file before editing the Simulation file.");
         return;
     }
 
@@ -199,3 +207,22 @@ void MainWindow::on_SIM_Menu_clicked()
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 
+void MainWindow::enable_sub_menus() {
+    ui->Warning->setVisible(false);
+    ui->GRH_Menu->setEnabled(true);
+    ui->FOV_Menu->setEnabled(true);
+    ui->TDR_Menu->setEnabled(true);
+    ui->NOS_Menu->setEnabled(true);
+    ui->RGN_Menu->setEnabled(true);
+    ui->IPC_Menu->setEnabled(true);
+}
+
+void MainWindow::disable_sub_menus() {
+    ui->Warning->setVisible(true);
+    ui->GRH_Menu->setEnabled(false);
+    ui->FOV_Menu->setEnabled(false);
+    ui->TDR_Menu->setEnabled(false);
+    ui->NOS_Menu->setEnabled(false);
+    ui->RGN_Menu->setEnabled(false);
+    ui->IPC_Menu->setEnabled(false);
+}

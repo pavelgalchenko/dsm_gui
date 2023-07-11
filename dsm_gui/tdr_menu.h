@@ -1,8 +1,16 @@
 #ifndef TDR_MENU_H
 #define TDR_MENU_H
 
+#include "dsm_gui_lib.h"
+#include "qlineedit.h"
+
 #include <QDialog>
 #include <QDebug>
+#include <QFile>
+#include <QTextStream>
+#include <QMessageBox>
+#include <QRegularExpression>
+#include <QValidator>
 
 namespace Ui {
 class TDR_Menu;
@@ -17,12 +25,11 @@ public:
     ~TDR_Menu();
 
 private slots:
+    void set_validators();
     void receive_tdrpath(QString);
     void receive_data();
     void apply_data();
     void write_data();
-    int warning_message(QString);
-    QString whitespace(QString);
 
     void on_loaddefaultButton_clicked();
     void on_savedefaultButton_clicked();
@@ -37,6 +44,10 @@ private:
     QStringList tdr_data;
     QStringList tdr_update;
     QStringList tdr_string;
+
+    QList<QCheckBox*> tdrsEnabled;
+    QList<QLineEdit*> tdrsNames;
+
 };
 
 #endif // TDR_MENU_H

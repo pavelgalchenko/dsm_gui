@@ -58,6 +58,18 @@
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QPushButton" name="orbListRemove">
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="text">
           <string>-</string>
          </property>
@@ -68,6 +80,18 @@
        </item>
        <item>
         <widget class="QPushButton" name="orbListAdd">
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="text">
           <string>+</string>
          </property>
@@ -321,7 +345,7 @@
         <x>0</x>
         <y>0</y>
         <width>421</width>
-        <height>131</height>
+        <height>154</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -2402,11 +2426,11 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="orbTBodyModeSense_2"/>
-  <buttongroup name="orbCentJ2"/>
-  <buttongroup name="orbCentPA"/>
-  <buttongroup name="orbFlightPolyGrav"/>
   <buttongroup name="orbTBodyModeSense"/>
+  <buttongroup name="orbFlightPolyGrav"/>
   <buttongroup name="orbZeroPolyGrav"/>
+  <buttongroup name="orbCentPA"/>
+  <buttongroup name="orbCentJ2"/>
+  <buttongroup name="orbTBodyModeSense_2"/>
  </buttongroups>
 </ui>

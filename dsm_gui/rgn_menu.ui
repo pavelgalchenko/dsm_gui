@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>770</width>
     <height>480</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>800</width>
+    <width>770</width>
     <height>480</height>
    </size>
   </property>
@@ -23,14 +23,14 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Region Menu</string>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>430</y>
-     <width>781</width>
+     <width>751</width>
      <height>41</height>
     </rect>
    </property>
@@ -40,12 +40,18 @@
       <property name="text">
        <string>Load Default</string>
       </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="savedefaultButton">
       <property name="text">
        <string>Save Default</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -54,12 +60,18 @@
       <property name="text">
        <string>Close</string>
       </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="applyButton">
       <property name="text">
        <string>Apply</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -68,8 +80,8 @@
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>229</x>
-     <y>9</y>
+     <x>200</x>
+     <y>10</y>
      <width>561</width>
      <height>411</height>
     </rect>
@@ -90,7 +102,7 @@
      </widget>
     </item>
     <item row="5" column="0">
-     <widget class="QLabel" name="label_6">
+     <widget class="QLabel" name="lla_label">
       <property name="text">
        <string>Lng, Lat [deg], Alt [m]:</string>
       </property>
@@ -104,7 +116,7 @@
      </widget>
     </item>
     <item row="4" column="0">
-     <widget class="QLabel" name="label_5">
+     <widget class="QLabel" name="posw_label">
       <property name="text">
        <string>Position in World [m]:</string>
       </property>
@@ -147,23 +159,10 @@
        </spacer>
       </item>
       <item>
-       <widget class="QRadioButton" name="exists_on">
+       <widget class="QCheckBox" name="exists">
         <property name="text">
-         <string>On</string>
+         <string>Enabled?</string>
         </property>
-        <attribute name="buttonGroup">
-         <string notr="true">exists_toggle</string>
-        </attribute>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="exists_off">
-        <property name="text">
-         <string>Off</string>
-        </property>
-        <attribute name="buttonGroup">
-         <string notr="true">exists_toggle</string>
-        </attribute>
        </widget>
       </item>
      </layout>
@@ -258,7 +257,7 @@
     <item row="7" column="1">
      <layout class="QHBoxLayout" name="horizontalLayout_10">
       <item>
-       <widget class="QLineEdit" name="geometeryname"/>
+       <widget class="QLineEdit" name="geometryname"/>
       </item>
      </layout>
     </item>
@@ -269,7 +268,7 @@
     <rect>
      <x>9</x>
      <y>9</y>
-     <width>211</width>
+     <width>181</width>
      <height>411</height>
     </rect>
    </property>
@@ -281,15 +280,55 @@
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="rgn_remove">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
          <string>-</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="rgn_add">
+        <property name="minimumSize">
+         <size>
+          <width>30</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>30</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="text">
          <string>+</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="rgn_duplicate">
+        <property name="text">
+         <string>Duplicate</string>
+        </property>
+        <property name="autoDefault">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -300,7 +339,4 @@
  </widget>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="exists_toggle"/>
- </buttongroups>
 </ui>

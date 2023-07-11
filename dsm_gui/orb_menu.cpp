@@ -16,11 +16,9 @@ ORB_Menu::~ORB_Menu() {
 void ORB_Menu::set_validators() {
     QRegularExpression rx("[^\"]*");
     QRegularExpression rx1("[^\" ]*");
-    QValidator *noQuotes = new QRegularExpressionValidator(rx);
-    QValidator *noQuotesSpace = new QRegularExpressionValidator(rx1);
 
-    ui->orbLabel->setValidator(noQuotesSpace);
-    ui->orbDescription->setValidator(noQuotes);
+    ui->orbLabel->setValidator(new QRegularExpressionValidator(rx1));
+    ui->orbDescription->setValidator(new QRegularExpressionValidator(rx));
     ui->orbType->addItems(dsm_gui_lib::sortStringList(orbTypeInputs.values()));
     ui->orbFormFrame->addItems(orbFrameInputs);
     ui->orbFormOrigin->addItems(orbFrameInputs);
@@ -51,7 +49,7 @@ void ORB_Menu::set_validators() {
     ui->orbCentPVVel_2->setValidator(new QDoubleValidator);
     ui->orbCentPVVel_3->setValidator(new QDoubleValidator);
     ui->orbCentFileType->addItems(dsm_gui_lib::sortStringList(orbFileTypeInputs.values()));
-    ui->orbCentFileLabel->setValidator(noQuotes);
+    ui->orbCentFileLabel->setValidator(new QRegularExpressionValidator(rx));
 
     ui->orbTBodyLSystem->addItems(dsm_gui_lib::sortStringList(orbTBodyLSysInputs.values()));
     ui->orbTBodyProp->addItems(dsm_gui_lib::sortStringList(orbTBodyPropInputs.values()));
@@ -70,7 +68,7 @@ void ORB_Menu::set_validators() {
     ui->orbTBodyCowellVel_2->setValidator(new QDoubleValidator);
     ui->orbTBodyCowellVel_3->setValidator(new QDoubleValidator);
     ui->orbTBodyFileType->addItems(dsm_gui_lib::sortStringList(orbFileTypeInputs.values()));
-    ui->orbTBodyFileLabel->setValidator(noQuotes);
+    ui->orbTBodyFileLabel->setValidator(new QRegularExpressionValidator(rx));
 
     ui->orbZeroPolyGrav->setId(ui->orbZeroPolyGrav_on,1); ui->orbZeroPolyGrav->setId(ui->orbZeroPolyGrav_off,0);
     ui->orbFlightPolyGrav->setId(ui->orbFlightPolyGrav_on,1); ui->orbFlightPolyGrav->setId(ui->orbFlightPolyGrav_off,0);
@@ -96,6 +94,11 @@ void ORB_Menu::set_validators() {
     connect(ui->orbCentICParam, &QComboBox::currentTextChanged, this, &ORB_Menu::checkKepPA);
     connect(ui->orbCentPA, &QButtonGroup::idToggled, this, &ORB_Menu::checkKepPA);
     connect(ui->orbList, &QListWidget::currentRowChanged, this, &ORB_Menu::clear_data);
+
+    connect(ui->orbListAdd, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
+    connect(ui->orbListRemove, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
+    connect(ui->orbListDuplicate, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
+    connect(ui->loadDefaultButton, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
 }
 
 void ORB_Menu::receive_orbpath(QString path) {
@@ -851,3 +854,5 @@ void ORB_Menu::checkKepPA() {
     }
 }
 
+//void ORB_Menu::orbits_changed(bool clicked) {
+//}

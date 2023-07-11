@@ -66,6 +66,8 @@ void SIM_Menu::set_validators() {
                        ui->simSunEarthEn,
                        ui->simSunJupiterEn};
 
+
+    connect(ui->applyButton, SIGNAL(clicked(bool)), this->parent(), SLOT(enable_sub_menus()));
 }
 
 void SIM_Menu::receive_simpath(QString path) {
@@ -469,7 +471,7 @@ void SIM_Menu::on_applyButton_clicked() {
             dataInp = ui->simRNGSeed->text();
             break;
         case 5:
-            dataInp = toString(ui->simGraphicsEn);
+            dataInp = dsm_gui_lib::toString(ui->simGraphicsEn);
             break;
         case 6:
             dataInp = "Inp_Cmd.txt";
@@ -543,36 +545,36 @@ void SIM_Menu::on_applyButton_clicked() {
             dataInp = ui->simLunaHarmN->text() + "  " + ui->simLunaHarmM->text();
             break;
         case 12:
-            dataInp = toString(ui->simAeroPertEn) + "  ";
-            dataInp += toString(ui->simAeroPertShadow);
+            dataInp = dsm_gui_lib::toString(ui->simAeroPertEn) + "  ";
+            dataInp += dsm_gui_lib::toString(ui->simAeroPertShadow);
             break;
         case 13:
-            dataInp = toString(ui->simGravGradientEn);
+            dataInp = dsm_gui_lib::toString(ui->simGravGradientEn);
             break;
         case 14:
-            dataInp = toString(ui->simSRPPertEn) + "  ";
-            dataInp += toString(ui->simSRPPertShadow);
+            dataInp = dsm_gui_lib::toString(ui->simSRPPertEn) + "  ";
+            dataInp += dsm_gui_lib::toString(ui->simSRPPertShadow);
             break;
         case 15:
-            dataInp = toString(ui->simResidualMagEn);
+            dataInp = dsm_gui_lib::toString(ui->simResidualMagEn);
             break;
         case 16:
-            dataInp = toString(ui->simGravPertEn);
+            dataInp = dsm_gui_lib::toString(ui->simGravPertEn);
             break;
         case 17:
-            dataInp = toString(ui->simThrusterPlumeEn);
+            dataInp = dsm_gui_lib::toString(ui->simThrusterPlumeEn);
             break;
         case 18:
-            dataInp = toString(ui->simContactEn);
+            dataInp = dsm_gui_lib::toString(ui->simContactEn);
             break;
         case 19:
-            dataInp = toString(ui->simSloshEn);
+            dataInp = dsm_gui_lib::toString(ui->simSloshEn);
             break;
         case 20:
-            dataInp = toString(ui->simAlbedoEn);
+            dataInp = dsm_gui_lib::toString(ui->simAlbedoEn);
             break;
         case 21:
-            dataInp = toString(ui->simOutputTorqueEn);
+            dataInp = dsm_gui_lib::toString(ui->simOutputTorqueEn);
             break;
         default:
             break;
@@ -584,7 +586,7 @@ void SIM_Menu::on_applyButton_clicked() {
     dataInp = dsm_gui_lib::whitespace(ephemInputs.key(ui->simEphem->currentText()));
     simUpdate.append(dataInp+simFileDescrip[headerLines[toString(headerLineNames::BODIES)]]);
     for (int i = 0; i<celestialBodies.count(); i++) {
-        dataInp = toString(celestialBodies[i]);
+        dataInp = dsm_gui_lib::toString(celestialBodies[i]);
         simUpdate.append(dsm_gui_lib::whitespace(dataInp)+simFileDescrip[i+headerLines[toString(headerLineNames::BODIES)]+1]);
     }
 
@@ -613,15 +615,6 @@ void SIM_Menu::setQComboBox(QComboBox *comboBox, QString string) {
     comboBox->setCurrentIndex(comboBox->findText(string));
 }
 
-QStringList SIM_Menu::getTextFromList(QListWidget *list){
-    QStringList output;
-    foreach(QListWidgetItem *item, list->findItems("*",Qt::MatchWildcard))
-        output << item->text();
-    output.sort(Qt::CaseInsensitive);
-    return output;
-}
-
-
 void SIM_Menu::on_simOrbList_itemClicked(QListWidgetItem *item) {
     ui->simOrbitEn->setChecked(item->data(orbEnabledRole).toBool());
 }
@@ -648,7 +641,16 @@ void SIM_Menu::on_simSCOrbit_currentTextChanged(const QString &arg1) {
 
 void SIM_Menu::on_simGSList_itemClicked(QListWidgetItem *item) {
     ui->simGSEn->setChecked(item->data(gsEnabledRole).toBool());
-    ui->simGSWorld->setCurrentText(item->data(gsWorldRole).toString());
+    QString gsWorld = item->data(gsWorldRole).toString();
+    if (gsWorld.contains("MINORBODY")) {
+        ui->simGSWorld->setCurrentText("MINORBODY");
+        QStringList split = gsWorld.split(QRegExp("_"),Qt::SkipEmptyParts);
+        ui->simGSMinorBodyNum->setValue(split[1].toInt());
+    }
+    else {
+        ui->simGSMinorBodyNum->setValue(0);
+        ui->simGSWorld->setCurrentText(gsWorld);
+    }
     ui->simGSLat->setText(item->data(gsLatRole).toString());
     ui->simGSLong->setText(item->data(gsLongRole).toString());
     ui->simGSLabel->setText(item->text());
@@ -662,10 +664,12 @@ void SIM_Menu::on_simGSEn_toggled(bool checked) {
 void SIM_Menu::on_simGSWorld_currentTextChanged(const QString &arg1) {
     QString worldName = arg1;
     if (ui->simGSList->currentRow()==-1) return;
-    ui->simGSMinorBodyLabel->setEnabled(!worldName.compare("MINORBODY"));
-    ui->simGSMinorBodyNum->setEnabled(!worldName.compare("MINORBODY"));
-    if (!worldName.compare("MINORBODY"))
+    bool isMinor = !worldName.compare("MINORBODY");
+    ui->simGSMinorBodyLabel->setEnabled(isMinor);
+    ui->simGSMinorBodyNum->setEnabled(isMinor);
+    if (isMinor)
         worldName += "_" + ui->simGSMinorBodyNum->text();
+    else ui->simGSMinorBodyNum->setValue(0);
     ui->simGSList->currentItem()->setData(gsWorldRole,worldName);
 }
 
@@ -697,7 +701,7 @@ void SIM_Menu::on_simGSListRemove_clicked() {
 
 void SIM_Menu::on_simGSListAdd_clicked() {
     QString newGS = "GroundStation";
-    QStringList curGSNames = getTextFromList(ui->simGSList);
+    QStringList curGSNames = dsm_gui_lib::getTextFromList(ui->simGSList);
 
     if (ui->simGSList->count() != 0) {
         for(int i = 0; i <= 50; i++) {
@@ -717,13 +721,12 @@ void SIM_Menu::on_simGSListAdd_clicked() {
     newGSItem->setData(gsLongRole,-76.852);
     newGSItem->setData(gsLatRole,38.995);
     ui->simGSList->addItem(newGSItem);
-
 }
 
 void SIM_Menu::on_simGSListDuplicate_clicked() {
     int index = ui->simGSList->currentRow();
     QListWidgetItem* curItem = ui->simGSList->currentItem();
-    QStringList curGSNames = getTextFromList(ui->simGSList);
+    QStringList curGSNames = dsm_gui_lib::getTextFromList(ui->simGSList);
 
     if (index == -1) return;
     QString oldGS = curItem->text();
@@ -766,10 +769,8 @@ void SIM_Menu::on_simAeroPertShadow_toggled(bool checked) {
     ui->simAeroPertEn->setEnabled(!checked);
 }
 
-
 void SIM_Menu::on_simSRPPertShadow_toggled(bool checked) {
     if (checked)
         ui->simSRPPertEn->setChecked(true);
     ui->simSRPPertEn->setEnabled(!checked);
 }
-
