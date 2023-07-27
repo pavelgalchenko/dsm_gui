@@ -800,6 +800,7 @@ void SPC_Menu::on_spc_close_clicked()
 
 void SPC_Menu::on_spc_conf_clicked()
 {
+    on_spc_apply_clicked();
     receive_data();
     apply_data();
 
