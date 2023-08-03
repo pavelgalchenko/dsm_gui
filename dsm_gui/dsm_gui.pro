@@ -13,6 +13,7 @@ QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 
 SOURCES += \
     dsm_gui_lib.cpp \
+    dsm_menu.cpp \
     fov_menu.cpp \
     grh_menu.cpp \
     ipc_menu.cpp \
@@ -28,6 +29,7 @@ SOURCES += \
 
 HEADERS += \
     dsm_gui_lib.h \
+    dsm_menu.h \
     fov_menu.h \
     grh_menu.h \
     ipc_menu.h \
@@ -41,6 +43,7 @@ HEADERS += \
     tdr_menu.h
 
 FORMS += \
+    dsm_menu.ui \
     fov_menu.ui \
     grh_menu.ui \
     ipc_menu.ui \
