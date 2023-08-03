@@ -152,9 +152,6 @@ void MainWindow::on_load_mission_clicked() {
                 disable_sub_menus();
         }
     }
-
-
-
 }
 
 void MainWindow::on_GRH_Menu_clicked()
