@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "qglobal.h"
 #include "ui_mainwindow.h"
 
 #include <QMessageBox>
@@ -90,6 +91,70 @@ void MainWindow::on_new_mission_clicked()
     ui->SPC_Menu->setEnabled(true);
     ui->ORB_Menu->setEnabled(true);
     ui->SIM_Menu->setEnabled(true);
+}
+
+void MainWindow::on_load_mission_clicked() {
+    QString homedir = getenv("HOME");
+    QString dir_name = QFileDialog::getExistingDirectory(this, tr("Choose Folder"), homedir, QFileDialog::DontUseNativeDialog);
+
+    if (dir_name.isEmpty())
+        return;
+
+    QString defaultPath = dir_name+"/__default__/";
+    path = dir_name+"/InOut/";
+
+    QDir defaultDir(defaultPath);
+    QDir dir(path);
+
+    if (dir.exists()) {
+        int response = dsm_gui_lib::warning_message("Open "+path+"?");
+        if (response != QMessageBox::Ok) {
+            return;
+        }
+    }
+//    Come back to this
+//    else {
+//        dir.mkpath(".");
+//        dir.mkpath("./__default__/");
+//    }
+
+    ui->mission_path->setText(path);
+
+    if (!defaultDir.exists())
+        defaultDir.mkpath(".");
+    if (!dir.exists())
+        dir.mkpath(".");
+
+    ui->GRH_Menu->setEnabled(true);
+    ui->TDR_Menu->setEnabled(true);
+    ui->FOV_Menu->setEnabled(true);
+    ui->NOS_Menu->setEnabled(true);
+    ui->RGN_Menu->setEnabled(true);
+    ui->IPC_Menu->setEnabled(true);
+    ui->SPC_Menu->setEnabled(true);
+    ui->ORB_Menu->setEnabled(true);
+    ui->SIM_Menu->setEnabled(true);
+
+    QStringList curFiles = QDir(path).entryList();
+    QStringList defaultFiles = QDir(defaultPath).entryList();
+
+    // Make sure that the "Inp_*" files exist in dir_name+"/__default__/".
+    // If they don't, copy from the resources into default.
+    // Then, make sure that "Inp_*" file exists in dir_name_"/InOut/",
+    // copying from dir_name+"/__default__/" if it doesn't.
+    foreach (QString neededFile, neededFiles) {
+        if (!defaultFiles.contains(neededFile))
+            QFile::copy(":/data/__default__/"+neededFile, defaultPath+neededFile);
+
+        if (!curFiles.contains(neededFile)) {
+            QFile::copy(defaultPath+neededFile,path+neededFile);
+            if (neededFile.compare("Inp_Sim.txt") == 0)
+                disable_sub_menus();
+        }
+    }
+
+
+
 }
 
 void MainWindow::on_GRH_Menu_clicked()
@@ -194,6 +259,7 @@ void MainWindow::on_SIM_Menu_clicked()
     QStringList orbFiles = QDir(path).entryList({"Orb_*"});
     QStringList scFiles = QDir(path).entryList({"SC_*"});
     if (scFiles.isEmpty() || orbFiles.isEmpty()){
+        // is this true, tbh???
         dsm_gui_lib::error_message("There must be both a Orbit file and a Spacecraft file before editing the Simulation file.");
         return;
     }
