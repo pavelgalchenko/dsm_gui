@@ -95,7 +95,11 @@ void MainWindow::on_new_mission_clicked()
 
 void MainWindow::on_load_mission_clicked() {
     QString homedir = getenv("HOME");
+    QString oldPath = path;
     QString dir_name = QFileDialog::getExistingDirectory(this, tr("Choose Folder"), homedir, QFileDialog::DontUseNativeDialog);
+    bool missingFilesOk = false;
+    bool missingSim = false;
+    int response;
 
     if (dir_name.isEmpty())
         return;
@@ -107,33 +111,43 @@ void MainWindow::on_load_mission_clicked() {
     QDir dir(path);
 
     if (dir.exists()) {
-        int response = dsm_gui_lib::warning_message("Open "+path+"?");
+        response = dsm_gui_lib::warning_message("Open "+dir_name+"?");
         if (response != QMessageBox::Ok) {
+            path= oldPath;
             return;
         }
     }
-//    Come back to this
-//    else {
-//        dir.mkpath(".");
-//        dir.mkpath("./__default__/");
-//    }
 
     ui->mission_path->setText(path);
 
-    if (!defaultDir.exists())
-        defaultDir.mkpath(".");
-    if (!dir.exists())
+    if (!dir.exists()) {
+        if (!missingFilesOk) {
+            response = dsm_gui_lib::warning_message("Missing "+path+". Make directory and continue?");
+            if (response == QMessageBox::Ok) {
+                missingFilesOk = true;
+            }
+            else {
+                path = oldPath;
+                ui->mission_path->setText(path);
+                return;
+            }
+        }
         dir.mkpath(".");
-
-    ui->GRH_Menu->setEnabled(true);
-    ui->TDR_Menu->setEnabled(true);
-    ui->FOV_Menu->setEnabled(true);
-    ui->NOS_Menu->setEnabled(true);
-    ui->RGN_Menu->setEnabled(true);
-    ui->IPC_Menu->setEnabled(true);
-    ui->SPC_Menu->setEnabled(true);
-    ui->ORB_Menu->setEnabled(true);
-    ui->SIM_Menu->setEnabled(true);
+    }
+    if (!defaultDir.exists()) {
+        if (!missingFilesOk) {
+            response = dsm_gui_lib::warning_message("Missing "+defaultPath+". Make directory and continue?");
+            if (response == QMessageBox::Ok) {
+                missingFilesOk = true;
+            }
+            else {
+                path = oldPath;
+                ui->mission_path->setText(path);
+                return;
+            }
+        }
+        defaultDir.mkpath(".");
+    }
 
     QStringList curFiles = QDir(path).entryList();
     QStringList defaultFiles = QDir(defaultPath).entryList();
@@ -143,15 +157,47 @@ void MainWindow::on_load_mission_clicked() {
     // Then, make sure that "Inp_*" file exists in dir_name_"/InOut/",
     // copying from dir_name+"/__default__/" if it doesn't.
     foreach (QString neededFile, neededFiles) {
-        if (!defaultFiles.contains(neededFile))
+
+        if (!defaultFiles.contains(neededFile)) {
+            if (!missingFilesOk) {
+                response = dsm_gui_lib::warning_message("Missing "+neededFile+" in "+defaultPath+". Load from resources and continue?");
+                if (response == QMessageBox::Ok) {
+                    missingFilesOk = true;
+                }
+                else {
+                    path = oldPath;
+                    ui->mission_path->setText(path);
+                    return;
+                }
+            }
             QFile::copy(":/data/__default__/"+neededFile, defaultPath+neededFile);
+        }
 
         if (!curFiles.contains(neededFile)) {
+            if (!missingFilesOk) {
+                response = dsm_gui_lib::warning_message("Missing "+neededFile+" in "+path+". Load from resources and continue?");
+                if (response == QMessageBox::Ok) {
+                    missingFilesOk = true;
+                }
+                else {
+                    path = oldPath;
+                    ui->mission_path->setText(path);
+                    return;
+                }
+            }
             QFile::copy(defaultPath+neededFile,path+neededFile);
             if (neededFile.compare("Inp_Sim.txt") == 0)
-                disable_sub_menus();
+                missingSim = true;
         }
     }
+
+    ui->SPC_Menu->setEnabled(true);
+    ui->ORB_Menu->setEnabled(true);
+    ui->SIM_Menu->setEnabled(true);
+    if (!missingSim)
+        enable_sub_menus();
+    else
+        disable_sub_menus();
 }
 
 void MainWindow::on_GRH_Menu_clicked()
@@ -256,7 +302,7 @@ void MainWindow::on_SIM_Menu_clicked()
     QStringList orbFiles = QDir(path).entryList({"Orb_*"});
     QStringList scFiles = QDir(path).entryList({"SC_*"});
     if (scFiles.isEmpty() || orbFiles.isEmpty()){
-        // is this true, tbh???
+        // is this true???
         dsm_gui_lib::error_message("There must be both a Orbit file and a Spacecraft file before editing the Simulation file.");
         return;
     }
@@ -288,4 +334,16 @@ void MainWindow::disable_sub_menus() {
     ui->NOS_Menu->setEnabled(false);
     ui->RGN_Menu->setEnabled(false);
     ui->IPC_Menu->setEnabled(false);
+}
+
+void MainWindow::set_menu_buttons(bool enabled) {
+    ui->SIM_Menu->setEnabled(enabled);
+    ui->ORB_Menu->setEnabled(enabled);
+    ui->SPC_Menu->setEnabled(enabled);
+    ui->GRH_Menu->setEnabled(enabled);
+    ui->FOV_Menu->setEnabled(enabled);
+    ui->TDR_Menu->setEnabled(enabled);
+    ui->NOS_Menu->setEnabled(enabled);
+    ui->RGN_Menu->setEnabled(enabled);
+    ui->IPC_Menu->setEnabled(enabled);
 }

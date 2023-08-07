@@ -49,6 +49,7 @@ private slots:
     void on_SIM_Menu_clicked();
 
     void on_load_mission_clicked();
+    void set_menu_buttons(bool enabled);
 
 private:
     Ui::MainWindow *ui;
