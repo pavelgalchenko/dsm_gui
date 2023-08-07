@@ -90,6 +90,7 @@ void MainWindow::on_new_mission_clicked()
     ui->SPC_Menu->setEnabled(true);
     ui->ORB_Menu->setEnabled(true);
     ui->SIM_Menu->setEnabled(true);
+    ui->DSM_Menu->setEnabled(true);
 }
 
 void MainWindow::on_GRH_Menu_clicked()
@@ -207,6 +208,13 @@ void MainWindow::on_SIM_Menu_clicked()
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 
+void MainWindow::on_DSM_Menu_clicked() {
+    dsm_menu = new DSM_Menu(this);
+    dsm_menu->setModal(true);
+    dsm_menu->show();
+
+}
+
 void MainWindow::enable_sub_menus() {
     ui->Warning->setVisible(false);
     ui->GRH_Menu->setEnabled(true);
@@ -226,3 +234,5 @@ void MainWindow::disable_sub_menus() {
     ui->RGN_Menu->setEnabled(false);
     ui->IPC_Menu->setEnabled(false);
 }
+
+

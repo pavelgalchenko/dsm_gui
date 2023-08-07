@@ -11,6 +11,7 @@
 #include "spc_menu.h"
 #include "orb_menu.h"
 #include "sim_menu.h"
+#include "dsm_menu.h"
 #include "dsm_gui_lib.h"
 
 #include <QDebug>
@@ -48,6 +49,8 @@ private slots:
     void on_ORB_Menu_clicked();
     void on_SIM_Menu_clicked();
 
+    void on_DSM_Menu_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -60,6 +63,7 @@ private:
     SPC_Menu *spc_menu;
     ORB_Menu *orb_menu;
     SIM_Menu *sim_menu;
+    DSM_Menu *dsm_menu;
     QString path;
 };
 #endif // MAINWINDOW_H
