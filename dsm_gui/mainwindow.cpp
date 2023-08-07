@@ -213,6 +213,9 @@ void MainWindow::on_DSM_Menu_clicked() {
     dsm_menu->setModal(true);
     dsm_menu->show();
 
+    connect(this, SIGNAL(send_data(QString)), dsm_menu, SLOT(receive_dsmpath(QString)));
+    emit send_data(path);
+    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 
 void MainWindow::enable_sub_menus() {
