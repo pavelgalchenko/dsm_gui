@@ -50,6 +50,8 @@ private slots:
     void on_SIM_Menu_clicked();
 
     void on_DSM_Menu_clicked();
+    void on_load_mission_clicked();
+    void set_menu_buttons(bool enabled);
 
 private:
     Ui::MainWindow *ui;
@@ -65,5 +67,7 @@ private:
     SIM_Menu *sim_menu;
     DSM_Menu *dsm_menu;
     QString path;
+
+    const QStringList neededFiles = {"Inp_Cmd.txt", "Inp_FOV.txt", "Inp_Graphics.txt", "Inp_IPC.txt", "Inp_NOS3.txt", "Inp_Region.txt", "Inp_Sim.txt", "Inp_TDRS.txt","Inp_DSM.txt"};
 };
 #endif // MAINWINDOW_H

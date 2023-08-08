@@ -1,5 +1,5 @@
 <<<<<<<<<<<<<<<<<  42:  Command Script File  >>>>>>>>>>>>>>>>>
-0.0 SC[0] qrl = [0.0  0.0  0.0  1.0]
+0.0 SC[0] FswTag = DSM_FSW
 
 
 EOF
