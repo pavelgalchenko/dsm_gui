@@ -104,7 +104,7 @@ void MainWindow::on_load_mission_clicked() {
     if (dir_name.isEmpty())
         return;
 
-    QString defaultPath = dir_name+"/__default__/";
+    QString defaultPath = dir_name+"/InOut/__default__/";
     path = dir_name+"/InOut/";
 
     QDir defaultDir(defaultPath);
@@ -122,7 +122,7 @@ void MainWindow::on_load_mission_clicked() {
 
     if (!dir.exists()) {
         if (!missingFilesOk) {
-            response = dsm_gui_lib::warning_message("Missing "+path+". Make directory and continue?");
+            response = dsm_gui_lib::warning_message("Missing "+path+"\nMake directory and continue?");
             if (response == QMessageBox::Ok) {
                 missingFilesOk = true;
             }
@@ -136,7 +136,7 @@ void MainWindow::on_load_mission_clicked() {
     }
     if (!defaultDir.exists()) {
         if (!missingFilesOk) {
-            response = dsm_gui_lib::warning_message("Missing "+defaultPath+". Make directory and continue?");
+            response = dsm_gui_lib::warning_message("Missing "+defaultPath+"\nMake directory and continue?");
             if (response == QMessageBox::Ok) {
                 missingFilesOk = true;
             }
@@ -147,6 +147,11 @@ void MainWindow::on_load_mission_clicked() {
             }
         }
         defaultDir.mkpath(".");
+        QStringList newDefaultFiles = QDir(path).entryList();
+        foreach (QString neededFile, newDefaultFiles) {
+            QFile::copy(path+neededFile,defaultPath+neededFile);
+        }
+
     }
 
     QStringList curFiles = QDir(path).entryList();
@@ -160,7 +165,7 @@ void MainWindow::on_load_mission_clicked() {
 
         if (!defaultFiles.contains(neededFile)) {
             if (!missingFilesOk) {
-                response = dsm_gui_lib::warning_message("Missing "+neededFile+" in "+defaultPath+". Load from resources and continue?");
+                response = dsm_gui_lib::warning_message("Missing "+neededFile+" in "+defaultPath+"\nLoad from resources and continue?");
                 if (response == QMessageBox::Ok) {
                     missingFilesOk = true;
                 }
@@ -175,7 +180,7 @@ void MainWindow::on_load_mission_clicked() {
 
         if (!curFiles.contains(neededFile)) {
             if (!missingFilesOk) {
-                response = dsm_gui_lib::warning_message("Missing "+neededFile+" in "+path+". Load from resources and continue?");
+                response = dsm_gui_lib::warning_message("Missing "+neededFile+" in "+path+"\nLoad from resources and continue?");
                 if (response == QMessageBox::Ok) {
                     missingFilesOk = true;
                 }
