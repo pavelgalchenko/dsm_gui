@@ -358,4 +358,5 @@ void MainWindow::set_menu_buttons(bool enabled) {
     ui->NOS_Menu->setEnabled(enabled);
     ui->RGN_Menu->setEnabled(enabled);
     ui->IPC_Menu->setEnabled(enabled);
+    ui->DSM_Menu->setEnabled(enabled);
 }
