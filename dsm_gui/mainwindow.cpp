@@ -336,6 +336,7 @@ void MainWindow::enable_sub_menus() {
     ui->NOS_Menu->setEnabled(true);
     ui->RGN_Menu->setEnabled(true);
     ui->IPC_Menu->setEnabled(true);
+    ui->DSM_Menu->setEnabled(true);
 }
 
 void MainWindow::disable_sub_menus() {
@@ -346,6 +347,7 @@ void MainWindow::disable_sub_menus() {
     ui->NOS_Menu->setEnabled(false);
     ui->RGN_Menu->setEnabled(false);
     ui->IPC_Menu->setEnabled(false);
+    ui->DSM_Menu->setEnabled(false);
 }
 
 void MainWindow::set_menu_buttons(bool enabled) {

@@ -48,6 +48,48 @@ private:
 
     QStringList scNames;
 
+    /* Change these enums to change the column order in the QTreeWidgets */
+    enum tlCols {
+        tlColSCTime=0,
+        tlColTrn,
+        tlColAtt,
+        tlColAct,
+    };
+
+    enum cmdCols {
+        cmdColLabel=0,
+        cmdColInd,
+        cmdColAct,
+        cmdColCtl,
+        cmdColData,
+    };
+
+    enum ctrlCols {
+        ctrlColLabel=0,
+        ctrlColType,
+        ctrlColGains,
+        ctrlColLims,
+    };
+    /* END CHANGE ENUMS */
+
+    /* Change these maps to change the column names in the QTreeWidgets */
+    const QMap<int,QString> tlColNames = { {tlColSCTime,"Spacecraft/Time"},
+                                           {tlColTrn,"Translation Command"},
+                                           {tlColAtt,"Attitude Command"},
+                                           {tlColAct,"Actuator Command"}};
+
+    const QMap<int,QString> cmdColNames = { {cmdColLabel,"Command/Label"},
+                                            {cmdColAct,"Actuator"},
+                                            {cmdColInd,"Command Index"},
+                                            {cmdColCtl,"Controller"},
+                                            {cmdColData,"Command Data"}};
+
+    const QMap<int,QString> ctrlColNames = {{ctrlColLabel,"Controller/Label"},
+                                             {ctrlColType,"Controller Type"},
+                                             {ctrlColGains,"Gains"},
+                                             {ctrlColLims,"Limits"}};
+    /* END CHANGE MAPS */
+
     enum class dsmSectionTypes {
         COMMANDS,
         TRANSLATION,
@@ -134,6 +176,7 @@ private:
         ctrlGains,
         ctrlLimits
     };
+
 
     const QHash<QString,QString> ctrlTypes = { {"PID_CNTRL",        "PID Control"},
                                                {"LYA_ATT_CNTRL",    "Lyapunov Attitude Control"},
