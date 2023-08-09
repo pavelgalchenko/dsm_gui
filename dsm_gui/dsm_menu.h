@@ -50,7 +50,8 @@ private:
 
     /* Change these enums to change the column order in the QTreeWidgets */
     enum tlCols {
-        tlColSCTime=0,
+        tlColSC=0,
+        tlColTime,
         tlColTrn,
         tlColAtt,
         tlColAct,
@@ -73,7 +74,8 @@ private:
     /* END CHANGE ENUMS */
 
     /* Change these maps to change the column names in the QTreeWidgets */
-    const QMap<int,QString> tlColNames = { {tlColSCTime,"Spacecraft/Time"},
+    const QMap<int,QString> tlColNames = { {tlColSC,"Spacecraft"},
+                                           {tlColTime,"Time [sec]"},
                                            {tlColTrn,"Translation Command"},
                                            {tlColAtt,"Attitude Command"},
                                            {tlColAct,"Actuator Command"}};

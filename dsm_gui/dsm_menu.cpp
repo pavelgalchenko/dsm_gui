@@ -21,7 +21,11 @@ void DSM_Menu::set_validators() {
     ui->cmdConfigTree->setHeaderLabels(cmdColNames.values());
     ui->ctrlConfigTree->setHeaderLabels(ctrlColNames.values());
 
+    for (int i=0; i<ui->cmdConfigurator->count(); i++)
+        ui->cmdConfigurator->widget(i)->setEnabled(false);
 
+    for (int i=0; i<ui->gainConfigurator->count(); i++)
+        ui->gainConfigurator->widget(i)->setEnabled(false);
 
     QTreeWidget *parent = ui->cmdConfigTree;
     QTreeWidgetItem *newItem;
@@ -84,13 +88,15 @@ void DSM_Menu::receive_data() {
     dsmData.clear();
     dsmString.clear();
     dsmUpdate.clear();
+    scNames.clear();
+
     static QRegularExpression rxSC("SC_(.*).txt");
 
     QFile simFile(inoutPath + "Inp_Sim.txt");
     if(!simFile.open(QIODevice::ReadOnly))
         QMessageBox::information(0, "error", simFile.errorString());
     QTextStream simIn(&simFile);
-    QTreeWidgetItem *newSC;
+
     while (!simIn.atEnd()) {
         QString line = simIn.readLine();
         if (line.contains("Spacecraft",Qt::CaseInsensitive)) {
@@ -101,9 +107,6 @@ void DSM_Menu::receive_data() {
                 line = simIn.readLine();
                 QString name = rxSC.match(line).captured(1);
                 scNames.append(name);
-                newSC = new QTreeWidgetItem(ui->cmdTimelineTree,{name});
-                newSC->setData(0,timelineSC,i);
-                ui->cmdTimelineTree->addTopLevelItem(newSC);
             }
             break;
         }
@@ -345,31 +348,25 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
 
     switch (type) {
     case dsmSectionTypes::COMMANDS:
-        treeItem = ui->cmdTimelineTree->topLevelItem(0);
-        for (int i=0; i<ui->cmdTimelineTree->topLevelItemCount(); i++) {
-            treeItem = ui->cmdTimelineTree->topLevelItem(i);
-            if (treeItem->data(tlCols::tlColSCTime,timelineSC)==itemNum) {
-                break;
-            }
-        }
-        newTreeItem = new QTreeWidgetItem(treeItem);
+
+        newTreeItem = new QTreeWidgetItem(ui->cmdTimelineTree);
         match = rxCmdParse.match(itemData);
         dataSplit = match.captured(2).split(QRegExp("\\s"),Qt::SkipEmptyParts);
-        newTreeItem->setText(tlCols::tlColSCTime,match.captured(1)+" [sec]");
-        newTreeItem->setTextAlignment(tlCols::tlColSCTime,Qt::AlignRight);
+        newTreeItem->setText(tlCols::tlColSC,scNames[itemNum]);
+        newTreeItem->setData(tlCols::tlColTime,Qt::DisplayRole,match.captured(1).toDouble());
+        newTreeItem->setTextAlignment(tlCols::tlColTime,Qt::AlignRight);
         foreach (QString cmd, dataSplit) {
             int writeCol = -1;
             QString label = cmd;
             int cmdType = getCmdType(cmd);
-            if (trnCmds.contains(cmdType)) {
-                writeCol=1;
-            }
-            else if (attCmds.contains(cmdType)) {
-                writeCol=2;
-            }
-            else if (cmdType==DSM_Menu::cmdAct) {
-                writeCol=3;
-            }
+
+            if (trnCmds.contains(cmdType))
+                writeCol=tlColTrn;
+            else if (attCmds.contains(cmdType))
+                writeCol=tlColAtt;
+            else if (cmdType==DSM_Menu::cmdAct)
+                writeCol=tlColAct;
+
             if (cmdType!=DSM_Menu::cmdPsvTrn && cmdType!=DSM_Menu::cmdPsvAtt) {
                 if (cmdType!=cmdTypes::cmdAtt) {
                     treeParentItem = entryCmdParents[cmdType];
@@ -385,8 +382,8 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
                 }
             }
             newTreeItem->setText(writeCol,label);
-            treeItem->addChild(newTreeItem);
         }
+        ui->cmdTimelineTree->addTopLevelItem(newTreeItem);
         break;
     case dsmSectionTypes::TRANSLATION:
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
