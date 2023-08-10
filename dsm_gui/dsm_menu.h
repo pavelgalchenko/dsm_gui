@@ -36,9 +36,6 @@ private slots:
 
     void setQComboBox(QComboBox *comboBox, QString string);
 
-    void on_cmdConfigTree_itemClicked(QTreeWidgetItem *item, int column);
-
-
     void on_cmdTrnOri_currentTextChanged(const QString &arg1);
 
     void on_cmdTrnFrm_currentTextChanged(const QString &arg1);
@@ -47,15 +44,15 @@ private slots:
 
     void on_cmdSvTgtType_currentTextChanged(const QString &arg1);
 
-    void cmd_Trn_data_changed();
-    void cmd_PV_data_changed();
-    void cmd_SV_data_changed();
-    void cmd_Quat_data_changed();
-    void cmd_Mirror_data_changed();
-    void cmd_Detumble_data_changed();
-    void cmd_WhlHManage_data_changed();
-    void cmd_Act_data_changed();
-    void cmd_Maneuver_data_changed();
+    void cmd_data_changed();
+
+    void on_cmdController_textActivated(const QString &arg1);
+
+    void on_cmdActuator_textActivated(const QString &arg1);
+
+    void on_cmdLabel_textEdited(const QString &arg1);
+
+    void on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
 
 private:
     Ui::DSM_Menu *ui;
@@ -69,6 +66,10 @@ private:
     QStringList dsmUpdate;
 
     QStringList scNames;
+
+    const QString cmdDelimiter = ";";
+    const QString cmdDataSpacer = "  ";
+    const QString scBdyFrmt = "SC[%1].B[%2]";
 
 
     /* Change these enums to change the column order in the QTreeWidgets */
@@ -180,7 +181,7 @@ private:
         cmdAtt,
     };
     const QVector<int> trnCmds = {cmdPsvTrn,cmdTrn,cmdManeuver};
-    const QVector<int> attCmds = {cmdPsvAtt,cmdAtt,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage};
+    const QVector<int> attCmds = {cmdPsvAtt,cmdAtt,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdPV};
 
     const QMap<dsmSectionTypes,int> section2Cmd = { {dsmSectionTypes::TRANSLATION,cmdTrn},
                                                     {dsmSectionTypes::PRIMARY_VEC,cmdPV},
@@ -191,6 +192,7 @@ private:
                                                     {dsmSectionTypes::WHLHMANAGEMENT,cmdWhlHManage},
                                                     {dsmSectionTypes::ACTUATOR_CMD,cmdAct},
                                                     {dsmSectionTypes::MANEUVER,cmdManeuver}};
+    const QList<dsmSectionTypes> section2CmdKeys = section2Cmd.keys();
 
     const QHash<QString,QString> cmdAttTgtTypes = { {"VEC","Vector"},
                                                     {"SC","Spacecraft"},
@@ -245,13 +247,49 @@ private:
     const QHash<QString,QStringList> allowableGains = { {"PID_CNTRL",       {"PID","PID_WN"}},
                                                         {"LYA_ATT_CNTRL",   {"FC_LYA"}},
                                                         {"LYA_2BODY_CNTRL", {"FC_LYA"}},
-                                                        {"H_DUMP_CNRL",     {"MomentumDump"}}};
+                                                        {"H_DUMP_CNTRL",    {"MomentumDump"}}};
 
     // This is how valid gains are mapped to controllers
     const QHash<QString,QStringList> allowableCtrl  = { {"PID",             {"PID_CNTRL"}},
                                                         {"PID_WN",          {"PID_CNTRL"}},
                                                         {"MomentumDump",    {"H_DUMP_CNTRL"}},
                                                         {"FC_LYA",          {"LYA_ATT_CNTRL","LYA_2BODY_CNTRL"}}};
+
+    /* START HATE */
+    // This....
+    // I hate this...
+    // This is how I chose to coorelate controllers and actuators to command types
+    const QHash<QString,QList<int>> ctrlValidCmds = {   {"PID_CNTRL",{cmdTrn,cmdPV,cmdQuat,cmdMirror}},
+                                                        {"LYA_ATT_CNTRL",{cmdPV,cmdQuat,cmdMirror}},
+                                                        {"LYA_2BODY_CNTRL",{cmdTrn}},
+                                                        {"H_DUMP_CNTRL",{cmdWhlHManage}}};
+
+    QHash<int,QStringList> cmdValidCtrls = {{cmdTrn,{}},
+                                            {cmdPV,{}},
+                                            {cmdSV,{}},
+                                            {cmdQuat,{}},
+                                            {cmdMirror,{}},
+                                            {cmdDetumble,{}},
+                                            {cmdWhlHManage,{}},
+                                            {cmdAct,{}},
+                                            {cmdManeuver,{}}};
+
+    const QHash<QString,QList<int>> actValidCmds = {{"WHL",{cmdPV,cmdQuat,cmdMirror,cmdDetumble}},
+                                                    {"Ideal",{cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdManeuver}},
+                                                    {"MTB",{cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage}},
+                                                    {"THR_3DOF",{cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdManeuver}},
+                                                    {"THR_6DOF",{cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdManeuver}}};
+
+    QHash<int,QStringList> cmdValidActs = { {cmdTrn,{}},
+                                            {cmdPV,{}},
+                                            {cmdSV,{}},
+                                            {cmdQuat,{}},
+                                            {cmdMirror,{}},
+                                            {cmdDetumble,{}},
+                                            {cmdWhlHManage,{}},
+                                            {cmdAct,{}},
+                                            {cmdManeuver,{}}};
+    /* END HATE */
 
     enum limData {
         limData = Qt::UserRole,
@@ -283,6 +321,7 @@ private:
     QHash<QString,QString> gainsHash;
     QHash<QString,QString> limsHash;
     QHash<QString,QString> actsHash;
+
 
     const QHash<QString,QString> cmdTrnOriConst = {{"OP","Orbit Point"}};
     const QHash<QString,QString> cmdTrnFrmConst = {{"N","Inertial"},

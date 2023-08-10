@@ -105,7 +105,7 @@
     <enum>Qt::LeftToRight</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="dsmCmdTimeline">
     <attribute name="title">
@@ -116,7 +116,7 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>821</width>
+       <width>911</width>
        <height>509</height>
       </rect>
      </property>
@@ -504,6 +504,9 @@
               <property name="enabled">
                <bool>false</bool>
               </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToContents</enum>
+              </property>
              </widget>
             </item>
            </layout>
@@ -538,6 +541,9 @@
               <property name="enabled">
                <bool>false</bool>
               </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToContents</enum>
+              </property>
              </widget>
             </item>
            </layout>
@@ -568,7 +574,11 @@
              </spacer>
             </item>
             <item>
-             <widget class="QLineEdit" name="cmdLabel"/>
+             <widget class="QLineEdit" name="cmdLabel">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
@@ -1489,7 +1499,7 @@
                <item>
                 <widget class="QLabel" name="label_20">
                  <property name="text">
-                  <string>Quaternion:</string>
+                  <string>Quaternion (vector first):</string>
                  </property>
                 </widget>
                </item>
@@ -1822,7 +1832,7 @@
              <item>
               <widget class="QLabel" name="label_34">
                <property name="text">
-                <string>To never dump momentum, set both min &amp;&amp; max arbitrarily large.</string>
+                <string>To never dump momentum, set both min &amp; max arbitrarily large.</string>
                </property>
               </widget>
              </item>
@@ -1859,7 +1869,7 @@
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_24">
                <item>
-                <widget class="QListView" name="cmdActList"/>
+                <widget class="QListWidget" name="cmdActList"/>
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_70">
