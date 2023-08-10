@@ -34,6 +34,28 @@ private slots:
 
     void set_command_ctrl_act(QTreeWidgetItem*,const QString, QStringList*);
 
+    void setQComboBox(QComboBox *comboBox, QString string);
+
+    void on_cmdConfigTree_itemClicked(QTreeWidgetItem *item, int column);
+
+
+    void on_cmdTrnOri_currentTextChanged(const QString &arg1);
+
+    void on_cmdTrnFrm_currentTextChanged(const QString &arg1);
+
+    void on_cmdPvTgtType_currentTextChanged(const QString &arg1);
+
+    void on_cmdSvTgtType_currentTextChanged(const QString &arg1);
+
+    void cmd_Trn_data_changed();
+    void cmd_PV_data_changed();
+    void cmd_SV_data_changed();
+    void cmd_Quat_data_changed();
+    void cmd_Mirror_data_changed();
+    void cmd_Detumble_data_changed();
+    void cmd_WhlHManage_data_changed();
+    void cmd_Act_data_changed();
+    void cmd_Maneuver_data_changed();
 
 private:
     Ui::DSM_Menu *ui;
@@ -47,6 +69,7 @@ private:
     QStringList dsmUpdate;
 
     QStringList scNames;
+
 
     /* Change these enums to change the column order in the QTreeWidgets */
     enum tlCols {
@@ -143,10 +166,7 @@ private:
     };
 
     enum cmdTypes {
-        cmdPsvTrn,
-        cmdPsvAtt,
-        cmdTrn,
-        cmdAtt,
+        cmdTrn=0,
         cmdPV,
         cmdSV,
         cmdQuat,
@@ -155,6 +175,9 @@ private:
         cmdWhlHManage,
         cmdAct,
         cmdManeuver,
+        cmdPsvTrn,
+        cmdPsvAtt,
+        cmdAtt,
     };
     const QVector<int> trnCmds = {cmdPsvTrn,cmdTrn,cmdManeuver};
     const QVector<int> attCmds = {cmdPsvAtt,cmdAtt,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage};
@@ -168,6 +191,28 @@ private:
                                                     {dsmSectionTypes::WHLHMANAGEMENT,cmdWhlHManage},
                                                     {dsmSectionTypes::ACTUATOR_CMD,cmdAct},
                                                     {dsmSectionTypes::MANEUVER,cmdManeuver}};
+
+    const QHash<QString,QString> cmdAttTgtTypes = { {"VEC","Vector"},
+                                                    {"SC","Spacecraft"},
+                                                    {"BODY","World"}};
+
+    const QHash<QString,QString> cmdAttTgtFrm = {{"N","Inertial"},
+                                                 {"F","Formation"},
+                                                 {"L","Local Vert"},
+                                                 {"B","Body"}};
+
+    const QHash<QString,QString> cmdManFrm = { {"N","Inertial"},
+                                               {"B","Body"}};
+    const QHash<QString,QString> cmdManTypes = {    {"CONSTANT","Constant Thrust"},
+                                                    {"SMOOTHED","Smoothed Thrust"}};
+
+    const QStringList worldInputs = {"SOL","MERCURY","VENUS","EARTH","MARS","JUPITER","SATURN","URANUS",
+                                     "NEPTUNE","PLUTO","LUNA","PHOBOS","DEIMOS","IO","EUROPA","GANYMEDE","CALLISTO",
+                                     "AMALTHEA","HIMALITA","ELARA","PASIPHAE","SINOPE","LYSITHEA","CARME","ANANKE",
+                                     "LEDA","THEBE","ADRASTEA","METIS","MIMAS","ENCELADUS","TETHYS","DIONE","RHEA",
+                                     "TITAN","HYPERION","IAPETUS","PHOEBE","JANUS","EPIMETHEUS","HELENE","TELESTO",
+                                     "CALYPSO","ATLAS","PROMETHEUS","PANDORA","PAN","ARIEL","UMBRIEL",
+                                     "TITANIA","OBERON","MIRANDA","TRITON","NERIED","CHARON","MINORBODY"};
 
     int getCmdType(QString);
     QRegularExpression cmdRegEx(const int);
@@ -223,6 +268,26 @@ private:
                                                {"MTB", "Magnetorquers"},
                                                {"THR_3DOF", "3DOF Thrusters"},
                                                {"THR_6DOF", "6DOF Thrusters"}};
+
+    const QHash<QString,QString> trnCmdsHashConst = {{"Passive", "PASSIVE_TRN"},
+                                                     {"No Change",""}};
+    const QHash<QString,QString> attCmdsHashConst = {{"Passive","PASSIVE_ATT"},
+                                                     {"No Change",""}};
+    const QHash<QString,QString> actCmdsHashConst = {{"No Change",""}};
+
+    QHash<QString,QString> trnCmdsHash = trnCmdsHashConst;
+    QHash<QString,QString> attCmdsHash = attCmdsHashConst;
+    QHash<QString,QString> actCmdsHash = actCmdsHashConst;
+    QHash<QString,QString> attSVCmdsHash;
+    QHash<QString,QString> ctlsHash;
+    QHash<QString,QString> gainsHash;
+    QHash<QString,QString> limsHash;
+    QHash<QString,QString> actsHash;
+
+    const QHash<QString,QString> cmdTrnOriConst = {{"OP","Orbit Point"}};
+    const QHash<QString,QString> cmdTrnFrmConst = {{"N","Inertial"},
+                                                   {"F","Formation"},
+                                                   {"L","Local Vert"}};
 };
 
 #endif // DSM_MENU_H
