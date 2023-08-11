@@ -853,6 +853,3 @@ void ORB_Menu::checkKepPA() {
         ui->applyButton->setEnabled(true);
     }
 }
-
-//void ORB_Menu::orbits_changed(bool clicked) {
-//}

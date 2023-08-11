@@ -12,6 +12,7 @@
 #include <QComboBox>
 #include <QListWidget>
 #include <QCheckBox>
+#include <QVector3D>
 
 namespace Ui {
 class DSM_Menu;
@@ -45,6 +46,7 @@ private slots:
     void on_cmdSvTgtType_currentTextChanged(const QString &arg1);
 
     void cmd_data_changed();
+    void cmd_act_data_changed();
 
     void on_cmdController_textActivated(const QString &arg1);
 
@@ -53,6 +55,36 @@ private slots:
     void on_cmdLabel_textEdited(const QString &arg1);
 
     void on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+
+    void on_closeButton_clicked();
+
+    void on_saveDefaultButton_clicked();
+
+    void on_loadDefaultButton_clicked();
+
+    void on_cmdRemove_clicked();
+
+    void on_cmdAdd_clicked();
+
+    void on_cmdDuplicate_clicked();
+
+    void on_cmdActAdd_clicked();
+
+    void on_cmdActRemove_clicked();
+
+    void on_cmdActList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
+    void on_cmdTimelineTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+
+    void timeline_data_changed();
+
+    void validate_sv_cmds(QString);
+
+    void on_cmdTimeDuplicate_clicked();
+
+    void on_cmdTimeAdd_clicked();
+
+    void on_cmdTimeRemove_clicked();
 
 private:
     Ui::DSM_Menu *ui;
@@ -70,6 +102,9 @@ private:
     const QString cmdDelimiter = ";";
     const QString cmdDataSpacer = "  ";
     const QString scBdyFrmt = "SC[%1].B[%2]";
+
+    QPalette okTextPalette;
+    QPalette badTextPalette;
 
 
     /* Change these enums to change the column order in the QTreeWidgets */
@@ -259,8 +294,8 @@ private:
     // This....
     // I hate this...
     // This is how I chose to coorelate controllers and actuators to command types
-    const QHash<QString,QList<int>> ctrlValidCmds = {   {"PID_CNTRL",{cmdTrn,cmdPV,cmdQuat,cmdMirror}},
-                                                        {"LYA_ATT_CNTRL",{cmdPV,cmdQuat,cmdMirror}},
+    const QHash<QString,QList<int>> ctrlValidCmds = {   {"PID_CNTRL",{cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble}},
+                                                        {"LYA_ATT_CNTRL",{cmdPV,cmdQuat,cmdMirror,cmdDetumble}},
                                                         {"LYA_2BODY_CNTRL",{cmdTrn}},
                                                         {"H_DUMP_CNTRL",{cmdWhlHManage}}};
 
@@ -271,8 +306,7 @@ private:
                                             {cmdMirror,{}},
                                             {cmdDetumble,{}},
                                             {cmdWhlHManage,{}},
-                                            {cmdAct,{}},
-                                            {cmdManeuver,{}}};
+                                            {cmdAct,{}}};
 
     const QHash<QString,QList<int>> actValidCmds = {{"WHL",{cmdPV,cmdQuat,cmdMirror,cmdDetumble}},
                                                     {"Ideal",{cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdManeuver}},
@@ -313,9 +347,9 @@ private:
                                                      {"No Change",""}};
     const QHash<QString,QString> actCmdsHashConst = {{"No Change",""}};
 
-    QHash<QString,QString> trnCmdsHash = trnCmdsHashConst;
-    QHash<QString,QString> attCmdsHash = attCmdsHashConst;
-    QHash<QString,QString> actCmdsHash = actCmdsHashConst;
+    QHash<QString,QString> trnCmdsHash;
+    QHash<QString,QString> attCmdsHash;
+    QHash<QString,QString> actCmdsHash;
     QHash<QString,QString> attSVCmdsHash;
     QHash<QString,QString> ctlsHash;
     QHash<QString,QString> gainsHash;
