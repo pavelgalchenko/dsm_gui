@@ -47,6 +47,8 @@ private slots:
 
     void cmd_data_changed();
     void cmd_act_data_changed();
+    void gain_data_changed();
+    void lim_data_changed();
 
     void on_cmdController_textActivated(const QString &arg1);
 
@@ -86,6 +88,64 @@ private slots:
 
     void on_cmdTimeRemove_clicked();
 
+    void on_actList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
+    void on_actType_textActivated(const QString &arg1);
+
+    void on_actLabel_textEdited(const QString &arg1);
+
+    void on_actRemove_clicked();
+
+    void on_actAdd_clicked();
+
+    void on_actDuplicate_clicked();
+
+    void populate_cmdtl_dropdowns(int cmdType);
+    void populate_cmd_dropdowns();
+    void populate_ctrl_dropdowns();
+
+    void on_cmdConfigTree_itemChanged(QTreeWidgetItem *item, int column);
+
+    void on_ctrlConfigTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);
+
+    void on_ctrlConfigTree_itemChanged(QTreeWidgetItem *item, int column);
+
+    void on_ctrlType_textActivated(const QString &arg1);
+
+    void on_ctrlLabel_textEdited(const QString &arg1);
+
+    void on_ctrlGains_textActivated(const QString &arg1);
+
+    void on_ctrlLims_textActivated(const QString &arg1);
+
+    void on_ctrlRemove_clicked();
+
+    void on_ctrlAdd_clicked();
+
+    void on_ctrlDuplicate_clicked();
+
+    void on_gainList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
+    void on_gainType_textActivated(const QString &arg1);
+
+    void on_gainLabel_textEdited(const QString &arg1);
+
+    void on_gainRemove_clicked();
+
+    void on_gainAdd_clicked();
+
+    void on_gainDuplicate_clicked();
+
+    void on_limList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
+    void on_limLabel_textEdited(const QString &arg1);
+
+    void on_limRemove_clicked();
+
+    void on_limAdd_clicked();
+
+    void on_limDuplicate_clicked();
+
 private:
     Ui::DSM_Menu *ui;
 
@@ -105,6 +165,9 @@ private:
 
     QPalette okTextPalette;
     QPalette badTextPalette;
+
+    QBrush okTextBrush;
+    QBrush badTextBrush;
 
 
     /* Change these enums to change the column order in the QTreeWidgets */
@@ -290,6 +353,11 @@ private:
                                                         {"MomentumDump",    {"H_DUMP_CNTRL"}},
                                                         {"FC_LYA",          {"LYA_ATT_CNTRL","LYA_2BODY_CNTRL"}}};
 
+    QHash<QString,QStringList> ctrlValidGains = {   {"PID_CNTRL",{}},
+                                                    {"LYA_ATT_CNTRL",{}},
+                                                    {"LYA_2BODY_CNTRL",{}},
+                                                    {"H_DUMP_CNTRL",{}}};
+
     /* START HATE */
     // This....
     // I hate this...
@@ -323,6 +391,7 @@ private:
                                             {cmdWhlHManage,{}},
                                             {cmdAct,{}},
                                             {cmdManeuver,{}}};
+
     /* END HATE */
 
     enum limData {

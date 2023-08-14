@@ -44,7 +44,8 @@ QStringList dsm_gui_lib::sortStringList(QStringList unsorted) {
 
 QStringList dsm_gui_lib::getTextFromList(QListWidget *list){
     QStringList output;
-    foreach(QListWidgetItem *item, list->findItems("*",Qt::MatchWildcard))
+    QList<QListWidgetItem*> listItems = list->findItems("*",Qt::MatchWildcard);
+    for (QListWidgetItem *item : listItems)
         output << item->text();
     output.sort(Qt::CaseInsensitive);
     return output;
