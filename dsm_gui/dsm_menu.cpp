@@ -411,11 +411,10 @@ void DSM_Menu::receive_data() {
     populate_cmdtl_dropdowns(cmdTypes::cmdTrn);
     populate_cmdtl_dropdowns(cmdTypes::cmdAtt);
     populate_cmdtl_dropdowns(cmdTypes::cmdAct);
+    populate_ctrl_dropdowns();
 
     ui->cmdManLimits->clear();
     ui->cmdManLimits->addItems(dsm_gui_lib::sortStringList(limsHash.keys()));
-    ui->ctrlLims->clear();
-    ui->ctrlLims->addItems(dsm_gui_lib::sortStringList(limsHash.keys()));
 
     ui->cmdTimelineTree->sortByColumn(tlCols::tlColSC,Qt::AscendingOrder);
     ui->cmdTimelineTree->sortByColumn(tlCols::tlColTime,Qt::AscendingOrder);
@@ -627,6 +626,13 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         newTreeItem = new QTreeWidgetItem(ui->cmdTimelineTree);
         match = rxCmdParse.match(itemData);
         dataSplit = match.captured(2).split(QRegExp("\\s"),Qt::SkipEmptyParts);
+        if (itemNum >= scNames.length()) {
+            dsm_gui_lib::error_message("More Spacecraft in \"Inp_DSM.txt\" than in \"Inp_Sim.txt\".");
+            dsm_gui_lib::inexplicable_error_message();
+            DSM_Menu::close();
+            return; // won't get here, realistically
+        }
+
         newTreeItem->setText(tlCols::tlColSC,scNames[itemNum]);
         newTreeItem->setData(tlCols::tlColTime,Qt::DisplayRole,match.captured(1).toDouble());
         newTreeItem->setTextAlignment(tlCols::tlColTime,Qt::AlignRight);
@@ -1769,8 +1775,6 @@ void DSM_Menu::timeline_data_changed() {
         curItem->setText(tlCols::tlColAtt,attCmd);
     }
 
-
-
 }
 
 void DSM_Menu::validate_sv_cmds(QString curAttCmd) {
@@ -2179,11 +2183,15 @@ void DSM_Menu::on_ctrlConfigTree_itemChanged(QTreeWidgetItem *item, int column) 
 
     switch (column) {
     case ctrlCols::ctrlColGains:
-        checkItem = ui->gainList->findItems(item->text(ctrlCols::ctrlColGains),Qt::MatchExactly).at(0);
+        checkItem = ui->gainList->findItems(item->text(column),Qt::MatchExactly).at(0);
         if (allowableGains[ctrlType].contains(checkItem->data(gainsData::gainsType).toString()))
-            item->setBackground(ctrlCols::ctrlColGains,okTextBrush);
+            item->setBackground(column,okTextBrush);
         else
-            item->setBackground(ctrlCols::ctrlColGains,badTextBrush);
+            item->setBackground(column,badTextBrush);
+        break;
+    case ctrlCols::ctrlColLims:
+        if (!item->text(column).isEmpty())
+            item->setBackground(column,okTextBrush);
         break;
     default:
         break;
@@ -2575,7 +2583,7 @@ void DSM_Menu::on_gainLabel_textEdited(const QString &arg1) {
     QString value = entryItemFormat(dsmSectionTypes::GAINS).arg(itemNum);
     QString oldKey = gainsHash.key(value);
 
-    if (arg1.isEmpty() || gainsHash.keys().contains(oldKey)) {
+    if (arg1.isEmpty() || gainsHash.keys().contains(arg1)) {
         ui->gainLabel->setPalette(badTextPalette);
         return;
     }
@@ -2677,6 +2685,12 @@ void DSM_Menu::on_gainDuplicate_clicked() {
 
 void DSM_Menu::populate_ctrl_dropdowns() {
     QTreeWidgetItem *curCtrl = ui->ctrlConfigTree->currentItem();
+
+    ui->ctrlLims->clear();
+    QStringList lims = dsm_gui_lib::getTextFromList(ui->limList);
+    lims.sort();
+    ui->ctrlLims->addItems(lims);
+
     if (curCtrl!=NULL) {
         ui->ctrlGains->clear();
         QStringList validGains = ctrlValidGains[curCtrl->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString()];
@@ -2684,10 +2698,6 @@ void DSM_Menu::populate_ctrl_dropdowns() {
         ui->ctrlGains->addItems(validGains);
         setQComboBox(ui->ctrlGains,curCtrl->text(ctrlCols::ctrlColGains));
 
-        ui->ctrlLims->clear();
-        QStringList lims = dsm_gui_lib::getTextFromList(ui->limList);
-        lims.sort();
-        ui->ctrlLims->addItems(lims);
         setQComboBox(ui->ctrlLims,curCtrl->text(ctrlCols::ctrlColLims));
     }
 
@@ -2880,7 +2890,7 @@ void DSM_Menu::on_applyButton_clicked() {
             ui->cmdTimelineTree->sortByColumn(tlCols::tlColSC,Qt::AscendingOrder);
             ui->cmdTimelineTree->sortByColumn(tlCols::tlColTime,Qt::AscendingOrder);
             treeItems = ui->cmdTimelineTree->findItems("*",Qt::MatchWildcard,tlCols::tlColSC);
-            label = format+cmdDataSpacer+"%2";
+            label = format+cmdDataSpacer+"CmdTime"+cmdDataSpacer+"%2";
 
             for (QTreeWidgetItem *cmdItem : qAsConst(treeItems)) {
                 dataList.clear();
@@ -2986,7 +2996,7 @@ void DSM_Menu::on_applyButton_clicked() {
                 dataList.clear();
                 label = item->text();
                 dataList.append(actsHash[label]);
-                dataList.append(actTypes.key(item->data(actData::actType).toString()));
+                dataList.append(item->data(actData::actType).toString());
 
                 dataList.append(labelMkr);
                 dataList.append(label);
@@ -3001,7 +3011,7 @@ void DSM_Menu::on_applyButton_clicked() {
                 dataList.clear();
                 label = item->text();
                 dataList.append(gainsHash[label]);
-                dataList.append(gainsTypes.key(item->data(gainsData::gainsType).toString()));
+                dataList.append(item->data(gainsData::gainsType).toString());
                 dataList.append(item->data(gainsData::gainsData).toString());
 
                 dataList.append(labelMkr);
@@ -3011,7 +3021,7 @@ void DSM_Menu::on_applyButton_clicked() {
             }
             break;
         case dsmSectionTypes::LIMITS:
-            listItems = ui->actList->findItems("*",Qt::MatchWildcard);
+            listItems = ui->limList->findItems("*",Qt::MatchWildcard);
             for (QListWidgetItem *item : qAsConst(listItems)) {
                 dataList.clear();
                 label = item->text();
