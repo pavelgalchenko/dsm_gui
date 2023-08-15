@@ -30,7 +30,6 @@ private slots:
     void set_validators();
     void receive_dsmpath(QString);
     void receive_data();
-    void apply_data();
     void write_data();
 
     void set_command_ctrl_act(QTreeWidgetItem*,const QString, QStringList*);
@@ -145,6 +144,8 @@ private slots:
     void on_limAdd_clicked();
 
     void on_limDuplicate_clicked();
+
+    void on_applyButton_clicked();
 
 private:
     Ui::DSM_Menu *ui;

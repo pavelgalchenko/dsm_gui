@@ -11,7 +11,7 @@
 
 # SWARM Demo
 
-DSM_Cmd   SC[0]   CmdTime   0.0     NUM_CMD[2]    PASSIVE_ATT    QuaternionCmd_[0]
+DSM_Cmd   SC[0]   CmdTime   0.0     NUM_CMD[2]    PASSIVE_TRN    QuaternionCmd_[0]
 
 DSM_Cmd   SC[0]   CmdTime   60.0     NUM_CMD[1]    AttitudeCmd_PV[0]_SV[0]
 

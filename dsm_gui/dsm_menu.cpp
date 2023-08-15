@@ -221,7 +221,6 @@ void DSM_Menu::receive_dsmpath(QString path) {
     filePath = inoutPath+"Inp_DSM.txt";
 
     receive_data();
-    apply_data();
 }
 
 void DSM_Menu::receive_data() {
@@ -331,10 +330,6 @@ void DSM_Menu::receive_data() {
     ui->cmdManLimits->addItems(dsm_gui_lib::sortStringList(limsHash.keys()));
     ui->ctrlLims->clear();
     ui->ctrlLims->addItems(dsm_gui_lib::sortStringList(limsHash.keys()));
-
-}
-
-void DSM_Menu::apply_data() {
 
 }
 
@@ -602,6 +597,8 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
                     }
                 }
             }
+            else
+                label = "Passive";
             newTreeItem->setText(writeCol,label);
         }
         ui->cmdTimelineTree->addTopLevelItem(newTreeItem);
@@ -1359,7 +1356,6 @@ void DSM_Menu::on_saveDefaultButton_clicked() {
         QFile::copy(inoutPath+"__default__/Inp_DSM.txt", filePath);
 
         receive_data();
-        apply_data();
     }
     else return;
 }
@@ -2775,6 +2771,212 @@ void DSM_Menu::on_limDuplicate_clicked() {
 
 
 
+
+}
+
+
+void DSM_Menu::on_applyButton_clicked() {
+    static QRegularExpression rxPV("^((?(?=.*"+QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+".*).*(?="
+                                   +QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+")|.*))");
+    static QRegularExpression rxSV(QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+"(.*)$");
+
+    dsmUpdate.append("<<<<<<<<<<<<<<<<<<<<<<<<  42:  DSM Command Script File  >>>>>>>>>>>>>>>>>>>>>>>>");
+
+    // write to file in reverse search order
+    for (auto i = searchOrd.crbegin(); i!= searchOrd.crend(); i++) {
+        dsmSectionTypes type = *i;
+        dsmUpdate.append(secDescription(type));
+        dsmUpdate.append("");
+
+        QRegularExpressionMatch match;
+        QList<QTreeWidgetItem*> treeItems, checkItems;
+        QTreeWidgetItem *treeItem,*parent,*checkItem;
+        QList<QListWidgetItem*> listItems;
+        QListWidgetItem* listItem;
+        QString format = entryItemFormat(type);
+        QStringList dataList, tmpList;
+        QString data,tmp,label;
+        int num, cmdType;
+
+        switch (type) {
+        case dsmSectionTypes::COMMANDS:
+            ui->cmdTimelineTree->sortByColumn(tlCols::tlColSC,Qt::AscendingOrder);
+            ui->cmdTimelineTree->sortByColumn(tlCols::tlColTime,Qt::AscendingOrder);
+            treeItems = ui->cmdTimelineTree->findItems("*",Qt::MatchWildcard,tlCols::tlColSC);
+
+            for (QTreeWidgetItem *cmdItem : qAsConst(treeItems)) {
+                dataList.clear();
+                dataList.append(format.arg(scNames.indexOf(cmdItem->text(tlCols::tlColSC))));
+                dataList.append(cmdItem->data(tlCols::tlColTime,Qt::DisplayRole).toString());
+
+                num = 0;
+                tmpList.clear();
+                if (!cmdItem->text(tlCols::tlColTrn).isEmpty()) {
+                    num++;
+                    data = cmdItem->text(tlCols::tlColTrn);
+                    tmpList.append(trnCmdsHash[data]);
+                }
+                if (!cmdItem->text(tlCols::tlColAtt).isEmpty()) {
+                    num++;
+                    tmp.clear();
+                    data = rxPV.match(cmdItem->text(tlCols::tlColAtt)).captured(1);
+                    tmp.append(attCmdsHash[data]);
+                    data = rxSV.match(cmdItem->text(tlCols::tlColAtt)).captured(1);
+                    if (!data.isEmpty()) {
+                        checkItems = ui->cmdConfigTree->findItems(data,Qt::MatchExactly|Qt::MatchRecursive,cmdCols::cmdColLabel);
+                        for (QTreeWidgetItem *checkItem : qAsConst(checkItems)) {
+                            cmdType = entryCmdParents.key(checkItem->parent());
+                            if (cmdType==cmdTypes::cmdSV) {
+                                tmp.append("_SV["+checkItem->data(cmdCols::cmdColLabel,cmdData::cmdNum).toString()+"]");
+                                break;
+                            }
+                        }
+
+                    }
+                    tmpList.append(tmp);
+                }
+                if (!cmdItem->text(tlCols::tlColAct).isEmpty()) {
+                    num++;
+                    data = cmdItem->text(tlCols::tlColAct);
+                    tmpList.append(actCmdsHash[data]);
+                }
+                dataList.append("NUM_CMD["+QString::number(num)+"]");
+                dataList.append(tmpList);
+                if (num>0)
+                    dsmUpdate.append(dataList.join(cmdDataSpacer));
+            }
+            dsmUpdate.append("");
+            dsmUpdate.append("End_Of_File");
+            break;
+        case dsmSectionTypes::CONTROLLERS:
+            treeItems = ui->ctrlConfigTree->findItems("*",Qt::MatchWildcard,ctrlCols::ctrlColLabel);
+
+            for (QTreeWidgetItem *ctrlItem: qAsConst(treeItems)) {
+                dataList.clear();
+
+                label = ctrlItem->text(ctrlCols::ctrlColLabel);
+                dataList.append(ctlsHash[label]);
+                dataList.append(ctrlTypes.key(ctrlItem->text(ctrlCols::ctrlColType)));
+
+                data = ctrlItem->text(ctrlCols::ctrlColGains);
+                if (data.isEmpty()) {
+                    dsm_gui_lib::error_message("Gains are missing for Controller: "+label);
+                    dsmUpdate.clear();
+                    return;
+                }
+
+                listItem = ui->gainList->findItems(data,Qt::MatchExactly).at(0);
+                dataList.append(entryItemFormat(dsmSectionTypes::GAINS).arg(listItem->data(gainsData::gainsNum).toInt()));
+
+                data = ctrlItem->text(ctrlCols::ctrlColLims);
+                if (data.isEmpty()) {
+                    dsm_gui_lib::error_message("Limits are missing for Controller: "+label);
+                    dsmUpdate.clear();
+                    return;
+                }
+                listItem = ui->limList->findItems(data,Qt::MatchExactly).at(0);
+                dataList.append(entryItemFormat(dsmSectionTypes::LIMITS).arg(listItem->data(limData::limNum).toInt()));
+
+                dataList.append("#");
+                dataList.append(label);
+
+                dsmUpdate.append(dataList.join(cmdDataSpacer));
+            }
+
+            break;
+        case dsmSectionTypes::ACTUATORS:
+            listItems = ui->actList->findItems("*",Qt::MatchWildcard);
+            for (QListWidgetItem *item : qAsConst(listItems)) {
+                dataList.clear();
+                label = item->text();
+                dataList.append(actsHash[label]);
+                dataList.append(actTypes.key(item->data(actData::actType).toString()));
+
+                dataList.append("#");
+                dataList.append(label);
+
+                dsmUpdate.append(dataList.join(cmdDataSpacer));
+            }
+
+            break;
+        case dsmSectionTypes::GAINS:
+            listItems = ui->gainList->findItems("*",Qt::MatchWildcard);
+            for (QListWidgetItem *item : qAsConst(listItems)) {
+                dataList.clear();
+                label = item->text();
+                dataList.append(gainsHash[label]);
+                dataList.append(gainsTypes.key(item->data(gainsData::gainsType).toString()));
+                dataList.append(item->data(gainsData::gainsData).toString());
+
+                dataList.append("#");
+                dataList.append(label);
+
+                dsmUpdate.append(dataList.join(cmdDataSpacer));
+            }
+            break;
+        case dsmSectionTypes::LIMITS:
+            listItems = ui->actList->findItems("*",Qt::MatchWildcard);
+            for (QListWidgetItem *item : qAsConst(listItems)) {
+                dataList.clear();
+                label = item->text();
+                dataList.append(limsHash[label]);
+                dataList.append(item->data(limData::limData).toString());
+
+                dataList.append("#");
+                dataList.append(label);
+
+                dsmUpdate.append(dataList.join(cmdDataSpacer));
+            }
+            break;
+        default: // handle commands
+            cmdType = section2Cmd[type];
+            parent = entryCmdParents[cmdType];
+            for (int i = 0; i<parent->childCount(); i++) {
+                treeItem = parent->child(i);
+                dataList.clear();
+
+                label = treeItem->text(cmdCols::cmdColLabel);
+                dataList.append(format.arg(treeItem->data(cmdCols::cmdColLabel,cmdData::cmdNum).toInt()));
+                dataList.append(treeItem->text(cmdCols::cmdColData));
+
+                data = treeItem->text(cmdCols::cmdColCtl);
+                if (treeItem->background(cmdCols::cmdColCtl)==badTextBrush) {
+                    dsm_gui_lib::error_message("Command """+label+""" has invalid Controller: "+data);
+                    dsmUpdate.clear();
+                    return;
+                }
+                if (!data.isEmpty()) {
+                    checkItem = ui->ctrlConfigTree->findItems(data,Qt::MatchExactly,ctrlCols::ctrlColLabel).at(0);
+                    dataList.append(entryItemFormat(dsmSectionTypes::CONTROLLERS).arg(checkItem->data(ctrlCols::ctrlColLabel,ctrlData::ctrlNum).toInt()));
+                }
+
+                data = treeItem->text(cmdCols::cmdColAct);
+                if (treeItem->background(cmdCols::cmdColCtl)==badTextBrush) {
+                    dsm_gui_lib::error_message("Command """+label+""" has invalid Actuator: "+data);
+                    dsmUpdate.clear();
+                    return;
+                }
+                if (!data.isEmpty()) {
+                    listItem = ui->actList->findItems(data,Qt::MatchExactly).at(0);
+                    dataList.append(entryItemFormat(dsmSectionTypes::ACTUATORS).arg(listItem->data(actData::actNum).toInt()));
+                }
+
+                dataList.append("#");
+                dataList.append(label);
+
+                dsmUpdate.append(dataList.join(cmdDataSpacer));
+            }
+            break;
+        }
+        dsmUpdate.append("");
+    }
+
+    dsmUpdate.append("");
+    dsmUpdate.append("EOF");
+
+    for (int i =0; i<dsmUpdate.length(); i++)
+        dsmUpdate[i].append("\n");
+    write_data();
 
 }
 
