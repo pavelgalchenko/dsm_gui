@@ -50,13 +50,13 @@ void SPC_submenu::set_validators()
     // Joints
     ui->spc_cur_joint_type->addItems(dsm_gui_lib::sortStringList(joint_type));
 
-    ui->spc_cur_joint_rotdof_seq->addItems(dsm_gui_lib::sortStringList(euler_seq));
+    ui->spc_cur_joint_rotdof_seq->addItems(dsm_gui_lib::eulerInputs);
     ui->spc_cur_joint_rottype->addItems(dsm_gui_lib::sortStringList(rot_joint_seqtype));
 
-    ui->spc_cur_joint_bigi_seq->addItems(dsm_gui_lib::sortStringList(euler_seq));
-    ui->spc_cur_joint_bogo_seq->addItems(dsm_gui_lib::sortStringList(euler_seq));
+    ui->spc_cur_joint_bigi_seq->addItems(dsm_gui_lib::eulerInputs);
+    ui->spc_cur_joint_bogo_seq->addItems(dsm_gui_lib::eulerInputs);
 
-    ui->spc_cur_joint_trndof_seq->addItems(dsm_gui_lib::sortStringList(euler_seq));
+    ui->spc_cur_joint_trndof_seq->addItems(dsm_gui_lib::eulerInputs);
 
     // Wheels - N/A
     // MTBs - N/A
@@ -67,11 +67,11 @@ void SPC_submenu::set_validators()
     // Magnetometer - N/A
     // CSS - N/A
     // FSS
-    ui->spc_cur_fss_mountseq->addItems(dsm_gui_lib::sortStringList(euler_seq));
+    ui->spc_cur_fss_mountseq->addItems(dsm_gui_lib::eulerInputs);
     ui-> spc_cur_fss_boreaxis->addItems(dsm_gui_lib::sortStringList(axis));
 
     // Star Tracker
-    ui->spc_cur_strack_mountseq->addItems(dsm_gui_lib::sortStringList(euler_seq));
+    ui->spc_cur_strack_mountseq->addItems(dsm_gui_lib::eulerInputs);
     ui->spc_cur_strack_boreaxis->addItems(dsm_gui_lib::sortStringList(axis));
 
     // No more in following sections

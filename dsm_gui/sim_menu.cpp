@@ -46,7 +46,7 @@ void SIM_Menu::set_validators() {
 
     ui->simEphem->addItems(dsm_gui_lib::sortStringList(ephemInputs.values()));
 
-    ui->simGSWorld->addItems(worldInputs);
+    ui->simGSWorld->addItems(dsm_gui_lib::worldInputs);
     ui->simGSLong->setValidator(new QDoubleValidator);
     ui->simGSLat->setValidator(new QDoubleValidator);
     ui->simGSLabel->setValidator(noQuotes);

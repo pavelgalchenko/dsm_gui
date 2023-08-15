@@ -100,14 +100,14 @@ void DSM_Menu::set_validators() {
     ui->cmdPvTgtAxisFrm->clear();
     ui->cmdPvTgtAxisFrm->addItems(dsm_gui_lib::sortStringList(cmdAttTgtFrm.values()));
     ui->cmdPvTgtWld->clear();
-    ui->cmdPvTgtWld->addItems(dsm_gui_lib::sortStringList(worldInputs));
+    ui->cmdPvTgtWld->addItems(dsm_gui_lib::sortStringList(dsm_gui_lib::worldInputs));
 
     ui->cmdSvTgtType->clear();
     ui->cmdSvTgtType->addItems(dsm_gui_lib::sortStringList(cmdAttTgtTypes.values()));
     ui->cmdSvTgtAxisFrm->clear();
     ui->cmdSvTgtAxisFrm->addItems(dsm_gui_lib::sortStringList(cmdAttTgtFrm.values()));
     ui->cmdSvTgtWld->clear();
-    ui->cmdSvTgtWld->addItems(dsm_gui_lib::sortStringList(worldInputs));
+    ui->cmdSvTgtWld->addItems(dsm_gui_lib::sortStringList(dsm_gui_lib::worldInputs));
 
     ui->cmdQuatFrm->clear();
     ui->cmdQuatFrm->addItems(dsm_gui_lib::sortStringList(cmdTrnFrmConst.values()));
@@ -121,7 +121,10 @@ void DSM_Menu::set_validators() {
     ui->cmdConfigTree->setHeaderLabels(cmdColNames.values());
     ui->ctrlConfigTree->setHeaderLabels(ctrlColNames.values());
 
-    ui->cmdConfigTree->hideColumn(cmdCols::cmdColInd); // Hide this for now, I don't think this needs to be user facing
+    // Hide this for now, I don't think this needs to be user facing
+    // can use them for sorthing, though.
+    ui->cmdConfigTree->hideColumn(cmdCols::cmdColInd);
+    ui->ctrlConfigTree->hideColumn(ctrlCols::ctrlColInd);
 
     for (int i=0; i<ui->cmdConfigurator->count(); i++)
         ui->cmdConfigurator->setTabVisible(i,false);
@@ -167,6 +170,7 @@ void DSM_Menu::set_validators() {
         }
         if (newItem!=NULL) {
             newItem->setFirstColumnSpanned(true);
+            newItem->setData(cmdCols::cmdColLabel,cmdData::cmdType,section2Cmd[type]);
             entryCmdParents[section2Cmd[type]]=newItem;
             parent->addTopLevelItem(newItem);
         }
@@ -293,8 +297,6 @@ void DSM_Menu::receive_data() {
     static QRegularExpression rxSC("SC_(.*).txt");
 
     ui->cmdTimelineTree->clear();
-    dsmData.clear();
-    dsmString.clear();
     dsmUpdate.clear();
     scNames.clear();
     ui->cmdSC->clear();
@@ -368,14 +370,13 @@ void DSM_Menu::receive_data() {
         }
     }
     simFile.close();
-    scNames.sort();
 
-    ui->cmdSC->addItems(scNames);
-    ui->cmdTrnOri->addItems(scNames);
-    ui->cmdTrnFrm->addItems(scNames);
-    ui->cmdPvTgtSc->addItems(scNames);
-    ui->cmdSvTgtSc->addItems(scNames);
-    ui->cmdMirrorTgt->addItems(scNames);
+    ui->cmdSC->addItems(dsm_gui_lib::sortStringList(scNames));
+    ui->cmdTrnOri->addItems(dsm_gui_lib::sortStringList(scNames));
+    ui->cmdTrnFrm->addItems(dsm_gui_lib::sortStringList(scNames));
+    ui->cmdPvTgtSc->addItems(dsm_gui_lib::sortStringList(scNames));
+    ui->cmdSvTgtSc->addItems(dsm_gui_lib::sortStringList(scNames));
+    ui->cmdMirrorTgt->addItems(dsm_gui_lib::sortStringList(scNames));
 
 
     QFile dsmFile(filePath);
@@ -429,6 +430,9 @@ void DSM_Menu::receive_data() {
 
     ui->cmdTimelineTree->sortByColumn(tlCols::tlColSC,Qt::AscendingOrder);
     ui->cmdTimelineTree->sortByColumn(tlCols::tlColTime,Qt::AscendingOrder);
+    ui->cmdConfigTree->sortByColumn(cmdCols::cmdColLabel,Qt::AscendingOrder);
+    ui->cmdConfigTree->sortByColumn(cmdCols::cmdColInd,Qt::AscendingOrder);
+    ui->ctrlConfigTree->sortByColumn(ctrlCols::ctrlColLabel,Qt::AscendingOrder);
 }
 
 void DSM_Menu::write_data() {
@@ -668,7 +672,7 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
                     searchNum = match.captured(1).toInt();
                     for (int i=0; i<treeParentItem->childCount(); i++) {
                         treeItem = treeParentItem->child(i);
-                        if (treeItem->data(cmdCols::cmdColLabel,cmdData::cmdNum)==searchNum) {
+                        if (treeItem->data(cmdCols::cmdColInd,cmdData::cmdNum)==searchNum) {
                             label = treeItem->text(cmdCols::cmdColLabel);
                             break;
                         }
@@ -684,7 +688,7 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
 
                         for (int i=0; i<treeParentItem->childCount(); i++) {
                             treeItem = treeParentItem->child(i);
-                            if (treeItem->data(cmdCols::cmdColLabel,cmdData::cmdNum)==searchNum) {
+                            if (treeItem->data(cmdCols::cmdColInd,cmdData::cmdNum)==searchNum) {
                                 label.append(treeItem->text(cmdCols::cmdColLabel));
                                 break;
                             }
@@ -705,8 +709,8 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
 
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
-        newTreeItem->setData(cmdCols::cmdColLabel,cmdData::cmdNum,itemNum);
-        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+        newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
+//        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
         newTreeItem->setText(cmdCols::cmdColData, dataSplit.join(cmdDataSpacer));
 
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
@@ -716,8 +720,8 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
 
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
-        newTreeItem->setData(cmdCols::cmdColLabel,cmdData::cmdNum,itemNum);
-        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+        newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
+//        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
         newTreeItem->setText(cmdCols::cmdColData,dataSplit.join(cmdDataSpacer));
 
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
@@ -726,8 +730,8 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         attSVCmdsHash.insert(label, entryItemFormat(type).arg(itemNum));
 
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
-        newTreeItem->setData(cmdCols::cmdColLabel,cmdData::cmdNum,itemNum);
-        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+        newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
+//        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
         newTreeItem->setText(cmdCols::cmdColData, dataSplit.join(cmdDataSpacer));
 
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
@@ -737,8 +741,8 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
 
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
-        newTreeItem->setData(cmdCols::cmdColLabel,cmdData::cmdNum,itemNum);
-        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+        newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
+//        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
         newTreeItem->setText(cmdCols::cmdColData, dataSplit.join(cmdDataSpacer));
 
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
@@ -748,8 +752,8 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
 
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
-        newTreeItem->setData(cmdCols::cmdColLabel,cmdData::cmdNum,itemNum);
-        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+        newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
+//        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
         newTreeItem->setText(cmdCols::cmdColData, dataSplit.join(cmdDataSpacer));
 
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
@@ -759,8 +763,8 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
 
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
-        newTreeItem->setData(cmdCols::cmdColLabel,cmdData::cmdNum,itemNum);
-        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+        newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
+//        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
 
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
         break;
@@ -770,8 +774,8 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
 
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
-        newTreeItem->setData(cmdCols::cmdColLabel,cmdData::cmdNum,itemNum);
-        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+        newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
+//        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
         newTreeItem->setText(cmdCols::cmdColData, dataSplit.join(cmdDataSpacer));
 
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
@@ -781,8 +785,8 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
 
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
 //        newTreeItem->setData(0,cmdData::cmdType,section2Cmd[type]);
-        newTreeItem->setData(cmdCols::cmdColLabel,cmdData::cmdNum,itemNum);
-        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+        newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
+//        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
         newTreeItem->setText(cmdCols::cmdColData, dataSplit.join(cmdDataSpacer));
 
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
@@ -791,7 +795,7 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         ctlsHash.insert(label, entryItemFormat(type).arg(itemNum));
 
         newTreeItem = new QTreeWidgetItem(ui->ctrlConfigTree,{label});
-        newTreeItem->setData(ctrlCols::ctrlColLabel,ctrlData::ctrlNum,itemNum);
+        newTreeItem->setData(ctrlCols::ctrlColInd,ctrlData::ctrlNum,itemNum);
         newTreeItem->setData(ctrlCols::ctrlColLabel,ctrlData::ctrlType,dataSplit[0]);
         newTreeItem->setText(ctrlCols::ctrlColType,ctrlTypes[dataSplit[0]]);
 
@@ -866,8 +870,8 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
                 break;
             }
         }
-        newTreeItem->setData(cmdCols::cmdColLabel,cmdData::cmdNum,itemNum);
-        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+        newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
+//        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
         newTreeItem->setText(cmdCols::cmdColData, dataSplit.join(cmdDataSpacer));
 
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
@@ -893,7 +897,7 @@ void DSM_Menu::set_command_ctrl_act(QTreeWidgetItem *item, const QString dataStr
     searchNum = match.captured(1).toInt();
     QList<QTreeWidgetItem*> treeItems = ui->ctrlConfigTree->findItems("*",Qt::MatchWildcard);
     foreach (QTreeWidgetItem *treeItem, treeItems) {
-        if (treeItem->data(ctrlCols::ctrlColLabel,ctrlData::ctrlNum)==searchNum) {
+        if (treeItem->data(ctrlCols::ctrlColInd,ctrlData::ctrlNum)==searchNum) {
             dataList->takeAt(dataList->indexOf(match.captured(0)));
             item->setText(cmdCols::cmdColCtl,treeItem->text(0));
             break;
@@ -1087,7 +1091,7 @@ void DSM_Menu::cmd_data_changed() {
     QStringList checkList;
     double checkSum;
 
-    switch (entryCmdParents.key(curItem->parent())) {
+    switch (curItem->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt()) {
         case cmdTrn:
             cmdData.append(ui->cmdTrnX->text());
             cmdData.append(ui->cmdTrnY->text());
@@ -1206,7 +1210,7 @@ void DSM_Menu::on_cmdLabel_textEdited(const QString &arg1) {
         return;
 
     int itemNum = curItem->data(cmdCols::cmdColInd,Qt::DisplayRole).toInt();
-    int cmdType = entryCmdParents.key(curItem->parent());
+    int cmdType = curItem->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
     int checkCol;
     QString value = entryItemFormat(section2Cmd.key(cmdType)).arg(itemNum);
     QComboBox *checkBox;
@@ -1297,7 +1301,7 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
     ui->cmdLabelLabel->setEnabled(true);
 
 
-    int cmdType = entryCmdParents.key(item->parent());
+    int cmdType = item->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
     QString cmdData = item->text(cmdColData);
     QStringList cmdDataSplit = cmdData.split(QRegExp("\\s"),Qt::SkipEmptyParts);
     static QRegularExpression rxScBdy("SC\\[([0-9]+)](?(?=\\.B\\[[0-9]+])\\.B\\[([0-9]+)])");
@@ -1488,7 +1492,7 @@ void DSM_Menu::on_cmdAdd_clicked() {
 
     QList<int> usedCmdInds;
     for (int i=0; i<newCmdTypeParent->childCount(); i++)
-        usedCmdInds.append(newCmdTypeParent->child(i)->data(cmdCols::cmdColLabel,cmdData::cmdNum).toInt());
+        usedCmdInds.append(newCmdTypeParent->child(i)->data(cmdCols::cmdColInd,cmdData::cmdNum).toInt());
 
     int newCmdInd;
     for (newCmdInd=0; newCmdInd<5e3; newCmdInd++)
@@ -1509,7 +1513,7 @@ void DSM_Menu::on_cmdAdd_clicked() {
             return;
         }
         tmpCtrlItems = ui->ctrlConfigTree->findItems(cmdValidCtrls[cmdType].first(),Qt::MatchExactly,cmdCols::cmdColLabel);
-        ctrlName = entryItemFormat(dsmSectionTypes::CONTROLLERS).arg(tmpCtrlItems.first()->data(cmdCols::cmdColLabel,cmdData::cmdNum).toInt());
+        ctrlName = entryItemFormat(dsmSectionTypes::CONTROLLERS).arg(tmpCtrlItems.first()->data(cmdCols::cmdColInd,cmdData::cmdNum).toInt());
     }
     else if (attCmds.contains(cmdType)) {
         if (cmdValidCtrls[cmdType].isEmpty()) {
@@ -1517,7 +1521,7 @@ void DSM_Menu::on_cmdAdd_clicked() {
             return;
         }
         tmpCtrlItems = ui->ctrlConfigTree->findItems(cmdValidCtrls[cmdType].first(),Qt::MatchExactly,cmdCols::cmdColLabel);
-        ctrlName = entryItemFormat(dsmSectionTypes::CONTROLLERS).arg(tmpCtrlItems.first()->data(cmdCols::cmdColLabel,cmdData::cmdNum).toInt());
+        ctrlName = entryItemFormat(dsmSectionTypes::CONTROLLERS).arg(tmpCtrlItems.first()->data(cmdCols::cmdColInd,cmdData::cmdNum).toInt());
     }
 
     if (trnCmds.contains(cmdType)) {
@@ -1618,7 +1622,7 @@ void DSM_Menu::on_cmdDuplicate_clicked() {
     QStringList curLabels;
     for (int i=0; i<curItem->parent()->childCount(); i++) {
         curLabels.append(curItem->parent()->child(i)->text(cmdCols::cmdColLabel));
-        usedCmdInds.append(curItem->parent()->child(i)->data(cmdCols::cmdColLabel,cmdData::cmdNum).toInt());
+        usedCmdInds.append(curItem->parent()->child(i)->data(cmdCols::cmdColInd,cmdData::cmdNum).toInt());
     }
 
     int newCmdInd;
@@ -1647,7 +1651,7 @@ void DSM_Menu::on_cmdDuplicate_clicked() {
 
 //    QTreeWidgetItem *newItem = curItem->clone();
 //    newItem->setText(cmdCols::cmdColLabel,newLabel);
-//    newItem->setData(cmdCols::cmdColLabel,cmdData::cmdNum,newCmdInd);
+//    newItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,newCmdInd);
 //    newItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,newCmdInd);
 //    curItem->parent()->addChild(newItem);
 }
@@ -1997,7 +2001,7 @@ void DSM_Menu::on_cmdConfigTree_itemChanged(QTreeWidgetItem *item, int column) {
     if (item == NULL || item->parent() == NULL)
         return;
 
-    int cmdType = entryCmdParents.key(item->parent());
+    int cmdType = item->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
 
     QString text = item->text(column);
 
@@ -2144,7 +2148,7 @@ void DSM_Menu::populate_cmd_dropdowns() {
     ui->cmdActuator->clear();
     ui->cmdController->clear();
     if (curCmd!=NULL && curCmd->parent()!=NULL) {
-        int cmd = entryCmdParents.key(curCmd->parent());
+        int cmd = curCmd->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
         ui->cmdActuator->addItems(cmdValidActs[cmd]);
         ui->cmdController->addItems(cmdValidCtrls[cmd]);
     }
@@ -2246,7 +2250,7 @@ void DSM_Menu::on_ctrlLabel_textEdited(const QString &arg1) {
     if (current == NULL)
         return;
 
-    int itemNum=current->data(ctrlCols::ctrlColLabel,ctrlData::ctrlNum).toInt();
+    int itemNum=current->data(ctrlCols::ctrlColInd,ctrlData::ctrlNum).toInt();
     QString value = entryItemFormat(dsmSectionTypes::CONTROLLERS).arg(itemNum);
     QString oldKey = ctlsHash.key(value);
 
@@ -2323,7 +2327,7 @@ void DSM_Menu::on_ctrlAdd_clicked() {
     QList<int> usedCmdInds;
     QStringList usedLabels;
     for (int i=0; i<ui->ctrlConfigTree->topLevelItemCount(); i++) {
-        usedCmdInds.append(ui->ctrlConfigTree->topLevelItem(i)->data(ctrlCols::ctrlColLabel,ctrlData::ctrlNum).toInt());
+        usedCmdInds.append(ui->ctrlConfigTree->topLevelItem(i)->data(ctrlCols::ctrlColInd,ctrlData::ctrlNum).toInt());
         usedLabels.append(ui->ctrlConfigTree->topLevelItem(i)->text(cmdCols::cmdColLabel));
     }
 
@@ -2368,7 +2372,7 @@ void DSM_Menu::on_ctrlDuplicate_clicked() {
     QList <int> usedCmdInds;
     QStringList usedLabels;
     for (int i=0; i<ui->ctrlConfigTree->topLevelItemCount(); i++) {
-        usedCmdInds.append(ui->ctrlConfigTree->topLevelItem(i)->data(ctrlCols::ctrlColLabel,ctrlData::ctrlNum).toInt());
+        usedCmdInds.append(ui->ctrlConfigTree->topLevelItem(i)->data(ctrlCols::ctrlColInd,ctrlData::ctrlNum).toInt());
         usedLabels.append(ui->ctrlConfigTree->topLevelItem(i)->text(ctrlCols::ctrlColLabel));
     }
 
@@ -2879,6 +2883,8 @@ void DSM_Menu::on_applyButton_clicked() {
 
     dsmUpdate.append("<<<<<<<<<<<<<<<<<<<<<<<<  42:  DSM Command Script File  >>>>>>>>>>>>>>>>>>>>>>>>");
 
+    ui->cmdConfigTree->sortByColumn(cmdCols::cmdColLabel,Qt::AscendingOrder);
+    ui->cmdConfigTree->sortByColumn(cmdCols::cmdColInd,Qt::AscendingOrder);
     // write to file in reverse search order
     for (auto i = searchOrd.crbegin(); i!= searchOrd.crend(); i++) {
         dsmSectionTypes type = *i;
@@ -2925,9 +2931,9 @@ void DSM_Menu::on_applyButton_clicked() {
                     if (!data.isEmpty()) {
                         checkItems = ui->cmdConfigTree->findItems(data,Qt::MatchExactly|Qt::MatchRecursive,cmdCols::cmdColLabel);
                         for (QTreeWidgetItem *checkItem : qAsConst(checkItems)) {
-                            cmdType = entryCmdParents.key(checkItem->parent());
+                            cmdType = checkItem->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
                             if (cmdType==cmdTypes::cmdSV) {
-                                tmp.append("_SV["+checkItem->data(cmdCols::cmdColLabel,cmdData::cmdNum).toString()+"]");
+                                tmp.append("_SV["+checkItem->data(cmdCols::cmdColInd,cmdData::cmdNum).toString()+"]");
                                 break;
                             }
                         }
@@ -2953,6 +2959,7 @@ void DSM_Menu::on_applyButton_clicked() {
             dsmUpdate.append("End_Of_File");
             break;
         case dsmSectionTypes::CONTROLLERS:
+            ui->ctrlConfigTree->sortByColumn(ctrlCols::ctrlColInd,Qt::AscendingOrder);
             treeItems = ui->ctrlConfigTree->findItems("*",Qt::MatchWildcard,ctrlCols::ctrlColLabel);
 
             for (QTreeWidgetItem *ctrlItem: qAsConst(treeItems)) {
@@ -2999,6 +3006,8 @@ void DSM_Menu::on_applyButton_clicked() {
 
                 dsmUpdate.append(dataList.join(cmdDataSpacer));
             }
+
+            ui->ctrlConfigTree->sortByColumn(ctrlCols::ctrlColLabel,Qt::AscendingOrder);
 
             break;
         case dsmSectionTypes::ACTUATORS:
@@ -3053,7 +3062,7 @@ void DSM_Menu::on_applyButton_clicked() {
                 dataList.clear();
 
                 label = treeItem->text(cmdCols::cmdColLabel);
-                dataList.append(format.arg(treeItem->data(cmdCols::cmdColLabel,cmdData::cmdNum).toInt()));
+                dataList.append(format.arg(treeItem->data(cmdCols::cmdColInd,cmdData::cmdNum).toInt()));
                 dataList.append(treeItem->text(cmdCols::cmdColData));
 
                 data = treeItem->text(cmdCols::cmdColCtl);
@@ -3064,7 +3073,7 @@ void DSM_Menu::on_applyButton_clicked() {
                 }
                 if (!data.isEmpty()) {
                     checkItem = ui->ctrlConfigTree->findItems(data,Qt::MatchExactly,ctrlCols::ctrlColLabel).at(0);
-                    dataList.append(entryItemFormat(dsmSectionTypes::CONTROLLERS).arg(checkItem->data(ctrlCols::ctrlColLabel,ctrlData::ctrlNum).toInt()));
+                    dataList.append(entryItemFormat(dsmSectionTypes::CONTROLLERS).arg(checkItem->data(ctrlCols::ctrlColInd,ctrlData::ctrlNum).toInt()));
                 }
 
                 data = treeItem->text(cmdCols::cmdColAct);

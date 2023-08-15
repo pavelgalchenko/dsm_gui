@@ -21,7 +21,7 @@ RGN_Menu::~RGN_Menu() {
 void RGN_Menu::set_validators() {
     QRegularExpression rx("[^\"]*");
 
-    ui->world->addItems(world_inputs);
+    ui->world->addItems(dsm_gui_lib::worldInputs);
     ui->location->addItems(dsm_gui_lib::sortStringList(location_inputs.values()));
     ui->posw_x->setValidator(new QDoubleValidator);
     ui->posw_y->setValidator(new QDoubleValidator);

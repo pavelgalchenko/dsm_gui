@@ -137,7 +137,6 @@ private:
     const QStringList angvel_wrt = {"N", "L"};
     const QStringList att_params = {"Q", "A"};
     const QStringList att_wrt = {"N", "L", "F"};
-    const QStringList euler_seq = {"123", "231", "312", "132", "213", "321", "121", "131", "212", "232", "313","323"};
     const QStringList solve_dynamics = {"GAUSS_ELIM", "ORDER_N"};
     const QStringList mass_prop_ref = {"REFPT_CM", "REFPT_JOINT"};
     const QStringList joint_type = {"PASSIVE", "ACTUATED", "STEPPER_MOTOR", "TVC_JOINT", "VIBRATION_ISOLATOR", "SLOSH", "STEERING_MIRROR", "AD_HOC_JOINT"};

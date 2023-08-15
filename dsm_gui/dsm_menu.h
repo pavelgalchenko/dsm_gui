@@ -155,10 +155,6 @@ private:
 
     QString inoutPath;
     QString filePath;
-    QStringList dsmData;
-    QStringList dsmString;
-    QStringList dsmFileHeaders; // section headers in the file
-    QStringList dsmFileDescrip; // data descriptors in the file
     QStringList dsmUpdate;
 
     QStringList scNames;
@@ -173,7 +169,6 @@ private:
 
     QBrush okTextBrush;
     QBrush badTextBrush;
-
 
     /* Change these enums to change the column order in the QTreeWidgets */
     enum tlCols {
@@ -194,6 +189,7 @@ private:
 
     enum ctrlCols {
         ctrlColLabel=0,
+        ctrlColInd,
         ctrlColType,
         ctrlColGains,
         ctrlColLims,
@@ -213,7 +209,8 @@ private:
                                             {cmdColCtl,"Controller"},
                                             {cmdColData,"Command Data"}};
 
-    const QMap<int,QString> ctrlColNames = {{ctrlColLabel,"Controller/Label"},
+    const QMap<int,QString> ctrlColNames = {{ctrlColLabel,"Controller Label"},
+                                             {ctrlColInd,"Controller Index"},
                                              {ctrlColType,"Controller Type"},
                                              {ctrlColGains,"Gains"},
                                              {ctrlColLims,"Limits"}};
@@ -253,19 +250,9 @@ private:
     void new_entry_item(const dsmSectionTypes, QString, const int, const QString);
     QHash<int,QTreeWidgetItem*> entryCmdParents;
 
-    enum timelineItemData {
-        timelineSC = Qt::UserRole, // Might not need, might be able to reference parent item
-        timelineTime,
-        timelineTrnCmd,
-        timelineAttCmd,
-        timelineActCmd
-    };
-
     enum cmdData {
-        cmdType = Qt::UserRole, // Might not need, might be able to reference parent item
-        cmdNum,
-        cmdController,
-        cmdActuator,
+        cmdNum = Qt::DisplayRole,
+        cmdType = Qt::UserRole,
         cmdData
     };
 
@@ -311,24 +298,15 @@ private:
     const QHash<QString,QString> cmdManTypes = {    {"CONSTANT","Constant Thrust"},
                                                     {"SMOOTHED","Smoothed Thrust"}};
 
-    const QStringList worldInputs = {"SOL","MERCURY","VENUS","EARTH","MARS","JUPITER","SATURN","URANUS",
-                                     "NEPTUNE","PLUTO","LUNA","PHOBOS","DEIMOS","IO","EUROPA","GANYMEDE","CALLISTO",
-                                     "AMALTHEA","HIMALITA","ELARA","PASIPHAE","SINOPE","LYSITHEA","CARME","ANANKE",
-                                     "LEDA","THEBE","ADRASTEA","METIS","MIMAS","ENCELADUS","TETHYS","DIONE","RHEA",
-                                     "TITAN","HYPERION","IAPETUS","PHOEBE","JANUS","EPIMETHEUS","HELENE","TELESTO",
-                                     "CALYPSO","ATLAS","PROMETHEUS","PANDORA","PAN","ARIEL","UMBRIEL",
-                                     "TITANIA","OBERON","MIRANDA","TRITON","NERIED","CHARON","MINORBODY"};
-
     int getCmdType(QString);
     QRegularExpression cmdRegEx(const int);
 
     enum ctrlData {
+        ctrlNum=Qt::DisplayRole,
         ctrlType = Qt::UserRole,
-        ctrlNum,
         ctrlGains,
         ctrlLimits
     };
-
 
     const QHash<QString,QString> ctrlTypes = { {"PID_CNTRL",        "PID Control"},
                                                {"LYA_ATT_CNTRL",    "Lyapunov Attitude Control"},
@@ -396,7 +374,6 @@ private:
                                             {cmdWhlHManage,{}},
                                             {cmdAct,{}},
                                             {cmdManeuver,{}}};
-
     /* END HATE */
 
     enum limData {

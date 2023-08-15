@@ -85,7 +85,6 @@ private:
     const QStringList angvel_wrt = {"N", "L"};
     const QStringList att_params = {"Q", "A"};
     const QStringList att_wrt = {"N", "L", "F"};
-    const QStringList euler_seq = {"123", "231", "312", "132", "213", "321", "121", "131", "212", "232", "313","323"};
 };
 
 #endif // SPC_Menu_H

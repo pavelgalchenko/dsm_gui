@@ -41,7 +41,7 @@ void SPC_Menu::set_validators()
     ui->spc_cur_angvel_frame2->addItems(dsm_gui_lib::sortStringList(att_wrt));
     ui->spc_cur_att_param->addItems(dsm_gui_lib::sortStringList(att_params));
 
-    ui->spc_cur_initeul_seq->addItems(dsm_gui_lib::sortStringList(euler_seq));
+    ui->spc_cur_initeul_seq->addItems(dsm_gui_lib::eulerInputs);
 
     // Data Type Validators
     ui->spc_name->setValidator(noQuotesSpaces);

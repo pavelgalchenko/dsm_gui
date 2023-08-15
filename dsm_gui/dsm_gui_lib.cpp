@@ -2,8 +2,7 @@
 #include <QMessageBox>
 #include <QComboBox>
 
-dsm_gui_lib::dsm_gui_lib()
-{
+dsm_gui_lib::dsm_gui_lib() {
 
 }
 

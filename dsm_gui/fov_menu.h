@@ -96,8 +96,6 @@ private:
                                                     {"SOLID", "Solid"},
                                                     {"VECTOR", "Vector"},
                                                     {"PLANE", "Plane"}};
-    const QStringList euler_inputs = {"121","123","131","132","212","213","231","232","312","313","321","323"};
-
 };
 
 #endif // FOV_MENU_H

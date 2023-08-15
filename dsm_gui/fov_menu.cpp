@@ -33,7 +33,7 @@ void FOV_Menu::set_validators() {
     ui->rot1->setValidator(new QDoubleValidator);
     ui->rot2->setValidator(new QDoubleValidator);
     ui->rot3->setValidator(new QDoubleValidator);
-    ui->euler_seq->addItems(euler_inputs);
+    ui->euler_seq->addItems(dsm_gui_lib::eulerInputs);
     ui->boresightaxis->addItems(dsm_gui_lib::sortStringList(axis_inputs.values()));
 
     connect(ui->num_sides, &QLineEdit::textChanged, this, &FOV_Menu::sides_changed);
