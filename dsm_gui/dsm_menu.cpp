@@ -310,6 +310,35 @@ void DSM_Menu::receive_data() {
     ui->ctrlLims->clear();
     ui->cmdManLimits->clear();
 
+    ui->cmdTimelineTree->clear();
+    ui->actList->clear();
+    ui->ctrlConfigTree->clear();
+    ui->gainList->clear();
+    ui->limList->clear();
+
+    for (dsmSectionTypes type : section2CmdKeys) {
+        int cmdType = section2Cmd[type];
+        QTreeWidgetItem *parent = entryCmdParents[cmdType];
+        QList<QTreeWidgetItem*> children;
+        for (int i=0; i<parent->childCount(); i++)
+            children << parent->child(i);
+        for (QTreeWidgetItem *child : qAsConst(children))
+            delete child;
+    }
+
+    trnCmdsHash.clear();
+    attCmdsHash.clear();
+    actCmdsHash.clear();
+    attSVCmdsHash.clear();
+    ctlsHash.clear();
+    gainsHash.clear();
+    limsHash.clear();
+    actsHash.clear();
+
+    for (QString ctrlType : ctrlValidGains.keys())
+        ctrlValidGains[ctrlType].clear();
+
+
     QFile simFile(inoutPath + "Inp_Sim.txt");
     if(!simFile.open(QIODevice::ReadOnly))
         QMessageBox::information(0, "error", simFile.errorString());
@@ -344,15 +373,6 @@ void DSM_Menu::receive_data() {
     if(!dsmFile.open(QIODevice::ReadOnly))
         QMessageBox::information(0, "error", dsmFile.errorString());
     QTextStream in(&dsmFile);
-
-    trnCmdsHash.clear();
-    attCmdsHash.clear();
-    actCmdsHash.clear();
-    attSVCmdsHash.clear();
-    ctlsHash.clear();
-    gainsHash.clear();
-    limsHash.clear();
-    actsHash.clear();
 
     for (int key : cmdValidCtrls.keys())
         cmdValidCtrls[key].clear();
@@ -397,6 +417,8 @@ void DSM_Menu::receive_data() {
     ui->ctrlLims->clear();
     ui->ctrlLims->addItems(dsm_gui_lib::sortStringList(limsHash.keys()));
 
+    ui->cmdTimelineTree->sortByColumn(tlCols::tlColSC,Qt::AscendingOrder);
+    ui->cmdTimelineTree->sortByColumn(tlCols::tlColTime,Qt::AscendingOrder);
 }
 
 void DSM_Menu::write_data() {
@@ -1407,7 +1429,7 @@ void DSM_Menu::on_closeButton_clicked() {
     DSM_Menu::close();
 }
 
-void DSM_Menu::on_saveDefaultButton_clicked() {
+void DSM_Menu::on_loadDefaultButton_clicked() {
     int response = dsm_gui_lib::warning_message("Delete Inp_DSM file and load current Default?");
     if (response == QMessageBox::Ok) {
 
@@ -1419,13 +1441,15 @@ void DSM_Menu::on_saveDefaultButton_clicked() {
     else return;
 }
 
-void DSM_Menu::on_loadDefaultButton_clicked() {
+void DSM_Menu::on_saveDefaultButton_clicked() {
     int response = dsm_gui_lib::warning_message("Delete Default Inp_DSM file and replace with current?");
     if (response == QMessageBox::Ok) {
         QFile::remove(inoutPath+"__default__/Inp_DSM.txt");
         QFile::copy(filePath, inoutPath+"__default__/Inp_DSM.txt");
     }
     else return;
+
+
 }
 
 void DSM_Menu::on_cmdRemove_clicked() {
