@@ -338,7 +338,6 @@ void DSM_Menu::receive_data() {
     for (QString ctrlType : ctrlValidGains.keys())
         ctrlValidGains[ctrlType].clear();
 
-
     QFile simFile(inoutPath + "Inp_Sim.txt");
     if(!simFile.open(QIODevice::ReadOnly))
         QMessageBox::information(0, "error", simFile.errorString());
@@ -353,6 +352,16 @@ void DSM_Menu::receive_data() {
             for (int i=0; i<nSC; i++) {
                 line = simIn.readLine();
                 QString name = rxSC.match(line).captured(1);
+                if (badScNames.contains(name)) {
+                    QString errMsg = "Spacecraft name \""+name+"\" is invalid.\n";
+                    errMsg.append("Spacecraft cannot be named:\n");
+                    for (QString badScName : badScNames)
+                        errMsg.append("\t\""+badScName+"\"\n");
+                    errMsg.append("Please rename your spacecraft.");
+                    dsm_gui_lib::error_message(errMsg);
+                    dsm_gui_lib::inexplicable_error_message();
+                    DSM_Menu::close();
+                }
                 scNames.append(name);
             }
             break;
@@ -397,12 +406,14 @@ void DSM_Menu::receive_data() {
     for (int col=0; col<ui->ctrlConfigTree->columnCount(); col++)
         ui->ctrlConfigTree->resizeColumnToContents(col);
 
+    ui->cmdConfigTree->setAnimated(false);
     for (QTreeWidgetItem *item : entryCmdParents.values())
         item->setExpanded(true);
     for (int col=0; col<ui->cmdConfigTree->columnCount(); col++)
         ui->cmdConfigTree->resizeColumnToContents(col);
     for (QTreeWidgetItem *item : entryCmdParents.values())
         item->setExpanded(false);
+    ui->cmdConfigTree->setAnimated(true);
 
     trnCmdsHash.insert(trnCmdsHashConst);
     attCmdsHash.insert(attCmdsHashConst);

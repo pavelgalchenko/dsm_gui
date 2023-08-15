@@ -482,6 +482,13 @@ void ORB_Menu::on_applyButton_clicked() {
     QStringList orbFileHashKeys = orbFileHash.keys();
 
     QString newLabel = ui->orbLabel->text();
+
+    if (newLabel.compare(oldOrb)!=0) {
+        connect(this, SIGNAL(orbit_changed()),this->parent(), SLOT(disable_sub_menus()));
+        emit orbit_changed();
+        disconnect(this, SIGNAL(orbit_changed()), 0, 0);
+    }
+
     if (orbFileHashKeys.contains(newLabel,Qt::CaseInsensitive)) {
         dsm_gui_lib::warning_message("Orbit \"" + newLabel + "\" already exists. Orbit names are NOT case sensitive.");
         orbFileHash.insert(oldOrb,oldOrbFile);

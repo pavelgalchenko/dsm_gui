@@ -270,8 +270,14 @@ void SPC_Menu::on_spc_apply_clicked()
 
     QString cur_name = ui->spc_name->text();
     if (other_names.contains(cur_name, Qt::CaseInsensitive)) {
-        dsm_gui_lib::warning_message("SC \"" + cur_name + "\" already exists. SC names are NOT case sensitive.");
+        dsm_gui_lib::error_message("SC \"" + cur_name + "\" already exists.\nSC names are NOT case sensitive.");
         return;
+    }
+
+    if (cur_name.compare(ui->spc_list->currentItem()->text())!=0) {
+        connect(this, SIGNAL(name_changed()),this->parent(), SLOT(disable_sub_menus()));
+        emit name_changed();
+        disconnect(this, SIGNAL(name_changed()), 0, 0);
     }
 
     file_path = file_paths[index];

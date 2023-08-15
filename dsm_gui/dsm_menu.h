@@ -430,11 +430,13 @@ private:
     QHash<QString,QString> limsHash;
     QHash<QString,QString> actsHash;
 
+    const QHash<QString,QString> cmdTrnOriConst = { {"OP","Orbit Point"}};
+    const QHash<QString,QString> cmdTrnFrmConst = { {"N","Inertial"},
+                                                    {"F","Formation"},
+                                                    {"L","Local Vert"}};
 
-    const QHash<QString,QString> cmdTrnOriConst = {{"OP","Orbit Point"}};
-    const QHash<QString,QString> cmdTrnFrmConst = {{"N","Inertial"},
-                                                   {"F","Formation"},
-                                                   {"L","Local Vert"}};
+    const QStringList badScNames = {cmdTrnOriConst["OP"], cmdTrnFrmConst["N"], cmdTrnFrmConst["F"], cmdTrnFrmConst["L"]};
+
 };
 
 #endif // DSM_MENU_H

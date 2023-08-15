@@ -22,6 +22,9 @@ public:
     explicit ORB_Menu(QWidget *parent = nullptr);
     ~ORB_Menu();
 
+signals:
+    void orbit_changed();
+
 private slots:
     void set_validators();
     void receive_orbpath(QString);

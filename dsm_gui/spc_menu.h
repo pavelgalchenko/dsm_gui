@@ -23,6 +23,7 @@ public:
 
 signals:
     void send_data(QString, QString);
+    void name_changed();
 
 private slots:
 
