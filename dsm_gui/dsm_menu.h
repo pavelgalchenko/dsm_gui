@@ -164,7 +164,7 @@ private:
     QStringList scNames;
 
     const QString cmdDelimiter = ";";
-    const QString cmdDataSpacer = "\t";
+    const QString cmdDataSpacer = "  "; // must be whitespace character(s)
     const QString labelMkr = "#";
     const QString scBdyFrmt = "SC[%1].B[%2]";
 

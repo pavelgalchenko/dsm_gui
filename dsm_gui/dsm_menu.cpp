@@ -25,13 +25,16 @@ DSM_Menu::~DSM_Menu() {
 }
 
 void DSM_Menu::set_validators() {
-    static QRegularExpression noLabelRx("");
+    QRegularExpression noCmdSpacerRx("[^"+QRegularExpression::escape(cmdDelimiter)+"]*");
+    QValidator *noCmdSpacer = new QRegularExpressionValidator(noCmdSpacerRx);
 
     ui->dsmTabs->setCurrentIndex(0);
     ui->dsmSubTabs->setCurrentIndex(0);
 
     ui->cmdTime->setMaximum(INFINITY);
+    ui->cmdTime->setDecimals(3);
 
+    ui->cmdLabel->setValidator( noCmdSpacer);
     ui->gainKpX->setValidator( new QDoubleValidator(0,INFINITY,5));
     ui->gainKpY->setValidator( new QDoubleValidator(0,INFINITY,5));
     ui->gainKpZ->setValidator( new QDoubleValidator(0,INFINITY,5));
@@ -2861,17 +2864,20 @@ void DSM_Menu::on_applyButton_clicked() {
         QStringList dataList, tmpList;
         QString data,tmp,label;
         int num, cmdType;
+        double time, lastTime=0;
 
         switch (type) {
         case dsmSectionTypes::COMMANDS:
             ui->cmdTimelineTree->sortByColumn(tlCols::tlColSC,Qt::AscendingOrder);
             ui->cmdTimelineTree->sortByColumn(tlCols::tlColTime,Qt::AscendingOrder);
             treeItems = ui->cmdTimelineTree->findItems("*",Qt::MatchWildcard,tlCols::tlColSC);
+            label = format+cmdDataSpacer+"%2";
 
             for (QTreeWidgetItem *cmdItem : qAsConst(treeItems)) {
                 dataList.clear();
-                dataList.append(format.arg(scNames.indexOf(cmdItem->text(tlCols::tlColSC))));
-                dataList.append(cmdItem->data(tlCols::tlColTime,Qt::DisplayRole).toString());
+
+                time = cmdItem->data(tlCols::tlColTime,Qt::DisplayRole).toDouble();
+                dataList.append(label.arg(scNames.indexOf(cmdItem->text(tlCols::tlColSC))).arg(time,15,'f',3));
 
                 num = 0;
                 tmpList.clear();
@@ -2906,8 +2912,12 @@ void DSM_Menu::on_applyButton_clicked() {
                 }
                 dataList.append("NUM_CMD["+QString::number(num)+"]");
                 dataList.append(tmpList);
-                if (num>0)
+                if (num>0) {
+                    if (time>lastTime)
+                        dsmUpdate.append("");
                     dsmUpdate.append(dataList.join(cmdDataSpacer));
+                    lastTime=time;
+                }
             }
             dsmUpdate.append("");
             dsmUpdate.append("End_Of_File");
