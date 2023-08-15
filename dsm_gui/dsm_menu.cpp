@@ -2864,6 +2864,11 @@ void DSM_Menu::on_applyButton_clicked() {
                     dsmUpdate.clear();
                     return;
                 }
+                if (ctrlItem->background(ctrlCols::ctrlColGains) == badTextBrush) {
+                    dsm_gui_lib::error_message("Controller """+label+""" has invalid gains: "+data);
+                    dsmUpdate.clear();
+                    return;
+                }
 
                 listItem = ui->gainList->findItems(data,Qt::MatchExactly).at(0);
                 dataList.append(entryItemFormat(dsmSectionTypes::GAINS).arg(listItem->data(gainsData::gainsNum).toInt()));
@@ -2874,6 +2879,14 @@ void DSM_Menu::on_applyButton_clicked() {
                     dsmUpdate.clear();
                     return;
                 }
+                if (ctrlItem->background(ctrlCols::ctrlColLims) == badTextBrush) {
+                    dsm_gui_lib::error_message("Controller """+label+""" has invalid Limits: "+data);
+                    dsmUpdate.clear();
+                    // This really shouldn't happen except in the case of missing text
+                    dsm_gui_lib::inexplicable_error_message();
+                    return;
+                }
+
                 listItem = ui->limList->findItems(data,Qt::MatchExactly).at(0);
                 dataList.append(entryItemFormat(dsmSectionTypes::LIMITS).arg(listItem->data(limData::limNum).toInt()));
 
