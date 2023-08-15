@@ -25,9 +25,72 @@ DSM_Menu::~DSM_Menu() {
 }
 
 void DSM_Menu::set_validators() {
+    static QRegularExpression noLabelRx("");
+
     ui->dsmTabs->setCurrentIndex(0);
+    ui->dsmSubTabs->setCurrentIndex(0);
 
     ui->cmdTime->setMaximum(INFINITY);
+
+    ui->gainKpX->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainKpY->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainKpZ->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainKrX->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainKrY->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainKrZ->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainKiX->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainKiY->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainKiZ->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainKiLimX->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainKiLimY->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainKiLimZ->setValidator( new QDoubleValidator(0,INFINITY,5));
+
+    ui->gainBandwidth->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainDampingRatio->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainAlpha->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainILim->setValidator( new QDoubleValidator(0,INFINITY,5));
+
+    ui->gainMomDumpKpX->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainMomDumpKpY->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainMomDumpKpZ->setValidator( new QDoubleValidator(0,INFINITY,5));
+
+    ui->gainLyaGain->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->gainLyaGain_2->setValidator( new QDoubleValidator(0,INFINITY,5));
+
+    ui->limFrcX->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->limFrcY->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->limFrcZ->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->limRateX->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->limRateY->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->limRateZ->setValidator( new QDoubleValidator(0,INFINITY,5));
+
+    ui->cmdTrnX->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdTrnY->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdTrnZ->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdPvX->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdPvY->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdPvZ->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdPvTgtX->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdPvTgtY->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdPvTgtZ->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdSvX->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdSvY->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdSvZ->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdSvTgtX->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdSvTgtY->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdSvTgtZ->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdQv1->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdQv2->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdQv3->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdQs->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdHManageMax->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->cmdHManageMin->setValidator( new QDoubleValidator(0,INFINITY,5));
+    ui->cmdActDutyCycle->setValidator( new QDoubleValidator(0,100.0,5));
+    ui->cmdManX->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdManY->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdManZ->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
+    ui->cmdManTime->setValidator( new QDoubleValidator(0,INFINITY,5));
+
 
     ui->cmdPvTgtType->clear();
     ui->cmdPvTgtType->addItems(dsm_gui_lib::sortStringList(cmdAttTgtTypes.values()));
