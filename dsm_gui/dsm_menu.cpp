@@ -428,9 +428,11 @@ QStringList DSM_Menu::secDescription(const dsmSectionTypes type) {
         descrip.append("# Col: 2   ->  Spacecraft ID Number: \"SC[#]\"");
         descrip.append("# Col: 3   ->  Command Sequence Flag: \"FswMode\" or \"CmdTime\"");
         descrip.append("# Col: 4   ->  Command Sequence Parameter: FSW Mode ID or Command Execution Time");
-        descrip.append("# Col: 5   ->  Translation Control Method_Mode (\"PASSIVE\" for none, \"NO_CHANGE\" for no change)");
-        descrip.append("# Col: 6   ->  Attitude Control Method_Mode (\"PASSIVE\" for none)");
-        descrip.append("# Col: 7   ->  Optional Actuator Command_Mode");
+        descrip.append("# If Col: 3 -> CmdTime, then Col: 5 is \"NUM_CMD[#]\" (\"#\" is the number of commands)");
+        descrip.append("#                       Command Types:");
+        descrip.append("#                       Translation Command Method_Mode (\"PASSIVE_TRN\" for none)");
+        descrip.append("#                       Attitude Command Method_Mode (\"PASSIVE_ATT\" for none)");
+        descrip.append("#                       Optional Actuator Command_Mode");
         break;
     case dsmSectionTypes::TRANSLATION:
         descrip.append("#-------------------------------------------------------------------------------");
@@ -440,8 +442,8 @@ QStringList DSM_Menu::secDescription(const dsmSectionTypes type) {
         descrip.append("# Col: 2   ->  Position 1: X (meters)");
         descrip.append("# Col: 3   ->  Position 2: Y (meters)");
         descrip.append("# Col: 4   ->  Position 3: Z (meters)");
-        descrip.append("# Col: 5   ->  Ref Origin (ctrl wrt): Orbit Point \"OP\" or SC ID Number (\"SC[#]\")");
-        descrip.append("# Col: 6   ->  Ref Frame Directions: \"N\", \"F\", \"L\", or SC ID Number (\"SC[#]\")");
+        descrip.append("# Col: 5   ->  Ref Origin (ctrl wrt): Orbit Point \"OP\" or SC ID Number (\"SC[#].B[#]\")");
+        descrip.append("# Col: 6   ->  Ref Frame Directions: \"N\", \"F\", \"L\", or SC ID Number (\"SC[#].B[#]\")");
         descrip.append("# Col: 7   ->  Controller Mode");
         descrip.append("# Col: 8   ->  Actuator Mode");
         break;
@@ -455,7 +457,7 @@ QStringList DSM_Menu::secDescription(const dsmSectionTypes type) {
         descrip.append("# Col: 3   ->  Primary Axis Direction 1");
         descrip.append("# Col: 4   ->  Primary Axis Direction 2");
         descrip.append("# Col: 5   ->  Primary Axis Direction 3");
-        descrip.append("# Col: 6   ->  Primary Target: Specify Body, SC[#] or Vec");
+        descrip.append("# Col: 6   ->  Primary Target: Specify Body, SC[#].B[#] or Vec");
         descrip.append("# Col: 7   ->  Controller Mode");
         descrip.append("# Col: 8   ->  Actuator Mode");
         descrip.append("# If Col: 2 -> VEC, then Col: 6 is the Ref. Frame of the pointing vector: \"N\", \"F\", \"L\", \"B\"");
@@ -469,7 +471,7 @@ QStringList DSM_Menu::secDescription(const dsmSectionTypes type) {
         descrip.append("# Col: 3   ->  Secondary Axis Direction 1");
         descrip.append("# Col: 4   ->  Secondary Axis Direction 2");
         descrip.append("# Col: 5   ->  Secondary Axis Direction 3");
-        descrip.append("# Col: 6   ->  Secondary Target: Specify Body, SC[#] or Vec");
+        descrip.append("# Col: 6   ->  Secondary Target: Specify Body, SC[#].B[#] or Vec");
         descrip.append("# If Col: 2 -> VEC, then Col: 6 is the Ref. Frame of the pointing vector: \"N\", \"F\", \"L\"");
         descrip.append("#                        Col: 7-9 are the pointing vec for Secondary axis");
         break;
@@ -575,16 +577,6 @@ QStringList DSM_Menu::secDescription(const dsmSectionTypes type) {
         descrip.append("# Col: 8   ->  Set of Control Limits");
         descrip.append("# Col: 9   ->  Actuator Mode");
         break;
-//    case dsmSectionTypes::MOMENTUM_DUMP:
-//        descrip.append("#-------------------------------------------------------------------------------");
-//        descrip.append("#                             Momentum Dump");
-//        descrip.append("#-------------------------------------------------------------------------------");
-//        descrip.append("# Col: 1   ->  Cmd Interp ID Flag: \"MomentumDump_[#]\"");
-//        descrip.append("# Col: 2   ->  Minimum H_norm [Nms] (0 to always dump, *large* to never dump)");
-//        descrip.append("# Col: 3   ->  Maximum H_norm [Nms] (0 to always dump, *large* to never dump)");
-//        descrip.append("# Col: 4   ->  Set of Control Gains");
-//        descrip.append("# Col: 5   ->  Actuator Mode for Dumping");
-//        break;
     }
     return descrip;
 }
@@ -1712,16 +1704,8 @@ void DSM_Menu::on_cmdTimelineTree_currentItemChanged(QTreeWidgetItem *current, Q
 
     if (curAttCmd.isEmpty())
         ui->cmdAttLabel->setCurrentText("No Change");
-    else {
+    else
         populate_cmdtl_dropdowns(cmdTypes::cmdSV);
-//        QString pvLabel = rxPV.match(curAttCmd).captured(1);
-//        ui->cmdAttLabel->setCurrentText(pvLabel);
-//        ui->cmdAttSVLabel->clear();
-
-//        bool isPVCmd = attCmdsHash[pvLabel].contains(entryItemName(dsmSectionTypes::PRIMARY_VEC));
-//        ui->cmdAttSVLabel->setEnabled(isPVCmd);
-//        if (isPVCmd) validate_sv_cmds(curAttCmd);
-    }
 
     ui->cmdTime->setValue(current->data(tlCols::tlColTime,Qt::DisplayRole).toDouble());
 }
@@ -1749,7 +1733,9 @@ void DSM_Menu::timeline_data_changed() {
     else {
 
         QString svCmd = ui->cmdAttSVLabel->currentText();
+        ui->cmdAttSVLabel->setEnabled(false);
         if (attCmdsHash[attCmd].contains(entryItemName(dsmSectionTypes::PRIMARY_VEC))) {
+            ui->cmdAttSVLabel->setEnabled(true);
             validate_sv_cmds(attCmd+cmdDelimiter+cmdDataSpacer+svCmd);
             svCmd = ui->cmdAttSVLabel->currentText();
 
@@ -1971,7 +1957,6 @@ void DSM_Menu::on_actRemove_clicked() {
 void DSM_Menu::on_cmdConfigTree_itemChanged(QTreeWidgetItem *item, int column) {
     if (item == NULL || item->parent() == NULL)
         return;
-
 
     int cmdType = entryCmdParents.key(item->parent());
 
@@ -3088,4 +3073,3 @@ void DSM_Menu::on_cmdQuatNormalize_clicked() {
     ui->cmdQv3->setText(QString::number(quat[2]));
     ui->cmdQs->setText(QString::number(quat[3]));
 }
-
