@@ -292,6 +292,7 @@ void DSM_Menu::receive_dsmpath(QString path) {
 void DSM_Menu::receive_data() {
     static QRegularExpression rxSC("SC_(.*).txt");
 
+    ui->cmdTimelineTree->clear();
     dsmData.clear();
     dsmString.clear();
     dsmUpdate.clear();
@@ -310,7 +311,6 @@ void DSM_Menu::receive_data() {
     ui->ctrlLims->clear();
     ui->cmdManLimits->clear();
 
-    ui->cmdTimelineTree->clear();
     ui->actList->clear();
     ui->ctrlConfigTree->clear();
     ui->gainList->clear();
