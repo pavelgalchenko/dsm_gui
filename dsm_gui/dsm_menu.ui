@@ -617,18 +617,18 @@
          <widget class="QTabWidget" name="cmdConfigurator">
           <property name="minimumSize">
            <size>
-            <width>0</width>
+            <width>600</width>
             <height>0</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>450</width>
+            <width>600</width>
             <height>16777215</height>
            </size>
           </property>
           <property name="currentIndex">
-           <number>7</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="cmdTrnConfig">
            <property name="enabled">
@@ -642,7 +642,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>441</width>
+              <width>591</width>
               <height>211</height>
              </rect>
             </property>
@@ -835,7 +835,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>457</width>
+              <width>591</width>
               <height>211</height>
              </rect>
             </property>
@@ -1170,7 +1170,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>457</width>
+              <width>591</width>
               <height>211</height>
              </rect>
             </property>
@@ -1505,7 +1505,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>441</width>
+              <width>591</width>
               <height>211</height>
              </rect>
             </property>
@@ -1536,13 +1536,13 @@
                 <widget class="QLineEdit" name="cmdQv1">
                  <property name="minimumSize">
                   <size>
-                   <width>50</width>
+                   <width>92</width>
                    <height>0</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>50</width>
+                   <width>92</width>
                    <height>16777215</height>
                   </size>
                  </property>
@@ -1552,13 +1552,13 @@
                 <widget class="QLineEdit" name="cmdQv2">
                  <property name="minimumSize">
                   <size>
-                   <width>50</width>
+                   <width>92</width>
                    <height>0</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>50</width>
+                   <width>92</width>
                    <height>16777215</height>
                   </size>
                  </property>
@@ -1568,13 +1568,13 @@
                 <widget class="QLineEdit" name="cmdQv3">
                  <property name="minimumSize">
                   <size>
-                   <width>50</width>
+                   <width>92</width>
                    <height>0</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>50</width>
+                   <width>92</width>
                    <height>16777215</height>
                   </size>
                  </property>
@@ -1584,13 +1584,13 @@
                 <widget class="QLineEdit" name="cmdQs">
                  <property name="minimumSize">
                   <size>
-                   <width>50</width>
+                   <width>92</width>
                    <height>0</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>50</width>
+                   <width>92</width>
                    <height>16777215</height>
                   </size>
                  </property>
@@ -1599,14 +1599,44 @@
               </layout>
              </item>
              <item>
-              <widget class="QPushButton" name="cmdQuatNormalize">
-               <property name="text">
-                <string>Normalize &amp;&amp; Rectify Quaternion</string>
-               </property>
-               <property name="autoDefault">
-                <bool>false</bool>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_36">
+               <item>
+                <spacer name="horizontalSpacer_36">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="cmdQuatNormalize">
+                 <property name="text">
+                  <string>Normalize &amp;&amp; Rectify Quaternion</string>
+                 </property>
+                 <property name="autoDefault">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_37">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
              </item>
              <item>
               <layout class="QHBoxLayout" name="horizontalLayout_30">
@@ -1663,7 +1693,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>441</width>
+              <width>591</width>
               <height>211</height>
              </rect>
             </property>
@@ -1745,7 +1775,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>441</width>
+              <width>591</width>
               <height>211</height>
              </rect>
             </property>
@@ -1877,7 +1907,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>441</width>
+              <width>591</width>
               <height>171</height>
              </rect>
             </property>
@@ -2064,8 +2094,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>441</width>
-              <height>194</height>
+              <width>591</width>
+              <height>171</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -2268,19 +2298,6 @@
                 </widget>
                </item>
               </layout>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
              </item>
             </layout>
            </widget>

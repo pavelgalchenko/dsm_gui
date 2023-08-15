@@ -864,7 +864,8 @@ int DSM_Menu::getCmdType(QString cmdString) {
 
 /* This function sets up the Regular Expression to parse lines from the Inp_DSM.txt file */
 QRegularExpression DSM_Menu::entryItemRegEx(const dsmSectionTypes type) {
-    static const QString format = "^\\s*%1\\[([0-9]+)]\\s*([^#]*)\\s*(?(?=#+)#+\\s*(.*))$";
+    static const QString format = "^\\s*%1\\[([0-9]+)]\\s*([^"+labelMkr
+                                  +"]*)\\s*(?(?="+labelMkr+"+)"+labelMkr+"+\\s*(.*))$";
 
     static QRegularExpression rxCmd(format.arg(entryItemName(dsmSectionTypes::COMMANDS).split(QRegExp("\\s"),Qt::SkipEmptyParts).join("\\s*")));
     static QRegularExpression rxTrn(format.arg(entryItemName(dsmSectionTypes::TRANSLATION)));
@@ -2890,7 +2891,7 @@ void DSM_Menu::on_applyButton_clicked() {
                 listItem = ui->limList->findItems(data,Qt::MatchExactly).at(0);
                 dataList.append(entryItemFormat(dsmSectionTypes::LIMITS).arg(listItem->data(limData::limNum).toInt()));
 
-                dataList.append("#");
+                dataList.append(labelMkr);
                 dataList.append(label);
 
                 dsmUpdate.append(dataList.join(cmdDataSpacer));
@@ -2905,7 +2906,7 @@ void DSM_Menu::on_applyButton_clicked() {
                 dataList.append(actsHash[label]);
                 dataList.append(actTypes.key(item->data(actData::actType).toString()));
 
-                dataList.append("#");
+                dataList.append(labelMkr);
                 dataList.append(label);
 
                 dsmUpdate.append(dataList.join(cmdDataSpacer));
@@ -2921,7 +2922,7 @@ void DSM_Menu::on_applyButton_clicked() {
                 dataList.append(gainsTypes.key(item->data(gainsData::gainsType).toString()));
                 dataList.append(item->data(gainsData::gainsData).toString());
 
-                dataList.append("#");
+                dataList.append(labelMkr);
                 dataList.append(label);
 
                 dsmUpdate.append(dataList.join(cmdDataSpacer));
@@ -2935,7 +2936,7 @@ void DSM_Menu::on_applyButton_clicked() {
                 dataList.append(limsHash[label]);
                 dataList.append(item->data(limData::limData).toString());
 
-                dataList.append("#");
+                dataList.append(labelMkr);
                 dataList.append(label);
 
                 dsmUpdate.append(dataList.join(cmdDataSpacer));
@@ -2974,7 +2975,7 @@ void DSM_Menu::on_applyButton_clicked() {
                     dataList.append(entryItemFormat(dsmSectionTypes::ACTUATORS).arg(listItem->data(actData::actNum).toInt()));
                 }
 
-                dataList.append("#");
+                dataList.append(labelMkr);
                 dataList.append(label);
 
                 dsmUpdate.append(dataList.join(cmdDataSpacer));
@@ -2991,5 +2992,27 @@ void DSM_Menu::on_applyButton_clicked() {
         dsmUpdate[i].append("\n");
     write_data();
 
+}
+
+void DSM_Menu::on_cmdQuatNormalize_clicked() {
+    QVector4D quat;
+    quat[0] = ui->cmdQv1->text().toDouble();
+    quat[1] = ui->cmdQv2->text().toDouble();
+    quat[2] = ui->cmdQv3->text().toDouble();
+    quat[3] = ui->cmdQs->text().toDouble();
+
+    if (quat.length()<std::numeric_limits<double>::epsilon()) {
+        dsm_gui_lib::inexplicable_error_message();
+        return;
+    }
+    if (abs(quat[3])>std::numeric_limits<double>::epsilon()) {
+        quat = quat[3]*quat/abs(quat[3]);
+    }
+    quat.normalize();
+
+    ui->cmdQv1->setText(QString::number(quat[0]));
+    ui->cmdQv2->setText(QString::number(quat[1]));
+    ui->cmdQv3->setText(QString::number(quat[2]));
+    ui->cmdQs->setText(QString::number(quat[3]));
 }
 

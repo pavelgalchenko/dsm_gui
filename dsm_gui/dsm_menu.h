@@ -13,6 +13,7 @@
 #include <QListWidget>
 #include <QCheckBox>
 #include <QVector3D>
+#include <QVector4D>
 
 namespace Ui {
 class DSM_Menu;
@@ -147,6 +148,8 @@ private slots:
 
     void on_applyButton_clicked();
 
+    void on_cmdQuatNormalize_clicked();
+
 private:
     Ui::DSM_Menu *ui;
 
@@ -161,7 +164,8 @@ private:
     QStringList scNames;
 
     const QString cmdDelimiter = ";";
-    const QString cmdDataSpacer = "  ";
+    const QString cmdDataSpacer = "\t";
+    const QString labelMkr = "#";
     const QString scBdyFrmt = "SC[%1].B[%2]";
 
     QPalette okTextPalette;
