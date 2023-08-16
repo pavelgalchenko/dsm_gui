@@ -1343,7 +1343,7 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
     for (int i=0; i<ui->cmdConfigurator->count(); i++) {
         bool test=false;
         if (cmdType!=cmdDetumble)
-                test=i==cmdType;
+            test=i==cmdType;
         ui->cmdConfigurator->setTabVisible(i,test);
     }
 
@@ -1360,32 +1360,32 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         ui->cmdTrnY->setText(cmdDataSplit[1]);
         ui->cmdTrnZ->setText(cmdDataSplit[2]);
         if (cmdDataSplit[3].contains("SC")) {
-                match = rxScBdy.match(cmdDataSplit[3]);
-                tmpStr = scNames[match.captured(1).toInt()];
-                ui->cmdTrnOri->setCurrentText(tmpStr);
+            match = rxScBdy.match(cmdDataSplit[3]);
+            tmpStr = scNames[match.captured(1).toInt()];
+            ui->cmdTrnOri->setCurrentText(tmpStr);
 
-                ui->cmdTrnOriScBdyNum->setMaximum(nBdys[tmpStr]-1);
-                if (match.captured(2).isEmpty())
-                    ui->cmdTrnOriScBdyNum->setValue(0);
-                else
-                    ui->cmdTrnOriScBdyNum->setValue(match.captured(2).toInt());
+            ui->cmdTrnOriScBdyNum->setMaximum(nBdys[tmpStr]-1);
+            if (match.captured(2).isEmpty())
+                ui->cmdTrnOriScBdyNum->setValue(0);
+            else
+                ui->cmdTrnOriScBdyNum->setValue(match.captured(2).toInt());
         }
         else {
-                ui->cmdTrnOri->setCurrentText(cmdTrnOriConst[cmdDataSplit[3]]);
+            ui->cmdTrnOri->setCurrentText(cmdTrnOriConst[cmdDataSplit[3]]);
         }
         if (cmdDataSplit[4].contains("SC")) {
-                match = rxScBdy.match(cmdDataSplit[4]);
-                tmpStr = scNames[match.captured(1).toInt()];
-                ui->cmdTrnFrm->setCurrentText(tmpStr);
+            match = rxScBdy.match(cmdDataSplit[4]);
+            tmpStr = scNames[match.captured(1).toInt()];
+            ui->cmdTrnFrm->setCurrentText(tmpStr);
 
-                ui->cmdTrnFrmScBdyNum->setMaximum(nBdys[tmpStr]-1);
-                if (match.captured(2).isEmpty())
-                    ui->cmdTrnFrmScBdyNum->setValue(0);
-                else
-                    ui->cmdTrnFrmScBdyNum->setValue(match.captured(2).toInt());
+            ui->cmdTrnFrmScBdyNum->setMaximum(nBdys[tmpStr]-1);
+            if (match.captured(2).isEmpty())
+                ui->cmdTrnFrmScBdyNum->setValue(0);
+            else
+                ui->cmdTrnFrmScBdyNum->setValue(match.captured(2).toInt());
         }
         else {
-                ui->cmdTrnFrm->setCurrentText(cmdTrnFrmConst[cmdDataSplit[4]]);
+            ui->cmdTrnFrm->setCurrentText(cmdTrnFrmConst[cmdDataSplit[4]]);
         }
         break;
     case cmdPV:
