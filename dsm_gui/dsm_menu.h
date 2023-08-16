@@ -150,7 +150,8 @@ private slots:
 
     void on_cmdQuatNormalize_clicked();
 
-    int get_sc_nbodies(QString scName);
+    bool check_actuator_cmds(const QString scName, const QTreeWidgetItem *actCmd);
+    bool check_actuator_cmds(const QString scName, const QString actCmdLabel);
 
 private:
     Ui::DSM_Menu *ui;
@@ -160,6 +161,9 @@ private:
     QStringList dsmUpdate;
 
     QStringList scNames;
+    QHash<QString,int> nWhls;
+    QHash<QString,int> nMtbs;
+    QHash<QString,int> nThrs;
 
     const QString cmdDelimiter = ";";
     const QString cmdDataSpacer = "  "; // must be whitespace character(s)

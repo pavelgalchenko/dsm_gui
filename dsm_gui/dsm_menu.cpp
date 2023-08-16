@@ -299,6 +299,9 @@ void DSM_Menu::receive_data() {
     ui->cmdTimelineTree->clear();
     dsmUpdate.clear();
     scNames.clear();
+    nWhls.clear();
+    nMtbs.clear();
+    nThrs.clear();
     ui->cmdSC->clear();
     ui->cmdTrnOri->clear();
     ui->cmdTrnOri->addItems(dsm_gui_lib::sortStringList(cmdTrnOriConst.values()));
@@ -365,6 +368,11 @@ void DSM_Menu::receive_data() {
                     DSM_Menu::close();
                 }
                 scNames.append(name);
+
+                nBdys.insert(name,dsm_gui_lib::get_sc_nitems(inoutPath,name,dsm_gui_lib::scSectionType::BODY));
+                nWhls.insert(name,dsm_gui_lib::get_sc_nitems(inoutPath,name,dsm_gui_lib::scSectionType::WHEEL));
+                nMtbs.insert(name,dsm_gui_lib::get_sc_nitems(inoutPath,name,dsm_gui_lib::scSectionType::MTB));
+                nThrs.insert(name,dsm_gui_lib::get_sc_nitems(inoutPath,name,dsm_gui_lib::scSectionType::THRUSTER));
             }
             break;
         }
@@ -967,20 +975,20 @@ QRegularExpression DSM_Menu::entryItemRegEx(const dsmSectionTypes type) {
     static const QString format = "^\\s*%1\\[([0-9]+)]\\s*([^"+labelMkr
                                   +"]*)\\s*(?(?="+labelMkr+"+)"+labelMkr+"+\\s*(.*))$";
 
-    static QRegularExpression rxCmd(format.arg(entryItemName(dsmSectionTypes::COMMANDS).split(QRegExp("\\s"),Qt::SkipEmptyParts).join("\\s*")));
-    static QRegularExpression rxTrn(format.arg(entryItemName(dsmSectionTypes::TRANSLATION)));
-    static QRegularExpression rxPV(format.arg(entryItemName(dsmSectionTypes::PRIMARY_VEC)));
-    static QRegularExpression rxSV(format.arg(entryItemName(dsmSectionTypes::SECONDARY_VEC)));
-    static QRegularExpression rxQuat(format.arg(entryItemName(dsmSectionTypes::QUATERION)));
-    static QRegularExpression rxMirror(format.arg(entryItemName(dsmSectionTypes::MIRROR)));
-    static QRegularExpression rxDetumble(format.arg(entryItemName(dsmSectionTypes::DETUMBLE)));
-    static QRegularExpression rxWhlHManage(format.arg(entryItemName(dsmSectionTypes::WHLHMANAGEMENT)));
-    static QRegularExpression rxActCmd(format.arg(entryItemName(dsmSectionTypes::ACTUATOR_CMD)));
-    static QRegularExpression rxCtrl(format.arg(entryItemName(dsmSectionTypes::CONTROLLERS)));
-    static QRegularExpression rxAct(format.arg(entryItemName(dsmSectionTypes::ACTUATORS)));
-    static QRegularExpression rxGains(format.arg(entryItemName(dsmSectionTypes::GAINS)));
-    static QRegularExpression rxLims(format.arg(entryItemName(dsmSectionTypes::LIMITS)));
-    static QRegularExpression rxManeuver(format.arg(entryItemName(dsmSectionTypes::MANEUVER)));
+    const static QRegularExpression rxCmd(format.arg(entryItemName(dsmSectionTypes::COMMANDS).split(QRegExp("\\s"),Qt::SkipEmptyParts).join("\\s*")));
+    const static QRegularExpression rxTrn(format.arg(entryItemName(dsmSectionTypes::TRANSLATION)));
+    const static QRegularExpression rxPV(format.arg(entryItemName(dsmSectionTypes::PRIMARY_VEC)));
+    const static QRegularExpression rxSV(format.arg(entryItemName(dsmSectionTypes::SECONDARY_VEC)));
+    const static QRegularExpression rxQuat(format.arg(entryItemName(dsmSectionTypes::QUATERION)));
+    const static QRegularExpression rxMirror(format.arg(entryItemName(dsmSectionTypes::MIRROR)));
+    const static QRegularExpression rxDetumble(format.arg(entryItemName(dsmSectionTypes::DETUMBLE)));
+    const static QRegularExpression rxWhlHManage(format.arg(entryItemName(dsmSectionTypes::WHLHMANAGEMENT)));
+    const static QRegularExpression rxActCmd(format.arg(entryItemName(dsmSectionTypes::ACTUATOR_CMD)));
+    const static QRegularExpression rxCtrl(format.arg(entryItemName(dsmSectionTypes::CONTROLLERS)));
+    const static QRegularExpression rxAct(format.arg(entryItemName(dsmSectionTypes::ACTUATORS)));
+    const static QRegularExpression rxGains(format.arg(entryItemName(dsmSectionTypes::GAINS)));
+    const static QRegularExpression rxLims(format.arg(entryItemName(dsmSectionTypes::LIMITS)));
+    const static QRegularExpression rxManeuver(format.arg(entryItemName(dsmSectionTypes::MANEUVER)));
 
     switch (type) {
     case dsmSectionTypes::COMMANDS: return rxCmd;
@@ -1006,16 +1014,16 @@ QRegularExpression DSM_Menu::entryItemRegEx(const dsmSectionTypes type) {
 QRegularExpression DSM_Menu::cmdRegEx(const int cmdType) {
     static QString format = "%1\\[([0-9]+)]";
 
-    static QRegularExpression rxTrn(format.arg(entryItemName(dsmSectionTypes::TRANSLATION)));
-    static QRegularExpression rxAtt(format.arg(entryItemName(dsmSectionTypes::PRIMARY_VEC))+format.arg("_SV"));
-    static QRegularExpression rxPV(format.arg(entryItemName(dsmSectionTypes::PRIMARY_VEC)));
-    static QRegularExpression rxSV(format.arg(entryItemName(dsmSectionTypes::SECONDARY_VEC)));
-    static QRegularExpression rxQuat(format.arg(entryItemName(dsmSectionTypes::QUATERION)));
-    static QRegularExpression rxMirror(format.arg(entryItemName(dsmSectionTypes::MIRROR)));
-    static QRegularExpression rxDetumble(format.arg(entryItemName(dsmSectionTypes::DETUMBLE)));
-    static QRegularExpression rxWhlHManage(format.arg(entryItemName(dsmSectionTypes::WHLHMANAGEMENT)));
-    static QRegularExpression rxAct(format.arg(entryItemName(dsmSectionTypes::ACTUATOR_CMD)));
-    static QRegularExpression rxManeuver(format.arg(entryItemName(dsmSectionTypes::MANEUVER)));
+    const static QRegularExpression rxTrn(format.arg(entryItemName(dsmSectionTypes::TRANSLATION)));
+    const static QRegularExpression rxAtt(format.arg(entryItemName(dsmSectionTypes::PRIMARY_VEC))+format.arg("_SV"));
+    const static QRegularExpression rxPV(format.arg(entryItemName(dsmSectionTypes::PRIMARY_VEC)));
+    const static QRegularExpression rxSV(format.arg(entryItemName(dsmSectionTypes::SECONDARY_VEC)));
+    const static QRegularExpression rxQuat(format.arg(entryItemName(dsmSectionTypes::QUATERION)));
+    const static QRegularExpression rxMirror(format.arg(entryItemName(dsmSectionTypes::MIRROR)));
+    const static QRegularExpression rxDetumble(format.arg(entryItemName(dsmSectionTypes::DETUMBLE)));
+    const static QRegularExpression rxWhlHManage(format.arg(entryItemName(dsmSectionTypes::WHLHMANAGEMENT)));
+    const static QRegularExpression rxAct(format.arg(entryItemName(dsmSectionTypes::ACTUATOR_CMD)));
+    const static QRegularExpression rxManeuver(format.arg(entryItemName(dsmSectionTypes::MANEUVER)));
 
     switch (cmdType) {
     case cmdTrn: return rxTrn;
@@ -1051,7 +1059,7 @@ void DSM_Menu::on_cmdTrnOri_currentTextChanged(const QString &arg1) {
         ui->cmdTrnOriScBdyNum->setEnabled(true);
     }
     if (scNames.contains(arg1))
-        ui->cmdTrnOriScBdyNum->setMaximum(get_sc_nbodies(arg1));
+        ui->cmdTrnOriScBdyNum->setMaximum(nBdys[arg1]-1);
     else
         ui->cmdTrnOriScBdyNum->setValue(0);
     return;
@@ -1067,7 +1075,7 @@ void DSM_Menu::on_cmdTrnFrm_currentTextChanged(const QString &arg1) {
         ui->cmdTrnFrmScBdyNum->setEnabled(true);
     }
     if (scNames.contains(arg1))
-        ui->cmdTrnFrmScBdyNum->setMaximum(get_sc_nbodies(arg1));
+        ui->cmdTrnFrmScBdyNum->setMaximum(nBdys[arg1]-1);
     else
         ui->cmdTrnFrmScBdyNum->setValue(0);
     return;
@@ -1096,7 +1104,9 @@ void DSM_Menu::cmd_data_changed() {
     QStringList checkList;
     double checkSum;
 
-    switch (curItem->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt()) {
+
+    int cmdType = curItem->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
+    switch (cmdType) {
         case cmdTrn:
             cmdData.append(ui->cmdTrnX->text());
             cmdData.append(ui->cmdTrnY->text());
@@ -1107,7 +1117,7 @@ void DSM_Menu::cmd_data_changed() {
             if (checkList.contains(tmpStr))
                 cmdData.append(cmdTrnOriConst.key(tmpStr,"OP"));
             else {
-                ui->cmdTrnOriScBdyNum->setMaximum(get_sc_nbodies(tmpStr));
+                ui->cmdTrnOriScBdyNum->setMaximum(nBdys[tmpStr]-1);
                 cmdData.append(scBdyFrmt.arg(scNames.indexOf(tmpStr)).arg(ui->cmdTrnOriScBdyNum->value()));
             }
 
@@ -1116,7 +1126,7 @@ void DSM_Menu::cmd_data_changed() {
             if (checkList.contains(tmpStr))
                 cmdData.append(cmdTrnFrmConst.key(tmpStr,"N"));
             else {
-                ui->cmdTrnFrmScBdyNum->setMaximum(get_sc_nbodies(tmpStr));
+                ui->cmdTrnFrmScBdyNum->setMaximum(nBdys[tmpStr]-1);
                 cmdData.append(scBdyFrmt.arg(scNames.indexOf(tmpStr)).arg(ui->cmdTrnFrmScBdyNum->value()));
             }
             break;
@@ -1134,7 +1144,7 @@ void DSM_Menu::cmd_data_changed() {
             }
             else if (tmpStr.compare("SC") == 0) {
                 tmpStr = ui->cmdPvTgtSc->currentText();
-                ui->cmdPvTgtScBdyNum->setMaximum(get_sc_nbodies(tmpStr));
+                ui->cmdPvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
 
                 cmdData.append(scBdyFrmt.arg(scNames.indexOf(tmpStr)).arg(ui->cmdPvTgtScBdyNum->value()));
             }
@@ -1156,7 +1166,7 @@ void DSM_Menu::cmd_data_changed() {
             }
             else if (tmpStr.compare("SC") == 0) {
                 tmpStr = ui->cmdSvTgtSc->currentText();
-                ui->cmdSvTgtScBdyNum->setMaximum(get_sc_nbodies(tmpStr));
+                ui->cmdSvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
                 cmdData.append(scBdyFrmt.arg(scNames.indexOf(tmpStr)).arg(ui->cmdSvTgtScBdyNum->value()));
             }
             else if (tmpStr.compare("BODY") == 0)
@@ -1174,7 +1184,7 @@ void DSM_Menu::cmd_data_changed() {
             break;
         case cmdMirror:
             tmpStr = ui->cmdMirrorTgt->currentText();
-            ui->cmdMirrorTgtBdyNum->setMaximum(get_sc_nbodies(tmpStr));
+            ui->cmdMirrorTgtBdyNum->setMaximum(nBdys[tmpStr]-1);
             cmdData.append(scBdyFrmt.arg(scNames.indexOf(tmpStr)).arg(ui->cmdMirrorTgtBdyNum->value()));
             break;
         case cmdDetumble:
@@ -1203,6 +1213,21 @@ void DSM_Menu::cmd_data_changed() {
     }
 
     curItem->setText(DSM_Menu::cmdColData, cmdData.join(cmdDataSpacer));
+
+    if (cmdType == cmdAct) {
+        QList<QTreeWidgetItem*> checkItems = ui->cmdTimelineTree->findItems(curItem->text(cmdCols::cmdColLabel),Qt::MatchExactly,tlCols::tlColAct);
+        QHash<QString,bool> checkedSc;
+        for (QString scName : qAsConst(scNames))
+            checkedSc.insert(scName,false);
+
+        for (QTreeWidgetItem *item : checkItems) {
+            QString scName = item->text(tlCols::tlColSC);
+            if (!checkedSc[scName]) {
+                checkedSc.insert(scName,true);
+                check_actuator_cmds(scName,curItem);
+            }
+        }
+    }
 }
 
 void DSM_Menu::on_cmdController_textActivated(const QString &arg1) {
@@ -1299,24 +1324,18 @@ void DSM_Menu::on_cmdLabel_textEdited(const QString &arg1) {
 }
 
 void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem*) {
-    if (item->parent()==NULL) {
+    bool isNull = item==NULL || item->parent()==NULL;
+    ui->cmdController->setEnabled(!isNull);
+    ui->cmdControllerLabel->setEnabled(!isNull);
+    ui->cmdActuator->setEnabled(!isNull);
+    ui->cmdActuatorLabel->setEnabled(!isNull);
+    ui->cmdLabel->setEnabled(!isNull);
+    ui->cmdLabelLabel->setEnabled(!isNull);
+    if (isNull) {
         ui->cmdConfigurator->setTabVisible(ui->cmdConfigurator->currentIndex(),false);
-        ui->cmdController->setEnabled(false);
-        ui->cmdControllerLabel->setEnabled(false);
-        ui->cmdActuator->setEnabled(false);
-        ui->cmdActuatorLabel->setEnabled(false);
-        ui->cmdLabel->setEnabled(false);
-        ui->cmdLabelLabel->setEnabled(false);
         ui->cmdLabel->clear();
         return;
     }
-    ui->cmdController->setEnabled(true);
-    ui->cmdControllerLabel->setEnabled(true);
-    ui->cmdActuator->setEnabled(true);
-    ui->cmdActuatorLabel->setEnabled(true);
-    ui->cmdLabel->setEnabled(true);
-    ui->cmdLabelLabel->setEnabled(true);
-
 
     int cmdType = item->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
     QString cmdData = item->text(cmdColData);
@@ -1338,6 +1357,7 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
     setQComboBox(ui->cmdActuator,item->text(DSM_Menu::cmdColAct));
     ui->cmdLabel->setText(item->text(DSM_Menu::cmdColLabel));
 
+    QString tmpStr;
     switch (cmdType) {
     case cmdTrn:
         ui->cmdTrnX->setText(cmdDataSplit[0]);
@@ -1345,22 +1365,28 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         ui->cmdTrnZ->setText(cmdDataSplit[2]);
         if (cmdDataSplit[3].contains("SC")) {
                 match = rxScBdy.match(cmdDataSplit[3]);
-                setQComboBox(ui->cmdTrnOri,scNames[match.captured(1).toInt()]);
+                tmpStr = scNames[match.captured(1).toInt()];
+                setQComboBox(ui->cmdTrnOri,tmpStr);
+
+                ui->cmdTrnOriScBdyNum->setMaximum(nBdys[tmpStr]-1);
                 if (match.captured(2).isEmpty())
-                ui->cmdTrnOriScBdyNum->setValue(0);
+                    ui->cmdTrnOriScBdyNum->setValue(0);
                 else
-                ui->cmdTrnOriScBdyNum->setValue(match.captured(2).toInt());
+                    ui->cmdTrnOriScBdyNum->setValue(match.captured(2).toInt());
         }
         else {
                 setQComboBox(ui->cmdTrnOri,cmdTrnOriConst[cmdDataSplit[3]]);
         }
         if (cmdDataSplit[4].contains("SC")) {
                 match = rxScBdy.match(cmdDataSplit[4]);
-                setQComboBox(ui->cmdTrnFrm,scNames[match.captured(1).toInt()]);
+                tmpStr = scNames[match.captured(1).toInt()];
+                setQComboBox(ui->cmdTrnFrm,tmpStr);
+
+                ui->cmdTrnFrmScBdyNum->setMaximum(nBdys[tmpStr]-1);
                 if (match.captured(2).isEmpty())
-                ui->cmdTrnFrmScBdyNum->setValue(0);
+                    ui->cmdTrnFrmScBdyNum->setValue(0);
                 else
-                ui->cmdTrnFrmScBdyNum->setValue(match.captured(2).toInt());
+                    ui->cmdTrnFrmScBdyNum->setValue(match.captured(2).toInt());
         }
         else {
                 setQComboBox(ui->cmdTrnFrm,cmdTrnFrmConst[cmdDataSplit[4]]);
@@ -1379,11 +1405,14 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         }
         else if (cmdDataSplit[0].compare("SC")==0) {
                 match = rxScBdy.match(cmdDataSplit[4]);
-                setQComboBox(ui->cmdPvTgtSc,scNames[match.captured(1).toInt()]);
+                tmpStr = scNames[match.captured(1).toInt()];
+                setQComboBox(ui->cmdPvTgtSc,tmpStr);
+
+                ui->cmdPvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
                 if (match.captured(2).isEmpty())
-                ui->cmdPvTgtScBdyNum->setValue(0);
+                    ui->cmdPvTgtScBdyNum->setValue(0);
                 else
-                ui->cmdPvTgtScBdyNum->setValue(match.captured(2).toInt());
+                    ui->cmdPvTgtScBdyNum->setValue(match.captured(2).toInt());
         }
         else if (cmdDataSplit[0].compare("BODY")==0) {
                 if (cmdDataSplit[4].compare("SUN",Qt::CaseInsensitive)==0)
@@ -1406,11 +1435,14 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         }
         else if (cmdDataSplit[0].compare("SC")==0) {
                 match = rxScBdy.match(cmdDataSplit[4]);
-                setQComboBox(ui->cmdSvTgtSc,scNames[match.captured(1).toInt()]);
+                tmpStr = scNames[match.captured(1).toInt()];
+                setQComboBox(ui->cmdSvTgtSc,tmpStr);
+
+                ui->cmdSvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
                 if (match.captured(2).isEmpty())
-                ui->cmdSvTgtScBdyNum->setValue(0);
+                    ui->cmdSvTgtScBdyNum->setValue(0);
                 else
-                ui->cmdSvTgtScBdyNum->setValue(match.captured(2).toInt());
+                    ui->cmdSvTgtScBdyNum->setValue(match.captured(2).toInt());
         }
         else if (cmdDataSplit[0].compare("BODY")==0) {
                 if (cmdDataSplit[4].compare("SUN",Qt::CaseInsensitive)==0)
@@ -1427,11 +1459,14 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         break;
     case cmdMirror:
         match = rxScBdy.match(cmdDataSplit[0]);
-        setQComboBox(ui->cmdMirrorTgt,scNames[match.captured(1).toInt()]);
+        tmpStr = scNames[match.captured(1).toInt()];
+        setQComboBox(ui->cmdMirrorTgt,tmpStr);
+
+        ui->cmdPvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
         if (match.captured(2).isEmpty())
-                ui->cmdPvTgtScBdyNum->setValue(0);
+                ui->cmdMirrorTgtBdyNum->setValue(0);
         else
-                ui->cmdPvTgtScBdyNum->setValue(match.captured(2).toInt());
+                ui->cmdMirrorTgtBdyNum->setValue(match.captured(2).toInt());
         break;
     case cmdDetumble:
         // Nothing Here
@@ -1462,7 +1497,6 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         return;
         break;
     }
-
 }
 
 void DSM_Menu::on_closeButton_clicked() {
@@ -1507,28 +1541,30 @@ void DSM_Menu::on_cmdRemove_clicked() {
     QList<QTreeWidgetItem*> searchList;
     QHash<QString,QString> *searchHash;
     QString cmdTypeStr;
+    Qt::MatchFlags flags;
 
     if (trnCmds.contains(cmdType)) {
         searchCol = tlCols::tlColTrn;
-        searchList = ui->cmdTimelineTree->findItems(searchLabel,Qt::MatchExactly,searchCol);
+        flags = Qt::MatchExactly;
         searchHash = &trnCmdsHash;
         cmdTypeStr = "Translation";
     }
     else if (attCmds.contains(cmdType)) {
         searchCol = tlCols::tlColAtt;
-        searchList = ui->cmdTimelineTree->findItems(searchLabel,Qt::MatchContains,searchCol);
+        flags = Qt::MatchContains;
         searchHash = &attCmdsHash;
         cmdTypeStr = "Attitude";
     }
     else if (cmdType == cmdSV) {
         searchCol = tlCols::tlColAtt;
-        searchList = ui->cmdTimelineTree->findItems(cmdDelimiter+cmdDataSpacer+searchLabel,Qt::MatchContains,searchCol);
+        searchLabel = cmdDelimiter+cmdDataSpacer+searchLabel;
+        flags = Qt::MatchContains;
         searchHash = &attSVCmdsHash;
         cmdTypeStr = "Attitude";
     }
     else if (cmdType == cmdAct) {
         searchCol = tlCols::tlColAct;
-        searchList = ui->cmdTimelineTree->findItems(searchLabel,Qt::MatchExactly,searchCol);
+        flags = Qt::MatchExactly;
         searchHash = &actCmdsHash;
         cmdTypeStr = "Actuator";
     }
@@ -1536,6 +1572,8 @@ void DSM_Menu::on_cmdRemove_clicked() {
         dsm_gui_lib::inexplicable_error_message();
         return;
     }
+
+    searchList = ui->cmdTimelineTree->findItems(searchLabel,flags,searchCol);
 
     if (!searchList.isEmpty()) {
         QString scName = searchList[0]->text(tlCols::tlColSC);
@@ -1687,6 +1725,7 @@ void DSM_Menu::on_cmdAdd_clicked() {
     }
 
     new_entry_item(type, newLabel, newCmdInd, newCmdData.split(QRegExp("//s"),Qt::SkipEmptyParts).join(cmdDataSpacer));
+    populate_cmdtl_dropdowns(cmdType);
 }
 
 void DSM_Menu::on_cmdDuplicate_clicked() {
@@ -1718,22 +1757,22 @@ void DSM_Menu::on_cmdDuplicate_clicked() {
     int newCmdType = entryCmdParents.key(curItem->parent());
     dsmSectionTypes newSecType = section2Cmd.key(newCmdType);
     QString newData = curItem->text(cmdCols::cmdColData);
+    newData.append(cmdDataSpacer);
+    newData.append(ctlsHash[curItem->text(cmdCols::cmdColCtl)]);
+    newData.append(cmdDataSpacer);
+    newData.append(actsHash[curItem->text(cmdCols::cmdColAct)]);
     new_entry_item(newSecType,newLabel,newCmdInd,newData);
 
     QTreeWidgetItem *curTime = ui->cmdTimelineTree->currentItem();
     if (curTime != NULL) {
         populate_cmdtl_dropdowns(newCmdType);
     }
-
-//    QTreeWidgetItem *newItem = curItem->clone();
-//    newItem->setText(cmdCols::cmdColLabel,newLabel);
-//    newItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,newCmdInd);
-//    newItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,newCmdInd);
-//    curItem->parent()->addChild(newItem);
 }
 
 void DSM_Menu::cmd_act_data_changed() {
     QListWidgetItem *item = ui->cmdActList->currentItem();
+    if (item == NULL) return;
+
     QString tmpStr = ui->cmdActType->currentText();
     if (tmpStr.compare(actTypes["WHL"])==0)
         tmpStr = "WHL_[%1]_[%2]";
@@ -1756,14 +1795,17 @@ void DSM_Menu::on_cmdActAdd_clicked() {
 }
 
 void DSM_Menu::on_cmdActRemove_clicked() {
-    int item = ui->cmdActList->currentRow();
-    if (item == -1) return;
+    QListWidgetItem *item = ui->cmdActList->currentItem();
+    if (item == NULL) return;
 
-    ui->cmdActList->takeItem(item);
+    ui->cmdActList->setCurrentItem(NULL);
+    delete item;
     cmd_data_changed();
 }
 
 void DSM_Menu::on_cmdActList_currentItemChanged(QListWidgetItem *current, QListWidgetItem*) {
+    if (current == NULL) return;
+
     static QRegularExpression actRx("^(.*)_\\[([0-9]+)]_\\[([0-9.]+)]");
     QRegularExpressionMatch match = actRx.match(current->text());
 
@@ -1781,7 +1823,6 @@ void DSM_Menu::on_cmdActList_currentItemChanged(QListWidgetItem *current, QListW
 }
 
 void DSM_Menu::on_cmdTimelineTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem*) {
-
     bool isNull = current==NULL;
     ui->cmdSC->setEnabled(!isNull);
     ui->cmdSCLabel->setEnabled(!isNull);
@@ -1832,6 +1873,7 @@ void DSM_Menu::on_cmdTimelineTree_currentItemChanged(QTreeWidgetItem *current, Q
 }
 
 void DSM_Menu::timeline_data_changed() {
+
     QTreeWidgetItem *curItem = ui->cmdTimelineTree->currentItem();
     if (curItem == NULL) return;
 
@@ -1845,8 +1887,13 @@ void DSM_Menu::timeline_data_changed() {
 
     if (ui->cmdActLabel->currentText().compare("No Change")==0)
         curItem->setText(tlCols::tlColAct,"");
-    else
-        curItem->setText(tlCols::tlColAct,ui->cmdActLabel->currentText());
+    else {
+        QString label = ui->cmdActLabel->currentText();
+        if (!check_actuator_cmds(curItem->text(tlCols::tlColSC),label))
+            return;
+
+        curItem->setText(tlCols::tlColAct,label);
+    }
 
     QString attCmd = ui->cmdAttLabel->currentText();
     ui->cmdAttSVLabel->setEnabled(false);
@@ -3225,24 +3272,67 @@ void DSM_Menu::on_cmdQuatNormalize_clicked() {
     ui->cmdQs->setText(QString::number(quat[3]));
 }
 
-int DSM_Menu::get_sc_nbodies(QString scName) {
-    QString scFileName = "SC_"+scName+".txt";
+bool DSM_Menu::check_actuator_cmds(const QString scName, const QTreeWidgetItem *actCmd) {
+    const static QRegularExpression actCmdRx("[a-zA-Z]{3}_\\[([0-9]+)]_\\[[0-9.]+]");
+    const static QString tmpStr = "\n%1  requires %2; \"%3\" has %4";
 
-    QFile scFile(inoutPath + scFileName);
-    if(!scFile.open(QIODevice::ReadOnly))
-        QMessageBox::information(0, "error", scFile.errorString());
-    QTextStream in(&scFile);
+    QString label = ui->cmdActLabel->currentText();
 
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        if (line.contains("Body Parameters",Qt::CaseInsensitive)) {
-            line = in.readLine();
-            line = in.readLine();
-            QStringList line_items = line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
-            int nBodies = line_items[0].toInt();
-            return nBodies-1;
+    int nWhl = nWhls[scName];
+    int nMtb = nMtbs[scName];
+    int nThr = nThrs[scName];
+
+    int nUsedWhl=0, nUsedMtb=0, nUsedThr=0;
+    QStringList dataSplit = actCmd->text(cmdCols::cmdColData).split(QRegExp("\\s"),Qt::SkipEmptyParts);
+
+    for (int i=1; i<dataSplit.length(); i++) {
+        int test = actCmdRx.match(dataSplit[i]).captured(1).toInt()+1;
+        if (dataSplit[i].contains("WHL")) {
+            if (nUsedWhl<test) nUsedWhl = test;
+        }
+        else if (dataSplit[i].contains("MTB")) {
+            if (nUsedMtb<test) nUsedMtb = test;
+        }
+        else if (dataSplit[i].contains("THR")) {
+            if (nUsedThr<test) nUsedThr = test;
+        }
+        else {
+            dsm_gui_lib::inexplicable_error_message();
+            return -1;
+        }
+    }
+
+    bool isErr = false;
+    QString errMsg="Actuator command \""+label+"\" requires more actuators than spacecraft \""+scName+"\" has:\n";
+    if (nUsedWhl>nWhl){
+        isErr = true;
+        errMsg.append(tmpStr.arg(QString("Wheel:   "),QString::number(nUsedWhl),scName,QString::number(nWhl)));
+    }
+    if (nUsedMtb>nMtb){
+        isErr = true;
+        errMsg.append(tmpStr.arg(QString("MTB:     "),QString::number(nUsedMtb),scName,QString::number(nMtb)));
+    }
+    if (nUsedThr>nThr){
+        isErr = true;
+        errMsg.append(tmpStr.arg(QString("Thruster:"),QString::number(nUsedThr),scName,QString::number(nThr)));
+    }
+    if (isErr) {
+        dsm_gui_lib::error_message(errMsg);
+    }
+    return !isErr;
+}
+
+bool DSM_Menu::check_actuator_cmds(const QString scName, const QString actCmdLabel) {
+    QTreeWidgetItem *parent = entryCmdParents[cmdTypes::cmdAct];
+    QTreeWidgetItem *item = parent->child(0);
+    QList<QTreeWidgetItem*> items = ui->cmdConfigTree->findItems(actCmdLabel,Qt::MatchExactly|Qt::MatchRecursive,cmdCols::cmdColLabel);
+
+    for (QTreeWidgetItem *checkItem : qAsConst(items)) {
+        if (checkItem->parent()==parent) {
+            item = checkItem;
             break;
         }
     }
 
+    return check_actuator_cmds(scName,item);
 }

@@ -662,26 +662,8 @@ void FOV_Menu::on_fov_duplicate_clicked() {
 void FOV_Menu::on_sc_name_currentTextChanged(const QString &arg1) {
     QStringList scFileNames = QDir(inout_path).entryList({"SC_"+arg1+".txt"});
     if (scFileNames.isEmpty()) return;
-    QString scFileName = scFileNames[0];
 
-    QFile scFile(inout_path + scFileName);
-    if(!scFile.open(QIODevice::ReadOnly))
-        QMessageBox::information(0, "error", scFile.errorString());
-    QTextStream in(&scFile);
-
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        if (line.contains("Body Parameters",Qt::CaseInsensitive)) {
-            line = in.readLine();
-            line = in.readLine();
-            QStringList line_items = line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
-            int nBodies = line_items[0].toInt();
-            ui->bdy_num->setMaximum(nBodies-1);
-            break;
-        }
-
-    }
-    scFile.close();
+    ui->bdy_num->setMaximum(dsm_gui_lib::get_sc_nitems(inout_path,arg1,dsm_gui_lib::scSectionType::BODY)-1);
 
 }
 

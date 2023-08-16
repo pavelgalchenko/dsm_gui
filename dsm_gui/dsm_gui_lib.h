@@ -6,6 +6,8 @@
 #include <QCheckBox>
 #include <QVariant>
 #include <QRandomGenerator>
+#include <QFile>
+#include <QTextStream>
 
 class dsm_gui_lib
 {
@@ -45,9 +47,57 @@ public:
         int randomNum = QRandomGenerator::global()->bounded(lineCount);
         return error_message(inexplicableErrorMsg[randomNum]);
     }
-};
 
-//const QStringList dsm_gui_lib::eulerInputs
-//const QStringList dsm_gui_lib::worldInputs
+    enum class scSectionType {
+        BODY,
+        WHEEL,
+        MTB,
+        THRUSTER,
+        GYRO,
+        MAGNETOMETER,
+        CSS,
+        FSS,
+        STARTRACKER,
+        GPS,
+        ACCEL,
+    };
+
+    static int get_sc_nitems(const QString inout_path, const QString sc_name, const scSectionType type);
+
+
+private:
+    inline static QString scSectionIdentifier(scSectionType type) {
+        switch (type){
+        case scSectionType::BODY: return "Body Parameters";
+        case scSectionType::WHEEL: return "Wheel Parameters";
+        case scSectionType::MTB: return "MTB Parameters";
+        case scSectionType::THRUSTER: return "Thruster Parameters";
+        case scSectionType::GYRO: return "Gyro";
+        case scSectionType::MAGNETOMETER: return "Magnetometer";
+        case scSectionType::CSS: return "Coarse Sun Sensor";
+        case scSectionType::FSS: return "Fine Sun Sensor";
+        case scSectionType::STARTRACKER: return "Star Tracker";
+        case scSectionType::GPS: return "GPS";
+        case scSectionType::ACCEL: return "Accelerometer";
+        }
+    }
+
+    inline static int scSectionLineToNum(scSectionType type) {
+        switch (type) {
+        case scSectionType::BODY: return 2;
+        case scSectionType::WHEEL: return 3;
+        case scSectionType::MTB: return 1;
+        case scSectionType::THRUSTER: return 1;
+        case scSectionType::GYRO: return 1;
+        case scSectionType::MAGNETOMETER: return 1;
+        case scSectionType::CSS: return 1;
+        case scSectionType::FSS: return 1;
+        case scSectionType::STARTRACKER: return 1;
+        case scSectionType::GPS: return 1;
+        case scSectionType::ACCEL: return 1;
+        }
+    }
+
+};
 
 #endif // DSM_GUI_LIB_H
