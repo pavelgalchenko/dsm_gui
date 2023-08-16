@@ -1497,7 +1497,6 @@ void DSM_Menu::on_cmdRemove_clicked() {
     if (item==NULL || item->parent()==NULL)
         return;
 
-
     int searchCol;
     int cmdType = item->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
     QString searchLabel = item->text(cmdCols::cmdColLabel);
@@ -1529,8 +1528,17 @@ void DSM_Menu::on_cmdRemove_clicked() {
         return;
     }
 
-    searchHash->remove(searchLabel);
+    if (!searchList.isEmpty()) {
+        QString scName = searchList[0]->text(tlCols::tlColSC);
+        double cmdTime = searchList[0]->data(tlCols::tlColTime,Qt::DisplayRole).toDouble();
 
+        int response = dsm_gui_lib::warning_message("Command \""+searchLabel+"\" is used by spacecraft \""+scName+"\" at time "+QString::number(cmdTime)+" seconds and perhaps other times.\n"
+                                                    +"Continue in the removal of command \""+searchLabel+"\"?");
+        if (response == QMessageBox::Cancel)
+            return;
+    }
+
+    searchHash->remove(searchLabel);
 
     for (QTreeWidgetItem *item : qAsConst(searchList)) {
         item->setText(searchCol,"");
@@ -1564,7 +1572,6 @@ void DSM_Menu::on_cmdAdd_clicked() {
     QString ctrlName, actName, limName;
     QList<QTreeWidgetItem*> tmpCtrlItems;
     QList<QListWidgetItem*> tmpActItems;
-
 
     if (cmdType==cmdTrn) {
         if (cmdValidCtrls[cmdType].isEmpty()) {
@@ -2188,6 +2195,13 @@ void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
         curBox->addItems(newCmdList);
     }
     else if (cmdtype == cmdSV) {
+        if (curItem == NULL) {
+            ui->cmdAttSVLabel->clear();
+            ui->cmdAttSVLabel->setEnabled(false);
+            ui->cmdSVSecLabel->setEnabled(false);
+            return;
+        }
+
         QString curAttCmd = curItem->text(tlCols::tlColAtt);
         QString pvLabel = rxPV.match(curAttCmd).captured(1);
         ui->cmdAttLabel->setCurrentText(pvLabel);
