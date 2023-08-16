@@ -35,8 +35,6 @@ private slots:
 
     void set_command_ctrl_act(QTreeWidgetItem*,const QString, QStringList*);
 
-    void setQComboBox(QComboBox *comboBox, QString string);
-
     void on_cmdTrnOri_currentTextChanged(const QString &arg1);
 
     void on_cmdTrnFrm_currentTextChanged(const QString &arg1);
@@ -161,6 +159,7 @@ private:
     QStringList dsmUpdate;
 
     QStringList scNames;
+    QHash<QString,int> nBdys;
     QHash<QString,int> nWhls;
     QHash<QString,int> nMtbs;
     QHash<QString,int> nThrs;

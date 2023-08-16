@@ -1045,10 +1045,6 @@ QString DSM_Menu::entryItemFormat(const dsmSectionTypes type) {
     return string;
 }
 
-void DSM_Menu::setQComboBox(QComboBox *comboBox, QString string) {
-    comboBox->setCurrentIndex(comboBox->findText(string));
-}
-
 void DSM_Menu::on_cmdTrnOri_currentTextChanged(const QString &arg1) {
     if (cmdTrnOriConst.values().contains(arg1)){
         ui->cmdTrnOriScBdyLabel->setEnabled(false);
@@ -1353,8 +1349,8 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
 
     populate_cmd_dropdowns();
 
-    setQComboBox(ui->cmdController,item->text(DSM_Menu::cmdColCtl));
-    setQComboBox(ui->cmdActuator,item->text(DSM_Menu::cmdColAct));
+    ui->cmdController->setCurrentText(item->text(DSM_Menu::cmdColCtl));
+    ui->cmdActuator->setCurrentText(item->text(DSM_Menu::cmdColAct));
     ui->cmdLabel->setText(item->text(DSM_Menu::cmdColLabel));
 
     QString tmpStr;
@@ -1366,7 +1362,7 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         if (cmdDataSplit[3].contains("SC")) {
                 match = rxScBdy.match(cmdDataSplit[3]);
                 tmpStr = scNames[match.captured(1).toInt()];
-                setQComboBox(ui->cmdTrnOri,tmpStr);
+                ui->cmdTrnOri->setCurrentText(tmpStr);
 
                 ui->cmdTrnOriScBdyNum->setMaximum(nBdys[tmpStr]-1);
                 if (match.captured(2).isEmpty())
@@ -1375,12 +1371,12 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
                     ui->cmdTrnOriScBdyNum->setValue(match.captured(2).toInt());
         }
         else {
-                setQComboBox(ui->cmdTrnOri,cmdTrnOriConst[cmdDataSplit[3]]);
+                ui->cmdTrnOri->setCurrentText(cmdTrnOriConst[cmdDataSplit[3]]);
         }
         if (cmdDataSplit[4].contains("SC")) {
                 match = rxScBdy.match(cmdDataSplit[4]);
                 tmpStr = scNames[match.captured(1).toInt()];
-                setQComboBox(ui->cmdTrnFrm,tmpStr);
+                ui->cmdTrnFrm->setCurrentText(tmpStr);
 
                 ui->cmdTrnFrmScBdyNum->setMaximum(nBdys[tmpStr]-1);
                 if (match.captured(2).isEmpty())
@@ -1389,16 +1385,16 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
                     ui->cmdTrnFrmScBdyNum->setValue(match.captured(2).toInt());
         }
         else {
-                setQComboBox(ui->cmdTrnFrm,cmdTrnFrmConst[cmdDataSplit[4]]);
+                ui->cmdTrnFrm->setCurrentText(cmdTrnFrmConst[cmdDataSplit[4]]);
         }
         break;
     case cmdPV:
-        setQComboBox(ui->cmdPvTgtType,cmdAttTgtTypes[cmdDataSplit[0]]);
+        ui->cmdPvTgtType->setCurrentText(cmdAttTgtTypes[cmdDataSplit[0]]);
         ui->cmdPvX->setText(cmdDataSplit[1]);
         ui->cmdPvY->setText(cmdDataSplit[2]);
         ui->cmdPvZ->setText(cmdDataSplit[3]);
         if (cmdDataSplit[0].compare("VEC")==0) {
-                setQComboBox(ui->cmdPvTgtAxisFrm,cmdAttTgtFrm[cmdDataSplit[4]]);
+                ui->cmdPvTgtAxisFrm->setCurrentText(cmdAttTgtFrm[cmdDataSplit[4]]);
                 ui->cmdPvTgtX->setText(cmdDataSplit[5]);
                 ui->cmdPvTgtY->setText(cmdDataSplit[6]);
                 ui->cmdPvTgtZ->setText(cmdDataSplit[7]);
@@ -1406,7 +1402,7 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         else if (cmdDataSplit[0].compare("SC")==0) {
                 match = rxScBdy.match(cmdDataSplit[4]);
                 tmpStr = scNames[match.captured(1).toInt()];
-                setQComboBox(ui->cmdPvTgtSc,tmpStr);
+                ui->cmdPvTgtSc->setCurrentText(tmpStr);
 
                 ui->cmdPvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
                 if (match.captured(2).isEmpty())
@@ -1417,18 +1413,18 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         else if (cmdDataSplit[0].compare("BODY")==0) {
                 if (cmdDataSplit[4].compare("SUN",Qt::CaseInsensitive)==0)
                 cmdDataSplit[4]="SOL";
-                setQComboBox(ui->cmdPvTgtWld,cmdDataSplit[4]);
+                ui->cmdPvTgtWld->setCurrentText(cmdDataSplit[4]);
         }
         break;
     case cmdSV:
         ui->cmdController->setEnabled(false);
         ui->cmdActuator->setEnabled(false);
-        setQComboBox(ui->cmdSvTgtType,cmdAttTgtTypes[cmdDataSplit[0]]);
+        ui->cmdSvTgtType->setCurrentText(cmdAttTgtTypes[cmdDataSplit[0]]);
         ui->cmdSvX->setText(cmdDataSplit[1]);
         ui->cmdSvY->setText(cmdDataSplit[2]);
         ui->cmdSvZ->setText(cmdDataSplit[3]);
         if (cmdDataSplit[0].compare("VEC")==0) {
-                setQComboBox(ui->cmdSvTgtAxisFrm,cmdAttTgtFrm[cmdDataSplit[4]]);
+                ui->cmdSvTgtAxisFrm->setCurrentText(cmdAttTgtFrm[cmdDataSplit[4]]);
                 ui->cmdSvTgtX->setText(cmdDataSplit[5]);
                 ui->cmdSvTgtY->setText(cmdDataSplit[6]);
                 ui->cmdSvTgtZ->setText(cmdDataSplit[7]);
@@ -1436,7 +1432,7 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         else if (cmdDataSplit[0].compare("SC")==0) {
                 match = rxScBdy.match(cmdDataSplit[4]);
                 tmpStr = scNames[match.captured(1).toInt()];
-                setQComboBox(ui->cmdSvTgtSc,tmpStr);
+                ui->cmdSvTgtSc->setCurrentText(tmpStr);
 
                 ui->cmdSvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
                 if (match.captured(2).isEmpty())
@@ -1447,7 +1443,7 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         else if (cmdDataSplit[0].compare("BODY")==0) {
                 if (cmdDataSplit[4].compare("SUN",Qt::CaseInsensitive)==0)
                 cmdDataSplit[4]="SOL";
-                setQComboBox(ui->cmdSvTgtWld,cmdDataSplit[4]);
+                ui->cmdSvTgtWld->setCurrentText(cmdDataSplit[4]);
         }
         break;
     case cmdQuat:
@@ -1455,12 +1451,12 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         ui->cmdQv2->setText(cmdDataSplit[1]);
         ui->cmdQv3->setText(cmdDataSplit[2]);
         ui->cmdQs->setText(cmdDataSplit[3]);
-        setQComboBox(ui->cmdQuatFrm,cmdTrnFrmConst[cmdDataSplit[4]]);
+        ui->cmdQuatFrm->setCurrentText(cmdTrnFrmConst[cmdDataSplit[4]]);
         break;
     case cmdMirror:
         match = rxScBdy.match(cmdDataSplit[0]);
         tmpStr = scNames[match.captured(1).toInt()];
-        setQComboBox(ui->cmdMirrorTgt,tmpStr);
+        ui->cmdMirrorTgt->setCurrentText(tmpStr);
 
         ui->cmdPvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
         if (match.captured(2).isEmpty())
@@ -1487,10 +1483,10 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         ui->cmdManX->setText(cmdDataSplit[0]);
         ui->cmdManY->setText(cmdDataSplit[1]);
         ui->cmdManZ->setText(cmdDataSplit[2]);
-        setQComboBox(ui->cmdManFrm,cmdManFrm[cmdDataSplit[3]]);
-        setQComboBox(ui->cmdManType,cmdManTypes[cmdDataSplit[4]]);
+        ui->cmdManFrm->setCurrentText(cmdManFrm[cmdDataSplit[3]]);
+        ui->cmdManType->setCurrentText(cmdManTypes[cmdDataSplit[4]]);
         ui->cmdManTime->setText(cmdDataSplit[5]);
-        setQComboBox(ui->cmdManLimits,cmdDataSplit[6]);
+        ui->cmdManLimits->setCurrentText(cmdDataSplit[6]);
         break;
     default:
         dsm_gui_lib::inexplicable_error_message();
@@ -2009,7 +2005,7 @@ void DSM_Menu::on_cmdTimeRemove_clicked() {
     QTreeWidgetItem *curItem = ui->cmdTimelineTree->currentItem();
     if (curItem==NULL) return;
 
-    ui->cmdTimelineTree->takeTopLevelItem(ui->cmdTimelineTree->indexOfTopLevelItem(curItem));
+    delete curItem;
     ui->cmdTimelineTree->setCurrentItem(NULL);
 }
 
@@ -2026,7 +2022,7 @@ void DSM_Menu::on_actList_currentItemChanged(QListWidgetItem *current, QListWidg
         return;
     }
 
-    setQComboBox(ui->actType,actTypes[current->data(actData::actType).toString()]);
+    ui->actType->setCurrentText(actTypes[current->data(actData::actType).toString()]);
     ui->actLabel->setText(current->text());
 }
 
@@ -2108,17 +2104,15 @@ void DSM_Menu::on_actRemove_clicked() {
 
     QString label = current->text();
     QString actType = current->data(actData::actType).toString();
-    for (int cmd : actValidCmds[actType]) {
-        for (int i=0 ; i<entryCmdParents[cmd]->childCount(); i++) {
-            QTreeWidgetItem* item = entryCmdParents[cmd]->child(i);
-            if (item->text(cmdCols::cmdColAct).compare(label)==0) {
-                item->setText(cmdCols::cmdColAct,"");
-            }
-        }
+
+    QList<QTreeWidgetItem*> items = ui->cmdConfigTree->findItems(label,Qt::MatchExactly|Qt::MatchRecursive,cmdCols::cmdColAct);
+    for (QTreeWidgetItem *item : qAsConst(items)) {
+        item->setText(cmdCols::cmdColAct,"");
     }
 
-    for (int cmd : actValidCmds[actType])
+    for (int cmd : actValidCmds[actType]) {
         cmdValidActs[cmd].removeOne(label);
+    }
 
     delete current;
     ui->actList->setCurrentItem(NULL);
@@ -2236,6 +2230,8 @@ void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
 
         curBox = ui->cmdTrnLabel;
         curBox->addItems(newCmdList);
+        if (curItem!=NULL)
+            curBox->setCurrentText(curItem->text(tlCols::tlColTrn));
     }
     else if (attCmds.contains(cmdtype)) {
         ui->cmdAttLabel->clear();
@@ -2250,6 +2246,12 @@ void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
 
         curBox = ui->cmdAttLabel;
         curBox->addItems(newCmdList);
+
+        if (curItem != NULL) {
+            QString curAttCmd = curItem->text(tlCols::tlColAtt);
+            QString pvLabel = rxPV.match(curAttCmd).captured(1);
+            curBox->setCurrentText(pvLabel);
+        }
     }
     else if (cmdtype == cmdSV) {
         if (curItem == NULL) {
@@ -2268,7 +2270,6 @@ void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
         if (isPVCmd) validate_sv_cmds(curAttCmd);
         else
             ui->cmdSVSecLabel->setEnabled(false);
-        curBox = ui->cmdAttSVLabel;
     }
     else if (cmdtype == cmdAct) {
         ui->cmdActLabel->clear();
@@ -2283,6 +2284,8 @@ void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
 
         curBox = ui->cmdActLabel;
         curBox->addItems(newCmdList);
+        if (curItem!=NULL)
+            curBox->setCurrentText(curItem->text(tlCols::tlColAct));
     }
 }
 
@@ -2295,6 +2298,8 @@ void DSM_Menu::populate_cmd_dropdowns() {
         int cmd = curCmd->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
         ui->cmdActuator->addItems(cmdValidActs[cmd]);
         ui->cmdController->addItems(cmdValidCtrls[cmd]);
+        ui->cmdActuator->setCurrentText(curCmd->text(cmdCols::cmdColAct));
+        ui->cmdController->setCurrentText(curCmd->text(cmdCols::cmdColCtl));
     }
 }
 
@@ -2316,15 +2321,15 @@ void DSM_Menu::on_ctrlConfigTree_currentItemChanged(QTreeWidgetItem *current, QT
         return;
     }
 
-    setQComboBox(ui->ctrlType,current->text(ctrlCols::ctrlColType));
+    ui->ctrlType->setCurrentText(current->text(ctrlCols::ctrlColType));
     ui->ctrlLabel->setText(current->text(ctrlCols::ctrlColLabel));
-    setQComboBox(ui->ctrlLims,current->text(ctrlCols::ctrlColLims));
+    ui->ctrlLims->setCurrentText(current->text(ctrlCols::ctrlColLims));
 
     QString ctrlType = ctrlTypes.key(current->text(ctrlCols::ctrlColType));
 
     ui->ctrlGains->clear();
     ui->ctrlGains->addItems(dsm_gui_lib::sortStringList(ctrlValidGains[ctrlType]));
-    setQComboBox(ui->ctrlGains,current->text(ctrlCols::ctrlColGains));
+    ui->ctrlGains->setCurrentText(current->text(ctrlCols::ctrlColGains));
 }
 
 void DSM_Menu::on_ctrlConfigTree_itemChanged(QTreeWidgetItem *item, int column) {
@@ -2385,7 +2390,7 @@ void DSM_Menu::on_ctrlType_textActivated(const QString &arg1) {
     ui->ctrlGains->clear();
     ui->ctrlGains->addItems(dsm_gui_lib::sortStringList(ctrlValidGains[newType]));
     if (ctrlValidGains[newType].contains(current->text(ctrlCols::ctrlColGains)))
-        setQComboBox(ui->ctrlGains,current->text(ctrlCols::ctrlColGains));
+        ui->ctrlGains->setCurrentText(current->text(ctrlCols::ctrlColGains));
     on_ctrlConfigTree_itemChanged(current, ctrlCols::ctrlColGains);
 }
 
@@ -2449,16 +2454,12 @@ void DSM_Menu::on_ctrlRemove_clicked() {
     QString label = current->text(ctrlCols::ctrlColLabel);
     QString ctlType = current->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString();
 
-    for (int cmd : ctrlValidCmds[ctlType]) {
-        for (int i=0 ; i<entryCmdParents[cmd]->childCount(); i++) {
-            QTreeWidgetItem* item = entryCmdParents[cmd]->child(i);
-            if (item->text(cmdCols::cmdColCtl).compare(label)==0) {
-                item->setText(cmdCols::cmdColCtl,"");
-            }
-        }
+    QList<QTreeWidgetItem*> items = ui->cmdConfigTree->findItems(label,Qt::MatchExactly|Qt::MatchRecursive,cmdCols::cmdColCtl);
+    for (QTreeWidgetItem *item : qAsConst(items)) {
+        item->setText(cmdCols::cmdColCtl,"");
     }
 
-    for (int cmd : actValidCmds[ctlType])
+    for (int cmd : ctrlValidCmds[ctlType])
         cmdValidCtrls[cmd].removeOne(label);
 
     delete current;
@@ -2563,7 +2564,7 @@ void DSM_Menu::on_gainList_currentItemChanged(QListWidgetItem *current, QListWid
         ui->gainConfigurator->setTabVisible(i,gainType.compare(gainsTypes.key(tabText))==0);
     }
 
-    setQComboBox(ui->gainType,gainsTypes[gainType]);
+    ui->gainType->setCurrentText(gainsTypes[gainType]);
 
     QStringList dataSplit = current->data(gainsData::gainsData).toString().split(QRegExp("\\s"),Qt::SkipEmptyParts);
 
@@ -2718,7 +2719,7 @@ void DSM_Menu::on_gainType_textActivated(const QString &arg1) {
         if (ctrlValidGainTypes.contains(oldType) || ctrlValidGainTypes.contains(newType)) {
             ui->ctrlGains->clear();
             ui->ctrlGains->addItems(ctrlValidGains[currentCtrl->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString()]);
-            setQComboBox(ui->ctrlGains,label);
+            ui->ctrlGains->setCurrentText(label);
         }
     }
 
@@ -2855,9 +2856,8 @@ void DSM_Menu::populate_ctrl_dropdowns() {
         QStringList validGains = ctrlValidGains[curCtrl->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString()];
         validGains.sort();
         ui->ctrlGains->addItems(validGains);
-        setQComboBox(ui->ctrlGains,curCtrl->text(ctrlCols::ctrlColGains));
-
-        setQComboBox(ui->ctrlLims,curCtrl->text(ctrlCols::ctrlColLims));
+        ui->ctrlGains->setCurrentText(curCtrl->text(ctrlCols::ctrlColGains));
+        ui->ctrlLims->setCurrentText(curCtrl->text(ctrlCols::ctrlColLims));
     }
 
 }
@@ -2949,10 +2949,14 @@ void DSM_Menu::on_limRemove_clicked() {
         return;
 
     QString label = current->text();
-    for (QTreeWidgetItem *item : ui->ctrlConfigTree->findItems(label,Qt::MatchExactly|Qt::MatchRecursive,ctrlCols::ctrlColLims))
+    QList<QTreeWidgetItem*> items = ui->ctrlConfigTree->findItems(label,Qt::MatchExactly|Qt::MatchRecursive,ctrlCols::ctrlColLims);
+    for (QTreeWidgetItem *item : qAsConst(items)) {
         item->setText(ctrlCols::ctrlColLims,"");
+    }
     delete current;
     limsHash.remove(label);
+
+    ui->limList->setCurrentItem(NULL);
     populate_ctrl_dropdowns();
 }
 
@@ -3119,7 +3123,7 @@ void DSM_Menu::on_applyButton_clicked() {
                     return;
                 }
                 if (ctrlItem->background(ctrlCols::ctrlColGains) == badTextBrush) {
-                    dsm_gui_lib::error_message("Controller """+label+""" has invalid gains: "+data);
+                    dsm_gui_lib::error_message("Controller \""+label+"\" has invalid gains: \""+data+"\"");
                     dsmUpdate.clear();
                     return;
                 }
@@ -3134,7 +3138,7 @@ void DSM_Menu::on_applyButton_clicked() {
                     return;
                 }
                 if (ctrlItem->background(ctrlCols::ctrlColLims) == badTextBrush) {
-                    dsm_gui_lib::error_message("Controller """+label+""" has invalid Limits: "+data);
+                    dsm_gui_lib::error_message("Controller \""+label+"\" has invalid Limits: \""+data+"\"");
                     dsmUpdate.clear();
                     // This really shouldn't happen except in the case of missing text
                     dsm_gui_lib::inexplicable_error_message();
@@ -3210,7 +3214,7 @@ void DSM_Menu::on_applyButton_clicked() {
 
                 data = treeItem->text(cmdCols::cmdColCtl);
                 if (treeItem->background(cmdCols::cmdColCtl)==badTextBrush) {
-                    dsm_gui_lib::error_message("Command """+label+""" has invalid Controller: "+data);
+                    dsm_gui_lib::error_message("Command \""+label+"\" has invalid Controller: \""+data+"\"");
                     dsmUpdate.clear();
                     return;
                 }
@@ -3221,7 +3225,7 @@ void DSM_Menu::on_applyButton_clicked() {
 
                 data = treeItem->text(cmdCols::cmdColAct);
                 if (treeItem->background(cmdCols::cmdColAct)==badTextBrush) {
-                    dsm_gui_lib::error_message("Command """+label+""" has invalid Actuator: "+data);
+                    dsm_gui_lib::error_message("Command \""+label+"\" has invalid Actuator: \""+data+"\"");
                     dsmUpdate.clear();
                     return;
                 }
