@@ -340,7 +340,7 @@ void DSM_Menu::receive_data() {
     limsHash.clear();
     actsHash.clear();
 
-    for (QString ctrlType : ctrlValidGains.keys())
+    for (const QString &ctrlType : ctrlValidGains.keys())
         ctrlValidGains[ctrlType].clear();
 
     QFile simFile(inoutPath + "Inp_Sim.txt");
@@ -360,7 +360,7 @@ void DSM_Menu::receive_data() {
                 if (badScNames.contains(name)) {
                     QString errMsg = "Spacecraft name \""+name+"\" is invalid.\n";
                     errMsg.append("Spacecraft cannot be named:\n");
-                    for (QString badScName : badScNames)
+                    for (const QString &badScName : badScNames)
                         errMsg.append("\t\""+badScName+"\"\n");
                     errMsg.append("Please rename your spacecraft.");
                     dsm_gui_lib::error_message(errMsg);
@@ -386,15 +386,14 @@ void DSM_Menu::receive_data() {
     ui->cmdSvTgtSc->addItems(dsm_gui_lib::sortStringList(scNames));
     ui->cmdMirrorTgt->addItems(dsm_gui_lib::sortStringList(scNames));
 
-
     QFile dsmFile(filePath);
     if(!dsmFile.open(QIODevice::ReadOnly))
         QMessageBox::information(0, "error", dsmFile.errorString());
     QTextStream in(&dsmFile);
 
-    for (int key : cmdValidCtrls.keys())
+    for (const int key : cmdValidCtrls.keys())
         cmdValidCtrls[key].clear();
-    for (int key : cmdValidActs.keys())
+    for (const int key : cmdValidActs.keys())
         cmdValidActs[key].clear();
 
     for (dsmSectionTypes type : searchOrd) {
@@ -415,12 +414,13 @@ void DSM_Menu::receive_data() {
     for (int col=0; col<ui->ctrlConfigTree->columnCount(); col++)
         ui->ctrlConfigTree->resizeColumnToContents(col);
 
+    QList<QTreeWidgetItem*> topLevelCmds = entryCmdParents.values();
     ui->cmdConfigTree->setAnimated(false);
-    for (QTreeWidgetItem *item : entryCmdParents.values())
+    for (QTreeWidgetItem *item : qAsConst(topLevelCmds))
         item->setExpanded(true);
     for (int col=0; col<ui->cmdConfigTree->columnCount(); col++)
         ui->cmdConfigTree->resizeColumnToContents(col);
-    for (QTreeWidgetItem *item : entryCmdParents.values())
+    for (QTreeWidgetItem *item : qAsConst(topLevelCmds))
         item->setExpanded(false);
     ui->cmdConfigTree->setAnimated(true);
 
@@ -843,7 +843,7 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
     case dsmSectionTypes::GAINS:
         gainsHash.insert(label, entryItemFormat(type).arg(itemNum));
 
-        for (QString ctrl : allowableCtrl[dataSplit[0]])
+        for (const QString &ctrl : allowableCtrl[dataSplit[0]])
             ctrlValidGains[ctrl].append(label);
 
         newListItem = new QListWidgetItem(label);
@@ -1213,7 +1213,7 @@ void DSM_Menu::cmd_data_changed() {
     if (cmdType == cmdAct) {
         QList<QTreeWidgetItem*> checkItems = ui->cmdTimelineTree->findItems(curItem->text(cmdCols::cmdColLabel),Qt::MatchExactly,tlCols::tlColAct);
         QHash<QString,bool> checkedSc;
-        for (QString scName : qAsConst(scNames))
+        for (const QString &scName : qAsConst(scNames))
             checkedSc.insert(scName,false);
 
         for (QTreeWidgetItem *item : checkItems) {
@@ -1336,8 +1336,7 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
     int cmdType = item->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
     QString cmdData = item->text(cmdColData);
     QStringList cmdDataSplit = cmdData.split(QRegExp("\\s"),Qt::SkipEmptyParts);
-    static QRegularExpression rxScBdy("SC\\[([0-9]+)](?(?=\\.B\\[[0-9]+])\\.B\\[([0-9]+)])");
-    static QRegularExpression rxLim("Limits_\\[([0-9]+)]");
+    const static QRegularExpression rxScBdy("SC\\[([0-9]+)](?(?=\\.B\\[[0-9]+])\\.B\\[([0-9]+)])");
     QRegularExpressionMatch match;
 
     for (int i=0; i<ui->cmdConfigurator->count(); i++) {
@@ -1802,7 +1801,7 @@ void DSM_Menu::on_cmdActRemove_clicked() {
 void DSM_Menu::on_cmdActList_currentItemChanged(QListWidgetItem *current, QListWidgetItem*) {
     if (current == NULL) return;
 
-    static QRegularExpression actRx("^(.*)_\\[([0-9]+)]_\\[([0-9.]+)]");
+    const static qRegularExpression actRx("^(.*)_\\[([0-9]+)]_\\[([0-9.]+)]");
     QRegularExpressionMatch match = actRx.match(current->text());
 
     if (match.captured(1).compare("WHL")==0) {
@@ -1917,7 +1916,7 @@ void DSM_Menu::timeline_data_changed() {
 }
 
 void DSM_Menu::validate_sv_cmds(QString curAttCmd) {
-    static QRegularExpression rxPV("^((?(?=.*"+QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+".*).*(?="
+    const static qRegularlarExpression rxPV("^((?(?=.*"+QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+".*).*(?="
                                    +QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+")|.*))");
     static QRegularExpression rxSV(QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+"(.*)$");
 
@@ -2384,7 +2383,8 @@ void DSM_Menu::on_ctrlType_textActivated(const QString &arg1) {
             checkCmds.append(cmd);
     }
 
-    for (QTreeWidgetItem *item : ui->cmdConfigTree->findItems(label,Qt::MatchExactly|Qt::MatchRecursive,cmdCols::cmdColCtl))
+    QList<QTreeWidgetItem*> items = ui->cmdConfigTree->findItems(label,Qt::MatchExactly|Qt::MatchRecursive,cmdCols::cmdColCtl);
+    for (QTreeWidgetItem *item : items)
         on_cmdConfigTree_itemChanged(item,cmdCols::cmdColCtl);//revalid controller type
 
     ui->ctrlGains->clear();
@@ -2709,10 +2709,10 @@ void DSM_Menu::on_gainType_textActivated(const QString &arg1) {
     if (currentCtrl!=NULL)
         ctrlValidGainTypes = ctrlValidGains[currentCtrl->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString()];
 
-    for (QString ctrl : allowableCtrl[oldType])
+    for (const QString &ctrl : allowableCtrl[oldType])
         ctrlValidGains[ctrl].removeOne(label);
 
-    for (QString ctrl : allowableCtrl[newType])
+    for (const QString &ctrl : allowableCtrl[newType])
         ctrlValidGains[ctrl].append(label);
 
     if (currentCtrl!=NULL) {
@@ -2723,7 +2723,8 @@ void DSM_Menu::on_gainType_textActivated(const QString &arg1) {
         }
     }
 
-    for (QTreeWidgetItem *item : ui->ctrlConfigTree->findItems("*",Qt::MatchWildcard)) {
+    QList<QTreeWidgetItem*> items = ui->ctrlConfigTree->findItems("*",Qt::MatchWildcard);
+    for (QTreeWidgetItem *item : items) {
         if (label.compare(item->text(ctrlCols::ctrlColGains))==0) {
             QString ctrlType = item->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString();
             if (ctrlValidGains[ctrlType].contains(label))
@@ -2756,11 +2757,13 @@ void DSM_Menu::on_gainLabel_textEdited(const QString &arg1) {
     QString gainType = current->data(gainsData::gainsType).toString();
     current->setText(arg1);
 
-    for (QString ctrlType : allowableCtrl[gainType]) {
+    for (const QString &ctrlType : allowableCtrl[gainType]) {
         QStringList *validGainList = &ctrlValidGains[ctrlType];
         validGainList->replace(validGainList->indexOf(oldKey),arg1);
     }
-    for (QTreeWidgetItem *item : ui->ctrlConfigTree->findItems(oldKey,Qt::MatchExactly|Qt::MatchRecursive,ctrlCols::ctrlColGains))
+
+    QList<QTreeWidgetItem*> items = ui->ctrlConfigTree->findItems(oldKey,Qt::MatchExactly,ctrlCols::ctrlColGains);
+    for (QTreeWidgetItem *item : items)
         item->setText(ctrlCols::ctrlColGains,arg1);
 
     populate_ctrl_dropdowns();
@@ -2773,10 +2776,11 @@ void DSM_Menu::on_gainRemove_clicked() {
 
     QString label = current->text();
     QString type = current->data(gainsData::gainsType).toString();
-    for (QTreeWidgetItem *item :ui->ctrlConfigTree->findItems(label,Qt::MatchExactly,ctrlCols::ctrlColGains))
+    QList<QTreeWidgetItem*> items = ui->ctrlConfigTree->findItems(label,Qt::MatchExactly,ctrlCols::ctrlColGains);
+    for (QTreeWidgetItem *item : items)
         item->setText(ctrlCols::ctrlColGains,"");
 
-    for (QString ctrlType : allowableCtrl[type])
+    for (const QString &ctrlType : allowableCtrl[type])
         ctrlValidGains[ctrlType].removeOne(label);
 
     delete current;
@@ -2937,7 +2941,8 @@ void DSM_Menu::on_limLabel_textEdited(const QString &arg1) {
     limsHash.insert(arg1,value);
 
     current->setText(arg1);
-    for (QTreeWidgetItem *item : ui->ctrlConfigTree->findItems(oldKey,Qt::MatchExactly|Qt::MatchRecursive,ctrlCols::ctrlColLims))
+    QList<QTreeWidgetItem*> items = ui->ctrlConfigTree->findItems(oldKey,Qt::MatchExactly|Qt::MatchRecursive,ctrlCols::ctrlColLims);
+    for (QTreeWidgetItem *item : items)
         item->setText(ctrlCols::ctrlColLims,arg1);
 
     populate_ctrl_dropdowns();
@@ -2986,7 +2991,6 @@ void DSM_Menu::on_limAdd_clicked() {
     new_entry_item(dsmSectionTypes::LIMITS,newLabel,newInd,data.join(cmdDataSpacer));
 
     populate_ctrl_dropdowns();
-
 }
 
 void DSM_Menu::on_limDuplicate_clicked() {
