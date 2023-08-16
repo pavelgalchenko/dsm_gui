@@ -567,7 +567,6 @@ QStringList DSM_Menu::secDescription(const dsmSectionTypes type) {
         descrip.append("#-------------------------------------------------------------------------------");
         descrip.append("# Col: 1   ->  Cmd Interp ID Flag: \"Actuators_[#]\"");
         descrip.append("# Col: 2   ->  Actuators: \"WHL_[#]\", \"MTB\", \"THR\", \"Ideal\"");
-        descrip.append("# Col: 3   ->  Actuator Mode: \"Translation\", \"Attitude\", \"Full\"");
         break;
     case dsmSectionTypes::GAINS:
         descrip.append("#-------------------------------------------------------------------------------");
@@ -1498,10 +1497,50 @@ void DSM_Menu::on_cmdRemove_clicked() {
     if (item==NULL || item->parent()==NULL)
         return;
 
+
+    int searchCol;
+    int cmdType = item->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
+    QString searchLabel = item->text(cmdCols::cmdColLabel);
+    QList<QTreeWidgetItem*> searchList;
+    QHash<QString,QString> *searchHash;
+
+    if (trnCmds.contains(cmdType)) {
+        searchCol = tlCols::tlColTrn;
+        searchList = ui->cmdTimelineTree->findItems(searchLabel,Qt::MatchExactly,searchCol);
+        searchHash = &trnCmdsHash;
+    }
+    else if (attCmds.contains(cmdType)) {
+        searchCol = tlCols::tlColAtt;
+        searchList = ui->cmdTimelineTree->findItems(searchLabel,Qt::MatchContains,searchCol);
+        searchHash = &attCmdsHash;
+    }
+    else if (cmdType == cmdSV) {
+        searchCol = tlCols::tlColAtt;
+        searchList = ui->cmdTimelineTree->findItems(cmdDelimiter+cmdDataSpacer+searchLabel,Qt::MatchContains,searchCol);
+        searchHash = &attSVCmdsHash;
+    }
+    else if (cmdType == cmdAct) {
+        searchCol = tlCols::tlColAct;
+        searchList = ui->cmdTimelineTree->findItems(searchLabel,Qt::MatchExactly,searchCol);
+        searchHash = &actCmdsHash;
+    }
+    else {
+        dsm_gui_lib::inexplicable_error_message();
+        return;
+    }
+
+    searchHash->remove(searchLabel);
+
+
+    for (QTreeWidgetItem *item : qAsConst(searchList)) {
+        item->setText(searchCol,"");
+//        item->setBackground(searchCol,badTextBrush);
+    }
+
     ui->cmdConfigTree->setCurrentItem(item->parent());
     item->parent()->removeChild(item);
 
-    // need to remove this command from timeline & comboboxes in timeline
+    populate_cmdtl_dropdowns(cmdType);
 }
 
 void DSM_Menu::on_cmdAdd_clicked() {
@@ -1763,11 +1802,14 @@ void DSM_Menu::on_cmdTimelineTree_currentItemChanged(QTreeWidgetItem *current, Q
     else
         ui->cmdActLabel->setCurrentText(current->text(tlCols::tlColAct));
 
-    if (curAttCmd.isEmpty())
+    if (curAttCmd.isEmpty()) {
         ui->cmdAttLabel->setCurrentText("No Change");
-    else {
-        populate_cmdtl_dropdowns(cmdTypes::cmdSV);
+        ui->cmdAttSVLabel->clear();
+        ui->cmdAttSVLabel->setEnabled(false);
+        ui->cmdSVSecLabel->setEnabled(false);
     }
+    else
+        populate_cmdtl_dropdowns(cmdTypes::cmdSV);
 
     ui->cmdTime->setValue(current->data(tlCols::tlColTime,Qt::DisplayRole).toDouble());
 }
@@ -1790,13 +1832,14 @@ void DSM_Menu::timeline_data_changed() {
         curItem->setText(tlCols::tlColAct,ui->cmdActLabel->currentText());
 
     QString attCmd = ui->cmdAttLabel->currentText();
-    if (attCmd.compare("No Change")==0)
+    ui->cmdAttSVLabel->setEnabled(false);
+    ui->cmdSVSecLabel->setEnabled(false);
+    if (attCmd.compare("No Change")==0){
         curItem->setText(tlCols::tlColAtt,"");
+        ui->cmdAttSVLabel->clear();
+    }
     else {
-
         QString svCmd = ui->cmdAttSVLabel->currentText();
-        ui->cmdAttSVLabel->setEnabled(false);
-        ui->cmdSVSecLabel->setEnabled(false);
         if (attCmdsHash[attCmd].contains(entryItemName(dsmSectionTypes::PRIMARY_VEC))) {
             ui->cmdAttSVLabel->setEnabled(true);
             ui->cmdSVSecLabel->setEnabled(true);
@@ -2112,6 +2155,10 @@ void DSM_Menu::on_actDuplicate_clicked() {
 void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
     static QRegularExpression rxPV("^((?(?=.*"+QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+".*).*(?="
                                    +QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+")|.*))");
+
+    QComboBox *curBox;
+    QTreeWidgetItem *curItem = ui->cmdTimelineTree->currentItem();
+
     if (trnCmds.contains(cmdtype)) {
         ui->cmdTrnLabel->clear();
         QStringList newCmdList = trnCmdsHash.keys();
@@ -2123,7 +2170,8 @@ void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
             newCmdList.prepend(*i);
         }
 
-        ui->cmdTrnLabel->addItems(newCmdList);
+        curBox = ui->cmdTrnLabel;
+        curBox->addItems(newCmdList);
     }
     else if (attCmds.contains(cmdtype)) {
         ui->cmdAttLabel->clear();
@@ -2136,10 +2184,11 @@ void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
             newCmdList.prepend(*i);
         }
 
-        ui->cmdAttLabel->addItems(newCmdList);
+        curBox = ui->cmdAttLabel;
+        curBox->addItems(newCmdList);
     }
     else if (cmdtype == cmdSV) {
-        QString curAttCmd = ui->cmdTimelineTree->currentItem()->text(tlCols::tlColAtt);
+        QString curAttCmd = curItem->text(tlCols::tlColAtt);
         QString pvLabel = rxPV.match(curAttCmd).captured(1);
         ui->cmdAttLabel->setCurrentText(pvLabel);
         ui->cmdAttSVLabel->clear();
@@ -2148,6 +2197,7 @@ void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
         if (isPVCmd) validate_sv_cmds(curAttCmd);
         else
             ui->cmdSVSecLabel->setEnabled(false);
+        curBox = ui->cmdAttSVLabel;
     }
     else if (cmdtype == cmdAct) {
         ui->cmdActLabel->clear();
@@ -2160,8 +2210,8 @@ void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
             newCmdList.prepend(*i);
         }
 
-        ui->cmdActLabel->addItems(newCmdList);
-
+        curBox = ui->cmdActLabel;
+        curBox->addItems(newCmdList);
     }
 }
 
@@ -3099,7 +3149,7 @@ void DSM_Menu::on_applyButton_clicked() {
                 }
 
                 data = treeItem->text(cmdCols::cmdColAct);
-                if (treeItem->background(cmdCols::cmdColCtl)==badTextBrush) {
+                if (treeItem->background(cmdCols::cmdColAct)==badTextBrush) {
                     dsm_gui_lib::error_message("Command """+label+""" has invalid Actuator: "+data);
                     dsmUpdate.clear();
                     return;
