@@ -1494,6 +1494,10 @@ void DSM_Menu::on_saveDefaultButton_clicked() {
 
 void DSM_Menu::on_cmdRemove_clicked() {
     QTreeWidgetItem *item = ui->cmdConfigTree->currentItem();
+    const QString warnMsg = QString("Command \"%1\" is used by spacecraft \"%2\" at time %3 seconds%5.\n\n")
+                            +QString("Continue in the removal of command \"%1\"?\n\n")
+                            +QString("This will clear the %4 commands everywhere \"%1\" is used.");
+
     if (item==NULL || item->parent()==NULL)
         return;
 
@@ -1502,26 +1506,31 @@ void DSM_Menu::on_cmdRemove_clicked() {
     QString searchLabel = item->text(cmdCols::cmdColLabel);
     QList<QTreeWidgetItem*> searchList;
     QHash<QString,QString> *searchHash;
+    QString cmdTypeStr;
 
     if (trnCmds.contains(cmdType)) {
         searchCol = tlCols::tlColTrn;
         searchList = ui->cmdTimelineTree->findItems(searchLabel,Qt::MatchExactly,searchCol);
         searchHash = &trnCmdsHash;
+        cmdTypeStr = "Translation";
     }
     else if (attCmds.contains(cmdType)) {
         searchCol = tlCols::tlColAtt;
         searchList = ui->cmdTimelineTree->findItems(searchLabel,Qt::MatchContains,searchCol);
         searchHash = &attCmdsHash;
+        cmdTypeStr = "Attitude";
     }
     else if (cmdType == cmdSV) {
         searchCol = tlCols::tlColAtt;
         searchList = ui->cmdTimelineTree->findItems(cmdDelimiter+cmdDataSpacer+searchLabel,Qt::MatchContains,searchCol);
         searchHash = &attSVCmdsHash;
+        cmdTypeStr = "Attitude";
     }
     else if (cmdType == cmdAct) {
         searchCol = tlCols::tlColAct;
         searchList = ui->cmdTimelineTree->findItems(searchLabel,Qt::MatchExactly,searchCol);
         searchHash = &actCmdsHash;
+        cmdTypeStr = "Actuator";
     }
     else {
         dsm_gui_lib::inexplicable_error_message();
@@ -1530,10 +1539,9 @@ void DSM_Menu::on_cmdRemove_clicked() {
 
     if (!searchList.isEmpty()) {
         QString scName = searchList[0]->text(tlCols::tlColSC);
-        double cmdTime = searchList[0]->data(tlCols::tlColTime,Qt::DisplayRole).toDouble();
-
-        int response = dsm_gui_lib::warning_message("Command \""+searchLabel+"\" is used by spacecraft \""+scName+"\" at time "+QString::number(cmdTime)+" seconds and perhaps other times.\n"
-                                                    +"Continue in the removal of command \""+searchLabel+"\"?");
+        QString cmdTime = searchList[0]->data(tlCols::tlColTime,Qt::DisplayRole).toString();
+        QString andElsewhere = (searchList.length()>1 ? " and elsewhere" : "");
+        int response = dsm_gui_lib::warning_message(warnMsg.arg(searchLabel,scName,cmdTime,cmdTypeStr,andElsewhere));
         if (response == QMessageBox::Cancel)
             return;
     }
