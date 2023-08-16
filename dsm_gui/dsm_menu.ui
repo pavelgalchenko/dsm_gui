@@ -39,24 +39,14 @@
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <widget class="QPushButton" name="applyButton">
+     <widget class="QPushButton" name="loadDefaultButton">
       <property name="text">
-       <string>Apply</string>
+       <string>Load Default</string>
       </property>
       <property name="autoDefault">
        <bool>false</bool>
       </property>
       <property name="default">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="closeButton">
-      <property name="text">
-       <string>Close</string>
-      </property>
-      <property name="autoDefault">
        <bool>false</bool>
       </property>
      </widget>
@@ -72,9 +62,19 @@
      </widget>
     </item>
     <item>
-     <widget class="QPushButton" name="loadDefaultButton">
+     <widget class="QPushButton" name="closeButton">
       <property name="text">
-       <string>Load Default</string>
+       <string>Close</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="applyButton">
+      <property name="text">
+       <string>Apply</string>
       </property>
       <property name="autoDefault">
        <bool>false</bool>
