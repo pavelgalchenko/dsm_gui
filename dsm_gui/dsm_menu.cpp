@@ -1496,7 +1496,7 @@ void DSM_Menu::on_cmdRemove_clicked() {
     QTreeWidgetItem *item = ui->cmdConfigTree->currentItem();
     const QString warnMsg = QString("Command \"%1\" is used by spacecraft \"%2\" at time %3 seconds%5.\n\n")
                             +QString("Continue in the removal of command \"%1\"?\n\n")
-                            +QString("This will clear the %4 commands everywhere \"%1\" is used.");
+                            +QString("This will clear the %6 %4 command%7 where \"%1\" is used.");
 
     if (item==NULL || item->parent()==NULL)
         return;
@@ -1540,8 +1540,10 @@ void DSM_Menu::on_cmdRemove_clicked() {
     if (!searchList.isEmpty()) {
         QString scName = searchList[0]->text(tlCols::tlColSC);
         QString cmdTime = searchList[0]->data(tlCols::tlColTime,Qt::DisplayRole).toString();
+        QString nTimes = QString::number(searchList.length());
         QString andElsewhere = (searchList.length()>1 ? " and elsewhere" : "");
-        int response = dsm_gui_lib::warning_message(warnMsg.arg(searchLabel,scName,cmdTime,cmdTypeStr,andElsewhere));
+        QString isPlural = (searchList.length()>1 ? "s" : "");
+        int response = dsm_gui_lib::warning_message(warnMsg.arg(searchLabel,scName,cmdTime,cmdTypeStr,andElsewhere,nTimes,isPlural));
         if (response == QMessageBox::Cancel)
             return;
     }
