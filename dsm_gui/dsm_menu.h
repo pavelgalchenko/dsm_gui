@@ -150,6 +150,8 @@ private slots:
 
     void on_cmdQuatNormalize_clicked();
 
+    int get_sc_nbodies(QString scName);
+
 private:
     Ui::DSM_Menu *ui;
 
