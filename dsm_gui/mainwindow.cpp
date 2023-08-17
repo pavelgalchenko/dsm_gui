@@ -86,7 +86,7 @@ void MainWindow::on_new_mission_clicked()
 
     QStringList newDefaultFiles = QDir(":/data/__default__/").entryList();
 
-    foreach (QString neededFile, newDefaultFiles) {
+    for (const QString &neededFile : newDefaultFiles) {
         QFile::copy(":/data/__default__/"+neededFile,path+neededFile);
         QFile::copy(":/data/__default__/"+neededFile,path+"__default__/"+neededFile);
     }

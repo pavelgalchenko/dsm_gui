@@ -88,7 +88,9 @@ void DSM_Menu::set_validators() {
     ui->cmdQs->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
     ui->cmdHManageMax->setValidator( new QDoubleValidator(0,INFINITY,5));
     ui->cmdHManageMin->setValidator( new QDoubleValidator(0,INFINITY,5));
-    ui->cmdActDutyCycle->setValidator( new QDoubleValidator(0,100.0,5));
+    ui->cmdActDutyCycle->setMaximum(100.0);
+    ui->cmdActDutyCycle->setMinimum(0.0);
+    ui->cmdActDutyCycle->setDecimals(2);
     ui->cmdManX->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
     ui->cmdManY->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
     ui->cmdManZ->setValidator( new QDoubleValidator(-INFINITY, INFINITY,5));
@@ -236,7 +238,7 @@ void DSM_Menu::set_validators() {
 
     connect(ui->cmdActType, &QComboBox::textActivated, this, &DSM_Menu::cmd_act_data_changed);
     connect(ui->cmdActNum, &QSpinBox::textChanged, this, &DSM_Menu::cmd_act_data_changed);
-    connect(ui->cmdActDutyCycle, &QLineEdit::textEdited, this, &DSM_Menu::cmd_act_data_changed);
+    connect(ui->cmdActDutyCycle, &QDoubleSpinBox::textChanged, this, &DSM_Menu::cmd_act_data_changed);
 
     connect(ui->cmdManX, &QLineEdit::textEdited, this, &DSM_Menu::cmd_data_changed);
     connect(ui->cmdManY, &QLineEdit::textEdited, this, &DSM_Menu::cmd_data_changed);
@@ -284,6 +286,14 @@ void DSM_Menu::set_validators() {
     connect(ui->limRateY, &QLineEdit::textEdited, this, &DSM_Menu::lim_data_changed);
     connect(ui->limRateZ, &QLineEdit::textEdited, this, &DSM_Menu::lim_data_changed);
 
+    ui->cmdActList->setSortingEnabled(true);
+    ui->cmdActList->sortItems(Qt::AscendingOrder);
+    ui->gainList->setSortingEnabled(true);
+    ui->gainList->sortItems(Qt::AscendingOrder);
+    ui->limList->setSortingEnabled(true);
+    ui->limList->sortItems(Qt::AscendingOrder);
+    ui->actList->setSortingEnabled(true);
+    ui->actList->sortItems(Qt::AscendingOrder);
 
 }
 
@@ -787,7 +797,7 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
     case dsmSectionTypes::CONTROLLERS:
         newTreeItem = new QTreeWidgetItem(ui->ctrlConfigTree,{label});
         newTreeItem->setData(ctrlCols::ctrlColInd,ctrlData::ctrlNum,itemNum);
-        newTreeItem->setData(ctrlCols::ctrlColLabel,ctrlData::ctrlType,dataSplit[0]);
+//        newTreeItem->setData(ctrlCols::ctrlColLabel,ctrlData::ctrlType,dataSplit[0]);
         newTreeItem->setText(ctrlCols::ctrlColType,ctrlTypes[dataSplit[0]]);
 
         for (int cmdType : ctrlValidCmds[dataSplit[0]])
@@ -1397,6 +1407,8 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
     case cmdSV:
         ui->cmdController->setEnabled(false);
         ui->cmdActuator->setEnabled(false);
+        ui->cmdControllerLabel->setEnabled(false);
+        ui->cmdActuatorLabel->setEnabled(false);
         dsm_gui_lib::setQComboBox(ui->cmdSvTgtType,cmdAttTgtTypes[cmdDataSplit[0]]);
 
         ui->cmdSvX->setText(cmdDataSplit[1]);
@@ -1455,11 +1467,14 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
     case cmdAct:
         ui->cmdController->setEnabled(false);
         ui->cmdActuator->setEnabled(false);
+        ui->cmdControllerLabel->setEnabled(false);
+        ui->cmdActuatorLabel->setEnabled(false);
         ui->cmdActList->clear();
         ui->cmdActList->addItems(cmdDataSplit.mid(1));
         break;
     case cmdManeuver:
         ui->cmdController->setEnabled(false);
+        ui->cmdControllerLabel->setEnabled(false);
         ui->cmdManX->setText(cmdDataSplit[0]);
         ui->cmdManY->setText(cmdDataSplit[1]);
         ui->cmdManZ->setText(cmdDataSplit[2]);
@@ -1822,7 +1837,7 @@ void DSM_Menu::on_cmdActList_currentItemChanged(QListWidgetItem *current, QListW
         dsm_gui_lib::setQComboBox(ui->cmdActType,"Thruster");
     }
     ui->cmdActNum->setValue(match.captured(2).toInt());
-    ui->cmdActDutyCycle->setText(match.captured(3));
+    ui->cmdActDutyCycle->setValue(match.captured(3).toDouble());
 }
 
 void DSM_Menu::on_cmdTimelineTree_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem*) {
@@ -2361,7 +2376,7 @@ void DSM_Menu::on_ctrlConfigTree_itemChanged(QTreeWidgetItem *item, int column) 
     }
 
     QListWidgetItem *checkItem;
-    QString ctrlType = item->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString();
+    QString ctrlType = ctrlTypes.key(item->text(ctrlCols::ctrlColType));
 
     switch (column) {
     case ctrlCols::ctrlColGains:
@@ -2385,14 +2400,14 @@ void DSM_Menu::on_ctrlType_textActivated(const QString &arg1) {
     if (current == NULL)
         return;
 
-    QString oldType = current->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString();
+    QString oldType = ctrlTypes.key(current->text(ctrlCols::ctrlColType));
     QString label = current->text(ctrlCols::ctrlColLabel);
 
     for (int cmd : ctrlValidCmds[oldType])
         cmdValidCtrls[cmd].removeOne(label);
 
     QString newType = ctrlTypes.key(arg1);
-    current->setData(ctrlCols::ctrlColLabel,ctrlData::ctrlType,newType);
+    current->setText(ctrlCols::ctrlColType,newType);
     for (int cmd : ctrlValidCmds[newType])
         cmdValidCtrls[cmd].append(label);
 
@@ -2432,7 +2447,7 @@ void DSM_Menu::on_ctrlLabel_textEdited(const QString &arg1) {
     ctlsHash.remove(oldKey);
     ctlsHash.insert(arg1,value);
 
-    QString ctlType = current->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString();
+    QString ctlType = ctrlTypes.key(current->text(ctrlCols::ctrlColType));
 
     current->setText(ctrlCols::ctrlColLabel,arg1);
 
@@ -2471,7 +2486,7 @@ void DSM_Menu::on_ctrlRemove_clicked() {
         return;
 
     QString label = current->text(ctrlCols::ctrlColLabel);
-    QString ctlType = current->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString();
+    QString ctlType = ctrlTypes.key(current->text(ctrlCols::ctrlColType));
 
     QList<QTreeWidgetItem*> items = ui->cmdConfigTree->findItems(label,Qt::MatchExactly|Qt::MatchRecursive,cmdCols::cmdColCtl);
     for (QTreeWidgetItem *item : qAsConst(items)) {
@@ -2729,7 +2744,7 @@ void DSM_Menu::on_gainType_textActivated(const QString &arg1) {
     QTreeWidgetItem *currentCtrl = ui->ctrlConfigTree->currentItem();
     QStringList *ctrlValidGainTypes;
     if (currentCtrl!=NULL)
-        ctrlValidGainTypes = &ctrlValidGains[currentCtrl->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString()];
+        ctrlValidGainTypes = &ctrlValidGains[ctrlTypes.key(currentCtrl->text(ctrlCols::ctrlColType))];
 
     for (const QString &ctrl : allowableCtrl[oldType])
         ctrlValidGains[ctrl].removeOne(label);
@@ -2750,7 +2765,7 @@ void DSM_Menu::on_gainType_textActivated(const QString &arg1) {
 
     QList<QTreeWidgetItem*> items = ui->ctrlConfigTree->findItems(label,Qt::MatchExactly,ctrlCols::ctrlColGains);
     for (QTreeWidgetItem *item : items) {
-            QString ctrlType = item->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString();
+        QString ctrlType = ctrlTypes.key(item->text(ctrlCols::ctrlColType));
         if (ctrlValidGains[ctrlType].contains(label))
             item->setBackground(ctrlCols::ctrlColGains,okTextBrush);
         else
@@ -2885,7 +2900,7 @@ void DSM_Menu::populate_ctrl_dropdowns() {
 
     if (curCtrl!=NULL) {
         ui->ctrlGains->clear();
-        QStringList validGains = ctrlValidGains[curCtrl->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString()];
+        QStringList validGains = ctrlValidGains[ctrlTypes.key(curCtrl->text(ctrlCols::ctrlColType))];
         validGains.sort();
         ui->ctrlGains->addItems(validGains);
         dsm_gui_lib::setQComboBox(ui->ctrlGains,curCtrl->text(ctrlCols::ctrlColGains));

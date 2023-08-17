@@ -633,7 +633,7 @@
            </size>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>6</number>
           </property>
           <widget class="QWidget" name="cmdTrnConfig">
            <property name="enabled">
@@ -1781,7 +1781,7 @@
               <x>10</x>
               <y>0</y>
               <width>571</width>
-              <height>211</height>
+              <height>161</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_15">
@@ -1824,7 +1824,7 @@
                <item>
                 <widget class="QLabel" name="label_31">
                  <property name="text">
-                  <string>Minimum Wheel Angular Momentum:</string>
+                  <string>Low Wheel Angular Momentum Threshold [Nms]:</string>
                  </property>
                 </widget>
                </item>
@@ -1842,7 +1842,14 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QLineEdit" name="cmdHManageMin"/>
+                <widget class="QLineEdit" name="cmdHManageMin">
+                 <property name="minimumSize">
+                  <size>
+                   <width>180</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
@@ -1851,7 +1858,7 @@
                <item>
                 <widget class="QLabel" name="label_32">
                  <property name="text">
-                  <string>Maximum Wheel Angular Momentum:</string>
+                  <string>High Wheel Angular Momentum Threshold [Nms]:</string>
                  </property>
                 </widget>
                </item>
@@ -1869,36 +1876,37 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QLineEdit" name="cmdHManageMax"/>
+                <widget class="QLineEdit" name="cmdHManageMax">
+                 <property name="minimumSize">
+                  <size>
+                   <width>180</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
                </item>
               </layout>
              </item>
              <item>
+              <widget class="QLabel" name="label_40">
+               <property name="text">
+                <string>Momentum dumping enables at low and disables at high.</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QLabel" name="label_33">
                <property name="text">
-                <string>To always dump momentum, set both min &amp; max to 0.</string>
+                <string>To always dump momentum, set both low &amp; high to 0.</string>
                </property>
               </widget>
              </item>
              <item>
               <widget class="QLabel" name="label_34">
                <property name="text">
-                <string>To never dump momentum, set both min &amp; max arbitrarily large.</string>
+                <string>To never dump momentum, set both low &amp; high arbitrarily large.</string>
                </property>
               </widget>
-             </item>
-             <item>
-              <spacer name="verticalSpacer_11">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
              </item>
             </layout>
            </widget>
@@ -2068,7 +2076,7 @@
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QLineEdit" name="cmdActDutyCycle"/>
+                  <widget class="QDoubleSpinBox" name="cmdActDutyCycle"/>
                  </item>
                 </layout>
                </item>
