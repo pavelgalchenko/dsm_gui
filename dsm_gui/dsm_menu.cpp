@@ -1591,7 +1591,39 @@ void DSM_Menu::on_cmdRemove_clicked() {
     ui->cmdConfigTree->setCurrentItem(item->parent());
     item->parent()->removeChild(item);
 
-    populate_cmdtl_dropdowns(cmdType);
+//    populate_cmdtl_dropdowns(cmdType);
+    int ind;
+    if (trnCmds.contains(cmdType)) {
+        ind = ui->cmdTrnLabel->findText(searchLabel);
+        if (ind!=-1)
+            ui->cmdTrnLabel->removeItem(ind);
+    }
+    else if (attCmds.contains(cmdType)) {
+        ind = ui->cmdAttLabel->findText(searchLabel);
+        if (ind!=-1) {
+            if (cmdType == cmdPV&&ui->cmdAttLabel->currentIndex()==ind) {
+                ui->cmdSVSecLabel->setEnabled(false);
+                ui->cmdAttSVLabel->setEnabled(false);
+                ui->cmdAttSVLabel->clear();
+            }
+            ui->cmdAttLabel->removeItem(ind);
+        }
+
+    }
+    else if (cmdType == cmdSV) {
+        ind = ui->cmdAttSVLabel->findText(searchLabel);
+        if (ind!=-1)
+            ui->cmdAttSVLabel->removeItem(ind);
+    }
+    else if (cmdType == cmdAct) {
+        ind = ui->cmdActLabel->findText(searchLabel);
+        if (ind!=-1)
+            ui->cmdActLabel->removeItem(ind);
+    }
+    else {
+        dsm_gui_lib::inexplicable_error_message();
+        return;
+    }
 }
 
 void DSM_Menu::on_cmdAdd_clicked() {
@@ -2115,7 +2147,10 @@ void DSM_Menu::on_actRemove_clicked() {
 
     delete current;
     ui->actList->setCurrentItem(NULL);
-    populate_cmd_dropdowns();
+//    populate_cmd_dropdowns();
+    int ind = ui->cmdActLabel->findText(label);
+    if (ind!=-1)
+        ui->cmdActLabel->removeItem(ind);
 }
 
 void DSM_Menu::on_cmdConfigTree_itemChanged(QTreeWidgetItem *item, int column) {
@@ -2464,7 +2499,10 @@ void DSM_Menu::on_ctrlRemove_clicked() {
 
     delete current;
     ui->ctrlConfigTree->setCurrentItem(NULL);
-    populate_cmd_dropdowns();
+//    populate_cmd_dropdowns();
+    int ind = ui->cmdController->findText(label);
+    if (ind!=-1)
+        ui->cmdController->removeItem(ind);
 }
 
 void DSM_Menu::on_ctrlAdd_clicked() {
@@ -2703,11 +2741,12 @@ void DSM_Menu::on_gainType_textActivated(const QString &arg1) {
 
     current->setData(gainsData::gainsType,newType);
     current->setData(gainsData::gainsData,data.join(cmdDataSpacer));
+    on_gainList_currentItemChanged(current,NULL);
 
     QTreeWidgetItem *currentCtrl = ui->ctrlConfigTree->currentItem();
-    QStringList ctrlValidGainTypes;
+    QStringList *ctrlValidGainTypes;
     if (currentCtrl!=NULL)
-        ctrlValidGainTypes = ctrlValidGains[currentCtrl->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString()];
+        ctrlValidGainTypes = &ctrlValidGains[currentCtrl->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString()];
 
     for (const QString &ctrl : allowableCtrl[oldType])
         ctrlValidGains[ctrl].removeOne(label);
@@ -2716,10 +2755,14 @@ void DSM_Menu::on_gainType_textActivated(const QString &arg1) {
         ctrlValidGains[ctrl].append(label);
 
     if (currentCtrl!=NULL) {
-        if (ctrlValidGainTypes.contains(oldType) || ctrlValidGainTypes.contains(newType)) {
+        if (ctrlValidGainTypes->contains(oldType)) {
+            ui->ctrlGains->removeItem(ui->ctrlGains->findText(label));
+        }
+
+        if ( ctrlValidGainTypes->contains(newType)) {
             ui->ctrlGains->clear();
-            ui->ctrlGains->addItems(ctrlValidGains[currentCtrl->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString()]);
-            ui->ctrlGains->setCurrentText(label);
+            ui->ctrlGains->addItems(*ctrlValidGainTypes);
+            ui->ctrlGains->setCurrentText(currentCtrl->text(ctrlCols::ctrlColGains));
         }
     }
 
@@ -2786,7 +2829,11 @@ void DSM_Menu::on_gainRemove_clicked() {
     delete current;
     ui->gainList->setCurrentItem(NULL);
 
-    populate_ctrl_dropdowns();
+    int ind =  ui->ctrlGains->findText(label);
+    if (ind!=-1) {
+        ui->ctrlGains->removeItem(ind);
+    }
+//    populate_ctrl_dropdowns();
 }
 
 void DSM_Menu::on_gainAdd_clicked() {
@@ -2962,7 +3009,8 @@ void DSM_Menu::on_limRemove_clicked() {
     limsHash.remove(label);
 
     ui->limList->setCurrentItem(NULL);
-    populate_ctrl_dropdowns();
+    ui->ctrlLims->removeItem(ui->ctrlLims->findText(label));
+//    populate_ctrl_dropdowns();
 }
 
 void DSM_Menu::on_limAdd_clicked() {

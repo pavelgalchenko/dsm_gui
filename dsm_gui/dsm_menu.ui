@@ -2066,7 +2066,7 @@
               <x>10</x>
               <y>3</y>
               <width>571</width>
-              <height>161</height>
+              <height>184</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -2294,7 +2294,7 @@
     <enum>Qt::LeftToRight</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="dsmActConfig">
     <attribute name="title">
@@ -2936,7 +2936,7 @@
               <x>10</x>
               <y>10</y>
               <width>441</width>
-              <height>131</height>
+              <height>134</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_19">
@@ -3254,7 +3254,7 @@
               <x>10</x>
               <y>13</y>
               <width>441</width>
-              <height>131</height>
+              <height>134</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_20">
