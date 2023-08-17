@@ -278,15 +278,15 @@ private:
     const QVector<int> trnCmds = {cmdPsvTrn,cmdTrn,cmdManeuver};
     const QVector<int> attCmds = {cmdPsvAtt,cmdAtt,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdPV};
 
-    const QMap<dsmSectionTypes,int> section2Cmd = { {dsmSectionTypes::TRANSLATION,cmdTrn},
-                                                    {dsmSectionTypes::PRIMARY_VEC,cmdPV},
-                                                    {dsmSectionTypes::SECONDARY_VEC,cmdSV},
-                                                    {dsmSectionTypes::QUATERION,cmdQuat},
-                                                    {dsmSectionTypes::MIRROR,cmdMirror},
-                                                    {dsmSectionTypes::DETUMBLE,cmdDetumble},
-                                                    {dsmSectionTypes::WHLHMANAGEMENT,cmdWhlHManage},
-                                                    {dsmSectionTypes::ACTUATOR_CMD,cmdAct},
-                                                    {dsmSectionTypes::MANEUVER,cmdManeuver}};
+    const QMap<dsmSectionTypes,int> section2Cmd = { {dsmSectionTypes::TRANSLATION,      cmdTrn},
+                                                    {dsmSectionTypes::PRIMARY_VEC,      cmdPV},
+                                                    {dsmSectionTypes::SECONDARY_VEC,    cmdSV},
+                                                    {dsmSectionTypes::QUATERION,        cmdQuat},
+                                                    {dsmSectionTypes::MIRROR,           cmdMirror},
+                                                    {dsmSectionTypes::DETUMBLE,         cmdDetumble},
+                                                    {dsmSectionTypes::WHLHMANAGEMENT,   cmdWhlHManage},
+                                                    {dsmSectionTypes::ACTUATOR_CMD,     cmdAct},
+                                                    {dsmSectionTypes::MANEUVER,         cmdManeuver}};
     const QList<dsmSectionTypes> section2CmdKeys = section2Cmd.keys();
 
     const QHash<QString,QString> cmdAttTgtTypes = { {"VEC","Vector"},

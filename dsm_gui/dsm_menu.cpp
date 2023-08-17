@@ -1532,19 +1532,22 @@ void DSM_Menu::on_cmdRemove_clicked() {
 
     int searchCol;
     int cmdType = item->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
-    QString searchLabel = item->text(cmdCols::cmdColLabel);
+    QString label = item->text(cmdCols::cmdColLabel);
+    QString searchLabel;
     QList<QTreeWidgetItem*> searchList;
     QHash<QString,QString> *searchHash;
     QString cmdTypeStr;
     Qt::MatchFlags flags;
 
     if (trnCmds.contains(cmdType)) {
+        searchLabel = label;
         searchCol = tlCols::tlColTrn;
         flags = Qt::MatchExactly;
         searchHash = &trnCmdsHash;
         cmdTypeStr = "Translation";
     }
     else if (attCmds.contains(cmdType)) {
+        searchLabel = label;
         searchCol = tlCols::tlColAtt;
         flags = Qt::MatchContains;
         searchHash = &attCmdsHash;
@@ -1558,6 +1561,7 @@ void DSM_Menu::on_cmdRemove_clicked() {
         cmdTypeStr = "Attitude";
     }
     else if (cmdType == cmdAct) {
+        searchLabel = label;
         searchCol = tlCols::tlColAct;
         flags = Qt::MatchExactly;
         searchHash = &actCmdsHash;
@@ -1576,12 +1580,12 @@ void DSM_Menu::on_cmdRemove_clicked() {
         QString nTimes = QString::number(searchList.length());
         QString andElsewhere = (searchList.length()>1 ? " and elsewhere" : "");
         QString isPlural = (searchList.length()>1 ? "s" : "");
-        int response = dsm_gui_lib::warning_message(warnMsg.arg(searchLabel,scName,cmdTime,cmdTypeStr,andElsewhere,nTimes,isPlural));
+        int response = dsm_gui_lib::warning_message(warnMsg.arg(label,scName,cmdTime,cmdTypeStr,andElsewhere,nTimes,isPlural));
         if (response == QMessageBox::Cancel)
             return;
     }
 
-    searchHash->remove(searchLabel);
+    searchHash->remove(label);
 
     for (QTreeWidgetItem *item : qAsConst(searchList)) {
         item->setText(searchCol,"");
@@ -1594,31 +1598,47 @@ void DSM_Menu::on_cmdRemove_clicked() {
 //    populate_cmdtl_dropdowns(cmdType);
     int ind;
     if (trnCmds.contains(cmdType)) {
-        ind = ui->cmdTrnLabel->findText(searchLabel);
-        if (ind!=-1)
+        ind = ui->cmdTrnLabel->findText(label);
+        if (ind!=-1) {
+            if (ind==ui->cmdTrnLabel->currentIndex())
+                ui->cmdTrnLabel->setCurrentIndex(-1);
             ui->cmdTrnLabel->removeItem(ind);
+        }
     }
     else if (attCmds.contains(cmdType)) {
-        ind = ui->cmdAttLabel->findText(searchLabel);
+        ind = ui->cmdAttLabel->findText(label);
         if (ind!=-1) {
-            if (cmdType == cmdPV&&ui->cmdAttLabel->currentIndex()==ind) {
+            if (ui->cmdAttLabel->currentIndex()==ind) {
+                ui->cmdAttLabel->setCurrentIndex(-1);
+                if (cmdPV==cmdType) {
+                    ui->cmdSVSecLabel->setEnabled(false);
+                    ui->cmdAttSVLabel->setEnabled(false);
+                    ui->cmdAttSVLabel->clear();
+                }
+            }
+            ui->cmdAttLabel->removeItem(ind);
+        }
+    }
+    else if (cmdType == cmdSV) {
+        ind = ui->cmdAttSVLabel->findText(label);
+        qDebug() << ind;
+        if (ind!=-1) {
+            if (ind==ui->cmdAttSVLabel->currentIndex()) {
+                ui->cmdAttLabel->setCurrentIndex(-1);
                 ui->cmdSVSecLabel->setEnabled(false);
                 ui->cmdAttSVLabel->setEnabled(false);
                 ui->cmdAttSVLabel->clear();
             }
-            ui->cmdAttLabel->removeItem(ind);
-        }
-
-    }
-    else if (cmdType == cmdSV) {
-        ind = ui->cmdAttSVLabel->findText(searchLabel);
-        if (ind!=-1)
             ui->cmdAttSVLabel->removeItem(ind);
+        }
     }
     else if (cmdType == cmdAct) {
-        ind = ui->cmdActLabel->findText(searchLabel);
-        if (ind!=-1)
+        ind = ui->cmdActLabel->findText(label);
+        if (ind!=-1) {
+            if (ind==ui->cmdActLabel->currentIndex())
+                ui->cmdActLabel->setCurrentIndex(-1);
             ui->cmdActLabel->removeItem(ind);
+        }
     }
     else {
         dsm_gui_lib::inexplicable_error_message();
@@ -2149,8 +2169,11 @@ void DSM_Menu::on_actRemove_clicked() {
     ui->actList->setCurrentItem(NULL);
 //    populate_cmd_dropdowns();
     int ind = ui->cmdActLabel->findText(label);
-    if (ind!=-1)
+    if (ind!=-1) {
+        if (ind==ui->cmdActLabel->currentIndex())
+            ui->cmdActLabel->setCurrentIndex(-1);
         ui->cmdActLabel->removeItem(ind);
+    }
 }
 
 void DSM_Menu::on_cmdConfigTree_itemChanged(QTreeWidgetItem *item, int column) {
@@ -2501,8 +2524,11 @@ void DSM_Menu::on_ctrlRemove_clicked() {
     ui->ctrlConfigTree->setCurrentItem(NULL);
 //    populate_cmd_dropdowns();
     int ind = ui->cmdController->findText(label);
-    if (ind!=-1)
+    if (ind!=-1) {
+        if (ind==ui->cmdController->currentIndex())
+            ui->cmdController->setCurrentIndex(-1);
         ui->cmdController->removeItem(ind);
+    }
 }
 
 void DSM_Menu::on_ctrlAdd_clicked() {
@@ -2756,7 +2782,10 @@ void DSM_Menu::on_gainType_textActivated(const QString &arg1) {
 
     if (currentCtrl!=NULL) {
         if (ctrlValidGainTypes->contains(oldType)) {
-            ui->ctrlGains->removeItem(ui->ctrlGains->findText(label));
+            int ind = ui->ctrlGains->findText(label);
+            if (ind==ui->ctrlGains->currentIndex())
+                ui->ctrlGains->setCurrentIndex(-1);
+            ui->ctrlGains->removeItem(ind);
         }
 
         if ( ctrlValidGainTypes->contains(newType)) {
@@ -2829,6 +2858,8 @@ void DSM_Menu::on_gainRemove_clicked() {
 
     int ind =  ui->ctrlGains->findText(label);
     if (ind!=-1) {
+        if (ui->ctrlGains->currentIndex()==ind)
+            ui->ctrlGains->setCurrentIndex(-1);
         ui->ctrlGains->removeItem(ind);
     }
 //    populate_ctrl_dropdowns();
@@ -2887,7 +2918,10 @@ void DSM_Menu::on_gainDuplicate_clicked() {
         }
     }
 
-    new_entry_item(dsmSectionTypes::GAINS,newLabel,newInd,current->data(gainsData::gainsData).toString());
+    QString data = current->data(gainsData::gainsType).toString()+cmdDataSpacer;
+    data.append(current->data(gainsData::gainsData).toString());
+
+    new_entry_item(dsmSectionTypes::GAINS,newLabel,newInd,data);
 
     populate_ctrl_dropdowns();
 }
@@ -3007,7 +3041,10 @@ void DSM_Menu::on_limRemove_clicked() {
     limsHash.remove(label);
 
     ui->limList->setCurrentItem(NULL);
-    ui->ctrlLims->removeItem(ui->ctrlLims->findText(label));
+    int ind = ui->ctrlLims->findText(label);
+    if (ui->ctrlLims->currentIndex()==ind)
+        ui->ctrlLims->setCurrentIndex(-1);
+    ui->ctrlLims->removeItem(ind);
 //    populate_ctrl_dropdowns();
 }
 

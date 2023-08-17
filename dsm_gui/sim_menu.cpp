@@ -18,6 +18,11 @@ void SIM_Menu::set_validators() {
     QRegularExpression rx("[^\"]*");
     QValidator *noQuotes = new QRegularExpressionValidator(rx);
 
+    ui->simOrbitEn->setEnabled(false);
+    ui->simSCEn->setEnabled(false);
+    ui->simSCOrbit->setEnabled(false);
+    ui->simSCOrbitLabel->setEnabled(false);
+
     ui->simTimeMode->addItems(dsm_gui_lib::sortStringList(timeModeInputs.values()));
     ui->simSimDur->setValidator(new QDoubleValidator);
     ui->simSimStep->setValidator(new QDoubleValidator);
@@ -774,3 +779,17 @@ void SIM_Menu::on_simSRPPertShadow_toggled(bool checked) {
         ui->simSRPPertEn->setChecked(true);
     ui->simSRPPertEn->setEnabled(!checked);
 }
+
+void SIM_Menu::on_simOrbList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *) {
+    bool isNull = current==NULL;
+    ui->simOrbitEn->setEnabled(!isNull);
+}
+
+void SIM_Menu::on_simSCList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *) {
+    bool isNull = current==NULL;
+
+    ui->simSCEn->setEnabled(!isNull);
+    ui->simSCOrbit->setEnabled(!isNull);
+    ui->simSCOrbitLabel->setEnabled(!isNull);
+}
+

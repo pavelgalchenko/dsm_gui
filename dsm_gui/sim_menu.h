@@ -76,6 +76,10 @@ private slots:
 
     void on_simSRPPertShadow_toggled(bool checked);
 
+    void on_simOrbList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
+    void on_simSCList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous);
+
 private:
     Ui::SIM_Menu *ui;
 
