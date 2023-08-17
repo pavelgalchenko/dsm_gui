@@ -2766,15 +2766,13 @@ void DSM_Menu::on_gainType_textActivated(const QString &arg1) {
         }
     }
 
-    QList<QTreeWidgetItem*> items = ui->ctrlConfigTree->findItems("*",Qt::MatchWildcard);
+    QList<QTreeWidgetItem*> items = ui->ctrlConfigTree->findItems(label,Qt::MatchExactly,ctrlCols::ctrlColGains);
     for (QTreeWidgetItem *item : items) {
-        if (label.compare(item->text(ctrlCols::ctrlColGains))==0) {
             QString ctrlType = item->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString();
-            if (ctrlValidGains[ctrlType].contains(label))
-                item->setBackground(ctrlCols::ctrlColGains,badTextBrush);
-            else
-                item->setBackground(ctrlCols::ctrlColGains,okTextBrush);
-        }
+        if (ctrlValidGains[ctrlType].contains(label))
+            item->setBackground(ctrlCols::ctrlColGains,okTextBrush);
+        else
+            item->setBackground(ctrlCols::ctrlColGains,badTextBrush);
     }
 }
 
