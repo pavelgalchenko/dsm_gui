@@ -294,7 +294,7 @@ void DSM_Menu::receive_dsmpath(QString path) {
 }
 
 void DSM_Menu::receive_data() {
-    static QRegularExpression rxSC("SC_(.*).txt");
+    const static QRegularExpression rxSC("SC_(.*).txt");
 
     ui->cmdTimelineTree->clear();
     dsmUpdate.clear();
@@ -626,10 +626,10 @@ QStringList DSM_Menu::secDescription(const dsmSectionTypes type) {
 
 void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const int itemNum, const QString itemData) {
     QStringList dataSplit = itemData.split(QRegExp("\\s"),Qt::SkipEmptyParts);
-    static QRegularExpression rxGains("Gains_\\[([0-9]+)]");
-    static QRegularExpression  rxLims("Limits_\\[([0-9]+)]");
-    static QRegularExpression  rxActs("Actuators_\\[([0-9]+)]");
-    static QRegularExpression  rxCmdParse("\\s*CmdTime\\s*([0-9.]+)\\s*NUM_CMD\\[[0-9]+]\\s*(.*)");
+    const static QRegularExpression rxGains("Gains_\\[([0-9]+)]");
+    const static QRegularExpression  rxLims("Limits_\\[([0-9]+)]");
+    const static QRegularExpression  rxActs("Actuators_\\[([0-9]+)]");
+    const static QRegularExpression  rxCmdParse("\\s*CmdTime\\s*([0-9.]+)\\s*NUM_CMD\\[[0-9]+]\\s*(.*)");
     QRegularExpressionMatch match;
 
     if (label.isEmpty())
@@ -891,8 +891,8 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
 }
 
 void DSM_Menu::set_command_ctrl_act(QTreeWidgetItem *item, const QString dataString, QStringList *dataList) {
-    static QRegularExpression rxCtrls("Controller_\\[([0-9]+)]");
-    static QRegularExpression   rxActs("Actuators_\\[([0-9]+)]");
+    const static QRegularExpression rxCtrls("Controller_\\[([0-9]+)]");
+    const static QRegularExpression   rxActs("Actuators_\\[([0-9]+)]");
     QRegularExpressionMatch match;
     int searchNum;
 
@@ -1012,7 +1012,7 @@ QRegularExpression DSM_Menu::entryItemRegEx(const dsmSectionTypes type) {
 }
 
 QRegularExpression DSM_Menu::cmdRegEx(const int cmdType) {
-    static QString format = "%1\\[([0-9]+)]";
+    const static QString format = "%1\\[([0-9]+)]";
 
     const static QRegularExpression rxTrn(format.arg(entryItemName(dsmSectionTypes::TRANSLATION)));
     const static QRegularExpression rxAtt(format.arg(entryItemName(dsmSectionTypes::PRIMARY_VEC))+format.arg("_SV"));
@@ -1801,7 +1801,7 @@ void DSM_Menu::on_cmdActRemove_clicked() {
 void DSM_Menu::on_cmdActList_currentItemChanged(QListWidgetItem *current, QListWidgetItem*) {
     if (current == NULL) return;
 
-    const static qRegularExpression actRx("^(.*)_\\[([0-9]+)]_\\[([0-9.]+)]");
+    const static QRegularExpression actRx("^(.*)_\\[([0-9]+)]_\\[([0-9.]+)]");
     QRegularExpressionMatch match = actRx.match(current->text());
 
     if (match.captured(1).compare("WHL")==0) {
@@ -1916,9 +1916,9 @@ void DSM_Menu::timeline_data_changed() {
 }
 
 void DSM_Menu::validate_sv_cmds(QString curAttCmd) {
-    const static qRegularlarExpression rxPV("^((?(?=.*"+QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+".*).*(?="
+    const static QRegularExpression rxPV("^((?(?=.*"+QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+".*).*(?="
                                    +QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+")|.*))");
-    static QRegularExpression rxSV(QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+"(.*)$");
+    const static QRegularExpression rxSV(QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+"(.*)$");
 
     QString pvLabel = rxPV.match(curAttCmd).captured(1);
     QString svLabel = rxSV.match(curAttCmd).captured(1);
@@ -2210,7 +2210,7 @@ void DSM_Menu::on_actDuplicate_clicked() {
 }
 
 void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
-    static QRegularExpression rxPV("^((?(?=.*"+QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+".*).*(?="
+    const static QRegularExpression rxPV("^((?(?=.*"+QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+".*).*(?="
                                    +QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+")|.*))");
 
     QComboBox *curBox;
@@ -3028,9 +3028,9 @@ void DSM_Menu::on_limDuplicate_clicked() {
 }
 
 void DSM_Menu::on_applyButton_clicked() {
-    static QRegularExpression rxPV("^((?(?=.*"+QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+".*).*(?="
+    const static QRegularExpression rxPV("^((?(?=.*"+QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+".*).*(?="
                                    +QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+")|.*))");
-    static QRegularExpression rxSV(QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+"(.*)$");
+    const static QRegularExpression rxSV(QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+"(.*)$");
 
     dsmUpdate.append("<<<<<<<<<<<<<<<<<<<<<<<<  42:  DSM Command Script File  >>>>>>>>>>>>>>>>>>>>>>>>");
 
