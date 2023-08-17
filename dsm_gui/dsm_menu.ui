@@ -105,7 +105,7 @@
     <enum>Qt::LeftToRight</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="dsmCmdTimeline">
     <attribute name="title">
@@ -130,6 +130,9 @@
             <width>0</width>
             <height>200</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::ClickFocus</enum>
           </property>
           <property name="alternatingRowColors">
            <bool>false</bool>
@@ -414,6 +417,9 @@
             <width>0</width>
             <height>240</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::ClickFocus</enum>
           </property>
           <property name="sortingEnabled">
            <bool>true</bool>
@@ -2332,11 +2338,14 @@
      <height>291</height>
     </rect>
    </property>
+   <property name="focusPolicy">
+    <enum>Qt::ClickFocus</enum>
+   </property>
    <property name="layoutDirection">
     <enum>Qt::LeftToRight</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="dsmActConfig">
     <attribute name="title">
@@ -2373,6 +2382,9 @@
             <width>16777215</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::ClickFocus</enum>
           </property>
          </widget>
         </item>
@@ -2547,6 +2559,9 @@
             <width>540</width>
             <height>0</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::StrongFocus</enum>
           </property>
           <property name="sortingEnabled">
            <bool>true</bool>
@@ -2815,6 +2830,9 @@
             <width>16777215</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::ClickFocus</enum>
           </property>
          </widget>
         </item>
@@ -3730,6 +3748,9 @@
             <width>400</width>
             <height>16777215</height>
            </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::ClickFocus</enum>
           </property>
          </widget>
         </item>
