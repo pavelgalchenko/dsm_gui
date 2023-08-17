@@ -17,6 +17,7 @@
 
 namespace Ui {
 class DSM_Menu;
+class dsmSectionTypes;
 }
 
 class DSM_Menu : public QDialog
@@ -26,6 +27,23 @@ class DSM_Menu : public QDialog
 public:
     explicit DSM_Menu(QWidget *parent = nullptr);
     ~DSM_Menu();
+
+    enum class dsmSectionTypes {
+        COMMANDS,
+        TRANSLATION,
+        PRIMARY_VEC,
+        SECONDARY_VEC,
+        QUATERION,
+        MIRROR,
+        DETUMBLE,
+        WHLHMANAGEMENT,
+        ACTUATOR_CMD,
+        CONTROLLERS,
+        ACTUATORS,
+        GAINS,
+        LIMITS,
+        MANEUVER,
+    };
 
 private slots:
     void set_validators();
@@ -181,6 +199,7 @@ private:
         tlColTime,
         tlColTrn,
         tlColAtt,
+        tlColHMan,
         tlColAct,
     };
 
@@ -206,6 +225,7 @@ private:
                                            {tlColTime,"Time [sec]"},
                                            {tlColTrn,"Translation Command"},
                                            {tlColAtt,"Attitude Command"},
+                                           {tlColHMan,"Momentum Management Command"},
                                            {tlColAct,"Actuator Command"}};
 
     const QMap<int,QString> cmdColNames = { {cmdColLabel,"Command/Label"},
@@ -220,23 +240,6 @@ private:
                                              {ctrlColGains,"Gains"},
                                              {ctrlColLims,"Limits"}};
     /* END CHANGE MAPS */
-
-    enum class dsmSectionTypes {
-        COMMANDS,
-        TRANSLATION,
-        PRIMARY_VEC,
-        SECONDARY_VEC,
-        QUATERION,
-        MIRROR,
-        DETUMBLE,
-        WHLHMANAGEMENT,
-        ACTUATOR_CMD,
-        CONTROLLERS,
-        ACTUATORS,
-        GAINS,
-        LIMITS,
-        MANEUVER,
-    };
 
     const QVector<dsmSectionTypes> searchOrd = {dsmSectionTypes::LIMITS,dsmSectionTypes::GAINS,dsmSectionTypes::ACTUATORS,dsmSectionTypes::CONTROLLERS,
                                                 dsmSectionTypes::MANEUVER,dsmSectionTypes::ACTUATOR_CMD,dsmSectionTypes::WHLHMANAGEMENT,dsmSectionTypes::DETUMBLE,
@@ -276,7 +279,7 @@ private:
         cmdAtt,
     };
     const QVector<int> trnCmds = {cmdPsvTrn,cmdTrn,cmdManeuver};
-    const QVector<int> attCmds = {cmdPsvAtt,cmdAtt,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdPV};
+    const QVector<int> attCmds = {cmdPsvAtt,cmdAtt,cmdQuat,cmdMirror,cmdDetumble,cmdPV};
 
     const QMap<dsmSectionTypes,int> section2Cmd = { {dsmSectionTypes::TRANSLATION,      cmdTrn},
                                                     {dsmSectionTypes::PRIMARY_VEC,      cmdPV},
@@ -350,10 +353,10 @@ private:
     // This....
     // I hate this...
     // This is how I chose to coorelate controllers and actuators to command types
-    const QHash<QString,QList<int>> ctrlValidCmds = {   {"PID_CNTRL",{cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble}},
-                                                        {"LYA_ATT_CNTRL",{cmdPV,cmdQuat,cmdMirror,cmdDetumble}},
-                                                        {"LYA_2BODY_CNTRL",{cmdTrn}},
-                                                        {"H_DUMP_CNTRL",{cmdWhlHManage}}};
+    const QHash<QString,QList<int>> ctrlValidCmds = {   {"PID_CNTRL",       {cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble}},
+                                                        {"LYA_ATT_CNTRL",   {       cmdPV,cmdQuat,cmdMirror,cmdDetumble}},
+                                                        {"LYA_2BODY_CNTRL", {cmdTrn}},
+                                                        {"H_DUMP_CNTRL",    {                                           cmdWhlHManage}}};
 
     QHash<int,QStringList> cmdValidCtrls = {{cmdTrn,{}},
                                             {cmdPV,{}},
@@ -364,11 +367,11 @@ private:
                                             {cmdWhlHManage,{}},
                                             {cmdAct,{}}};
 
-    const QHash<QString,QList<int>> actValidCmds = {{"WHL",{cmdPV,cmdQuat,cmdMirror,cmdDetumble}},
-                                                    {"Ideal",{cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdManeuver}},
-                                                    {"MTB",{cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage}},
-                                                    {"THR_3DOF",{cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdManeuver}},
-                                                    {"THR_6DOF",{cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdManeuver}}};
+    const QHash<QString,QList<int>> actValidCmds = {{"WHL"      ,{       cmdPV,cmdQuat,cmdMirror,cmdDetumble}},
+                                                    {"MTB"      ,{       cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage}},
+                                                    {"Ideal"    ,{cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdManeuver}},
+                                                    {"THR_3DOF" ,{cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdManeuver}},
+                                                    {"THR_6DOF" ,{cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdManeuver}}};
 
     QHash<int,QStringList> cmdValidActs = { {cmdTrn,{}},
                                             {cmdPV,{}},
@@ -397,20 +400,48 @@ private:
                                                {"THR_3DOF", "3DOF Thrusters"},
                                                {"THR_6DOF", "6DOF Thrusters"}};
 
-    const QHash<QString,QString> trnCmdsHashConst = {{"Passive", "PASSIVE_TRN"},
-                                                     {"No Change",""}};
-    const QHash<QString,QString> attCmdsHashConst = {{"Passive","PASSIVE_ATT"},
-                                                     {"No Change",""}};
-    const QHash<QString,QString> actCmdsHashConst = {{"No Change",""}};
+    inline static const QHash<QString,QString> trnCmdsHashConst =   {{"Passive", "PASSIVE_TRN"},
+                                                                     {"No Change",""}};
+    inline static const QHash<QString,QString> attCmdsHashConst =   {{"Passive","PASSIVE_ATT"},
+                                                                     {"No Change",""}};
+    inline static const QHash<QString,QString> actCmdsHashConst =   {{"No Change",""}};
+    inline static const QHash<QString,QString> attSVCmdsHashConst = {{"", ""}};
+    inline static const QHash<QString,QString> hManCmdsHashConst =  {{"No Change", ""}};
 
     QHash<QString,QString> trnCmdsHash;
     QHash<QString,QString> attCmdsHash;
     QHash<QString,QString> actCmdsHash;
     QHash<QString,QString> attSVCmdsHash;
+    QHash<QString,QString> hManCmdsHash;
     QHash<QString,QString> ctlsHash;
     QHash<QString,QString> gainsHash;
     QHash<QString,QString> limsHash;
     QHash<QString,QString> actsHash;
+
+    const QHash<dsmSectionTypes, const QHash<QString,QString>* > metaConstHash = {  {DSM_Menu::dsmSectionTypes::TRANSLATION,     &trnCmdsHashConst},
+                                                                                    {DSM_Menu::dsmSectionTypes::PRIMARY_VEC,      &attCmdsHashConst},
+                                                                                    {DSM_Menu::dsmSectionTypes::SECONDARY_VEC,    &attSVCmdsHashConst},
+                                                                                    {DSM_Menu::dsmSectionTypes::QUATERION,        &attCmdsHashConst},
+                                                                                    {DSM_Menu::dsmSectionTypes::MIRROR,           &attCmdsHashConst},
+                                                                                    {DSM_Menu::dsmSectionTypes::DETUMBLE,         &attCmdsHashConst},
+                                                                                    {DSM_Menu::dsmSectionTypes::WHLHMANAGEMENT,   &hManCmdsHashConst},
+                                                                                    {DSM_Menu::dsmSectionTypes::ACTUATOR_CMD,     &actCmdsHashConst},
+                                                                                    {DSM_Menu::dsmSectionTypes::MANEUVER,         &trnCmdsHashConst}};;
+
+    const QHash<dsmSectionTypes,QHash<QString,QString>*> metaHash ={    {DSM_Menu::dsmSectionTypes::TRANSLATION,      &trnCmdsHash},
+                                                                        {DSM_Menu::dsmSectionTypes::PRIMARY_VEC,      &attCmdsHash},
+                                                                        {DSM_Menu::dsmSectionTypes::SECONDARY_VEC,    &attSVCmdsHash},
+                                                                        {DSM_Menu::dsmSectionTypes::QUATERION,        &attCmdsHash},
+                                                                        {DSM_Menu::dsmSectionTypes::MIRROR,           &attCmdsHash},
+                                                                        {DSM_Menu::dsmSectionTypes::DETUMBLE,         &attCmdsHash},
+                                                                        {DSM_Menu::dsmSectionTypes::WHLHMANAGEMENT,   &hManCmdsHash},
+                                                                        {DSM_Menu::dsmSectionTypes::ACTUATOR_CMD,     &actCmdsHash},
+                                                                        {DSM_Menu::dsmSectionTypes::CONTROLLERS,      &ctlsHash},
+                                                                        {DSM_Menu::dsmSectionTypes::ACTUATORS,        &actsHash},
+                                                                        {DSM_Menu::dsmSectionTypes::GAINS,            &gainsHash},
+                                                                        {DSM_Menu::dsmSectionTypes::LIMITS,           &limsHash},
+                                                                        {DSM_Menu::dsmSectionTypes::MANEUVER,         &trnCmdsHash}};
+
 
     const QHash<QString,QString> cmdTrnOriConst = { {"OP","Orbit Point"}};
     const QHash<QString,QString> cmdTrnFrmConst = { {"N","Inertial"},
@@ -418,7 +449,11 @@ private:
                                                     {"L","Local Vert"}};
 
     const QStringList badScNames = {cmdTrnOriConst["OP"], cmdTrnFrmConst["N"], cmdTrnFrmConst["F"], cmdTrnFrmConst["L"]};
-
 };
+
+
+inline uint qHash(const DSM_Menu::dsmSectionTypes &key, uint seed) {
+    return ::qHash(static_cast<uint>(key), seed);
+}
 
 #endif // DSM_MENU_H

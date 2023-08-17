@@ -8,6 +8,7 @@
 #include <QRandomGenerator>
 #include <QFile>
 #include <QTextStream>
+#include <QComboBox>
 
 class dsm_gui_lib
 {
@@ -63,6 +64,18 @@ public:
     };
 
     static int get_sc_nitems(const QString inout_path, const QString sc_name, const scSectionType type);
+
+    inline static void setQComboBox(QComboBox *box, const QString text, bool remove = false) {
+        int ind = box->findText(text);
+        if (remove && ind!=-1) {
+            if (box->currentIndex()==ind) {
+                box->setCurrentIndex(-1);
+            }
+            box->removeItem(ind);
+        }
+        else
+            box->setCurrentIndex(ind);
+    }
 
 
 private:

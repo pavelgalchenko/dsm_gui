@@ -250,6 +250,7 @@ void DSM_Menu::set_validators() {
     connect(ui->cmdTime, &QDoubleSpinBox::textChanged, this, &DSM_Menu::timeline_data_changed);
     connect(ui->cmdTrnLabel, &QComboBox::textActivated, this, &DSM_Menu::timeline_data_changed);
     connect(ui->cmdAttLabel, &QComboBox::textActivated, this, &DSM_Menu::timeline_data_changed);
+    connect(ui->cmdHManLabel, &QComboBox::textActivated, this, &DSM_Menu::timeline_data_changed);
     connect(ui->cmdAttSVLabel, &QComboBox::textActivated, this, &DSM_Menu::timeline_data_changed);
     connect(ui->cmdActLabel, &QComboBox::textActivated, this, &DSM_Menu::timeline_data_changed);
 
@@ -331,15 +332,6 @@ void DSM_Menu::receive_data() {
             delete child;
     }
 
-    trnCmdsHash.clear();
-    attCmdsHash.clear();
-    actCmdsHash.clear();
-    attSVCmdsHash.clear();
-    ctlsHash.clear();
-    gainsHash.clear();
-    limsHash.clear();
-    actsHash.clear();
-
     for (const QString &ctrlType : ctrlValidGains.keys())
         ctrlValidGains[ctrlType].clear();
 
@@ -396,6 +388,10 @@ void DSM_Menu::receive_data() {
     for (const int key : cmdValidActs.keys())
         cmdValidActs[key].clear();
 
+    for (dsmSectionTypes type : searchOrd)
+        if (type != dsmSectionTypes::COMMANDS)
+            metaHash[type]->clear();
+
     for (dsmSectionTypes type : searchOrd) {
         in.seek(0);
         while(!in.atEnd()) {
@@ -426,11 +422,13 @@ void DSM_Menu::receive_data() {
 
     trnCmdsHash.insert(trnCmdsHashConst);
     attCmdsHash.insert(attCmdsHashConst);
+    attSVCmdsHash.insert(attSVCmdsHashConst);
     actCmdsHash.insert(actCmdsHashConst);
 
     populate_cmdtl_dropdowns(cmdTypes::cmdTrn);
-    populate_cmdtl_dropdowns(cmdTypes::cmdAtt);
+    populate_cmdtl_dropdowns(cmdTypes::cmdPV);
     populate_cmdtl_dropdowns(cmdTypes::cmdAct);
+    populate_cmdtl_dropdowns(cmdTypes::cmdWhlHManage);
     populate_ctrl_dropdowns();
 
     ui->cmdManLimits->clear();
@@ -545,7 +543,7 @@ QStringList DSM_Menu::secDescription(const dsmSectionTypes type) {
         break;
     case dsmSectionTypes::WHLHMANAGEMENT:
         descrip.append("#---------------------------Wheel Momentum Management Cmd-------------------------------");
-        descrip.append("# Col: 1   ->  Command Interp ID Flag: \"WhlHManagementCmd_[#]\"");
+        descrip.append("# Col: 1   ->  Command Interp ID Flag: \"WhlHManageCmd_[#]\"");
         descrip.append("# Col: 2   ->  Momentum Dumping [ON/OFF]");
         descrip.append("# Col: 3   ->  Minimum H_norm [Nms] (0 to always dump, *large* to never dump)");
         descrip.append("# Col: 4   ->  Maximum H_norm [Nms] (0 to always dump, *large* to never dump)");
@@ -642,6 +640,9 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
     QTreeWidgetItem *treeItem, *treeParentItem;
     int searchNum;
 
+    if (type!=dsmSectionTypes::COMMANDS)
+        metaHash[type]->insert(label, entryItemFormat(type).arg(itemNum));
+
     switch (type) {
     case dsmSectionTypes::COMMANDS:
 
@@ -667,7 +668,9 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
                 writeCol=tlColTrn;
             else if (attCmds.contains(cmdType))
                 writeCol=tlColAtt;
-            else if (cmdType==DSM_Menu::cmdAct)
+            else if (cmdType==cmdWhlHManage)
+                writeCol=tlColHMan;
+            else if (cmdType==cmdAct)
                 writeCol=tlColAct;
 
             if (cmdType!=DSM_Menu::cmdPsvTrn && cmdType!=DSM_Menu::cmdPsvAtt) {
@@ -712,8 +715,6 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         ui->cmdTimelineTree->addTopLevelItem(newTreeItem);
         break;
     case dsmSectionTypes::TRANSLATION:
-        trnCmdsHash.insert(label, entryItemFormat(type).arg(itemNum));
-
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
         newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
@@ -723,8 +724,6 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
         break;
     case dsmSectionTypes::PRIMARY_VEC:
-        attCmdsHash.insert(label, entryItemFormat(type).arg(itemNum));
-
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
         newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
@@ -734,8 +733,6 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
         break;
     case dsmSectionTypes::SECONDARY_VEC:
-        attSVCmdsHash.insert(label, entryItemFormat(type).arg(itemNum));
-
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
 //        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
@@ -744,8 +741,6 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
         break;
     case dsmSectionTypes::QUATERION:
-        attCmdsHash.insert(label, entryItemFormat(type).arg(itemNum));
-
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
         newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
@@ -755,8 +750,6 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
         break;
     case dsmSectionTypes::MIRROR:
-        attCmdsHash.insert(label, entryItemFormat(type).arg(itemNum));
-
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
         newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
@@ -766,8 +759,6 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
         break;
     case dsmSectionTypes::DETUMBLE:
-        attCmdsHash.insert(label, entryItemFormat(type).arg(itemNum));
-
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
         newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
@@ -776,9 +767,6 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
         break;
     case dsmSectionTypes::WHLHMANAGEMENT:
-        attCmdsHash.insert(label, entryItemFormat(type).arg(itemNum));
-        ui->cmdAttLabel->addItem(label);
-
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
         newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
@@ -788,8 +776,6 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
         break;
     case dsmSectionTypes::ACTUATOR_CMD:
-        actCmdsHash.insert(label, entryItemFormat(type).arg(itemNum));
-
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
 //        newTreeItem->setData(0,cmdData::cmdType,section2Cmd[type]);
         newTreeItem->setData(cmdCols::cmdColInd,cmdData::cmdNum,itemNum);
@@ -799,8 +785,6 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
         break;
     case dsmSectionTypes::CONTROLLERS:
-        ctlsHash.insert(label, entryItemFormat(type).arg(itemNum));
-
         newTreeItem = new QTreeWidgetItem(ui->ctrlConfigTree,{label});
         newTreeItem->setData(ctrlCols::ctrlColInd,ctrlData::ctrlNum,itemNum);
         newTreeItem->setData(ctrlCols::ctrlColLabel,ctrlData::ctrlType,dataSplit[0]);
@@ -829,8 +813,6 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         ui->ctrlConfigTree->addTopLevelItem(newTreeItem);
         break;
     case dsmSectionTypes::ACTUATORS:
-        actsHash.insert(label, entryItemFormat(type).arg(itemNum));
-
         newListItem = new QListWidgetItem(label);
         newListItem->setData(actData::actType,dataSplit[0]);
         newListItem->setData(actData::actNum,itemNum);
@@ -841,8 +823,6 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         ui->actList->addItem(newListItem);
         break;
     case dsmSectionTypes::GAINS:
-        gainsHash.insert(label, entryItemFormat(type).arg(itemNum));
-
         for (const QString &ctrl : allowableCtrl[dataSplit[0]])
             ctrlValidGains[ctrl].append(label);
 
@@ -853,19 +833,15 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label, const i
         ui->gainList->addItem(newListItem);
         break;
     case dsmSectionTypes::LIMITS:
-        limsHash.insert(label, entryItemFormat(type).arg(itemNum));
         ui->ctrlLims->addItem(label);
         ui->cmdManLimits->addItem(label);
-
         newListItem = new QListWidgetItem(label);
         newListItem->setData(limData::limNum,itemNum);
         newListItem->setData(limData::limData,itemData);
         ui->limList->addItem(newListItem);
         break;
     case dsmSectionTypes::MANEUVER:
-        trnCmdsHash.insert(label, entryItemFormat(type).arg(itemNum));
         ui->cmdTrnLabel->addItem(label);
-
         newTreeItem = new QTreeWidgetItem(entryCmdParents[section2Cmd[type]],{label});
         match = rxActs.match(itemData);
         searchNum = match.captured(1).toInt();
@@ -936,7 +912,7 @@ QString DSM_Menu::entryItemName(const dsmSectionTypes type) {
     case dsmSectionTypes::QUATERION: return "QuaternionCmd_";
     case dsmSectionTypes::MIRROR: return "MirrorCmd_";
     case dsmSectionTypes::DETUMBLE: return "DetumbleCmd_";
-    case dsmSectionTypes::WHLHMANAGEMENT: return "WhlHManagementCmd_";
+    case dsmSectionTypes::WHLHMANAGEMENT: return "WhlHManageCmd_";
     case dsmSectionTypes::ACTUATOR_CMD: return "ActuatorCmd_";
     case dsmSectionTypes::CONTROLLERS: return "Controller_";
     case dsmSectionTypes::ACTUATORS: return "Actuators_";
@@ -964,7 +940,7 @@ int DSM_Menu::getCmdType(QString cmdString) {
     else if (cmdString.contains("QuaternionCmd_")) return cmdQuat;
     else if (cmdString.contains("MirrorCmd_")) return cmdMirror;
     else if (cmdString.contains("DetumbleCmd_")) return cmdDetumble;
-    else if (cmdString.contains("WhlHManagementCmd")) return cmdWhlHManage;
+    else if (cmdString.contains("WhlHManageCmd")) return cmdWhlHManage;
     else if (cmdString.contains("ActuatorCmd_")) return cmdAct;
     else if (cmdString.contains("ManeuverCmd_")) return cmdManeuver;
     else return -1;
@@ -1249,29 +1225,30 @@ void DSM_Menu::on_cmdLabel_textEdited(const QString &arg1) {
 
     int itemNum = curItem->data(cmdCols::cmdColInd,Qt::DisplayRole).toInt();
     int cmdType = curItem->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
+    dsmSectionTypes type = section2Cmd.key(cmdType);
     int checkCol;
     QString value = entryItemFormat(section2Cmd.key(cmdType)).arg(itemNum);
     QComboBox *checkBox;
     QString oldKey;
-    QHash <QString,QString> *checkHash;
+    QHash <QString,QString> *checkHash = metaHash[type];
 
     if (trnCmds.contains(cmdType)){
-        checkHash=&trnCmdsHash;
         checkCol = tlCols::tlColTrn;
         checkBox = ui->cmdTrnLabel;
     }
     else if (attCmds.contains(cmdType)){
-        checkHash=&attCmdsHash;
         checkCol = tlCols::tlColAtt;
         checkBox = ui->cmdAttLabel;
     }
     else if (cmdType == cmdSV) {
-        checkHash=&attSVCmdsHash;
         checkCol = tlCols::tlColAtt;
         checkBox = ui->cmdAttSVLabel;
     }
+    else if (cmdType == cmdWhlHManage){
+        checkCol = tlCols::tlColHMan;
+        checkBox = ui->cmdHManLabel;
+    }
     else {
-        checkHash=&actCmdsHash;
         checkCol = tlCols::tlColAct;
         checkBox = ui->cmdActLabel;
     }
@@ -1312,11 +1289,9 @@ void DSM_Menu::on_cmdLabel_textEdited(const QString &arg1) {
             removeTxt = arg1;
         }
         item->setText(checkCol,removeTxt);
-        int checkInd = checkBox->findText(oldKey);
-        if (checkInd != -1)
-            checkBox->setItemText(checkInd,arg1);
     }
     curItem->setText(DSM_Menu::cmdColLabel,arg1);
+    populate_cmdtl_dropdowns(cmdType);
 }
 
 void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem*) {
@@ -1348,8 +1323,10 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
 
     populate_cmd_dropdowns();
 
-    ui->cmdController->setCurrentText(item->text(DSM_Menu::cmdColCtl));
-    ui->cmdActuator->setCurrentText(item->text(DSM_Menu::cmdColAct));
+
+    dsm_gui_lib::setQComboBox(ui->cmdController,item->text(DSM_Menu::cmdColCtl));
+    dsm_gui_lib::setQComboBox(ui->cmdActuator,item->text(DSM_Menu::cmdColAct));
+
     ui->cmdLabel->setText(item->text(DSM_Menu::cmdColLabel));
 
     QString tmpStr;
@@ -1361,7 +1338,7 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         if (cmdDataSplit[3].contains("SC")) {
             match = rxScBdy.match(cmdDataSplit[3]);
             tmpStr = scNames[match.captured(1).toInt()];
-            ui->cmdTrnOri->setCurrentText(tmpStr);
+            dsm_gui_lib::setQComboBox(ui->cmdTrnOri,tmpStr);
 
             ui->cmdTrnOriScBdyNum->setMaximum(nBdys[tmpStr]-1);
             if (match.captured(2).isEmpty())
@@ -1369,13 +1346,13 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
             else
                 ui->cmdTrnOriScBdyNum->setValue(match.captured(2).toInt());
         }
-        else {
-            ui->cmdTrnOri->setCurrentText(cmdTrnOriConst[cmdDataSplit[3]]);
-        }
+        else
+            dsm_gui_lib::setQComboBox(ui->cmdTrnOri,cmdTrnOriConst[cmdDataSplit[3]]);
+
         if (cmdDataSplit[4].contains("SC")) {
             match = rxScBdy.match(cmdDataSplit[4]);
             tmpStr = scNames[match.captured(1).toInt()];
-            ui->cmdTrnFrm->setCurrentText(tmpStr);
+            dsm_gui_lib::setQComboBox(ui->cmdTrnFrm,tmpStr);
 
             ui->cmdTrnFrmScBdyNum->setMaximum(nBdys[tmpStr]-1);
             if (match.captured(2).isEmpty())
@@ -1384,65 +1361,69 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
                 ui->cmdTrnFrmScBdyNum->setValue(match.captured(2).toInt());
         }
         else {
-            ui->cmdTrnFrm->setCurrentText(cmdTrnFrmConst[cmdDataSplit[4]]);
+            dsm_gui_lib::setQComboBox(ui->cmdTrnFrm,cmdTrnFrmConst[cmdDataSplit[4]]);
         }
         break;
     case cmdPV:
-        ui->cmdPvTgtType->setCurrentText(cmdAttTgtTypes[cmdDataSplit[0]]);
+        dsm_gui_lib::setQComboBox(ui->cmdPvTgtType,cmdAttTgtTypes[cmdDataSplit[0]]);
+
         ui->cmdPvX->setText(cmdDataSplit[1]);
         ui->cmdPvY->setText(cmdDataSplit[2]);
         ui->cmdPvZ->setText(cmdDataSplit[3]);
         if (cmdDataSplit[0].compare("VEC")==0) {
-                ui->cmdPvTgtAxisFrm->setCurrentText(cmdAttTgtFrm[cmdDataSplit[4]]);
-                ui->cmdPvTgtX->setText(cmdDataSplit[5]);
-                ui->cmdPvTgtY->setText(cmdDataSplit[6]);
-                ui->cmdPvTgtZ->setText(cmdDataSplit[7]);
+            dsm_gui_lib::setQComboBox(ui->cmdPvTgtAxisFrm,cmdAttTgtFrm[cmdDataSplit[4]]);
+
+            ui->cmdPvTgtX->setText(cmdDataSplit[5]);
+            ui->cmdPvTgtY->setText(cmdDataSplit[6]);
+            ui->cmdPvTgtZ->setText(cmdDataSplit[7]);
         }
         else if (cmdDataSplit[0].compare("SC")==0) {
-                match = rxScBdy.match(cmdDataSplit[4]);
-                tmpStr = scNames[match.captured(1).toInt()];
-                ui->cmdPvTgtSc->setCurrentText(tmpStr);
+            match = rxScBdy.match(cmdDataSplit[4]);
+            tmpStr = scNames[match.captured(1).toInt()];
+            dsm_gui_lib::setQComboBox(ui->cmdPvTgtSc,tmpStr);
 
-                ui->cmdPvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
-                if (match.captured(2).isEmpty())
-                    ui->cmdPvTgtScBdyNum->setValue(0);
-                else
-                    ui->cmdPvTgtScBdyNum->setValue(match.captured(2).toInt());
+            ui->cmdPvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
+            if (match.captured(2).isEmpty())
+                ui->cmdPvTgtScBdyNum->setValue(0);
+            else
+                ui->cmdPvTgtScBdyNum->setValue(match.captured(2).toInt());
         }
         else if (cmdDataSplit[0].compare("BODY")==0) {
-                if (cmdDataSplit[4].compare("SUN",Qt::CaseInsensitive)==0)
+            if (cmdDataSplit[4].compare("SUN",Qt::CaseInsensitive)==0)
                 cmdDataSplit[4]="SOL";
-                ui->cmdPvTgtWld->setCurrentText(cmdDataSplit[4]);
+            dsm_gui_lib::setQComboBox(ui->cmdPvTgtWld,cmdDataSplit[4]);
         }
         break;
     case cmdSV:
         ui->cmdController->setEnabled(false);
         ui->cmdActuator->setEnabled(false);
-        ui->cmdSvTgtType->setCurrentText(cmdAttTgtTypes[cmdDataSplit[0]]);
+        dsm_gui_lib::setQComboBox(ui->cmdSvTgtType,cmdAttTgtTypes[cmdDataSplit[0]]);
+
         ui->cmdSvX->setText(cmdDataSplit[1]);
         ui->cmdSvY->setText(cmdDataSplit[2]);
         ui->cmdSvZ->setText(cmdDataSplit[3]);
         if (cmdDataSplit[0].compare("VEC")==0) {
-                ui->cmdSvTgtAxisFrm->setCurrentText(cmdAttTgtFrm[cmdDataSplit[4]]);
-                ui->cmdSvTgtX->setText(cmdDataSplit[5]);
-                ui->cmdSvTgtY->setText(cmdDataSplit[6]);
-                ui->cmdSvTgtZ->setText(cmdDataSplit[7]);
+            dsm_gui_lib::setQComboBox(ui->cmdSvTgtAxisFrm,cmdAttTgtFrm[cmdDataSplit[4]]);
+
+            ui->cmdSvTgtX->setText(cmdDataSplit[5]);
+            ui->cmdSvTgtY->setText(cmdDataSplit[6]);
+            ui->cmdSvTgtZ->setText(cmdDataSplit[7]);
         }
         else if (cmdDataSplit[0].compare("SC")==0) {
-                match = rxScBdy.match(cmdDataSplit[4]);
-                tmpStr = scNames[match.captured(1).toInt()];
-                ui->cmdSvTgtSc->setCurrentText(tmpStr);
+            match = rxScBdy.match(cmdDataSplit[4]);
+            tmpStr = scNames[match.captured(1).toInt()];
+            dsm_gui_lib::setQComboBox(ui->cmdSvTgtSc,tmpStr);
 
-                ui->cmdSvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
-                if (match.captured(2).isEmpty())
-                    ui->cmdSvTgtScBdyNum->setValue(0);
-                else
-                    ui->cmdSvTgtScBdyNum->setValue(match.captured(2).toInt());
+            ui->cmdSvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
+            if (match.captured(2).isEmpty())
+                ui->cmdSvTgtScBdyNum->setValue(0);
+            else
+                ui->cmdSvTgtScBdyNum->setValue(match.captured(2).toInt());
         }
         else if (cmdDataSplit[0].compare("BODY")==0) {
-                if (cmdDataSplit[4].compare("SUN",Qt::CaseInsensitive)==0)
-                cmdDataSplit[4]="SOL";
-                ui->cmdSvTgtWld->setCurrentText(cmdDataSplit[4]);
+            if (cmdDataSplit[4].compare("SUN",Qt::CaseInsensitive)==0)
+            cmdDataSplit[4]="SOL";
+            dsm_gui_lib::setQComboBox(ui->cmdSvTgtWld,cmdDataSplit[4]);
         }
         break;
     case cmdQuat:
@@ -1450,18 +1431,18 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         ui->cmdQv2->setText(cmdDataSplit[1]);
         ui->cmdQv3->setText(cmdDataSplit[2]);
         ui->cmdQs->setText(cmdDataSplit[3]);
-        ui->cmdQuatFrm->setCurrentText(cmdTrnFrmConst[cmdDataSplit[4]]);
+        dsm_gui_lib::setQComboBox(ui->cmdQuatFrm,cmdTrnFrmConst[cmdDataSplit[4]]);
         break;
     case cmdMirror:
         match = rxScBdy.match(cmdDataSplit[0]);
         tmpStr = scNames[match.captured(1).toInt()];
-        ui->cmdMirrorTgt->setCurrentText(tmpStr);
+        dsm_gui_lib::setQComboBox(ui->cmdMirrorTgt,tmpStr);
 
         ui->cmdPvTgtScBdyNum->setMaximum(nBdys[tmpStr]-1);
         if (match.captured(2).isEmpty())
-                ui->cmdMirrorTgtBdyNum->setValue(0);
+            ui->cmdMirrorTgtBdyNum->setValue(0);
         else
-                ui->cmdMirrorTgtBdyNum->setValue(match.captured(2).toInt());
+            ui->cmdMirrorTgtBdyNum->setValue(match.captured(2).toInt());
         break;
     case cmdDetumble:
         // Nothing Here
@@ -1482,10 +1463,10 @@ void DSM_Menu::on_cmdConfigTree_currentItemChanged(QTreeWidgetItem *item, QTreeW
         ui->cmdManX->setText(cmdDataSplit[0]);
         ui->cmdManY->setText(cmdDataSplit[1]);
         ui->cmdManZ->setText(cmdDataSplit[2]);
-        ui->cmdManFrm->setCurrentText(cmdManFrm[cmdDataSplit[3]]);
-        ui->cmdManType->setCurrentText(cmdManTypes[cmdDataSplit[4]]);
+        dsm_gui_lib::setQComboBox(ui->cmdManFrm,cmdManFrm[cmdDataSplit[3]]);
+        dsm_gui_lib::setQComboBox(ui->cmdManType,cmdManTypes[cmdDataSplit[4]]);
         ui->cmdManTime->setText(cmdDataSplit[5]);
-        ui->cmdManLimits->setCurrentText(cmdDataSplit[6]);
+        dsm_gui_lib::setQComboBox(ui->cmdManLimits,cmdDataSplit[6]);
         break;
     default:
         dsm_gui_lib::inexplicable_error_message();
@@ -1535,37 +1516,46 @@ void DSM_Menu::on_cmdRemove_clicked() {
     QString label = item->text(cmdCols::cmdColLabel);
     QString searchLabel;
     QList<QTreeWidgetItem*> searchList;
-    QHash<QString,QString> *searchHash;
+    QHash<QString,QString> *searchHash = metaHash[section2Cmd.key(cmdType)];
     QString cmdTypeStr;
     Qt::MatchFlags flags;
+    QComboBox *box;
 
     if (trnCmds.contains(cmdType)) {
         searchLabel = label;
         searchCol = tlCols::tlColTrn;
         flags = Qt::MatchExactly;
-        searchHash = &trnCmdsHash;
         cmdTypeStr = "Translation";
+        box = ui->cmdTrnLabel;
+
     }
     else if (attCmds.contains(cmdType)) {
         searchLabel = label;
         searchCol = tlCols::tlColAtt;
         flags = Qt::MatchContains;
-        searchHash = &attCmdsHash;
         cmdTypeStr = "Attitude";
+        box = ui->cmdAttLabel;
     }
     else if (cmdType == cmdSV) {
         searchCol = tlCols::tlColAtt;
-        searchLabel = cmdDelimiter+cmdDataSpacer+searchLabel;
+        searchLabel = cmdDelimiter+cmdDataSpacer+label;
         flags = Qt::MatchContains;
-        searchHash = &attSVCmdsHash;
-        cmdTypeStr = "Attitude";
+        cmdTypeStr = "secondary vector Attitude";
+        box = ui->cmdAttSVLabel;
+    }
+    else if (cmdType == cmdWhlHManage){
+        searchCol = tlCols::tlColHMan;
+        searchLabel = label;
+        flags = Qt::MatchExactly;
+        cmdTypeStr = "Momentum Management";
+        box = ui->cmdHManLabel;
     }
     else if (cmdType == cmdAct) {
         searchLabel = label;
         searchCol = tlCols::tlColAct;
         flags = Qt::MatchExactly;
-        searchHash = &actCmdsHash;
         cmdTypeStr = "Actuator";
+        box = ui->cmdActLabel;
     }
     else {
         dsm_gui_lib::inexplicable_error_message();
@@ -1588,62 +1578,28 @@ void DSM_Menu::on_cmdRemove_clicked() {
     searchHash->remove(label);
 
     for (QTreeWidgetItem *item : qAsConst(searchList)) {
-        item->setText(searchCol,"");
-//        item->setBackground(searchCol,badTextBrush);
+        if (cmdType != cmdSV)
+            item->setText(searchCol,"");
+        else {
+            QString tmp = item->text(searchCol);
+            tmp.remove(searchLabel);
+            item->setText(searchCol,tmp);
+        }
     }
 
     ui->cmdConfigTree->setCurrentItem(item->parent());
     item->parent()->removeChild(item);
 
-//    populate_cmdtl_dropdowns(cmdType);
-    int ind;
-    if (trnCmds.contains(cmdType)) {
-        ind = ui->cmdTrnLabel->findText(label);
-        if (ind!=-1) {
-            if (ind==ui->cmdTrnLabel->currentIndex())
-                ui->cmdTrnLabel->setCurrentIndex(-1);
-            ui->cmdTrnLabel->removeItem(ind);
+    dsm_gui_lib::setQComboBox(box,label,true);
+
+    if (cmdType==cmdPV) {
+        if (cmdPV==cmdType&&ui->cmdAttLabel->currentIndex()==ui->cmdAttLabel->findText(label)) {
+            ui->cmdSVSecLabel->setEnabled(false);
+            ui->cmdAttSVLabel->setEnabled(false);
+            ui->cmdAttSVLabel->clear();
         }
     }
-    else if (attCmds.contains(cmdType)) {
-        ind = ui->cmdAttLabel->findText(label);
-        if (ind!=-1) {
-            if (ui->cmdAttLabel->currentIndex()==ind) {
-                ui->cmdAttLabel->setCurrentIndex(-1);
-                if (cmdPV==cmdType) {
-                    ui->cmdSVSecLabel->setEnabled(false);
-                    ui->cmdAttSVLabel->setEnabled(false);
-                    ui->cmdAttSVLabel->clear();
-                }
-            }
-            ui->cmdAttLabel->removeItem(ind);
-        }
-    }
-    else if (cmdType == cmdSV) {
-        ind = ui->cmdAttSVLabel->findText(label);
-        qDebug() << ind;
-        if (ind!=-1) {
-            if (ind==ui->cmdAttSVLabel->currentIndex()) {
-                ui->cmdAttLabel->setCurrentIndex(-1);
-                ui->cmdSVSecLabel->setEnabled(false);
-                ui->cmdAttSVLabel->setEnabled(false);
-                ui->cmdAttSVLabel->clear();
-            }
-            ui->cmdAttSVLabel->removeItem(ind);
-        }
-    }
-    else if (cmdType == cmdAct) {
-        ind = ui->cmdActLabel->findText(label);
-        if (ind!=-1) {
-            if (ind==ui->cmdActLabel->currentIndex())
-                ui->cmdActLabel->setCurrentIndex(-1);
-            ui->cmdActLabel->removeItem(ind);
-        }
-    }
-    else {
-        dsm_gui_lib::inexplicable_error_message();
-        return;
-    }
+
 }
 
 void DSM_Menu::on_cmdAdd_clicked() {
@@ -1676,7 +1632,7 @@ void DSM_Menu::on_cmdAdd_clicked() {
         tmpCtrlItems = ui->ctrlConfigTree->findItems(cmdValidCtrls[cmdType].first(),Qt::MatchExactly,cmdCols::cmdColLabel);
         ctrlName = entryItemFormat(dsmSectionTypes::CONTROLLERS).arg(tmpCtrlItems.first()->data(cmdCols::cmdColInd,cmdData::cmdNum).toInt());
     }
-    else if (attCmds.contains(cmdType)) {
+    else if (attCmds.contains(cmdType)||cmdType==cmdWhlHManage) {
         if (cmdValidCtrls[cmdType].isEmpty()) {
             dsm_gui_lib::error_message("You must first define a valid Attitude Controller.");
             return;
@@ -1693,7 +1649,7 @@ void DSM_Menu::on_cmdAdd_clicked() {
         tmpActItems = ui->actList->findItems(cmdValidActs[cmdType].first(),Qt::MatchExactly);
         actName = entryItemFormat(dsmSectionTypes::ACTUATORS).arg(tmpActItems.first()->data(actData::actNum).toInt());
     }
-    else if (attCmds.contains(cmdType)) {
+    else if (attCmds.contains(cmdType)||cmdType==cmdWhlHManage) {
         if (cmdValidActs[cmdType].isEmpty()) {
             dsm_gui_lib::error_message("You must first define a valid Attitude Actuator.");
             return;
@@ -1857,13 +1813,13 @@ void DSM_Menu::on_cmdActList_currentItemChanged(QListWidgetItem *current, QListW
     QRegularExpressionMatch match = actRx.match(current->text());
 
     if (match.captured(1).compare("WHL")==0) {
-        ui->cmdActType->setCurrentText(actTypes["WHL"]);
+        dsm_gui_lib::setQComboBox(ui->cmdActType,actTypes["WHL"]);
     }
     else if (match.captured(1).compare("MTB")==0) {
-        ui->cmdActType->setCurrentText(actTypes["MTB"]);
+        dsm_gui_lib::setQComboBox(ui->cmdActType,actTypes["MTB"]);
     }
     else if (match.captured(1).compare("THR")==0) {
-        ui->cmdActType->setCurrentText("Thruster");
+        dsm_gui_lib::setQComboBox(ui->cmdActType,"Thruster");
     }
     ui->cmdActNum->setValue(match.captured(2).toInt());
     ui->cmdActDutyCycle->setText(match.captured(3));
@@ -1878,37 +1834,47 @@ void DSM_Menu::on_cmdTimelineTree_currentItemChanged(QTreeWidgetItem *current, Q
     ui->cmdSVSecLabel->setEnabled(!isNull);
     ui->cmdTrnLabelLabel->setEnabled(!isNull);
     ui->cmdAttLabelLabel->setEnabled(!isNull);
+    ui->cmdHManLabelLabel->setEnabled(!isNull);
     ui->cmdActLabelLabel->setEnabled(!isNull);
     ui->cmdTrnLabel->setEnabled(!isNull);
     ui->cmdAttLabel->setEnabled(!isNull);
     ui->cmdAttSVLabel->setEnabled(!isNull);
+    ui->cmdHManLabel->setEnabled(!isNull);
     ui->cmdActLabel->setEnabled(!isNull);
     if (isNull) {
-        ui->cmdSC->setCurrentText(scNames[0]);
+        dsm_gui_lib::setQComboBox(ui->cmdSC,scNames[0]);
         ui->cmdTime->setValue(0.0);
-        ui->cmdTrnLabel->setCurrentIndex(0);
-        ui->cmdAttLabel->setCurrentIndex(0);
-        ui->cmdActLabel->setCurrentIndex(0);
-        ui->cmdAttSVLabel->setCurrentText("");
+        dsm_gui_lib::setQComboBox(ui->cmdTrnLabel,  trnCmdsHashConst.key(""));
+        dsm_gui_lib::setQComboBox(ui->cmdAttLabel,  attCmdsHashConst.key(""));
+        dsm_gui_lib::setQComboBox(ui->cmdHManLabel, hManCmdsHashConst.key(""));
+        dsm_gui_lib::setQComboBox(ui->cmdActLabel,  actCmdsHashConst.key(""));
+        dsm_gui_lib::setQComboBox(ui->cmdAttSVLabel,attSVCmdsHashConst.key(""));
         return;
     }
 
     QString curAttCmd = current->text(tlCols::tlColAtt);
 
-    ui->cmdSC->setCurrentText(current->text(tlCols::tlColSC));
+    dsm_gui_lib::setQComboBox(ui->cmdSC,current->text(tlCols::tlColSC));
 
     if (current->text(tlCols::tlColTrn).isEmpty())
-        ui->cmdTrnLabel->setCurrentText("No Change");
+        dsm_gui_lib::setQComboBox(ui->cmdTrnLabel,"No Change");
     else
-        ui->cmdTrnLabel->setCurrentText(current->text(tlCols::tlColTrn));
+        dsm_gui_lib::setQComboBox(ui->cmdTrnLabel,current->text(tlCols::tlColTrn));
 
     if (current->text(tlCols::tlColAct).isEmpty())
-        ui->cmdActLabel->setCurrentText("No Change");
+        dsm_gui_lib::setQComboBox(ui->cmdActLabel,"No Change");
     else
-        ui->cmdActLabel->setCurrentText(current->text(tlCols::tlColAct));
+        dsm_gui_lib::setQComboBox(ui->cmdActLabel,current->text(tlCols::tlColAct));
+
+
+    if (current->text(tlCols::tlColHMan).isEmpty())
+        dsm_gui_lib::setQComboBox(ui->cmdHManLabel,"No Change");
+    else {
+        dsm_gui_lib::setQComboBox(ui->cmdHManLabel,current->text(tlCols::tlColHMan));
+    }
 
     if (curAttCmd.isEmpty()) {
-        ui->cmdAttLabel->setCurrentText("No Change");
+        dsm_gui_lib::setQComboBox(ui->cmdAttLabel,"No Change");
         ui->cmdAttSVLabel->clear();
         ui->cmdAttSVLabel->setEnabled(false);
         ui->cmdSVSecLabel->setEnabled(false);
@@ -1938,9 +1904,13 @@ void DSM_Menu::timeline_data_changed() {
         QString label = ui->cmdActLabel->currentText();
         if (!check_actuator_cmds(curItem->text(tlCols::tlColSC),label))
             return;
-
         curItem->setText(tlCols::tlColAct,label);
     }
+
+    if (ui->cmdHManLabel->currentText().compare("No Change")==0)
+        curItem->setText(tlCols::tlColHMan,"");
+    else
+        curItem->setText(tlCols::tlColHMan,ui->cmdHManLabel->currentText());
 
     QString attCmd = ui->cmdAttLabel->currentText();
     ui->cmdAttSVLabel->setEnabled(false);
@@ -1977,16 +1947,14 @@ void DSM_Menu::validate_sv_cmds(QString curAttCmd) {
 
     QStringList validCmdSV={""};
     QString cmdPVData;
-    for (int i=0; i<entryCmdParents[cmdPV]->childCount(); i++) {
-        if (entryCmdParents[cmdPV]->child(i)->text(cmdCols::cmdColLabel).compare(pvLabel)==0) {
-            cmdPVData = entryCmdParents[cmdPV]->child(i)->text(cmdCols::cmdColData);
+    QList<QTreeWidgetItem*> items = ui->cmdConfigTree->findItems(pvLabel,Qt::MatchExactly|Qt::MatchRecursive,cmdCols::cmdColLabel);
+    for (QTreeWidgetItem* item : qAsConst(items)) {
+        if (item->parent() != NULL && item->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt()==cmdTypes::cmdPV) {
+            cmdPVData = item->text(cmdCols::cmdColData);
             break;
         }
-        if (i==(entryCmdParents[cmdPV]->childCount()-1)) {
-            dsm_gui_lib::inexplicable_error_message();
-            return;
-        }
     }
+
     QStringList dataSplit = cmdPVData.split(QRegExp("\\s"),Qt::SkipEmptyParts);
     QString cmdPVType = dataSplit[0];
     QVector3D cmdPVAxis(dataSplit[1].toDouble(),dataSplit[2].toDouble(),dataSplit[3].toDouble());
@@ -2003,8 +1971,8 @@ void DSM_Menu::validate_sv_cmds(QString curAttCmd) {
     for (int i=0; i<entryCmdParents[cmdSV]->childCount(); i++) {
         bool svIsValid = true;
         QTreeWidgetItem *svCmd = entryCmdParents[cmdSV]->child(i);
-        QString svData = svCmd->text(cmdCols::cmdColData);
-        QStringList svDataSplit = svData.split(QRegExp("\\s"),Qt::SkipEmptyParts);
+
+        QStringList svDataSplit = svCmd->text(cmdCols::cmdColData).split(QRegExp("\\s"),Qt::SkipEmptyParts);
         QString svType = svDataSplit[0];
         QVector3D svAxis(svDataSplit[1].toDouble(),svDataSplit[2].toDouble(),svDataSplit[3].toDouble());
         QString svTgtType = svDataSplit[4];
@@ -2031,9 +1999,9 @@ void DSM_Menu::validate_sv_cmds(QString curAttCmd) {
     ui->cmdAttSVLabel->addItems(validCmdSV);
 
     if (validCmdSV.contains(svLabel))
-        ui->cmdAttSVLabel->setCurrentText(svLabel);
+        dsm_gui_lib::setQComboBox(ui->cmdAttSVLabel,svLabel);
     else
-        ui->cmdAttSVLabel->setCurrentText("");
+        dsm_gui_lib::setQComboBox(ui->cmdAttLabel,"");
 }
 
 void DSM_Menu::on_cmdTimeDuplicate_clicked() {
@@ -2073,7 +2041,7 @@ void DSM_Menu::on_actList_currentItemChanged(QListWidgetItem *current, QListWidg
         return;
     }
 
-    ui->actType->setCurrentText(actTypes[current->data(actData::actType).toString()]);
+    dsm_gui_lib::setQComboBox(ui->actType,actTypes[current->data(actData::actType).toString()]);
     ui->actLabel->setText(current->text());
 }
 
@@ -2168,12 +2136,8 @@ void DSM_Menu::on_actRemove_clicked() {
     delete current;
     ui->actList->setCurrentItem(NULL);
 //    populate_cmd_dropdowns();
-    int ind = ui->cmdActLabel->findText(label);
-    if (ind!=-1) {
-        if (ind==ui->cmdActLabel->currentIndex())
-            ui->cmdActLabel->setCurrentIndex(-1);
-        ui->cmdActLabel->removeItem(ind);
-    }
+
+    dsm_gui_lib::setQComboBox(ui->cmdActLabel,label,true);
 }
 
 void DSM_Menu::on_cmdConfigTree_itemChanged(QTreeWidgetItem *item, int column) {
@@ -2264,53 +2228,50 @@ void DSM_Menu::on_actDuplicate_clicked() {
     new_entry_item(dsmSectionTypes::ACTUATORS,newLabel,newActInd,curItem->data(actData::actType).toString());
 
     populate_cmd_dropdowns();
-
 }
 
-void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
+void DSM_Menu::populate_cmdtl_dropdowns(int cmdType) {
     const static QRegularExpression rxPV("^((?(?=.*"+QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+".*).*(?="
                                    +QRegularExpression::escape(cmdDelimiter+cmdDataSpacer)+")|.*))");
 
     QComboBox *curBox;
     QTreeWidgetItem *curItem = ui->cmdTimelineTree->currentItem();
+    dsmSectionTypes type = section2Cmd.key(cmdType);
+    QHash<QString,QString> *hash = metaHash[type];
+    const QHash<QString,QString> *constHash = metaConstHash[type];
 
-    if (trnCmds.contains(cmdtype)) {
-        ui->cmdTrnLabel->clear();
-        QStringList newCmdList = trnCmdsHash.keys();
-        newCmdList.sort();
-        QStringList constCmds = dsm_gui_lib::sortStringList(trnCmdsHashConst.keys());
+    QStringList newCmdList = hash->keys();
+    newCmdList.sort();
 
-        for (auto i=constCmds.crbegin(); i!=constCmds.crend(); i++) {
-            newCmdList.removeOne(*i);
-            newCmdList.prepend(*i);
-        }
-
-        curBox = ui->cmdTrnLabel;
-        curBox->addItems(newCmdList);
-        if (curItem!=NULL)
-            curBox->setCurrentText(curItem->text(tlCols::tlColTrn));
+    QStringList constCmds = dsm_gui_lib::sortStringList(constHash->keys());
+    for (auto i=constCmds.crbegin(); i!=constCmds.crend(); i++) {
+        newCmdList.removeOne(*i);
+        newCmdList.prepend(*i);
     }
-    else if (attCmds.contains(cmdtype)) {
-        ui->cmdAttLabel->clear();
-        QStringList newCmdList = attCmdsHash.keys();
-        newCmdList.sort();
-        QStringList constCmds = dsm_gui_lib::sortStringList(attCmdsHashConst.keys());
 
-        for (auto i=constCmds.crbegin(); i!=constCmds.crend(); i++) {
-            newCmdList.removeOne(*i);
-            newCmdList.prepend(*i);
-        }
-
+    if (trnCmds.contains(cmdType)) {
+        curBox = ui->cmdTrnLabel;
+        curBox->clear();
+        curBox->addItems(newCmdList);
+        if (curItem == NULL || curItem->text(tlCols::tlColTrn).isEmpty())
+            dsm_gui_lib::setQComboBox(curBox,"No Change");
+        else if (curItem!=NULL)
+            dsm_gui_lib::setQComboBox(curBox,curItem->text(tlCols::tlColTrn));
+    }
+    else if (attCmds.contains(cmdType)) {
         curBox = ui->cmdAttLabel;
+        curBox->clear();
         curBox->addItems(newCmdList);
 
-        if (curItem != NULL) {
+        if (curItem == NULL || curItem->text(tlCols::tlColAtt).isEmpty())
+            dsm_gui_lib::setQComboBox(curBox,"No Change");
+        else if (curItem != NULL) {
             QString curAttCmd = curItem->text(tlCols::tlColAtt);
             QString pvLabel = rxPV.match(curAttCmd).captured(1);
-            curBox->setCurrentText(pvLabel);
+            dsm_gui_lib::setQComboBox(curBox,pvLabel);
         }
     }
-    else if (cmdtype == cmdSV) {
+    else if (cmdType == cmdSV) {
         if (curItem == NULL) {
             ui->cmdAttSVLabel->clear();
             ui->cmdAttSVLabel->setEnabled(false);
@@ -2320,29 +2281,29 @@ void DSM_Menu::populate_cmdtl_dropdowns(int cmdtype) {
 
         QString curAttCmd = curItem->text(tlCols::tlColAtt);
         QString pvLabel = rxPV.match(curAttCmd).captured(1);
-        ui->cmdAttLabel->setCurrentText(pvLabel);
+        dsm_gui_lib::setQComboBox(ui->cmdAttLabel,pvLabel);
         ui->cmdAttSVLabel->clear();
         bool isPVCmd = attCmdsHash[pvLabel].contains(entryItemName(dsmSectionTypes::PRIMARY_VEC));
         ui->cmdAttSVLabel->setEnabled(isPVCmd);
         if (isPVCmd) validate_sv_cmds(curAttCmd);
-        else
-            ui->cmdSVSecLabel->setEnabled(false);
     }
-    else if (cmdtype == cmdAct) {
-        ui->cmdActLabel->clear();
-        QStringList newCmdList = actCmdsHash.keys();
-        newCmdList.sort();
-        QStringList constCmds = dsm_gui_lib::sortStringList(actCmdsHashConst.keys());
-
-        for (auto i=constCmds.crbegin(); i!=constCmds.crend(); i++) {
-            newCmdList.removeOne(*i);
-            newCmdList.prepend(*i);
-        }
-
-        curBox = ui->cmdActLabel;
+    else if (cmdType == cmdWhlHManage) {
+        curBox = ui->cmdHManLabel;
+        curBox->clear();
         curBox->addItems(newCmdList);
-        if (curItem!=NULL)
-            curBox->setCurrentText(curItem->text(tlCols::tlColAct));
+        if (curItem == NULL || curItem->text(tlCols::tlColHMan).isEmpty())
+            dsm_gui_lib::setQComboBox(curBox,"No Change");
+        else if (curItem!=NULL)
+            dsm_gui_lib::setQComboBox(curBox,curItem->text(tlCols::tlColHMan));
+    }
+    else if (cmdType == cmdAct) {
+        curBox = ui->cmdActLabel;
+        curBox->clear();
+        curBox->addItems(newCmdList);
+        if (curItem == NULL || curItem->text(tlCols::tlColAct).isEmpty())
+            dsm_gui_lib::setQComboBox(curBox,"No Change");
+        else if (curItem!=NULL)
+            dsm_gui_lib::setQComboBox(curBox,curItem->text(tlCols::tlColAct));
     }
 }
 
@@ -2355,8 +2316,8 @@ void DSM_Menu::populate_cmd_dropdowns() {
         int cmd = curCmd->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
         ui->cmdActuator->addItems(cmdValidActs[cmd]);
         ui->cmdController->addItems(cmdValidCtrls[cmd]);
-        ui->cmdActuator->setCurrentText(curCmd->text(cmdCols::cmdColAct));
-        ui->cmdController->setCurrentText(curCmd->text(cmdCols::cmdColCtl));
+        dsm_gui_lib::setQComboBox(ui->cmdActuator,curCmd->text(cmdCols::cmdColAct));
+        dsm_gui_lib::setQComboBox(ui->cmdController,curCmd->text(cmdCols::cmdColCtl));
     }
 }
 
@@ -2378,15 +2339,15 @@ void DSM_Menu::on_ctrlConfigTree_currentItemChanged(QTreeWidgetItem *current, QT
         return;
     }
 
-    ui->ctrlType->setCurrentText(current->text(ctrlCols::ctrlColType));
+    dsm_gui_lib::setQComboBox(ui->ctrlType,current->text(ctrlCols::ctrlColType));
     ui->ctrlLabel->setText(current->text(ctrlCols::ctrlColLabel));
-    ui->ctrlLims->setCurrentText(current->text(ctrlCols::ctrlColLims));
+    dsm_gui_lib::setQComboBox(ui->ctrlLims,current->text(ctrlCols::ctrlColLims));
 
     QString ctrlType = ctrlTypes.key(current->text(ctrlCols::ctrlColType));
 
     ui->ctrlGains->clear();
     ui->ctrlGains->addItems(dsm_gui_lib::sortStringList(ctrlValidGains[ctrlType]));
-    ui->ctrlGains->setCurrentText(current->text(ctrlCols::ctrlColGains));
+    dsm_gui_lib::setQComboBox(ui->ctrlGains,current->text(ctrlCols::ctrlColGains));
 }
 
 void DSM_Menu::on_ctrlConfigTree_itemChanged(QTreeWidgetItem *item, int column) {
@@ -2448,7 +2409,7 @@ void DSM_Menu::on_ctrlType_textActivated(const QString &arg1) {
     ui->ctrlGains->clear();
     ui->ctrlGains->addItems(dsm_gui_lib::sortStringList(ctrlValidGains[newType]));
     if (ctrlValidGains[newType].contains(current->text(ctrlCols::ctrlColGains)))
-        ui->ctrlGains->setCurrentText(current->text(ctrlCols::ctrlColGains));
+        dsm_gui_lib::setQComboBox(ui->ctrlGains,current->text(ctrlCols::ctrlColGains));
     on_ctrlConfigTree_itemChanged(current, ctrlCols::ctrlColGains);
 }
 
@@ -2523,12 +2484,8 @@ void DSM_Menu::on_ctrlRemove_clicked() {
     delete current;
     ui->ctrlConfigTree->setCurrentItem(NULL);
 //    populate_cmd_dropdowns();
-    int ind = ui->cmdController->findText(label);
-    if (ind!=-1) {
-        if (ind==ui->cmdController->currentIndex())
-            ui->cmdController->setCurrentIndex(-1);
-        ui->cmdController->removeItem(ind);
-    }
+
+    dsm_gui_lib::setQComboBox(ui->cmdController,label,true);
 }
 
 void DSM_Menu::on_ctrlAdd_clicked() {
@@ -2628,7 +2585,7 @@ void DSM_Menu::on_gainList_currentItemChanged(QListWidgetItem *current, QListWid
         ui->gainConfigurator->setTabVisible(i,gainType.compare(gainsTypes.key(tabText))==0);
     }
 
-    ui->gainType->setCurrentText(gainsTypes[gainType]);
+    dsm_gui_lib::setQComboBox(ui->gainType,gainsTypes[gainType]);
 
     QStringList dataSplit = current->data(gainsData::gainsData).toString().split(QRegExp("\\s"),Qt::SkipEmptyParts);
 
@@ -2781,17 +2738,13 @@ void DSM_Menu::on_gainType_textActivated(const QString &arg1) {
         ctrlValidGains[ctrl].append(label);
 
     if (currentCtrl!=NULL) {
-        if (ctrlValidGainTypes->contains(oldType)) {
-            int ind = ui->ctrlGains->findText(label);
-            if (ind==ui->ctrlGains->currentIndex())
-                ui->ctrlGains->setCurrentIndex(-1);
-            ui->ctrlGains->removeItem(ind);
-        }
+        if (ctrlValidGainTypes->contains(oldType))
+            dsm_gui_lib::setQComboBox(ui->ctrlGains,label,true);
 
         if ( ctrlValidGainTypes->contains(newType)) {
             ui->ctrlGains->clear();
             ui->ctrlGains->addItems(*ctrlValidGainTypes);
-            ui->ctrlGains->setCurrentText(currentCtrl->text(ctrlCols::ctrlColGains));
+            dsm_gui_lib::setQComboBox(ui->ctrlGains,currentCtrl->text(ctrlCols::ctrlColGains));
         }
     }
 
@@ -2856,12 +2809,8 @@ void DSM_Menu::on_gainRemove_clicked() {
     delete current;
     ui->gainList->setCurrentItem(NULL);
 
-    int ind =  ui->ctrlGains->findText(label);
-    if (ind!=-1) {
-        if (ui->ctrlGains->currentIndex()==ind)
-            ui->ctrlGains->setCurrentIndex(-1);
-        ui->ctrlGains->removeItem(ind);
-    }
+    dsm_gui_lib::setQComboBox(ui->ctrlGains,label,true);
+
 //    populate_ctrl_dropdowns();
 }
 
@@ -2939,8 +2888,8 @@ void DSM_Menu::populate_ctrl_dropdowns() {
         QStringList validGains = ctrlValidGains[curCtrl->data(ctrlCols::ctrlColLabel,ctrlData::ctrlType).toString()];
         validGains.sort();
         ui->ctrlGains->addItems(validGains);
-        ui->ctrlGains->setCurrentText(curCtrl->text(ctrlCols::ctrlColGains));
-        ui->ctrlLims->setCurrentText(curCtrl->text(ctrlCols::ctrlColLims));
+        dsm_gui_lib::setQComboBox(ui->ctrlGains,curCtrl->text(ctrlCols::ctrlColGains));
+        dsm_gui_lib::setQComboBox(ui->ctrlLims,curCtrl->text(ctrlCols::ctrlColLims));
     }
 
 }
@@ -3041,10 +2990,7 @@ void DSM_Menu::on_limRemove_clicked() {
     limsHash.remove(label);
 
     ui->limList->setCurrentItem(NULL);
-    int ind = ui->ctrlLims->findText(label);
-    if (ui->ctrlLims->currentIndex()==ind)
-        ui->ctrlLims->setCurrentIndex(-1);
-    ui->ctrlLims->removeItem(ind);
+    dsm_gui_lib::setQComboBox(ui->ctrlLims,label,true);
 //    populate_ctrl_dropdowns();
 }
 
@@ -3127,7 +3073,7 @@ void DSM_Menu::on_applyButton_clicked() {
 
         QRegularExpressionMatch match;
         QList<QTreeWidgetItem*> treeItems, checkItems;
-        QTreeWidgetItem *treeItem,*parent,*checkItem;
+        QTreeWidgetItem *treeItem,*parent;
         QList<QListWidgetItem*> listItems;
         QListWidgetItem* listItem;
         QString format = entryItemFormat(type);
@@ -3135,6 +3081,7 @@ void DSM_Menu::on_applyButton_clicked() {
         QString data,tmp,label;
         int num, cmdType;
         double time, lastTime=0;
+        QHash<QString,QString> *hash;
 
         switch (type) {
         case dsmSectionTypes::COMMANDS:
@@ -3174,6 +3121,11 @@ void DSM_Menu::on_applyButton_clicked() {
 
                     }
                     tmpList.append(tmp);
+                }
+                if (!cmdItem->text(tlCols::tlColHMan).isEmpty()) {
+                    num++;
+                    data = cmdItem->text(tlCols::tlColHMan);
+                    tmpList.append(hManCmdsHash[data]);
                 }
                 if (!cmdItem->text(tlCols::tlColAct).isEmpty()) {
                     num++;
@@ -3291,12 +3243,13 @@ void DSM_Menu::on_applyButton_clicked() {
         default: // handle commands
             cmdType = section2Cmd[type];
             parent = entryCmdParents[cmdType];
+            hash = metaHash[type];
             for (int i = 0; i<parent->childCount(); i++) {
                 treeItem = parent->child(i);
                 dataList.clear();
 
                 label = treeItem->text(cmdCols::cmdColLabel);
-                dataList.append(format.arg(treeItem->data(cmdCols::cmdColInd,cmdData::cmdNum).toInt()));
+                dataList.append(hash->value(label));
                 dataList.append(treeItem->text(cmdCols::cmdColData));
 
                 data = treeItem->text(cmdCols::cmdColCtl);
@@ -3305,10 +3258,8 @@ void DSM_Menu::on_applyButton_clicked() {
                     dsmUpdate.clear();
                     return;
                 }
-                if (!data.isEmpty()) {
-                    checkItem = ui->ctrlConfigTree->findItems(data,Qt::MatchExactly,ctrlCols::ctrlColLabel).at(0);
-                    dataList.append(entryItemFormat(dsmSectionTypes::CONTROLLERS).arg(checkItem->data(ctrlCols::ctrlColInd,ctrlData::ctrlNum).toInt()));
-                }
+                if (!data.isEmpty())
+                    dataList.append(metaHash[dsmSectionTypes::CONTROLLERS]->value(data));
 
                 data = treeItem->text(cmdCols::cmdColAct);
                 if (treeItem->background(cmdCols::cmdColAct)==badTextBrush) {
@@ -3316,10 +3267,8 @@ void DSM_Menu::on_applyButton_clicked() {
                     dsmUpdate.clear();
                     return;
                 }
-                if (!data.isEmpty()) {
-                    listItem = ui->actList->findItems(data,Qt::MatchExactly).at(0);
-                    dataList.append(entryItemFormat(dsmSectionTypes::ACTUATORS).arg(listItem->data(actData::actNum).toInt()));
-                }
+                if (!data.isEmpty())
+                    dataList.append(metaHash[dsmSectionTypes::ACTUATORS]->value(data));
 
                 dataList.append(labelMkr);
                 dataList.append(label);
