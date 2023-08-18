@@ -319,7 +319,8 @@ private:
     const QHash<QString,QString> ctrlTypes = { {"PID_CNTRL",        "PID Control"},
                                                {"LYA_ATT_CNTRL",    "Lyapunov Attitude Control"},
                                                {"LYA_2BODY_CNTRL",  "Lyapunov 2-Body Control"},
-                                               {"H_DUMP_CNTRL",     "Momentum Dumping Control"}};
+                                               {"H_DUMP_CNTRL",     "Momentum Dumping Control"},
+                                               {"CUSTOM_CNTRL",     "Custom Control"}};
 
     enum gainsData {
         gainsType = Qt::UserRole,
@@ -330,33 +331,38 @@ private:
     const QHash<QString,QString> gainsTypes = { {"PID",             "PID Direct"},
                                                 {"PID_WN",          "PID Tuning"},
                                                 {"MomentumDump",    "Momentum Dumping"},
-                                                {"FC_LYA",          "Lyapunov"}};
+                                                {"FC_LYA",          "Lyapunov"},
+                                                {"CUSTOM",          "Custom"}};
 
     // This is how controllers are mapped to valid gains
     const QHash<QString,QStringList> allowableGains = { {"PID_CNTRL",       {"PID","PID_WN"}},
                                                         {"LYA_ATT_CNTRL",   {"FC_LYA"}},
                                                         {"LYA_2BODY_CNTRL", {"FC_LYA"}},
-                                                        {"H_DUMP_CNTRL",    {"MomentumDump"}}};
+                                                        {"H_DUMP_CNTRL",    {"MomentumDump"}},
+                                                        {"CUSTOM_CNTRL",    {"CUSTOM"}}};
 
     // This is how valid gains are mapped to controllers
     const QHash<QString,QStringList> allowableCtrl  = { {"PID",             {"PID_CNTRL"}},
                                                         {"PID_WN",          {"PID_CNTRL"}},
                                                         {"MomentumDump",    {"H_DUMP_CNTRL"}},
-                                                        {"FC_LYA",          {"LYA_ATT_CNTRL","LYA_2BODY_CNTRL"}}};
+                                                        {"FC_LYA",          {"LYA_ATT_CNTRL","LYA_2BODY_CNTRL"}},
+                                                        {"CUSTOM",          {"CUSTOM_CNTRL"}}};
 
     QHash<QString,QStringList> ctrlValidGains = {   {"PID_CNTRL",{}},
                                                     {"LYA_ATT_CNTRL",{}},
                                                     {"LYA_2BODY_CNTRL",{}},
-                                                    {"H_DUMP_CNTRL",{}}};
+                                                    {"H_DUMP_CNTRL",{}},
+                                                    {"CUSTOM_CNTRL",{}}};
 
     /* START HATE */
     // This....
     // I hate this...
     // This is how I chose to coorelate controllers and actuators to command types
-    const QHash<QString,QList<int>> ctrlValidCmds = {   {"PID_CNTRL",       {cmdTrn,cmdPV,cmdQuat,cmdMirror,cmdDetumble}},
-                                                        {"LYA_ATT_CNTRL",   {       cmdPV,cmdQuat,cmdMirror,cmdDetumble}},
+    const QHash<QString,QList<int>> ctrlValidCmds = {   {"PID_CNTRL",       {cmdTrn,cmdPV,      cmdQuat,cmdMirror,cmdDetumble}},
+                                                        {"LYA_ATT_CNTRL",   {       cmdPV,      cmdQuat,cmdMirror,cmdDetumble}},
                                                         {"LYA_2BODY_CNTRL", {cmdTrn}},
-                                                        {"H_DUMP_CNTRL",    {                                           cmdWhlHManage}}};
+                                                        {"H_DUMP_CNTRL",    {                                                 cmdWhlHManage}},
+                                                        {"CUSTOM_CNTRL",    {cmdTrn,cmdPV,cmdSV,cmdQuat,cmdMirror,cmdDetumble,cmdWhlHManage,cmdAct,cmdManeuver}}};
 
     QHash<int,QStringList> cmdValidCtrls = {{cmdTrn,{}},
                                             {cmdPV,{}},

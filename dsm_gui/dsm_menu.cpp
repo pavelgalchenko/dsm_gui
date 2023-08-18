@@ -279,6 +279,8 @@ void DSM_Menu::set_validators() {
     connect(ui->gainLyaGain, &QLineEdit::textEdited, this, &DSM_Menu::gain_data_changed);
     connect(ui->gainLyaGain_2, &QLineEdit::textEdited, this, &DSM_Menu::gain_data_changed);
 
+    connect(ui->gainCustomGains, &QLineEdit::textEdited, this, &DSM_Menu::gain_data_changed);
+
     connect(ui->limFrcX, &QLineEdit::textEdited, this, &DSM_Menu::lim_data_changed);
     connect(ui->limFrcY, &QLineEdit::textEdited, this, &DSM_Menu::lim_data_changed);
     connect(ui->limFrcZ, &QLineEdit::textEdited, this, &DSM_Menu::lim_data_changed);
@@ -370,6 +372,8 @@ void DSM_Menu::receive_data() {
                     DSM_Menu::close();
                 }
                 scNames.append(name);
+
+
 
                 nBdys.insert(name,dsm_gui_lib::get_sc_nitems(inoutPath,name,dsm_gui_lib::scSectionType::BODY));
                 nWhls.insert(name,dsm_gui_lib::get_sc_nitems(inoutPath,name,dsm_gui_lib::scSectionType::WHEEL));
@@ -573,7 +577,7 @@ QStringList DSM_Menu::secDescription(const dsmSectionTypes type) {
         descrip.append("#                              Controllers");
         descrip.append("#-------------------------------------------------------------------------------");
         descrip.append("# Col: 1   ->  Command Interp ID Flag: \"Controller_[#]\"");
-        descrip.append("# Col: 2   ->  Controller Type: \"PID_CNTRL\", \"LYA_ATT_CNTRL\", \"LYA_2BODY_CNTRL\", \"H_DUMP_CNTRL\"");
+        descrip.append("# Col: 2   ->  Controller Type: \"PID_CNTRL\", \"LYA_ATT_CNTRL\", \"LYA_2BODY_CNTRL\", \"H_DUMP_CNTRL\", \"CUSTOM_CNTRL\"");
         descrip.append("# Col: 3   ->  Set of Control Gains");
         descrip.append("# Col: 4   ->  Set of Control Limits");
         break;
@@ -589,7 +593,7 @@ QStringList DSM_Menu::secDescription(const dsmSectionTypes type) {
         descrip.append("#                   Translational / Attitude Control Parameters");
         descrip.append("#-------------------------------------------------------------------------------");
         descrip.append("# Col: 1   ->  Cmd Interp ID Flag: \"Gains_[#]\"");
-        descrip.append("# Col: 2   ->  Gain Mode: \"PID\", \"PID_WN\", \"MomentumDump\", \"FC_LYA\"");
+        descrip.append("# Col: 2   ->  Gain Mode: \"PID\", \"PID_WN\", \"MomentumDump\", \"FC_LYA\", \"CUSTOM\"");
         descrip.append("# Col: 3   ->  Proportional Gain Direction 1, Kp");
         descrip.append("# Col: 4   ->  Proportional Gain Direction 2, Kp");
         descrip.append("# Col: 5   ->  Proportional Gain Direction 3, Kp");
@@ -2657,6 +2661,9 @@ void DSM_Menu::on_gainList_currentItemChanged(QListWidgetItem *current, QListWid
         ui->gainLyaGain->setText(dataSplit[0]);
         ui->gainLyaGain_2->setText(dataSplit[1]);
     }
+    else if (gainType.compare("CUSTOM")==0) {
+        ui->gainCustomGains->setText(dataSplit[0]);
+    }
     else
         dsm_gui_lib::inexplicable_error_message();
 }
@@ -2699,6 +2706,10 @@ void DSM_Menu::gain_data_changed() {
     else if (current->data(gainsData::gainsType).toString().compare("FC_LYA")==0) {
         data.append(ui->gainLyaGain->text());
         data.append(ui->gainLyaGain_2->text());
+    }
+    else if (current->data(gainsData::gainsType).toString().compare("CUSTOM")==0) {
+        QString tmp = ui->gainCustomGains->text();
+        data.append(tmp.split(QRegExp("\\s"),Qt::SkipEmptyParts).join(cmdDataSpacer));
     }
     else
         dsm_gui_lib::inexplicable_error_message();
@@ -2749,6 +2760,9 @@ void DSM_Menu::on_gainType_textActivated(const QString &arg1) {
     }
     else if (newType.compare("FC_LYA")==0) {
         data.append("0.0");
+        data.append("0.0");
+    }
+    else if (newType.compare("CUSTOM")==0) {
         data.append("0.0");
     }
     else
