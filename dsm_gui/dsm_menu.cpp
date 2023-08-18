@@ -2399,19 +2399,26 @@ void DSM_Menu::on_ctrlType_textActivated(const QString &arg1) {
 
     QString oldType = ctrlTypes.key(current->text(ctrlCols::ctrlColType));
     QString label = current->text(ctrlCols::ctrlColLabel);
+    QString newType = ctrlTypes.key(arg1);
+
+    if (oldType.compare(newType)==0) return;
+
+    current->setText(ctrlCols::ctrlColType,arg1);
 
     for (int cmd : ctrlValidCmds[oldType])
         cmdValidCtrls[cmd].removeOne(label);
-
-    QString newType = ctrlTypes.key(arg1);
-    current->setText(ctrlCols::ctrlColType,newType);
     for (int cmd : ctrlValidCmds[newType])
         cmdValidCtrls[cmd].append(label);
 
-    QList<int> checkCmds = ctrlValidCmds[oldType];
-    for (int cmd: ctrlValidCmds[newType]) {
-        if (!checkCmds.contains(cmd))
-            checkCmds.append(cmd);
+    QTreeWidgetItem *curCmd = ui->cmdConfigTree->currentItem();
+    int cmdType;
+    if (curCmd!=NULL && curCmd->parent()!=NULL) {
+        cmdType = curCmd->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
+
+        if (ctrlValidCmds[oldType].contains(cmdType))
+            dsm_gui_lib::setQComboBox(ui->cmdController,label,true);
+        if (ctrlValidCmds[newType].contains(cmdType))
+            populate_cmd_dropdowns();
     }
 
     QList<QTreeWidgetItem*> items = ui->cmdConfigTree->findItems(label,Qt::MatchExactly|Qt::MatchRecursive,cmdCols::cmdColCtl);
@@ -2420,8 +2427,7 @@ void DSM_Menu::on_ctrlType_textActivated(const QString &arg1) {
 
     ui->ctrlGains->clear();
     ui->ctrlGains->addItems(dsm_gui_lib::sortStringList(ctrlValidGains[newType]));
-    if (ctrlValidGains[newType].contains(current->text(ctrlCols::ctrlColGains)))
-        dsm_gui_lib::setQComboBox(ui->ctrlGains,current->text(ctrlCols::ctrlColGains));
+    dsm_gui_lib::setQComboBox(ui->ctrlGains,current->text(ctrlCols::ctrlColGains));
     on_ctrlConfigTree_itemChanged(current, ctrlCols::ctrlColGains);
 }
 
