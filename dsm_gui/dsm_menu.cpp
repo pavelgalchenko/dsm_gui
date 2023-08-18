@@ -157,7 +157,7 @@ void DSM_Menu::set_validators() {
             newItem = new QTreeWidgetItem(parent,{"Detumble Command"});
             break;
         case dsmSectionTypes::WHLHMANAGEMENT:
-            newItem = new QTreeWidgetItem(parent,{"Wheel Momentum Management Command"});
+            newItem = new QTreeWidgetItem(parent,{"Wheel H Manage Command"});
             break;
         case dsmSectionTypes::ACTUATOR_CMD:
             newItem = new QTreeWidgetItem(parent,{"Actuator Command"});
@@ -512,7 +512,7 @@ QStringList DSM_Menu::secDescription(const dsmSectionTypes type) {
         descrip.append("# Col: 6   ->  Primary Target: Specify Body, SC[#].B[#] or Vec");
         descrip.append("# Col: 7   ->  Controller Mode");
         descrip.append("# Col: 8   ->  Actuator Mode");
-        descrip.append("# If Col: 2 -> VEC, then Col: 6 is the Ref. Frame of the pointing vector: \"N\", \"F\", \"L\", \"B\"");
+        descrip.append("# If Col: 2 -> VEC, then Col: 6 is the Ref. Frame of the pointing vector: \"N\", \"F\", \"L\"");
         descrip.append("#                        Col: 7-9 are the pointing vec for Primary axis");
         descrip.append("#                        Col: 10-11 are Controller and Actuator Sets");
         break;
@@ -1187,6 +1187,8 @@ void DSM_Menu::cmd_data_changed() {
             cmdData.append(ui->cmdManZ->text());
             cmdData.append(cmdManFrm.key(ui->cmdManFrm->currentText(),"N"));
             cmdData.append(cmdManTypes.key(ui->cmdManType->currentText(),"SMOOTHED"));
+            cmdData.append(ui->cmdManTime->text());
+            cmdData.append(limsHash[ui->cmdManLimits->currentText()]);
             break;
         default:
             dsm_gui_lib::inexplicable_error_message();
@@ -1201,14 +1203,17 @@ void DSM_Menu::cmd_data_changed() {
         QHash<QString,bool> checkedSc;
         for (const QString &scName : qAsConst(scNames))
             checkedSc.insert(scName,false);
-
+        int nFails = 0;
         for (QTreeWidgetItem *item : checkItems) {
             QString scName = item->text(tlCols::tlColSC);
             if (!checkedSc[scName]) {
                 checkedSc.insert(scName,true);
-                check_actuator_cmds(scName,curItem);
+                if (!check_actuator_cmds(scName,curItem))
+                    nFails++;
             }
         }
+        if (nFails>5)
+            dsm_gui_lib::inexplicable_error_message();
     }
 }
 
@@ -1614,6 +1619,7 @@ void DSM_Menu::on_cmdRemove_clicked() {
             ui->cmdAttSVLabel->clear();
         }
     }
+    populate_cmdtl_dropdowns(cmdType);
 
 }
 
@@ -1664,9 +1670,17 @@ void DSM_Menu::on_cmdAdd_clicked() {
         tmpActItems = ui->actList->findItems(cmdValidActs[cmdType].first(),Qt::MatchExactly);
         actName = entryItemFormat(dsmSectionTypes::ACTUATORS).arg(tmpActItems.first()->data(actData::actNum).toInt());
     }
-    else if (attCmds.contains(cmdType)||cmdType==cmdWhlHManage) {
+    else if (attCmds.contains(cmdType)) {
         if (cmdValidActs[cmdType].isEmpty()) {
             dsm_gui_lib::error_message("You must first define a valid Attitude Actuator.");
+            return;
+        }
+        tmpActItems = ui->actList->findItems(cmdValidActs[cmdType].first(),Qt::MatchExactly);
+        actName = entryItemFormat(dsmSectionTypes::ACTUATORS).arg(tmpActItems.first()->data(actData::actNum).toInt());
+    }
+    else if (cmdType==cmdWhlHManage) {
+        if (cmdValidActs[cmdType].isEmpty()) {
+            dsm_gui_lib::error_message("You must first define a valid Momentum Management Actuator.");
             return;
         }
         tmpActItems = ui->actList->findItems(cmdValidActs[cmdType].first(),Qt::MatchExactly);
@@ -3055,10 +3069,6 @@ void DSM_Menu::on_limDuplicate_clicked() {
 
     new_entry_item(dsmSectionTypes::LIMITS,newLabel,newInd,current->data(limData::limData).toString());
     populate_ctrl_dropdowns();
-
-
-
-
 }
 
 void DSM_Menu::on_applyButton_clicked() {
@@ -3249,6 +3259,39 @@ void DSM_Menu::on_applyButton_clicked() {
             cmdType = section2Cmd[type];
             parent = entryCmdParents[cmdType];
             hash = metaHash[type];
+            switch (cmdType) {
+                case cmdTrn:
+                    tmp = "Translation ";
+                break;
+                case cmdPV:
+                    tmp = "Primary Vector ";
+                break;
+                case cmdSV:
+                tmp = "Secondary Vector ";
+                break;
+                case cmdQuat:
+                    tmp = "Quaternion ";
+                break;
+                case cmdMirror:
+                    tmp = "Mirror ";
+                break;
+                case cmdDetumble:
+                tmp = "Detumble ";
+                break;
+                case cmdWhlHManage:
+                    tmp = "Momentum Management ";
+                break;
+                case cmdAct:
+                    tmp = "Actuator ";
+                break;
+                case cmdManeuver:
+                    tmp = "Maneuver ";
+                break;
+                default:
+                    tmp = "";
+                break;
+            }
+
             for (int i = 0; i<parent->childCount(); i++) {
                 treeItem = parent->child(i);
                 dataList.clear();
@@ -3259,7 +3302,7 @@ void DSM_Menu::on_applyButton_clicked() {
 
                 data = treeItem->text(cmdCols::cmdColCtl);
                 if (treeItem->background(cmdCols::cmdColCtl)==badTextBrush) {
-                    dsm_gui_lib::error_message("Command \""+label+"\" has invalid Controller: \""+data+"\"");
+                    dsm_gui_lib::error_message(tmp+"Command \""+label+"\" has invalid Controller: \""+data+"\"");
                     dsmUpdate.clear();
                     return;
                 }

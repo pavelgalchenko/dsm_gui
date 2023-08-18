@@ -225,7 +225,7 @@ private:
                                            {tlColTime,"Time [sec]"},
                                            {tlColTrn,"Translation Command"},
                                            {tlColAtt,"Attitude Command"},
-                                           {tlColHMan,"Momentum Management Command"},
+                                           {tlColHMan,"Wheel H Manage Command"},
                                            {tlColAct,"Actuator Command"}};
 
     const QMap<int,QString> cmdColNames = { {cmdColLabel,"Command/Label"},
@@ -298,8 +298,8 @@ private:
 
     const QHash<QString,QString> cmdAttTgtFrm = {{"N","Inertial"},
                                                  {"F","Formation"},
-                                                 {"L","Local Vert"},
-                                                 {"B","Body"}};
+                                                  {"L","Local Vert"}};
+//                                                 {"B","Body"}};
 
     const QHash<QString,QString> cmdManFrm = { {"N","Inertial"},
                                                {"B","Body"}};
