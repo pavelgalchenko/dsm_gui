@@ -66,7 +66,7 @@ int dsm_gui_lib::get_sc_nitems(const QString inout_path, const QString sc_name, 
 
     while (!in.atEnd()) {
         QString line = in.readLine();
-        if (line.contains(searchStr,Qt::CaseInsensitive)) {
+        if (line.contains(searchStr,Qt::CaseSensitive)) {
             for (int i=0; i<skipLines; i++)
                 line = in.readLine();
             QStringList line_items = line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);

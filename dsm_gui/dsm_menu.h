@@ -281,16 +281,26 @@ private:
     const QVector<int> trnCmds = {cmdPsvTrn,cmdTrn,cmdManeuver};
     const QVector<int> attCmds = {cmdPsvAtt,cmdAtt,cmdQuat,cmdMirror,cmdDetumble,cmdPV};
 
-    const QMap<dsmSectionTypes,int> section2Cmd = { {dsmSectionTypes::TRANSLATION,      cmdTrn},
-                                                    {dsmSectionTypes::PRIMARY_VEC,      cmdPV},
-                                                    {dsmSectionTypes::SECONDARY_VEC,    cmdSV},
-                                                    {dsmSectionTypes::QUATERION,        cmdQuat},
-                                                    {dsmSectionTypes::MIRROR,           cmdMirror},
-                                                    {dsmSectionTypes::DETUMBLE,         cmdDetumble},
-                                                    {dsmSectionTypes::WHLHMANAGEMENT,   cmdWhlHManage},
-                                                    {dsmSectionTypes::ACTUATOR_CMD,     cmdAct},
-                                                    {dsmSectionTypes::MANEUVER,         cmdManeuver}};
+    const QMap<dsmSectionTypes,int> section2Cmd = {         {dsmSectionTypes::TRANSLATION,      cmdTrn},
+                                                            {dsmSectionTypes::PRIMARY_VEC,      cmdPV},
+                                                            {dsmSectionTypes::SECONDARY_VEC,    cmdSV},
+                                                            {dsmSectionTypes::QUATERION,        cmdQuat},
+                                                            {dsmSectionTypes::MIRROR,           cmdMirror},
+                                                            {dsmSectionTypes::DETUMBLE,         cmdDetumble},
+                                                            {dsmSectionTypes::WHLHMANAGEMENT,   cmdWhlHManage},
+                                                            {dsmSectionTypes::ACTUATOR_CMD,     cmdAct},
+                                                            {dsmSectionTypes::MANEUVER,         cmdManeuver}};
     const QList<dsmSectionTypes> section2CmdKeys = section2Cmd.keys();
+
+    const QHash<dsmSectionTypes,QString> sectionCmdNames = {{dsmSectionTypes::TRANSLATION,      "Translation Command"},
+                                                            {dsmSectionTypes::PRIMARY_VEC,      "Primary Vector Command"},
+                                                            {dsmSectionTypes::SECONDARY_VEC,    "Secondary Vector Command"},
+                                                            {dsmSectionTypes::QUATERION,        "Quaternion Command"},
+                                                            {dsmSectionTypes::MIRROR,           "Mirror Command"},
+                                                            {dsmSectionTypes::DETUMBLE,         "Detumble Command"},
+                                                            {dsmSectionTypes::WHLHMANAGEMENT,   "Wheel H Manage Command"},
+                                                            {dsmSectionTypes::ACTUATOR_CMD,     "Actuator Command"},
+                                                            {dsmSectionTypes::MANEUVER,         "Maneuver Command"}};
 
     const QHash<QString,QString> cmdAttTgtTypes = { {"VEC","Vector"},
                                                     {"SC","Spacecraft"},
@@ -358,6 +368,8 @@ private:
     // This....
     // I hate this...
     // This is how I chose to coorelate controllers and actuators to command types
+    // Edit, Aug 18th:
+    // actually, this is pretty cool
     const QHash<QString,QList<int>> ctrlValidCmds = {   {"PID_CNTRL",       {cmdTrn,cmdPV,      cmdQuat,cmdMirror,cmdDetumble}},
                                                         {"LYA_ATT_CNTRL",   {       cmdPV,      cmdQuat,cmdMirror,cmdDetumble}},
                                                         {"LYA_2BODY_CNTRL", {cmdTrn}},

@@ -137,39 +137,7 @@ void DSM_Menu::set_validators() {
     QTreeWidget *parent = ui->cmdConfigTree;
     QTreeWidgetItem *newItem;
     for (dsmSectionTypes type : section2CmdKeys) {
-        switch (type) {
-        case dsmSectionTypes::TRANSLATION:
-            newItem = new QTreeWidgetItem(parent,{"Translation Command"});
-            break;
-        case dsmSectionTypes::PRIMARY_VEC:
-            newItem = new QTreeWidgetItem(parent,{"Primary Vector Command"});
-            break;
-        case dsmSectionTypes::SECONDARY_VEC:
-            newItem = new QTreeWidgetItem(parent,{"Secondary Vector Command"});
-            break;
-        case dsmSectionTypes::QUATERION:
-            newItem = new QTreeWidgetItem(parent,{"Quaternion Command"});
-            break;
-        case dsmSectionTypes::MIRROR:
-            newItem = new QTreeWidgetItem(parent,{"Mirror Command"});
-            break;
-        case dsmSectionTypes::DETUMBLE:
-            newItem = new QTreeWidgetItem(parent,{"Detumble Command"});
-            break;
-        case dsmSectionTypes::WHLHMANAGEMENT:
-            newItem = new QTreeWidgetItem(parent,{"Wheel H Manage Command"});
-            break;
-        case dsmSectionTypes::ACTUATOR_CMD:
-            newItem = new QTreeWidgetItem(parent,{"Actuator Command"});
-            break;
-        case dsmSectionTypes::MANEUVER:
-            newItem = new QTreeWidgetItem(parent,{"Maneuver Command"});
-            break;
-        default:
-            dsm_gui_lib::inexplicable_error_message();
-            newItem = NULL;
-            break;
-        }
+        newItem = new QTreeWidgetItem(parent,{sectionCmdNames[type]});
         if (newItem!=NULL) {
             newItem->setFirstColumnSpanned(true);
             newItem->setData(cmdCols::cmdColLabel,cmdData::cmdType,section2Cmd[type]);
@@ -372,8 +340,6 @@ void DSM_Menu::receive_data() {
                     DSM_Menu::close();
                 }
                 scNames.append(name);
-
-
 
                 nBdys.insert(name,dsm_gui_lib::get_sc_nitems(inoutPath,name,dsm_gui_lib::scSectionType::BODY));
                 nWhls.insert(name,dsm_gui_lib::get_sc_nitems(inoutPath,name,dsm_gui_lib::scSectionType::WHEEL));
@@ -1247,29 +1213,23 @@ void DSM_Menu::on_cmdLabel_textEdited(const QString &arg1) {
     dsmSectionTypes type = section2Cmd.key(cmdType);
     int checkCol;
     QString value = entryItemFormat(section2Cmd.key(cmdType)).arg(itemNum);
-    QComboBox *checkBox;
     QString oldKey;
     QHash <QString,QString> *checkHash = metaHash[type];
 
     if (trnCmds.contains(cmdType)){
         checkCol = tlCols::tlColTrn;
-        checkBox = ui->cmdTrnLabel;
     }
     else if (attCmds.contains(cmdType)){
         checkCol = tlCols::tlColAtt;
-        checkBox = ui->cmdAttLabel;
     }
     else if (cmdType == cmdSV) {
         checkCol = tlCols::tlColAtt;
-        checkBox = ui->cmdAttSVLabel;
     }
     else if (cmdType == cmdWhlHManage){
         checkCol = tlCols::tlColHMan;
-        checkBox = ui->cmdHManLabel;
     }
     else {
         checkCol = tlCols::tlColAct;
-        checkBox = ui->cmdActLabel;
     }
 
     oldKey = checkHash->key(value);
@@ -1522,8 +1482,6 @@ void DSM_Menu::on_saveDefaultButton_clicked() {
         QFile::copy(filePath, inoutPath+"__default__/Inp_DSM.txt");
     }
     else return;
-
-
 }
 
 void DSM_Menu::on_cmdRemove_clicked() {
@@ -1551,7 +1509,6 @@ void DSM_Menu::on_cmdRemove_clicked() {
         flags = Qt::MatchExactly;
         cmdTypeStr = "Translation";
         box = ui->cmdTrnLabel;
-
     }
     else if (attCmds.contains(cmdType)) {
         searchLabel = label;
@@ -1657,9 +1614,17 @@ void DSM_Menu::on_cmdAdd_clicked() {
         tmpCtrlItems = ui->ctrlConfigTree->findItems(cmdValidCtrls[cmdType].first(),Qt::MatchExactly,cmdCols::cmdColLabel);
         ctrlName = entryItemFormat(dsmSectionTypes::CONTROLLERS).arg(tmpCtrlItems.first()->data(cmdCols::cmdColInd,cmdData::cmdNum).toInt());
     }
-    else if (attCmds.contains(cmdType)||cmdType==cmdWhlHManage) {
+    else if (attCmds.contains(cmdType)) {
         if (cmdValidCtrls[cmdType].isEmpty()) {
             dsm_gui_lib::error_message("You must first define a valid Attitude Controller.");
+            return;
+        }
+        tmpCtrlItems = ui->ctrlConfigTree->findItems(cmdValidCtrls[cmdType].first(),Qt::MatchExactly,cmdCols::cmdColLabel);
+        ctrlName = entryItemFormat(dsmSectionTypes::CONTROLLERS).arg(tmpCtrlItems.first()->data(cmdCols::cmdColInd,cmdData::cmdNum).toInt());
+    }
+    else if (cmdType==cmdWhlHManage) {
+        if (cmdValidCtrls[cmdType].isEmpty()) {
+            dsm_gui_lib::error_message("You must first define a valid Momentum Management Controller.");
             return;
         }
         tmpCtrlItems = ui->ctrlConfigTree->findItems(cmdValidCtrls[cmdType].first(),Qt::MatchExactly,cmdCols::cmdColLabel);
@@ -2223,10 +2188,9 @@ void DSM_Menu::on_actAdd_clicked() {
 
     QString actType = "Ideal";
 
-    new_entry_item(dsmSectionTypes::ACTUATORS,newLabel,newActInd,{actType});
+    new_entry_item(dsmSectionTypes::ACTUATORS,newLabel,newActInd,actType);
 
     populate_cmd_dropdowns();
-
 }
 
 void DSM_Menu::on_actDuplicate_clicked() {
@@ -2344,8 +2308,8 @@ void DSM_Menu::populate_cmd_dropdowns() {
     ui->cmdController->clear();
     if (curCmd!=NULL && curCmd->parent()!=NULL) {
         int cmd = curCmd->parent()->data(cmdCols::cmdColLabel,cmdData::cmdType).toInt();
-        ui->cmdActuator->addItems(cmdValidActs[cmd]);
-        ui->cmdController->addItems(cmdValidCtrls[cmd]);
+        ui->cmdActuator->addItems(dsm_gui_lib::sortStringList(cmdValidActs[cmd]));
+        ui->cmdController->addItems(dsm_gui_lib::sortStringList(cmdValidCtrls[cmd]));
         dsm_gui_lib::setQComboBox(ui->cmdActuator,curCmd->text(cmdCols::cmdColAct));
         dsm_gui_lib::setQComboBox(ui->cmdController,curCmd->text(cmdCols::cmdColCtl));
     }
