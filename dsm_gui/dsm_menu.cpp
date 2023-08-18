@@ -2673,7 +2673,7 @@ void DSM_Menu::gain_data_changed() {
     }
     else if (current->data(gainsData::gainsType).toString().compare("CUSTOM")==0) {
         QString tmp = ui->gainCustomGains->text();
-        data.append(tmp.split(QRegExp("\\s"),Qt::SkipEmptyParts).join(cmdDataSpacer));
+        data.append(tmp.split(QRegExp("\\s"),Qt::SkipEmptyParts));
     }
     else
         dsm_gui_lib::inexplicable_error_message();
