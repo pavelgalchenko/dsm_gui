@@ -2626,7 +2626,7 @@ void DSM_Menu::on_gainList_currentItemChanged(QListWidgetItem *current, QListWid
         ui->gainLyaGain_2->setText(dataSplit[1]);
     }
     else if (gainType.compare("CUSTOM")==0) {
-        ui->gainCustomGains->setText(dataSplit[0]);
+        ui->gainCustomGains->setText(dataSplit.join(cmdDataSpacer));
     }
     else
         dsm_gui_lib::inexplicable_error_message();
