@@ -264,9 +264,11 @@ void SPC_Menu::on_spc_apply_clicked()
 
     spc_names.sort();
     file_paths.sort();
-
     QStringList other_names = spc_names;
-    other_names.removeAt(spc_names.indexOf(ui->spc_list->currentItem()->text()));
+    other_names.removeOne(ui->spc_list->currentItem()->text());
+
+    qDebug() << other_names;
+    qDebug() << spc_names;
 
     QString cur_name = ui->spc_name->text();
     if (other_names.contains(cur_name, Qt::CaseInsensitive)) {
@@ -568,8 +570,6 @@ void SPC_Menu::on_spc_apply_clicked()
     ui->spc_list->setCurrentRow(index);
 
     write_data();
-
-
 }
 
 
@@ -722,11 +722,6 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
     ui->spc_list->currentItem()->setData(257,current_item_data); // set item data
 
     on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count()-1)); // click the item
-
-    spc_names.append(new_spc);
-    file_paths.append(inout_path+"SC_"+new_spc+".txt");
-
-    QFile::copy(inout_path+"SC_" + old_spc + ".txt", inout_path+"SC_"+new_spc+".txt"); //create the file associated with the S/C and append the file information to the right variables
 
     if (ui->spc_list->count() > 0) {
         on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count() - 2));

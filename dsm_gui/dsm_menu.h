@@ -298,7 +298,7 @@ private:
 
     const QHash<QString,QString> cmdAttTgtFrm = {{"N","Inertial"},
                                                  {"F","Formation"},
-                                                  {"L","Local Vert"}};
+                                                 {"L","Local Vert"}};
 //                                                 {"B","Body"}};
 
     const QHash<QString,QString> cmdManFrm = { {"N","Inertial"},
