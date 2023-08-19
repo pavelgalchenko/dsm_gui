@@ -379,10 +379,10 @@ void IPC_Menu::on_applyButton_clicked() {
     int ipc_num = ui->ipclist->count();
     int nPrefixes;
 
-    ipc_update.append("<<<<<<<<<<<<<<< 42: InterProcess Comm Configuration File >>>>>>>>>>>>>>>>\n");
+    ipc_update.append("<<<<<<<<<<<<<<< 42: InterProcess Comm Configuration File >>>>>>>>>>>>>>>\n");
 
     data_inp = QString::number(ipc_num);
-    ipc_update.append(dsm_gui_lib::whitespace(data_inp) + " ! Number of Sockets\n");
+    ipc_update.append(dsm_gui_lib::whitespace(data_inp) + " !  Number of Sockets\n");
 
     for (int i=0; i<ipc_num; i++) {
         item = ui->ipclist->item(i);
@@ -390,53 +390,53 @@ void IPC_Menu::on_applyButton_clicked() {
         for (int j=0; j<ipcNLines; j++) {
             switch (j) {
             case 0:
-                data_inp = "********************************  IPC "+QString::number(i)+"  ********************************\n";
+                data_inp = "********************************  IPC "+QString::number(i)+"  *******************************\n";
                 break;
             case 1:
                 tmpData = item->data(IPC_Menu::Mode).toStringList();
                 data_inp = tmpData[0];
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)\n";
                 break;
             case 2:
                 tmpData = item->data(IPC_Menu::ACID).toStringList();
                 data_inp = tmpData[0];
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! AC.ID for ACS mode\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  AC.ID for ACS mode\n";
                 break;
             case 3:
                 tmpData = item->data(IPC_Menu::FileName).toStringList();
                 data_inp = "\"" + tmpData[0] + "\"";
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! File name for WRITE or READ\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  File name for WRITE or READ\n";
                 break;
             case 4:
                 tmpData = item->data(IPC_Menu::Role).toStringList();
                 data_inp = tmpData[0];
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Socket Role (SERVER,CLIENT,GMSEC_CLIENT)\n";
                 break;
             case 5:
                 tmpData = item->data(IPC_Menu::Server).toStringList();
                 data_inp = tmpData.join("  ");
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Server Host Name, Port\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Server Host Name, Port\n";
                 break;
             case 6:
                 tmpData = item->data(IPC_Menu::Blocking).toStringList();
                 data_inp = tmpData[0];
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Allow Blocking (i.e. wait on RX)\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Allow Blocking (i.e. wait on RX)\n";
                 break;
             case 7:
                 tmpData = item->data(IPC_Menu::Echo).toStringList();
                 data_inp = tmpData[0];
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Echo to stdout\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Echo to stdout\n";
                 break;
             case 8:
                 tmpData = item->data(IPC_Menu::nTX).toStringList();
                 nPrefixes = tmpData[0].toInt();
                 data_inp = tmpData[0];
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Number of TX prefixes\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Number of TX prefixes\n";
                 if (nPrefixes>0) {
                     tmpData = item->data(IPC_Menu::Prefixes).toStringList();
                     for (int k=0; k<nPrefixes; k++) {
                         prefix_name = "\"" + tmpData[k] + "\"";
-                        data_inp += dsm_gui_lib::whitespace(prefix_name) + " ! Prefix "+QString::number(k)+"\n";
+                        data_inp += dsm_gui_lib::whitespace(prefix_name) + " !  Prefix "+QString::number(k)+"\n";
                     }
                 }
                 break;

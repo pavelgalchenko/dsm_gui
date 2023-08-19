@@ -132,10 +132,10 @@ void TDR_Menu::on_closeButton_clicked() {
 void TDR_Menu::on_applyButton_clicked() {
     QString data_inp = {};
 
-    const QString tdrsDesc = " ! TDRS-%1 Exists, Designation\n";
+    const QString tdrsDesc = " !  TDRS-%1 Exists, Designation\n";
 
 
-    tdr_update.append("<<<<<<<<<<<<<<<<<<<  42 TDRS Configuration File  >>>>>>>>>>>>>>>>>>>>>>\n");
+    tdr_update.append("<<<<<<<<<<<<<<<<<<<<<  42 TDRS Configuration File  >>>>>>>>>>>>>>>>>>>>>\n");
 
     for (int i = 0; i<tdrsEnabled.length(); i++) {
         data_inp = dsm_gui_lib::toString(tdrsEnabled[i]) + "  ";
@@ -143,7 +143,7 @@ void TDR_Menu::on_applyButton_clicked() {
 
         data_inp = dsm_gui_lib::whitespace(data_inp);
         if (i == 1)
-            data_inp += " ! TDRS-2 was lost along with Challenger\n";
+            data_inp += " !  TDRS-2 was lost along with Challenger\n";
         else {
             data_inp += tdrsDesc.arg(i+1);
         }

@@ -281,11 +281,11 @@ void FOV_Menu::on_fov_add_clicked() {
     }
 
     newData.append("");
-    newData.append("4   4.0                           ");
+    newData.append("4  4.0                            ");
     newData.append("8.0  4.0                          ");
-    newData.append("0.0 1.0 0.0 0.5                   ");
+    newData.append("0.0  1.0  0.0  0.5                ");
     newData.append("SOLID                             ");
-    newData.append("TRUE  TRUE                        ");
+    newData.append("TRUE   TRUE                       ");
     newData.append("0  0                              ");
     newData.append("0.0  0.0  1.0                     ");
     newData.append("0.0  0.0  0.0  321                ");
@@ -460,32 +460,32 @@ void FOV_Menu::on_applyButton_clicked() {
 
     int fov_num = ui->fovlist->count();
 
-    fov_update.append("************************* Fields of View ***************************\n");
+    fov_update.append("**************************** Fields of View ****************************\n");
 
     data_inp = QString::number(fov_num);
-    fov_update.append(dsm_gui_lib::whitespace(data_inp) + " ! Number of FOVs\n");
+    fov_update.append(dsm_gui_lib::whitespace(data_inp) + " !  Number of FOVs\n");
 
     for (int i=0; i<fov_num; i++) {
         item = ui->fovlist->item(i);
         for (int j=0; j<fovNLines; j++) {
             switch (j) {
             case 0:
-                data_inp = "--------------------------------------------------------------------\n";
+                data_inp = "------------------------------------------------------------------------\n";
                 break;
             case 1:
                 tmpData = item->data(FOV_Menu::Label).toStringList();
                 data_inp = "\"" + tmpData[0] + "\"";
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Label\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Label\n";
                 break;
             case 2:
                 tmpData = item->data(FOV_Menu::Sides).toStringList();
                 data_inp = tmpData.join("  ");
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Number of Sides, Length [m]\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Number of Sides, Length [m]\n";
                 break;
             case 3:
                 tmpData = item->data(FOV_Menu::Dims).toStringList();
                 data_inp = tmpData.join("  ");
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! H Width, V Height [deg]\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  H Width, V Height [deg]\n";
                 break;
             case 4:
                 tmpData = item->data(FOV_Menu::Color).toStringList();
@@ -493,37 +493,37 @@ void FOV_Menu::on_applyButton_clicked() {
                     double colorChannel = tmpData[k].toDouble()/255.0;
                     data_inp += QString::number(colorChannel,'g',3) + "  ";
                 }
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Color RGB+Alpha\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Color RGB+Alpha\n";
                 break;
             case 5:
                 tmpData = item->data(FOV_Menu::Type).toStringList();
                 data_inp = tmpData[0];
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! WIREFRAME, SOLID, VECTOR, or PLANE\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  WIREFRAME, SOLID, VECTOR, or PLANE\n";
                 break;
             case 6:
                 tmpData = item->data(FOV_Menu::DrawField).toStringList();
                 data_inp = tmpData.join("  ");
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Draw Near Field, Draw Far Field\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Draw Near Field, Draw Far Field\n";
                 break;
             case 7:
                 tmpData = item->data(FOV_Menu::SCBody).toStringList();
                 data_inp = tmpData.join("  ");
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! SC, Body\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  SC, Body\n";
                 break;
             case 8:
                 tmpData = item->data(FOV_Menu::BodyPos).toStringList();
                 data_inp = tmpData.join("  ");
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Position in Body [m]\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Position in Body [m]\n";
                 break;
             case 9:
                 tmpData = item->data(FOV_Menu::Euler).toStringList();
                 data_inp = tmpData.join("  ");
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Euler Angles [deg], Sequence\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Euler Angles [deg], Sequence\n";
                 break;
             case 10:
                 tmpData = item->data(FOV_Menu::Boresight).toStringList();
                 data_inp = tmpData[0];
-                data_inp = dsm_gui_lib::whitespace(data_inp) + " ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n";
+                data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n";
                 break;
             }
             fov_update.append(data_inp);
