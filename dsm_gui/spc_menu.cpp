@@ -267,9 +267,6 @@ void SPC_Menu::on_spc_apply_clicked()
     QStringList other_names = spc_names;
     other_names.removeOne(ui->spc_list->currentItem()->text());
 
-    qDebug() << other_names;
-    qDebug() << spc_names;
-
     QString cur_name = ui->spc_name->text();
     if (other_names.contains(cur_name, Qt::CaseInsensitive)) {
         dsm_gui_lib::error_message("SC \"" + cur_name + "\" already exists.\nSC names are NOT case sensitive.");
@@ -426,7 +423,7 @@ void SPC_Menu::on_spc_apply_clicked()
 
         switch (line_num) {
         case 1:
-            spc_update.append("<<<<<<<<<<<<<<<<<  42: Spacecraft Description File   >>>>>>>>>>>>>>>>>\n");
+            spc_update.append("<<<<<<<<<<<<<<<<<  42: Spacecraft Description File   >>>>>>>>>>>>>>>>>>>\n");
             break; // header
         case 2:
             data_inp = current_data[0];
@@ -451,7 +448,7 @@ void SPC_Menu::on_spc_apply_clicked()
         case 7:
             /******************************************* HEADER ***************************************************/
             // Orbit Parameters
-            spc_update.append("************************* Orbit Parameters ****************************\n");
+            spc_update.append("************************* Orbit Parameters *****************************\n");
             break;
         case 8: // Orbit Prop
             data_inp = ui->spc_cur_orb_type->currentText();
@@ -474,11 +471,11 @@ void SPC_Menu::on_spc_apply_clicked()
             break;
         case 13: // Ang Vel wrt [NL], Att [QA] wrt [NLF]
             data_inp = ui->spc_cur_angvel_frame1->currentText() + ui->spc_cur_att_param->currentText() + ui->spc_cur_angvel_frame2->currentText();
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "! Ang Vel wrt [NL], Att [QA] wrt [NLF]\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "!  Ang Vel wrt [NL], Att [QA] wrt [NLF]\n");
             break;
         case 14:
             data_inp = ui->spc_cur_angvel_1->text() + "  " + ui->spc_cur_angvel_2->text() + "  " + ui->spc_cur_angvel_3->text();
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "! Ang Vel (deg/sec)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "!  Ang Vel (deg/sec)\n");
             break;
         case 15:
             data_inp = ui->spc_cur_q1->text() + "  " +  ui->spc_cur_q2->text() + "  " + ui->spc_cur_q3->text() + "  " + ui->spc_cur_q4->text();
@@ -509,7 +506,7 @@ void SPC_Menu::on_spc_apply_clicked()
                 ui->spc_cur_q3->setEnabled(false);
                 ui->spc_cur_q4->setEnabled(false);
             }
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "! Quaternion\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "!  Quaternion\n");
             break;
         case 16:
             data_inp = ui->spc_cur_initeul_1->text() + "  " + ui->spc_cur_initeul_2->text() + "  " + ui->spc_cur_initeul_3->text() + "  " + ui->spc_cur_initeul_seq->currentText();
@@ -540,7 +537,7 @@ void SPC_Menu::on_spc_apply_clicked()
                 ui->spc_cur_q3->setEnabled(false);
                 ui->spc_cur_q4->setEnabled(false);
             }
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "! Angles (deg) & Euler Sequence\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "!  Angles (deg) & Euler Sequence\n");
             break;
         }
     }

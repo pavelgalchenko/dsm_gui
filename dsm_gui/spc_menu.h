@@ -3,7 +3,6 @@
 
 #include <QDialog>
 #include <QListWidgetItem>
-#include <QDebug>
 #include <QComboBox>
 #include <QStringList>
 

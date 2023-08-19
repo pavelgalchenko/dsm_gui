@@ -50,40 +50,6 @@ void MainWindow::on_new_mission_clicked()
 
     ui->mission_path->setText(path);
 
-    QFile::copy(":/data/__default__/Flex_Simple.txt", path+"Flex_Simple.txt");
-    QFile::copy(":/data/__default__/Inp_Cmd.txt", path+"Inp_Cmd.txt");
-    QFile::copy(":/data/__default__/Inp_FOV.txt", path+"Inp_FOV.txt");
-    QFile::copy(":/data/__default__/Inp_Graphics.txt", path+"Inp_Graphics.txt");
-    QFile::copy(":/data/__default__/Inp_IPC.txt", path+"Inp_IPC.txt");
-    QFile::copy(":/data/__default__/Inp_DSM.txt", path+"Inp_DSM.txt");
-    QFile::copy(":/data/__default__/Inp_NOS3.txt", path+"Inp_NOS3.txt");
-    QFile::copy(":/data/__default__/Inp_Region.txt", path+"Inp_Region.txt");
-    QFile::copy(":/data/__default__/Inp_Sim.txt", path+"Inp_Sim.txt");
-    QFile::copy(":/data/__default__/Inp_TDRS.txt", path+"Inp_TDRS.txt");
-    QFile::copy(":/data/__default__/Nodes_Simple.txt", path+"Nodes_Simple.txt");
-    QFile::copy(":/data/__default__/Orb_Default.txt", path+"Orb_Default.txt");
-    QFile::copy(":/data/__default__/SC_Simple.txt", path+"SC_Simple.txt");
-    QFile::copy(":/data/__default__/Shaker_Simple.txt", path+"Shaker_Simple.txt");
-    QFile::copy(":/data/__default__/TRV.txt", path+"TRV.txt");
-    QFile::copy(":/data/__default__/Whl_Simple.txt", path+"Whl_Simple.txt");
-
-    QFile::copy(":/data/__default__/Flex_Simple.txt", path+"__default__/Flex_Simple.txt");
-    QFile::copy(":/data/__default__/Inp_Cmd.txt", path+"__default__/Inp_Cmd.txt");
-    QFile::copy(":/data/__default__/Inp_FOV.txt", path+"__default__/Inp_FOV.txt");
-    QFile::copy(":/data/__default__/Inp_Graphics.txt", path+"__default__/Inp_Graphics.txt");
-    QFile::copy(":/data/__default__/Inp_IPC.txt", path+"__default__/Inp_IPC.txt");
-    QFile::copy(":/data/__default__/Inp_DSM.txt", path+"__default__/Inp_DSM.txt");
-    QFile::copy(":/data/__default__/Inp_NOS3.txt", path+"__default__/Inp_NOS3.txt");
-    QFile::copy(":/data/__default__/Inp_Region.txt", path+"__default__/Inp_Region.txt");
-    QFile::copy(":/data/__default__/Inp_Sim.txt", path+"__default__/Inp_Sim.txt");
-    QFile::copy(":/data/__default__/Inp_TDRS.txt", path+"__default__/Inp_TDRS.txt");
-    QFile::copy(":/data/__default__/Nodes_Simple.txt", path+"__default__/Nodes_Simple.txt");
-    QFile::copy(":/data/__default__/Orb_Default.txt", path+"__default__/Orb_Default.txt");
-    QFile::copy(":/data/__default__/SC_Simple.txt", path+"__default__/SC_Simple.txt");
-    QFile::copy(":/data/__default__/Shaker_Simple.txt", path+"__default__/Shaker_Simple.txt");
-    QFile::copy(":/data/__default__/TRV.txt", path+"__default__/TRV.txt");
-    QFile::copy(":/data/__default__/Whl_Simple.txt", path+"__default__/Whl_Simple.txt");
-
     QStringList newDefaultFiles = QDir(":/data/__default__/").entryList();
 
     for (const QString &neededFile : newDefaultFiles) {

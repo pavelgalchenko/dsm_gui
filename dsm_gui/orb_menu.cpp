@@ -398,7 +398,7 @@ void ORB_Menu::on_orbListAdd_clicked()
     }
     orbFileHash.insert(newOrb,inout_path+"Orb_"+newOrb+".txt");
 
-    QFile::copy(":/data/__default__/Orb_Default.txt", orbFileHash[newOrb]);
+    QFile::copy(":/data/__default__/Orb_LEO.txt", orbFileHash[newOrb]);
 
     ui->orbList->addItem(newOrb);
 

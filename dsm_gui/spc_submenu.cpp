@@ -1430,39 +1430,39 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             break;
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Mass\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Mass\n");
             break;
         case 2: // Moments of Inertia (kg-m^2)
             data_inp = current_data[2] + "  " + current_data[3]  + "  " + current_data[4];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Moments of Inertia (kg-m^2)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Moments of Inertia (kg-m^2)\n");
             break;
         case 3: // Products of Inertia
             data_inp = current_data[5] + "  " + current_data[6] + "  " + current_data[7];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Products of Inertia (xy,xz,yz)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Products of Inertia (xy,xz,yz)\n");
             break;
         case 4: // Location of mass center
             data_inp = current_data[8] + "  " + current_data[9] + "  " + current_data[10];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Location of mass center, m\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Location of mass center, m\n");
             break;
         case 5: // constant embedded momentum
             data_inp = current_data[11] + "  " + current_data[12] + "  " + current_data[13];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Constant Embedded Momentum (Nms)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Constant Embedded Momentum (Nms)\n");
             break;
         case 6: // constant embedded momentum
             data_inp = current_data[14] + "  " + current_data[15] + "  " + current_data[16];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Constant Embedded Magnetic Dipole (A-m^2)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Constant Embedded Magnetic Dipole (A-m^2)\n");
             break;
         case 7:
             data_inp = current_data[17];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Geometry Input File Name\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Geometry Input File Name\n");
             break;
         case 8:
             data_inp = current_data[18];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node File Name\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Node File Name\n");
             break;
         case 9:
             data_inp = current_data[19];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Flex File Name\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Flex File Name\n");
             break;
         }
     }
@@ -1489,22 +1489,22 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (joints == 0)
     {
-        spc_update.append("============================== Joint 0 ================================\n");
-        spc_update.append("PASSIVE                     ! Type of joint (PASSIVE, ACTUATED, others)\n");
-        spc_update.append("0 1                         ! Inner, outer body indices\n");
-        spc_update.append("1   213   GIMBAL            ! RotDOF, Seq, GIMBAL or SPHERICAL\n");
-        spc_update.append("0   123                     ! TrnDOF, Seq\n");
-        spc_update.append("FALSE  FALSE  FALSE         ! RotDOF Locked\n");
-        spc_update.append("FALSE  FALSE  FALSE         ! TrnDOF Locked\n");
-        spc_update.append("0.0    0.0    0.0           ! Initial Angles [deg]\n");
-        spc_update.append("0.0    0.0    0.0           ! Initial Rates, deg/sec\n");
-        spc_update.append("0.0    0.0    0.0           ! Initial Displacements [m]\n");
-        spc_update.append("0.0    0.0    0.0           ! Initial Displacement Rates, m/sec\n");
-        spc_update.append("0.0   0.0  0.0  312         ! Bi to Gi Static Angles [deg] & Seq\n");
-        spc_update.append("0.0   0.0  0.0  312         ! Go to Bo Static Angles [deg] & Seq\n");
-        spc_update.append("0.0   0.0  0.0              ! Position wrt inner body origin, m\n");
-        spc_update.append("0.0   0.0  0.0              ! Position wrt outer body origin, m\n");
-        spc_update.append("NONE                        ! Parameter File Name\n");
+        spc_update.append("============================== Joint 0 =================================\n");
+        spc_update.append("PASSIVE                       !  Type of joint (PASSIVE, ACTUATED, others)\n");
+        spc_update.append("0  1                          !  Inner, outer body indices\n");
+        spc_update.append("1  213  GIMBAL                !  RotDOF, Seq, GIMBAL or SPHERICAL\n");
+        spc_update.append("0  123                        !  TrnDOF, Seq\n");
+        spc_update.append("FALSE  FALSE  FALSE           !  RotDOF Locked\n");
+        spc_update.append("FALSE  FALSE  FALSE           !  TrnDOF Locked\n");
+        spc_update.append("0.0  0.0  0.0                 !  Initial Angles [deg]\n");
+        spc_update.append("0.0  0.0  0.0                 !  Initial Rates, deg/sec\n");
+        spc_update.append("0.0  0.0  0.0                 !  Initial Displacements [m]\n");
+        spc_update.append("0.0  0.0  0.0                 !  Initial Displacement Rates, m/sec\n");
+        spc_update.append("0.0  0.0  0.0  312            !  Bi to Gi Static Angles [deg] & Seq\n");
+        spc_update.append("0.0  0.0  0.0  312            !  Go to Bo Static Angles [deg] & Seq\n");
+        spc_update.append("0.0  0.0  0.0                 !  Position wrt inner body origin, m\n");
+        spc_update.append("0.0  0.0  0.0                 !  Position wrt outer body origin, m\n");
+        spc_update.append("NONE                          !  Parameter File Name\n");
     }
 
     if (ui->sections->currentIndex() == 1)
@@ -1641,68 +1641,68 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry) {
         case 0: // Joint X Header
-            spc_update.append("============================== " + ui->spc_cur_joint_list->currentItem()->text() + " ================================\n");
+            spc_update.append("============================== " + ui->spc_cur_joint_list->currentItem()->text() + " =================================\n");
             break;
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Type of joint (PASSIVE, ACTUATED, others)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Type of joint (PASSIVE, ACTUATED, others)\n");
             break;
         case 2:
             data_inp = current_data[2] + "  " + current_data[3];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Inner, outer body indices\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Inner, outer body indices\n");
             break;
         case 3:
             data_inp = current_data[4] + "  " + current_data[5] + "  " + current_data[6];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! RotDOF, Seq, GIMBAL or SPHERICAL\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  RotDOF, Seq, GIMBAL or SPHERICAL\n");
             break;
         case 4:
             data_inp = current_data[7] + "  " + current_data[8];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! TrnDOF, Seq\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  TrnDOF, Seq\n");
             break;
         case 5:
             data_inp = current_data[9] + "  " + current_data[10] + "  " + current_data[11];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! RotDOF Locked\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  RotDOF Locked\n");
             break;
 
         case 6:
             data_inp = current_data[12] + "  " + current_data[13] + "  " + current_data[14];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! TrnDOF Locked\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  TrnDOF Locked\n");
             break;
         case 7:
             data_inp = current_data[15] + "  " + current_data[16] + "  " + current_data[17];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Angles [deg]\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Initial Angles [deg]\n");
             break;
         case 8:
             data_inp = current_data[18] + "  " + current_data[19] + "  " + current_data[20];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Rates, deg/sec\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Initial Rates, deg/sec\n");
             break;
         case 9:
             data_inp = current_data[21] + "  " + current_data[22] + "  " + current_data[23];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Displacements [m]\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Initial Displacements [m]\n");
             break;
         case 10:
             data_inp = current_data[24] + "  " + current_data[25] + "  " + current_data[26];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Displacement Rates, m/sec\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Initial Displacement Rates, m/sec\n");
             break;
         case 11:
             data_inp = current_data[27] + "  " + current_data[28] + "  " + current_data[29] + "  " + current_data[30];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Bi to Gi Static Angles [deg] & Seq\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Bi to Gi Static Angles [deg] & Seq\n");
             break;
         case 12:
             data_inp = current_data[31] + "  " + current_data[32] + "  " + current_data[33] + "  " + current_data[34];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Go to Bo Static Angles [deg] & Seq\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Go to Bo Static Angles [deg] & Seq\n");
             break;
         case 13:
             data_inp = current_data[35] + "  " + current_data[36] + "  " + current_data[37];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Position wrt inner body origin, m\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Position wrt inner body origin, m\n");
             break;
         case 14:
             data_inp = current_data[38] + "  " + current_data[39] + "  " + current_data[40];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Position wrt outer body origin, m\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Position wrt outer body origin, m\n");
             break;
         case 15:
             data_inp = current_data[41];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Parameter File Name\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Parameter File Name\n");
             break;
         }
 
@@ -1724,24 +1724,24 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     if (ui->spc_cur_wheel_glob_jitter_on->isChecked()) wheel_jitter = "TRUE";
     else wheel_jitter = "FALSE";
 
-    if (!QString::compare(wheel_drag, "FALSE")) spc_update.append("FALSE                         ! Wheel Drag Active\n");
+    if (!QString::compare(wheel_drag, "FALSE")) spc_update.append("FALSE                         !  Wheel Drag Active\n");
     else spc_update.append("TRUE                          ! Wheel Drag Active\n");
 
-    if (!QString::compare(wheel_jitter, "FALSE")) spc_update.append("FALSE                         ! Wheel Jitter Active\n");
+    if (!QString::compare(wheel_jitter, "FALSE")) spc_update.append("FALSE                         !  Wheel Jitter Active\n");
     else spc_update.append("TRUE                          ! Wheel Jitter Active\n");
 
-    spc_update.append(dsm_gui_lib::whitespace(QString::number(wheels)) + "! Number of wheels\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(wheels)) + "!  Number of wheels\n");
 
     if (wheels == 0)
     {
         spc_update.append("=============================  Wheel 0  ================================\n");
-        spc_update.append("0.0                           ! Initial Momentum, N-m-sec\n");
-        spc_update.append("1.0   0.0   0.0               ! Wheel Axis Components, [X, Y, Z]\n");
-        spc_update.append("0.14   50.0                   ! Max Torque (N-m), Momentum (N-m-sec)\n");
-        spc_update.append("0.012                         ! Wheel Rotor Inertia, kg-m^2\n");
-        spc_update.append("0                             ! Body\n");
-        spc_update.append("0                             ! Node\n");
-        spc_update.append("NONE                          ! Drag/Jitter Input File Name\n");
+        spc_update.append("0.0                           !  Initial Momentum, N-m-sec\n");
+        spc_update.append("1.0  0.0  0.0                 !  Wheel Axis Components, [X, Y, Z]\n");
+        spc_update.append("0.14  50.0                    !  Max Torque (N-m), Momentum (N-m-sec)\n");
+        spc_update.append("0.012                         !  Wheel Rotor Inertia, kg-m^2\n");
+        spc_update.append("0                             !  Body\n");
+        spc_update.append("0                             !  Node\n");
+        spc_update.append("NONE                          !  Drag/Jitter Input File Name\n");
     }
 
 
@@ -1818,31 +1818,31 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             break; // header
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Momentum, N-m-sec\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Initial Momentum, N-m-sec\n");
             break;
         case 2:
             data_inp = current_data[2] + "  " +  current_data[3] + "  " +  current_data[4];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Wheel Axis Components, [X, Y, Z]\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Wheel Axis Components, [X, Y, Z]\n");
             break;
         case 3:
             data_inp = current_data[5] + "  " +  current_data[6];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Max Torque (N-m), Momentum (N-m-sec)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Max Torque (N-m), Momentum (N-m-sec)\n");
             break;
         case 4:
             data_inp =  current_data[7];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Wheel Rotor Inertia, kg-m^2\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Wheel Rotor Inertia, kg-m^2\n");
             break;
         case 5:
             data_inp =  current_data[8];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Body\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Body\n");
             break;
         case 6:
             data_inp =  current_data[9];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Node\n");
             break;
         case 7:
             data_inp =  current_data[10];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Drag/Jitter Input File Name\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Drag/Jitter Input File Name\n");
             break;
         }
     }
@@ -1856,15 +1856,15 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries*mtbs;
 
     spc_update.append("**************************** MTB Parameters ****************************\n");
-    spc_update.append(dsm_gui_lib::whitespace(QString::number(mtbs)) + "! Number of MTBs\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(mtbs)) + "!  Number of MTBs\n");
 
 
     if (mtbs == 0)
     {
         spc_update.append("==============================  MTB 0  =================================\n");
-        spc_update.append("180.0                         ! Saturation (A-m^2)\n");
-        spc_update.append("1.0   0.0   0.0               ! MTB Axis Components, [X, Y, Z]\n");
-        spc_update.append("0                             ! Node\n");
+        spc_update.append("180.0                         !  Saturation (A-m^2)\n");
+        spc_update.append("1.0  0.0  0.0                 !  MTB Axis Components, [X, Y, Z]\n");
+        spc_update.append("0                             !  Node\n");
     }
 
     if (ui->sections->currentIndex() == 2  && ui->actuator_sections->currentIndex()==1)
@@ -1921,20 +1921,20 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            spc_update.append("=============================  " + ui->spc_cur_mtb_list->currentItem()->text() + "  ================================\n");
+            spc_update.append("==============================  " + ui->spc_cur_mtb_list->currentItem()->text() + "  =================================\n");
 
             break; // header
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Saturation (A-m^2)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Saturation (A-m^2)\n");
             break;
         case 2:
             data_inp =  current_data[2] + "  " +  current_data[3] + "  " +  current_data[4];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! MTB Axis Components, [X, Y, Z]\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  MTB Axis Components, [X, Y, Z]\n");
             break;
         case 3:
             data_inp =  current_data[5];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Node\n");
             break;
         }
     }
@@ -1948,16 +1948,16 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     reset_ind_gyro = reset_ind_thr + thr_headers + thr_entries*thrusters;
 
     spc_update.append("************************* Thruster Parameters **************************\n");
-    spc_update.append(dsm_gui_lib::whitespace(QString::number(thrusters)) + "! Number of Thrusters\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(thrusters)) + "!  Number of Thrusters\n");
 
     if (thrusters == 0)
     {
         spc_update.append("==============================  Thr 0  =================================\n");
-        spc_update.append("PULSED                        ! Mode (PULSED or PROPORTIONAL)\n");
-        spc_update.append("1.0                           ! Thrust Force (N)\n");
-        spc_update.append("-1.0  0.0  0.0                ! Thrust Axis \n");
-        spc_update.append("0                             ! Body\n");
-        spc_update.append("0                             ! Node\n");
+        spc_update.append("PULSED                        !  Mode (PULSED or PROPORTIONAL)\n");
+        spc_update.append("1.0                           !  Thrust Force (N)\n");
+        spc_update.append("-1.0  0.0  0.0                !  Thrust Axis \n");
+        spc_update.append("0                             !  Body\n");
+        spc_update.append("0                             !  Node\n");
     }
 
     if (ui->sections->currentIndex() == 2  && ui->actuator_sections->currentIndex()==2)
@@ -2019,28 +2019,28 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            spc_update.append("=============================  " + ui->spc_cur_thruster_list->currentItem()->text() + "  ================================\n");
+            spc_update.append("==============================  " + ui->spc_cur_thruster_list->currentItem()->text() + "  =================================\n");
 
             break; // header
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Mode (PULSED or PROPORTIONAL)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Mode (PULSED or PROPORTIONAL)\n");
             break;
         case 2:
             data_inp = current_data[2];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Thrust Force (N)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Thrust Force (N)\n");
             break;
         case 3:
             data_inp =  current_data[3] + "  " +  current_data[4] + "  " +  current_data[5];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Thrust Axis \n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Thrust Axis \n");
             break;
         case 4:
             data_inp =  current_data[6];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Body\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Body\n");
             break;
         case 5:
             data_inp =  current_data[7];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Node\n");
             break;
         }
     }
@@ -2053,22 +2053,22 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     /***************************** GYRO SECTION ******************************/
     reset_ind_mag = reset_ind_gyro + gyro_headers + gyro_entries*gyros;
 
-    spc_update.append("******************************* Gyro ************************************\n");
-    spc_update.append(dsm_gui_lib::whitespace(QString::number(gyros)) + "! Number of Gyro Axes\n");
+    spc_update.append("******************************* Gyro ***********************************\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(gyros)) + "!  Number of Gyro Axes\n");
 
     if (gyros == 0)
     {
-        spc_update.append("============================== Axis 0 ===================================\n");
-        spc_update.append("0.1                           ! Sample Time,sec\n");
-        spc_update.append("1.0  0.0  0.0                 ! Axis expressed in Body Frame\n");
-        spc_update.append("1000.0                        ! Max Rate, deg/sec\n");
-        spc_update.append("100.0                         ! Scale Factor Error, ppm\n");
-        spc_update.append("1.0                           ! Quantization, arcsec \n");
-        spc_update.append("0.07                          ! Angle Random Walk (deg/rt-hr)\n");
-        spc_update.append("0.1  1.0                      ! Bias Stability (deg/hr) over timespan (hr)\n");
-        spc_update.append("0.1                           ! Angle Noise, arcsec RMS\n");
-        spc_update.append("0.1                           ! Initial Bias (deg/hr)\n");
-        spc_update.append("0                             ! Node\n");
+        spc_update.append("============================== Axis 0 ==================================\n");
+        spc_update.append("0.1                           !  Sample Time,sec\n");
+        spc_update.append("1.0  0.0  0.0                 !  Axis expressed in Body Frame\n");
+        spc_update.append("1000.0                        !  Max Rate, deg/sec\n");
+        spc_update.append("100.0                         !  Scale Factor Error, ppm\n");
+        spc_update.append("1.0                           !  Quantization, arcsec \n");
+        spc_update.append("0.07                          !  Angle Random Walk (deg/rt-hr)\n");
+        spc_update.append("0.1  1.0                      !  Bias Stability (deg/hr) over timespan (hr)\n");
+        spc_update.append("0.1                           !  Angle Noise, arcsec RMS\n");
+        spc_update.append("0.1                           !  Initial Bias (deg/hr)\n");
+        spc_update.append("0                             !  Node\n");
     }
 
     if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==0)
@@ -2147,48 +2147,48 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            spc_update.append("=============================  " + ui->spc_cur_gyro_list->currentItem()->text() + "  ================================\n");
+            spc_update.append("==============================  " + ui->spc_cur_gyro_list->currentItem()->text() + "  ==================================\n");
 
             break; // header
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Sample Time,sec\n");
             break;
         case 2:
             data_inp =  current_data[2] + "  " +  current_data[3] + "  " +  current_data[4];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Axis expressed in Body Frame\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Axis expressed in Body Frame\n");
             break;
         case 3:
             data_inp =  current_data[5];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Max Rate, deg/sec\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Max Rate, deg/sec\n");
             break;
         case 4:
             data_inp =  current_data[6];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Scale Factor Error, ppm\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Scale Factor Error, ppm\n");
             break;
         case 5:
             data_inp =  current_data[7];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization, arcsec \n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Quantization, arcsec \n");
             break;
         case 6:
             data_inp =  current_data[8];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Angle Random Walk (deg/rt-hr)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Angle Random Walk (deg/rt-hr)\n");
             break;
         case 7:
             data_inp =  current_data[9] + "  " + current_data[10];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Bias Stability (deg/hr) over timespan (hr)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Bias Stability (deg/hr) over timespan (hr)\n");
             break;
         case 8:
             data_inp =  current_data[11];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Angle Noise, arcsec RMS\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Angle Noise, arcsec RMS\n");
             break;
         case 9:
             data_inp =  current_data[12];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Bias (deg/hr)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Initial Bias (deg/hr)\n");
             break;
         case 10:
             data_inp =  current_data[13];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Node\n");
             break;
         }
     }
@@ -2202,18 +2202,18 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     reset_ind_css = reset_ind_mag + mag_headers + mag_entries*mags;
 
     spc_update.append("*************************** Magnetometer ********************************\n");
-    spc_update.append(dsm_gui_lib::whitespace(QString::number(mags)) + "! Number of Magnetometer Axes\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(mags)) + "!  Number of Magnetometer Axes\n");
 
     if (mags == 0)
     {
         spc_update.append("============================== Axis 0 ===================================\n");
-        spc_update.append("0.1                           ! Sample Time,sec\n");
-        spc_update.append("1.0  0.0  0.0                 ! Axis expressed in Body Frame\n");
-        spc_update.append("60.0E-6                       ! Saturation, Tesla\n");
-        spc_update.append("0.0                           ! Scale Factor Error, ppm\n");
-        spc_update.append("1.0E-6                        ! Quantization, Tesla \n");
-        spc_update.append("1.0E-6                        ! Noise, Tesla RMS\n");
-        spc_update.append("0                             ! Node\n");
+        spc_update.append("0.1                           !  Sample Time,sec\n");
+        spc_update.append("1.0  0.0  0.0                 !  Axis expressed in Body Frame\n");
+        spc_update.append("60.0E-6                       !  Saturation, Tesla\n");
+        spc_update.append("0.0                           !  Scale Factor Error, ppm\n");
+        spc_update.append("1.0E-6                        !  Quantization, Tesla \n");
+        spc_update.append("1.0E-6                        !  Noise, Tesla RMS\n");
+        spc_update.append("0                             !  Node\n");
     }
 
 
@@ -2283,36 +2283,36 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            spc_update.append("=============================  " + ui->spc_cur_mag_list->currentItem()->text() + "  ================================\n");
+            spc_update.append("==============================  " + ui->spc_cur_mag_list->currentItem()->text() + "  ===================================\n");
 
             break; // header
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Sample Time,sec\n");
             break;
         case 2:
             data_inp =  current_data[2] + "  " +  current_data[3] + "  " +  current_data[4];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Axis expressed in Body Frame\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Axis expressed in Body Frame\n");
             break;
         case 3:
             data_inp =  current_data[5];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Saturation, Tesla\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Saturation, Tesla\n");
             break;
         case 4:
             data_inp =  current_data[6];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Scale Factor Error, ppm\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Scale Factor Error, ppm\n");
             break;
         case 5:
             data_inp =  current_data[7];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization, Tesla \n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Quantization, Tesla \n");
             break;
         case 6:
             data_inp =  current_data[8];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Noise, Tesla RMS\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Noise, Tesla RMS\n");
             break;
         case 7:
             data_inp =  current_data[9];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Node\n");
             break;
         }
     }
@@ -2326,18 +2326,18 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     reset_ind_fss = reset_ind_css + css_headers + css_entries*css_s;
 
     spc_update.append("*********************** Coarse Sun Sensor *******************************\n");
-    spc_update.append(dsm_gui_lib::whitespace(QString::number(css_s)) + "! Number of Coarse Sun Sensors\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(css_s)) + "!  Number of Coarse Sun Sensors\n");
 
     if (css_s == 0)
     {
         spc_update.append("============================== CSS 0 ====================================\n");
-        spc_update.append("0.1                           ! Sample Time,sec\n");
-        spc_update.append("1.0  0.0  0.0                 ! Axis expressed in Body Frame\n");
-        spc_update.append("90.0                          ! Half-cone Angle, deg\n");
-        spc_update.append("1.0                           ! Scale Factor\n");
-        spc_update.append("0.001                         ! Quantization\n");
-        spc_update.append("0                             ! Body\n");
-        spc_update.append("0                             ! Node\n");
+        spc_update.append("0.1                           !  Sample Time,sec\n");
+        spc_update.append("1.0  0.0  0.0                 !  Axis expressed in Body Frame\n");
+        spc_update.append("90.0                          !  Half-cone Angle, deg\n");
+        spc_update.append("1.0                           !  Scale Factor\n");
+        spc_update.append("0.001                         !  Quantization\n");
+        spc_update.append("0                             !  Body\n");
+        spc_update.append("0                             !  Node\n");
     }
 
     if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==2)
@@ -2405,36 +2405,36 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            spc_update.append("=============================  " + ui->spc_cur_css_list->currentItem()->text() + "  ================================\n");
+            spc_update.append("==============================  " + ui->spc_cur_css_list->currentItem()->text() + "  ====================================\n");
 
             break; // header
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Sample Time,sec\n");
             break;
         case 2:
             data_inp =  current_data[2] + "  " +  current_data[3] + "  " +  current_data[4];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Axis expressed in Body Frame\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Axis expressed in Body Frame\n");
             break;
         case 3:
             data_inp =  current_data[5];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Half-cone Angle, deg\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Half-cone Angle, deg\n");
             break;
         case 4:
             data_inp =  current_data[6];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Scale Factor\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Scale Factor\n");
             break;
         case 5:
             data_inp =  current_data[7];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Quantization\n");
             break;
         case 6:
             data_inp =  current_data[8];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Body\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Body\n");
             break;
         case 7:
             data_inp =  current_data[9];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Node\n");
             break;
         }
     }
@@ -2448,18 +2448,18 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     reset_ind_strack = reset_ind_fss + fss_headers + fss_entries*fss_s;
 
     spc_update.append("************************* Fine Sun Sensor *******************************\n");
-    spc_update.append(dsm_gui_lib::whitespace(QString::number(fss_s)) + "! Number of Fine Sun Sensors\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(fss_s)) + "!  Number of Fine Sun Sensors\n");
 
     if (fss_s == 0)
     {
         spc_update.append("=============================== FSS 0 ===================================\n");
-        spc_update.append("0.2                           ! Sample Time,sec\n");
-        spc_update.append("70.0  0.0  0.0  231           ! Mounting Angles (deg), Seq in Body\n");
-        spc_update.append("Z_AXIS                        ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
-        spc_update.append("32.0   32.0                   ! H, V FOV Size, deg\n");
-        spc_update.append("0.1                           ! Noise Equivalent Angle, deg RMS\n");
-        spc_update.append("0.5                           ! Quantization, deg\n");
-        spc_update.append("0                             ! Node\n");
+        spc_update.append("0.2                           !  Sample Time,sec\n");
+        spc_update.append("70.0  0.0  0.0  231           !  Mounting Angles (deg), Seq in Body\n");
+        spc_update.append("Z_AXIS                        !  Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
+        spc_update.append("32.0  32.0                    !  H, V FOV Size, deg\n");
+        spc_update.append("0.1                           !  Noise Equivalent Angle, deg RMS\n");
+        spc_update.append("0.5                           !  Quantization, deg\n");
+        spc_update.append("0                             !  Node\n");
     }
 
     if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==3)
@@ -2531,36 +2531,36 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            spc_update.append("=============================  " + ui->spc_cur_fss_list->currentItem()->text() + "  ================================\n");
+            spc_update.append("===============================  " + ui->spc_cur_fss_list->currentItem()->text() + "  ===================================\n");
 
             break; // header
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Sample Time,sec\n");
             break;
         case 2:
             data_inp =  current_data[2] + "  " +  current_data[3] + "  " +  current_data[4] + "  " + current_data[5];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Mounting Angles (deg), Seq in Body\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Mounting Angles (deg), Seq in Body\n");
             break;
         case 3:
             data_inp =  current_data[6];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
             break;
         case 4:
             data_inp =  current_data[7] + "  " + current_data[8];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! H, V FOV Size, deg\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  H, V FOV Size, deg\n");
             break;
         case 5:
             data_inp =  current_data[9];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Noise Equivalent Angle, deg RMS\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Noise Equivalent Angle, deg RMS\n");
             break;
         case 6:
             data_inp =  current_data[10];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization, deg\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Quantization, deg\n");
             break;
         case 7:
             data_inp =  current_data[11];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Node\n");
             break;
         }
     }
@@ -2574,18 +2574,18 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     reset_ind_gps = reset_ind_strack + strack_headers + strack_entries*stracks;
 
     spc_update.append("************************** Star Tracker *********************************\n");
-    spc_update.append(dsm_gui_lib::whitespace(QString::number(stracks)) + "! Number of Star Trackers\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(stracks)) + "!  Number of Star Trackers\n");
 
     if (stracks == 0)
     {
         spc_update.append("=============================== ST 0 ====================================\n");
-        spc_update.append("0.25                          ! Sample Time,sec\n");
-        spc_update.append("-90.0  90.0  00.0  321        ! Mounting Angles (deg), Seq in Body\n");
-        spc_update.append("Z_AXIS                        ! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
-        spc_update.append("8.0   8.0                     ! H, V FOV Size, deg\n");
-        spc_update.append("30.0  10.0  10.0              ! Sun, Earth, Moon Exclusion Angles, deg\n");
-        spc_update.append("2.0  2.0  20.0                ! Noise Equivalent Angle, arcsec RMS\n");
-        spc_update.append("0                             ! Node\n");
+        spc_update.append("0.25                          !  Sample Time,sec\n");
+        spc_update.append("-90.0  90.0  00.0  321        !  Mounting Angles (deg), Seq in Body\n");
+        spc_update.append("Z_AXIS                        !  Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
+        spc_update.append("8.0  8.0                      !  H, V FOV Size, deg\n");
+        spc_update.append("30.0  10.0  10.0              !  Sun, Earth, Moon Exclusion Angles, deg\n");
+        spc_update.append("2.0  2.0  20.0                !  Noise Equivalent Angle, arcsec RMS\n");
+        spc_update.append("0                             !  Node\n");
     }
 
     if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==4)
@@ -2661,36 +2661,36 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            spc_update.append("=============================  " + ui->spc_cur_strack_list->currentItem()->text() + "  ================================\n");
+            spc_update.append("===============================  " + ui->spc_cur_strack_list->currentItem()->text() + "  ====================================\n");
 
             break; // header
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Sample Time,sec\n");
             break;
         case 2:
             data_inp =  current_data[2] + "  " +  current_data[3] + "  " +  current_data[4] + "  " + current_data[5];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Mounting Angles (deg), Seq in Body\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Mounting Angles (deg), Seq in Body\n");
             break;
         case 3:
             data_inp =  current_data[6];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
             break;
         case 4:
             data_inp =  current_data[7] + "  " + current_data[8];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! H, V FOV Size, deg\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  H, V FOV Size, deg\n");
             break;
         case 5:
             data_inp =  current_data[9] + "  " + current_data[10] + "  " + current_data[11];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sun, Earth, Moon Exclusion Angles, deg\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Sun, Earth, Moon Exclusion Angles, deg\n");
             break;
         case 6:
             data_inp =  current_data[12] + "  " + current_data[13] + "  " + current_data[14];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Noise Equivalent Angle, arcsec RMS\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Noise Equivalent Angle, arcsec RMS\n");
             break;
         case 7:
             data_inp =  current_data[15];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Node\n");
             break;
         }
     }
@@ -2704,16 +2704,16 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     reset_ind_acc = reset_ind_gps + gps_headers + gps_entries*gps_s;
 
     spc_update.append("****************************** GPS **************************************\n");
-    spc_update.append(dsm_gui_lib::whitespace(QString::number(gps_s)) + "! Number of GPS Receivers\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(gps_s)) + "!  Number of GPS Receivers\n");
 
     if (gps_s == 0)
     {
         spc_update.append("============================= GPSR 0 ====================================\n");
-        spc_update.append("0.25                          ! Sample Time,sec\n");
-        spc_update.append("4.0                           ! Position Noise, m RMS\n");
-        spc_update.append("0.02                          ! Velocity Noise, m/sec RMS\n");
-        spc_update.append("20.0E-9                       ! Time Noise, sec RMS\n");
-        spc_update.append("0                             ! Node\n");
+        spc_update.append("0.25                          !  Sample Time,sec\n");
+        spc_update.append("4.0                           !  Position Noise, m RMS\n");
+        spc_update.append("0.02                          !  Velocity Noise, m/sec RMS\n");
+        spc_update.append("20.0E-9                       !  Time Noise, sec RMS\n");
+        spc_update.append("0                             !  Node\n");
     }
 
     if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==5)
@@ -2775,32 +2775,32 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            spc_update.append("=============================  " + ui->spc_cur_gps_list->currentItem()->text() + "  ================================\n");
+            spc_update.append("=============================  " + ui->spc_cur_gps_list->currentItem()->text() + "  ====================================\n");
 
             break; // header
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Sample Time,sec\n");
             break;
         case 2:
             data_inp =  current_data[2];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Position Noise, m RMS\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Position Noise, m RMS\n");
             break;
         case 3:
             data_inp =  current_data[3];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n");
             break;
         case 4:
             data_inp =  current_data[4];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Velocity Noise, m/sec RMS\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Velocity Noise, m/sec RMS\n");
             break;
         case 5:
             data_inp =  current_data[5];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Time Noise, sec RMS\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Time Noise, sec RMS\n");
             break;
         case 6:
             data_inp =  current_data[6];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Node\n");
             break;
         }
     }
@@ -2814,21 +2814,21 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     reset_ind_end = reset_ind_acc + accel_headers + acc_entries*accels;
 
     spc_update.append("*************************** Accelerometer *******************************\n");
-    spc_update.append(dsm_gui_lib::whitespace(QString::number(accels)) + "! Number of Accel Axes\n");
+    spc_update.append(dsm_gui_lib::whitespace(QString::number(accels)) + "!  Number of Accel Axes\n");
 
     if (accels == 0)
     {
         spc_update.append("============================== Axis 0 ===================================\n");
-        spc_update.append("0.1                           ! Sample Time,sec\n");
-        spc_update.append("1.0  0.0  0.0                 ! Axis expressed in Body Frame\n");
-        spc_update.append("1.0                           ! Max Acceleration (m/s^2)\n");
-        spc_update.append("0.0                           ! Scale Factor Error, ppm\n");
-        spc_update.append("0.05                          ! Quantization, m/s^2\n");
-        spc_update.append("0.0                           ! DV Random Walk (m/s/rt-hr)\n");
-        spc_update.append("0.0 1.0                       ! Bias Stability (m/s^2) over timespan (hr)\n");
-        spc_update.append("0.0                           ! DV Noise, m/s\n");
-        spc_update.append("0.5                           ! Initial Bias (m/s^2)\n");
-        spc_update.append("0                             ! Node\n");
+        spc_update.append("0.1                           !  Sample Time,sec\n");
+        spc_update.append("1.0  0.0  0.0                 !  Axis expressed in Body Frame\n");
+        spc_update.append("1.0                           !  Max Acceleration (m/s^2)\n");
+        spc_update.append("0.0                           !  Scale Factor Error, ppm\n");
+        spc_update.append("0.05                          !  Quantization, m/s^2\n");
+        spc_update.append("0.0                           !  DV Random Walk (m/s/rt-hr)\n");
+        spc_update.append("0.0  1.0                      !  Bias Stability (m/s^2) over timespan (hr)\n");
+        spc_update.append("0.0                           !  DV Noise, m/s\n");
+        spc_update.append("0.5                           !  Initial Bias (m/s^2)\n");
+        spc_update.append("0                             !  Node\n");
     }
 
     if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==6)
@@ -2908,48 +2908,48 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
         switch (cur_entry){
         case 0:
-            spc_update.append("=============================  " + ui->spc_cur_accel_list->currentItem()->text() + "  ================================\n");
+            spc_update.append("==============================  " + ui->spc_cur_accel_list->currentItem()->text() + "  ===================================\n");
 
             break; // header
         case 1:
             data_inp = current_data[1];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Sample Time,sec\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Sample Time,sec\n");
             break;
         case 2:
             data_inp =  current_data[2] + "  " + current_data[3] + "  " + current_data[4];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Axis expressed in Body Frame\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Axis expressed in Body Frame\n");
             break;
         case 3:
             data_inp =  current_data[5];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Max Acceleration (m/s^2)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Max Acceleration (m/s^2)\n");
             break;
         case 4:
             data_inp =  current_data[6];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Scale Factor Error, ppm\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Scale Factor Error, ppm\n");
             break;
         case 5:
             data_inp =  current_data[7];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Quantization, m/s^2\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Quantization, m/s^2\n");
             break;
         case 6:
             data_inp =  current_data[8];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! DV Random Walk (m/s/rt-hr)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  DV Random Walk (m/s/rt-hr)\n");
             break;
         case 7:
             data_inp =  current_data[9] + "  " + current_data[10];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Bias Stability (m/s^2) over timespan (hr)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Bias Stability (m/s^2) over timespan (hr)\n");
             break;
         case 8:
             data_inp =  current_data[11];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! DV Noise, m/s\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  DV Noise, m/s\n");
             break;
         case 9:
             data_inp =  current_data[12];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Initial Bias (m/s^2)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Initial Bias (m/s^2)\n");
             break;
         case 10:
             data_inp =  current_data[13];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"! Node\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp)+"!  Node\n");
             break;
         }
     }

@@ -517,10 +517,10 @@ void SIM_Menu::on_applyButton_clicked() {
     for (int lineNum=1; lineNum<headerLines[toString(headerLineNames::BODIES)]-headerLines[toString(headerLineNames::ENVIRONMENT)]; lineNum++) {
         switch (lineNum) {
         case 1:
-            dataInp = ui->simDate->date().toString("MM dd yyyy");
+            dataInp = ui->simDate->date().toString("MM  dd  yyyy");
             break;
         case 2:
-            dataInp = ui->simTime->time().toString("HH mm ss.zzz");
+            dataInp = ui->simTime->time().toString("HH  mm  ss.zzz");
             break;
         case 3:
             dataInp = ui->simLeapSec->text();

@@ -13,7 +13,6 @@
 #include <QComboBox>
 #include <QRegularExpression>
 #include <QDir>
-#include <QDebug>
 #include <QList>
 
 namespace Ui {
