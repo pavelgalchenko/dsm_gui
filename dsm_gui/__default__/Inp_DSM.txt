@@ -147,7 +147,7 @@ Controller_[1]   PID_CNTRL   Gains_[0]   Limits_[1]
 Controller_[2]   PID_CNTRL   Gains_[5]   Limits_[2]
 Controller_[3]   PID_CNTRL   Gains_[1]   Limits_[0]
 Controller_[4]   LYA_ATT_CNTRL   Gains_[6]   Limits_[1]
-Controller_[5]   LYA_2BODY_CNTRL   Gains_[5]   Limits_[0]
+Controller_[5]   LYA_2BODY_CNTRL   Gains_[7]   Limits_[0]
 Controller_[6]   PID_CNTRL   Gains_[0]   Limits_[0]
 Controller_[7]   H_DUMP_CNTRL      Gains_[2]   Limits_[3]
 

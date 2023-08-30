@@ -137,6 +137,9 @@ void SPC_Menu::receive_data()
         QMessageBox::information(0, "error", file.errorString());
     }
 
+    spc_data.clear();
+    spc_string.clear();
+
     QTextStream in(&file);
     while(!in.atEnd()) {
         QString line = in.readLine();
