@@ -317,7 +317,7 @@ void SPC_submenu::receive_data()
     static QRegularExpression rx3("(?:(?=^[^[:alnum:]|\"])([^[:alnum:]|\"].*)|(!.*))");
 
     // used to capture the name of the item between equal signs (any number of equal signs, one space, then any string, then one space, then any number of equal signs)
-    static QRegularExpression rx4("=+\\s([A-Za-z0-9 ]+)\\s=+");
+    static QRegularExpression rx4("=+\\s+([A-Za-z0-9 ]+?)\\s+=+");
 
     QFile file(file_path);
     if(!file.open(QIODevice::ReadOnly)) {
