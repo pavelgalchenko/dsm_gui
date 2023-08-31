@@ -22,6 +22,9 @@ public:
     explicit ORB_Menu(QWidget *parent = nullptr);
     ~ORB_Menu();
 
+signals:
+    void orbit_changed();
+
 private slots:
     void set_validators();
     void receive_orbpath(QString);
@@ -80,14 +83,6 @@ private:
     QStringList orb_file_descrip; // data descriptors in the file
     QStringList orb_update;
 
-    const QStringList eulerSeqInputs = {"123", "231", "312", "132", "213", "321", "121", "131", "212", "232", "313","323"};
-    const QStringList worldInputs = {"SOL","MERCURY","VENUS","EARTH","MARS","JUPITER","SATURN","URANUS",
-                                     "NEPTUNE","PLUTO","LUNA","PHOBOS","DEIMOS","IO","EUROPA","GANYMEDE","CALLISTO",
-                                     "AMALTHEA","HIMALITA","ELARA","PASIPHAE","SINOPE","LYSITHEA","CARME","ANANKE",
-                                     "LEDA","THEBE","ADRASTEA","METIS","MIMAS","ENCELADUS","TETHYS","DIONE","RHEA",
-                                     "TITAN","HYPERION","IAPETUS","PHOEBE","JANUS","EPIMETHEUS","HELENE","TELESTO",
-                                     "CALYPSO","ATLAS","PROMETHEUS","PANDORA","PAN","ARIEL","UMBRIEL",
-                                     "TITANIA","OBERON","MIRANDA","TRITON","NERIED","CHARON","MINORBODY"};
     QHash<QString, QString> orbFileHash;
 
     const QHash<QString, QString> orbTypeInputs = {{"ZERO", "Zero"},

@@ -11,6 +11,7 @@
 #include "spc_menu.h"
 #include "orb_menu.h"
 #include "sim_menu.h"
+#include "dsm_menu.h"
 #include "dsm_gui_lib.h"
 
 #include <QDebug>
@@ -48,6 +49,7 @@ private slots:
     void on_ORB_Menu_clicked();
     void on_SIM_Menu_clicked();
 
+    void on_DSM_Menu_clicked();
     void on_load_mission_clicked();
     void set_menu_buttons(bool enabled);
 
@@ -63,8 +65,9 @@ private:
     SPC_Menu *spc_menu;
     ORB_Menu *orb_menu;
     SIM_Menu *sim_menu;
+    DSM_Menu *dsm_menu;
     QString path;
 
-    const QStringList neededFiles = {"Inp_Cmd.txt", "Inp_FOV.txt", "Inp_Graphics.txt", "Inp_IPC.txt", "Inp_NOS3.txt", "Inp_Region.txt", "Inp_Sim.txt", "Inp_TDRS.txt"};
+    const QStringList neededFiles = {"Inp_Cmd.txt", "Inp_FOV.txt", "Inp_Graphics.txt", "Inp_IPC.txt", "Inp_NOS3.txt", "Inp_Region.txt", "Inp_Sim.txt", "Inp_TDRS.txt","Inp_DSM.txt"};
 };
 #endif // MAINWINDOW_H

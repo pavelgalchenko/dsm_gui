@@ -21,7 +21,7 @@ RGN_Menu::~RGN_Menu() {
 void RGN_Menu::set_validators() {
     QRegularExpression rx("[^\"]*");
 
-    ui->world->addItems(world_inputs);
+    ui->world->addItems(dsm_gui_lib::worldInputs);
     ui->location->addItems(dsm_gui_lib::sortStringList(location_inputs.values()));
     ui->posw_x->setValidator(new QDoubleValidator);
     ui->posw_y->setValidator(new QDoubleValidator);
@@ -364,57 +364,57 @@ void RGN_Menu::on_applyButton_clicked() {
 
     int rgn_num = ui->rgnlist->count();
 
-    rgn_update.append("********************  Regions for 42  *******************\n");
+    rgn_update.append("***************************  Regions for 42  ***************************\n");
 
     data_inp = QString::number(rgn_num);
-    rgn_update.append(dsm_gui_lib::whitespace(data_inp) + " ! Number of Regions\n");
+    rgn_update.append(dsm_gui_lib::whitespace(data_inp) + " !  Number of Regions\n");
 
     for (int i=0; i<rgn_num; i++) {
         item = ui->rgnlist->item(i);
         for (int j=0; j< rgnNLines; j++) {
             switch (j) {
             case 0:
-                data_inp = "---------------------------------------------------------\n";
+                data_inp = "------------------------------------------------------------------------\n";
                 break;
             case 1:
                 tmpData = item->data(RGN_Menu::Exists).toStringList();
                 data_inp = dsm_gui_lib::whitespace(tmpData[0]);
-                data_inp += " ! Exists\n";
+                data_inp += " !  Exists\n";
                 break;
             case 2:
                 tmpData = item->data(RGN_Menu::Name).toStringList();
                 data_inp = dsm_gui_lib::whitespace("\"" + tmpData[0] + "\"");
-                data_inp += " ! Name\n";
+                data_inp += " !  Name\n";
                 break;
             case 3:
                 tmpData = item->data(RGN_Menu::World).toStringList();
                 data_inp = dsm_gui_lib::whitespace(tmpData[0]);
-                data_inp += " ! World\n";
+                data_inp += " !  World\n";
                 break;
             case 4:
                 tmpData = item->data(RGN_Menu::Location).toStringList();
                 data_inp = dsm_gui_lib::whitespace(tmpData[0]);
-                data_inp += " ! POSW or LLA\n";
+                data_inp += " !  POSW or LLA\n";
                 break;
             case 5:
                 tmpData = item->data(RGN_Menu::PosW).toStringList();
                 data_inp = dsm_gui_lib::whitespace(tmpData.join("  "));
-                data_inp += " ! Position in W [m]\n";
+                data_inp += " !  Position in W [m]\n";
                 break;
             case 6:
                 tmpData = item->data(RGN_Menu::LLA).toStringList();
                 data_inp = dsm_gui_lib::whitespace(tmpData.join("  "));
-                data_inp += " ! Lng, Lat [deg], Alt [m]\n";
+                data_inp += " !  Lng, Lat [deg], Alt [m]\n";
                 break;
             case 7:
                 tmpData = item->data(RGN_Menu::Coeffs).toStringList();
                 data_inp = dsm_gui_lib::whitespace(tmpData.join("  "));
-                data_inp += " ! Elasticity, Damping, Friction Coef\n";
+                data_inp += " !  Elasticity, Damping, Friction Coef\n";
                 break;
             case 8:
                 tmpData = item->data(RGN_Menu::GeometryFile).toStringList();
                 data_inp = dsm_gui_lib::whitespace(tmpData[0]);
-                data_inp += " ! Geometry File Name\n";
+                data_inp += " !  Geometry File Name\n";
                 break;
             }
             rgn_update.append(data_inp);

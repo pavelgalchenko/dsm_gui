@@ -3,7 +3,6 @@
 
 #include <QDialog>
 #include <QListWidgetItem>
-#include <QDebug>
 #include <QComboBox>
 #include <QStringList>
 
@@ -23,6 +22,7 @@ public:
 
 signals:
     void send_data(QString, QString);
+    void name_changed();
 
 private slots:
 
@@ -84,7 +84,6 @@ private:
     const QStringList angvel_wrt = {"N", "L"};
     const QStringList att_params = {"Q", "A"};
     const QStringList att_wrt = {"N", "L", "F"};
-    const QStringList euler_seq = {"123", "231", "312", "132", "213", "321", "121", "131", "212", "232", "313","323"};
 };
 
 #endif // SPC_Menu_H

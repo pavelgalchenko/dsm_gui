@@ -75,14 +75,6 @@ private:
 
     const QHash<QString, QString> location_inputs = {{"POSW","Position in World"},
                                                     {"LLA","Lat, Long, Alt"}};
-    const QStringList world_inputs = {"SOL","MERCURY","VENUS","EARTH","MARS","JUPITER","SATURN","URANUS",
-                               "NEPTUNE","PLUTO","LUNA","PHOBOS","DEIMOS","IO","EUROPA","GANYMEDE","CALLISTO",
-                               "AMALTHEA","HIMALITA","ELARA","PASIPHAE","SINOPE","LYSITHEA","CARME","ANANKE",
-                               "LEDA","THEBE","ADRASTEA","METIS","MIMAS","ENCELADUS","TETHYS","DIONE","RHEA",
-                               "TITAN","HYPERION","IAPETUS","PHOEBE","JANUS","EPIMETHEUS","HELENE","TELESTO",
-                               "CALYPSO","ATLAS","PROMETHEUS","PANDORA","PAN","ARIEL","UMBRIEL","UMBRIEL",
-                               "TITANIA","OBERON","MIRANDA","TRITON","NERIED","CHARON","MINORBODY"};
-
 };
 
 #endif // RGN_MENU_H

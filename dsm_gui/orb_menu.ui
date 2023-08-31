@@ -124,7 +124,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="orbTabZero">
      <attribute name="title">
@@ -2426,10 +2426,10 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="orbTBodyModeSense"/>
-  <buttongroup name="orbFlightPolyGrav"/>
   <buttongroup name="orbZeroPolyGrav"/>
+  <buttongroup name="orbTBodyModeSense"/>
   <buttongroup name="orbCentPA"/>
+  <buttongroup name="orbFlightPolyGrav"/>
   <buttongroup name="orbCentJ2"/>
   <buttongroup name="orbTBodyModeSense_2"/>
  </buttongroups>

@@ -418,272 +418,272 @@ void GRH_Menu::on_applyButton_clicked() {
     for (int line_num=1; line_num<=grh_data.length(); line_num++) {
         switch (line_num) {
         case 1:
-            data_inp = "<<<<<<<<<<<<<<<<  42 Graphics Configuration File  >>>>>>>>>>>>>>>>>>>\n";
+            data_inp = "<<<<<<<<<<<<<<<<<<<  42 Graphics Configuration File  >>>>>>>>>>>>>>>>>>>\n";
             break;
         case 2:
             data_inp = dsm_gui_lib::whitespace(ui->gl_output->text());
-            data_inp += " ! GL Output Interval [sec]\n";
+            data_inp += " !  GL Output Interval [sec]\n";
             break;
         case 3:
             data_inp = dsm_gui_lib::whitespace(ui->star_catalog->text());
-            data_inp += " ! Star Catalog File Name\n";
+            data_inp += " !  Star Catalog File Name\n";
             break;
         case 4:
             data_inp = dsm_gui_lib::whitespace(dsm_gui_lib::toString(ui->mapWindow));
-            data_inp += " ! Map Window Exists\n";
+            data_inp += " !  Map Window Exists\n";
             break;
         case 5:
             data_inp = dsm_gui_lib::whitespace(dsm_gui_lib::toString(ui->orreyWindow));
-            data_inp += " ! Orrery Window Exists\n";
+            data_inp += " !  Orrery Window Exists\n";
             break;
         case 6:
             data_inp = dsm_gui_lib::whitespace(dsm_gui_lib::toString(ui->sphereWindow));
-            data_inp += " ! Unit Sphere Window Exists\n";
+            data_inp += " !  Unit Sphere Window Exists\n";
             break;
         case 7:
-            data_inp = "******************************* POV *********************************\n";
+            data_inp = "********************************* POV **********************************\n";
             break;
         case 8:
             data_inp = dsm_gui_lib::whitespace(dsm_gui_lib::toString(ui->pause));
-            data_inp += " ! Pause at Startup\n";
+            data_inp += " !  Pause at Startup\n";
             break;
         case 9:
             data_inp = dsm_gui_lib::whitespace(povMode_inputs.key(ui->povMode->currentText()));
-            data_inp += " ! POV Mode (TRACK_HOST, TRACK_TARGET, FIXED_IN_HOST)\n";
+            data_inp += " !  POV Mode (TRACK_HOST, TRACK_TARGET, FIXED_IN_HOST)\n";
             break;
         case 10:
             data_inp = dsm_gui_lib::whitespace(hosttarget_inputs.key(ui->hostType->currentText()));
-            data_inp += " ! Host Type (WORLD, REFORB, FRM, SC, BODY)\n";
+            data_inp += " !  Host Type (WORLD, REFORB, FRM, SC, BODY)\n";
             break;
         case 11:
             data_inp  = QString::number(scNums[ui->hostSC->currentText()]) + "  ";
             data_inp += QString::number(ui->hostBDY->value()) + "  ";
             data_inp += frame_inputs.key(ui->hostFrame->currentText());
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Initial Host SC, Body, POV Frame\n";
+            data_inp += " !  Initial Host SC, Body, POV Frame\n";
             break;
         case 12:
             data_inp = dsm_gui_lib::whitespace(hosttarget_inputs.key(ui->targetType->currentText()));
-            data_inp += " ! Target Type (WORLD, REFORB, FRM, SC, BODY)\n";
+            data_inp += " !  Target Type (WORLD, REFORB, FRM, SC, BODY)\n";
             break;
         case 13:
             data_inp  = QString::number(scNums[ui->targetSC->currentText()]) + "  ";
             data_inp += QString::number(ui->targetBDY->value()) + "  ";
             data_inp += frame_inputs.key(ui->targetFrame->currentText());
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Initial Host SC, Body, POV Frame\n";
+            data_inp += " !  Initial Host SC, Body, POV Frame\n";
             break;
         case 14:
             data_inp = dsm_gui_lib::whitespace(axis_inputs.key(ui->boresightaxis->currentText()));
-            data_inp += " ! Boresight Axis\n";
+            data_inp += " !  Boresight Axis\n";
             break;
         case 15:
             data_inp = dsm_gui_lib::whitespace(axis_inputs.key(ui->upaxis->currentText()));
-            data_inp += " ! Up Axis\n";
+            data_inp += " !  Up Axis\n";
             break;
         case 16:
             data_inp = dsm_gui_lib::whitespace(ui->povrange->text());
-            data_inp += " ! Initial POV Range from Target [m]\n";
+            data_inp += " !  Initial POV Range from Target [m]\n";
             break;
         case 17:
             data_inp = dsm_gui_lib::whitespace(ui->povangle->text());
-            data_inp += " ! POV Angle (Vertical) [deg]\n";
+            data_inp += " !  POV Angle (Vertical) [deg]\n";
             break;
         case 18:
             data_inp  = ui->povinhost_x->text() + "  ";
             data_inp += ui->povinhost_y->text() + "  ";
             data_inp += ui->povinhost_z->text();
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! POV Position in Host [m]\n";
+            data_inp += " !  POV Position in Host [m]\n";
             break;
         case 19:
             data_inp = dsm_gui_lib::whitespace(view_inputs.key(ui->povview->currentText()));
-            data_inp += " ! Initial POV View (FRONT, FRONT_RIGHT, etc)\n";
+            data_inp += " !  Initial POV View (FRONT, FRONT_RIGHT, etc)\n";
             break;
         case 20:
-            data_inp = "******************************* CAM *********************************\n";
+            data_inp = "********************************* CAM **********************************\n";
             break;
         case 21:
             data_inp = dsm_gui_lib::whitespace("\"" + ui->camtitle->text() + "\"");
-            data_inp += " ! Cam Title [delimited by \"]\n";
+            data_inp += " !  Cam Title [delimited by \"]\n";
             break;
         case 22:
             data_inp  = ui->camwidth->text() + "  ";
             data_inp += ui->camheight->text();
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Width, Height [pixels]\n";
+            data_inp += " !  Width, Height [pixels]\n";
             break;
         case 23:
             data_inp = dsm_gui_lib::whitespace(ui->mousescale->text());
-            data_inp += " ! Mouse Scale Factor\n";
+            data_inp += " !  Mouse Scale Factor\n";
             break;
         case 24:
             data_inp = dsm_gui_lib::whitespace(ui->displaygamma->text());
-            data_inp += " ! Display's Gamma Exponent (1.8-4.0)\n";
+            data_inp += " !  Display's Gamma Exponent (1.8-4.0)\n";
             break;
         case 25:
-            data_inp = "************************** CAM Show Menu ****************************\n";
+            data_inp = "**************************** CAM Show Menu *****************************\n";
             break;
         case 26:
             data_inp  = dsm_gui_lib::toString(ui->showNAxis) + "  ";
             data_inp += "\"" + ui->show_naxis_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show N Axes\n";
+            data_inp += " !  Show N Axes\n";
             break;
         case 27:
             data_inp  = dsm_gui_lib::toString(ui->showLAxis) + "  ";
             data_inp += "\"" + ui->show_laxis_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show L Axes\n";
+            data_inp += " !  Show L Axes\n";
             break;
         case 28:
             data_inp  = dsm_gui_lib::toString(ui->showFAxis) + "  ";
             data_inp += "\"" + ui->show_faxis_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show F Axes\n";
+            data_inp += " !  Show F Axes\n";
             break;
         case 29:
             data_inp  = dsm_gui_lib::toString(ui->showBAxis) + "  ";
             data_inp += "\"" + ui->show_baxis_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show B Axes\n";
+            data_inp += " !  Show B Axes\n";
             break;
         case 30:
             data_inp  = dsm_gui_lib::toString(ui->showNGrid) + "  ";
             data_inp += "\"" + ui->show_ngrid_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show N Grid\n";
+            data_inp += " !  Show N Grid\n";
             break;
         case 31:
             data_inp  = dsm_gui_lib::toString(ui->showLGrid) + "  ";
             data_inp += "\"" + ui->show_lgrid_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show L Grid\n";
+            data_inp += " !  Show L Grid\n";
             break;
         case 32:
             data_inp  = dsm_gui_lib::toString(ui->showFGrid) + "  ";
             data_inp += "\"" + ui->show_fgrid_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show F Grid\n";
+            data_inp += " !  Show F Grid\n";
             break;
         case 33:
             data_inp  = dsm_gui_lib::toString(ui->showBGrid) + "  ";
             data_inp += "\"" + ui->show_bgrid_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show B Grid\n";
+            data_inp += " !  Show B Grid\n";
             break;
         case 34:
             data_inp  = dsm_gui_lib::toString(ui->showGalGrid) + "  ";
             data_inp += "\"" + ui->show_galgrid_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show G Grid\n";
+            data_inp += " !  Show G Grid\n";
             break;
         case 35:
             data_inp  = dsm_gui_lib::toString(ui->showFOV) + "  ";
             data_inp += "\"" + ui->show_fov_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show Fields of View\n";
+            data_inp += " !  Show Fields of View\n";
             break;
         case 36:
             data_inp  = dsm_gui_lib::toString(ui->showProxOps) + "  ";
             data_inp += "\"" + ui->show_proxops_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show Prox Ops\n";
+            data_inp += " !  Show Prox Ops\n";
             break;
         case 37:
             data_inp  = dsm_gui_lib::toString(ui->showTDRS) + "  ";
             data_inp += "\"" + ui->show_tdrs_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show TDRS Satellites\n";
+            data_inp += " !  Show TDRS Satellites\n";
             break;
         case 38:
             data_inp  = dsm_gui_lib::toString(ui->showShadows) + "  ";
             data_inp += "\"" + ui->show_shdws_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show Shadows\n";
+            data_inp += " !  Show Shadows\n";
             break;
         case 39:
             data_inp  = dsm_gui_lib::toString(ui->showAstro) + "  ";
             data_inp += "\"" + ui->show_astro_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show Astro Labels\n";
+            data_inp += " !  Show Astro Labels\n";
             break;
         case 40:
             data_inp  = dsm_gui_lib::toString(ui->showTruth) + "  ";
             data_inp += "\"" + ui->show_truth_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show Truth Vectors\n";
+            data_inp += " !  Show Truth Vectors\n";
             break;
         case 41:
             data_inp  = dsm_gui_lib::toString(ui->showFSW) + "  ";
             data_inp += "\"" + ui->show_fsw_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show FSW Vectors\n";
+            data_inp += " !  Show FSW Vectors\n";
             break;
         case 42:
             data_inp  = dsm_gui_lib::toString(ui->showMilky) + "  ";
             data_inp += "\"" + ui->show_milky_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show Milky Way\n";
+            data_inp += " !  Show Milky Way\n";
             break;
         case 43:
             data_inp  = dsm_gui_lib::toString(ui->showFermi) + "  ";
             data_inp += "\"" + ui->show_fermi_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show Fermi Sky\n";
+            data_inp += " !  Show Fermi Sky\n";
             break;
         case 44:
-            data_inp = "******************************* MAP *********************************\n";
+            data_inp = "********************************* MAP **********************************\n";
             break;
         case 45:
             data_inp  = dsm_gui_lib::whitespace("\"" + ui->maptitle->text() + "\"");
-            data_inp += " ! Map Title [delimited by \"]\n";
+            data_inp += " !  Map Title [delimited by \"]\n";
             break;
         case 46:
             data_inp  = dsm_gui_lib::whitespace(ui->mapwidth->text() + "  " + ui->mapheight->text());
-            data_inp += " ! Width, Height [pixels]\n";
+            data_inp += " !  Width, Height [pixels]\n";
             break;
         case 47:
-            data_inp = "************************** MAP Show Menu ****************************\n";
+            data_inp = "**************************** MAP Show Menu *****************************\n";
             break;
         case 48:
             data_inp  = dsm_gui_lib::toString(ui->showClock) + "  ";
             data_inp += "\"" + ui->showclock_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show Clock\n";
+            data_inp += " !  Show Clock\n";
             break;
         case 49:
             data_inp  = dsm_gui_lib::toString(ui->showTlmClock) + "  ";
             data_inp += "\"" + ui->showtlmclock_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show Tlm Clock\n";
+            data_inp += " !  Show Tlm Clock\n";
             break;
         case 50:
             data_inp  = dsm_gui_lib::toString(ui->showCredits) + "  ";
             data_inp += "\"" + ui->showcredits_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show Credits\n";
+            data_inp += " !  Show Credits\n";
             break;
         case 51:
             data_inp  = dsm_gui_lib::toString(ui->showNight) + "  ";
             data_inp += "\"" + ui->shownight_name->text() + "\"";
             data_inp = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " ! Show Night\n";
+            data_inp += " !  Show Night\n";
             break;
         case 52:
-            data_inp = "********************* Unit Sphere Show Menu *************************\n";
+            data_inp = "************************ Unit Sphere Show Menu *************************\n";
             break;
         case 53:
             data_inp = dsm_gui_lib::whitespace(dsm_gui_lib::toString(ui->showMajorConst));
-            data_inp += " ! Show Major Constellations\n";
+            data_inp += " !  Show Major Constellations\n";
             break;
         case 54:
             data_inp = dsm_gui_lib::whitespace(dsm_gui_lib::toString(ui->showZodiac));
-            data_inp += " ! Show Zodiac Constellations\n";
+            data_inp += " !  Show Zodiac Constellations\n";
             break;
         case 55:
             data_inp = dsm_gui_lib::whitespace(dsm_gui_lib::toString(ui->showMinorConst));
-            data_inp += " ! Show Minor Constellations\n";
+            data_inp += " !  Show Minor Constellations\n";
             break;
         default:
             break;
@@ -697,47 +697,13 @@ void GRH_Menu::on_applyButton_clicked() {
 void GRH_Menu::on_hostSC_currentTextChanged(const QString &arg1) {
     QStringList scFileNames = QDir(inout_path).entryList({"SC_"+arg1+".txt"});
     if (scFileNames.isEmpty()) return;
-    QString scFileName = scFileNames[0];
 
-    QFile scFile(inout_path + scFileName);
-    if(!scFile.open(QIODevice::ReadOnly))
-        QMessageBox::information(0, "error", scFile.errorString());
-    QTextStream in(&scFile);
-
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        if (line.contains("Body Parameters",Qt::CaseInsensitive)) {
-            line = in.readLine();
-            line = in.readLine();
-            QStringList line_items = line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
-            int nBodies = line_items[0].toInt();
-            ui->hostBDY->setMaximum(nBodies-1);
-            break;
-        }
-    }
-    scFile.close();
+    ui->hostBDY->setMaximum(dsm_gui_lib::get_sc_nitems(inout_path,arg1,dsm_gui_lib::scSectionType::BODY)-1);
 }
 
 void GRH_Menu::on_targetSC_currentTextChanged(const QString &arg1) {
     QStringList scFileNames = QDir(inout_path).entryList({"SC_"+arg1+".txt"});
     if (scFileNames.isEmpty()) return;
-    QString scFileName = scFileNames[0];
 
-    QFile scFile(inout_path + scFileName);
-    if(!scFile.open(QIODevice::ReadOnly))
-        QMessageBox::information(0, "error", scFile.errorString());
-    QTextStream in(&scFile);
-
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        if (line.contains("Body Parameters",Qt::CaseInsensitive)) {
-            line = in.readLine();
-            line = in.readLine();
-            QStringList line_items = line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
-            int nBodies = line_items[0].toInt();
-            ui->targetBDY->setMaximum(nBodies-1);
-            break;
-        }
-    }
-    scFile.close();
+    ui->targetBDY->setMaximum(dsm_gui_lib::get_sc_nitems(inout_path,arg1,dsm_gui_lib::scSectionType::BODY)-1);
 }

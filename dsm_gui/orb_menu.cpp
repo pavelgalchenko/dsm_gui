@@ -22,7 +22,7 @@ void ORB_Menu::set_validators() {
     ui->orbType->addItems(dsm_gui_lib::sortStringList(orbTypeInputs.values()));
     ui->orbFormFrame->addItems(orbFrameInputs);
     ui->orbFormOrigin->addItems(orbFrameInputs);
-    ui->orbFormFrameEulerSeq->addItems(eulerSeqInputs);
+    ui->orbFormFrameEulerSeq->addItems(dsm_gui_lib::eulerInputs);
     ui->orbFormFrameEuler_1->setValidator(new QDoubleValidator);
     ui->orbFormFrameEuler_2->setValidator(new QDoubleValidator);
     ui->orbFormFrameEuler_3->setValidator(new QDoubleValidator);
@@ -30,10 +30,10 @@ void ORB_Menu::set_validators() {
     ui->orbFormOriginPos_2->setValidator(new QDoubleValidator);
     ui->orbFormOriginPos_3->setValidator(new QDoubleValidator);
 
-    ui->orbZeroWorld->addItems(worldInputs);
+    ui->orbZeroWorld->addItems(dsm_gui_lib::worldInputs);
     ui->orbZeroWorld->setMaxVisibleItems(10);
 
-    ui->orbCentWorld->addItems(worldInputs);
+    ui->orbCentWorld->addItems(dsm_gui_lib::worldInputs);
     ui->orbCentWorld->setMaxVisibleItems(10);
     ui->orbCentICParam->addItems(dsm_gui_lib::sortStringList(orbCentICTypeInputs.values()));
     ui->orbCentKepPeriAlt->setValidator(new QDoubleValidator(-INFINITY,INFINITY,5));
@@ -200,11 +200,11 @@ void ORB_Menu::apply_data()
             break;
         case 5: // Zero Orbit Body
             if(line_items[0].contains("MINORBODY")) {
-                ui->orbZeroWorld->setCurrentIndex(worldInputs.indexOf("MINORBODY"));
+                ui->orbZeroWorld->setCurrentIndex(dsm_gui_lib::worldInputs.indexOf("MINORBODY"));
                 ui->orbZeroMinorBodyNum->setValue(line_items[0].rightRef(1).toInt());
             } else {
                 ui->orbZeroMinorBodyNum->setValue(0);
-                ui->orbZeroWorld->setCurrentIndex(worldInputs.indexOf(line_items[0]));
+                ui->orbZeroWorld->setCurrentIndex(dsm_gui_lib::worldInputs.indexOf(line_items[0]));
             }
             break;
         case 6: // Zero Orbit Polyhedral Gravity
@@ -224,10 +224,10 @@ void ORB_Menu::apply_data()
             break;
         case 11: // Central Orbit World
             if(line_items[0].contains("MINORBODY")) {
-                ui->orbCentWorld->setCurrentIndex(worldInputs.indexOf("MINORBODY"));
+                ui->orbCentWorld->setCurrentIndex(dsm_gui_lib::worldInputs.indexOf("MINORBODY"));
                 ui->orbCentMinorBodyNum->setValue(line_items[0].rightRef(1).toInt());
             } else {
-                ui->orbCentWorld->setCurrentIndex(worldInputs.indexOf(line_items[0]));
+                ui->orbCentWorld->setCurrentIndex(dsm_gui_lib::worldInputs.indexOf(line_items[0]));
                 ui->orbCentMinorBodyNum->setValue(0);
             }
             break;
@@ -398,7 +398,7 @@ void ORB_Menu::on_orbListAdd_clicked()
     }
     orbFileHash.insert(newOrb,inout_path+"Orb_"+newOrb+".txt");
 
-    QFile::copy(":/data/__default__/Orb_Default.txt", orbFileHash[newOrb]);
+    QFile::copy(":/data/__default__/Orb_LEO.txt", orbFileHash[newOrb]);
 
     ui->orbList->addItem(newOrb);
 
@@ -482,6 +482,13 @@ void ORB_Menu::on_applyButton_clicked() {
     QStringList orbFileHashKeys = orbFileHash.keys();
 
     QString newLabel = ui->orbLabel->text();
+
+    if (newLabel.compare(oldOrb)!=0) {
+        connect(this, SIGNAL(orbit_changed()),this->parent(), SLOT(disable_sub_menus()));
+        emit orbit_changed();
+        disconnect(this, SIGNAL(orbit_changed()), 0, 0);
+    }
+
     if (orbFileHashKeys.contains(newLabel,Qt::CaseInsensitive)) {
         dsm_gui_lib::warning_message("Orbit \"" + newLabel + "\" already exists. Orbit names are NOT case sensitive.");
         orbFileHash.insert(oldOrb,oldOrbFile);
@@ -853,6 +860,3 @@ void ORB_Menu::checkKepPA() {
         ui->applyButton->setEnabled(true);
     }
 }
-
-//void ORB_Menu::orbits_changed(bool clicked) {
-//}

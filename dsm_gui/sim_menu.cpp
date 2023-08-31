@@ -18,6 +18,11 @@ void SIM_Menu::set_validators() {
     QRegularExpression rx("[^\"]*");
     QValidator *noQuotes = new QRegularExpressionValidator(rx);
 
+    ui->simOrbitEn->setEnabled(false);
+    ui->simSCEn->setEnabled(false);
+    ui->simSCOrbit->setEnabled(false);
+    ui->simSCOrbitLabel->setEnabled(false);
+
     ui->simTimeMode->addItems(dsm_gui_lib::sortStringList(timeModeInputs.values()));
     ui->simSimDur->setValidator(new QDoubleValidator);
     ui->simSimStep->setValidator(new QDoubleValidator);
@@ -46,7 +51,7 @@ void SIM_Menu::set_validators() {
 
     ui->simEphem->addItems(dsm_gui_lib::sortStringList(ephemInputs.values()));
 
-    ui->simGSWorld->addItems(worldInputs);
+    ui->simGSWorld->addItems(dsm_gui_lib::worldInputs);
     ui->simGSLong->setValidator(new QDoubleValidator);
     ui->simGSLat->setValidator(new QDoubleValidator);
     ui->simGSLabel->setValidator(noQuotes);
@@ -512,10 +517,10 @@ void SIM_Menu::on_applyButton_clicked() {
     for (int lineNum=1; lineNum<headerLines[toString(headerLineNames::BODIES)]-headerLines[toString(headerLineNames::ENVIRONMENT)]; lineNum++) {
         switch (lineNum) {
         case 1:
-            dataInp = ui->simDate->date().toString("MM dd yyyy");
+            dataInp = ui->simDate->date().toString("MM  dd  yyyy");
             break;
         case 2:
-            dataInp = ui->simTime->time().toString("HH mm ss.zzz");
+            dataInp = ui->simTime->time().toString("HH  mm  ss.zzz");
             break;
         case 3:
             dataInp = ui->simLeapSec->text();
@@ -774,3 +779,17 @@ void SIM_Menu::on_simSRPPertShadow_toggled(bool checked) {
         ui->simSRPPertEn->setChecked(true);
     ui->simSRPPertEn->setEnabled(!checked);
 }
+
+void SIM_Menu::on_simOrbList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *) {
+    bool isNull = current==NULL;
+    ui->simOrbitEn->setEnabled(!isNull);
+}
+
+void SIM_Menu::on_simSCList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *) {
+    bool isNull = current==NULL;
+
+    ui->simSCEn->setEnabled(!isNull);
+    ui->simSCOrbit->setEnabled(!isNull);
+    ui->simSCOrbitLabel->setEnabled(!isNull);
+}
+

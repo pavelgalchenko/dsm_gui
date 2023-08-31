@@ -134,13 +134,13 @@ void NOS_Menu::on_applyButton_clicked()
 
     nos_update.clear();
 
-    nos_update.append("<<<<<<<<<<<<<<<<  42 NOS3 Time Configuration File  >>>>>>>>>>>>>>>>>>>\n");
+    nos_update.append("<<<<<<<<<<<<<<<<<<  42 NOS3 Time Configuration File  >>>>>>>>>>>>>>>>>>>\n");
 
     data_inp = ui->time_bus->text();
-    nos_update.append(whitespace(data_inp) + " ! NOS3 Time Bus\n");
+    nos_update.append(whitespace(data_inp) + " !  NOS3 Time Bus\n");
 
     data_inp = ui->time_string->text();
-    nos_update.append(whitespace(data_inp) + " ! NOS3 Time Connection String\n");
+    nos_update.append(whitespace(data_inp) + " !  NOS3 Time Connection String\n");
 
     write_data();
 

@@ -10,11 +10,12 @@
         <file>__default__/Inp_Sim.txt</file>
         <file>__default__/Inp_TDRS.txt</file>
         <file>__default__/Nodes_Simple.txt</file>
-        <file>__default__/Orb_Default.txt</file>
+        <file>__default__/Orb_LEO.txt</file>
         <file>__default__/SC_Simple.txt</file>
         <file>__default__/Shaker_Simple.txt</file>
         <file>__default__/TRV.txt</file>
         <file>__default__/Whl_Simple.txt</file>
         <file>dsm_gui.icns</file>
+        <file>__default__/Inp_DSM.txt</file>
     </qresource>
 </RCC>

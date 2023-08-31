@@ -41,7 +41,7 @@ void SPC_Menu::set_validators()
     ui->spc_cur_angvel_frame2->addItems(dsm_gui_lib::sortStringList(att_wrt));
     ui->spc_cur_att_param->addItems(dsm_gui_lib::sortStringList(att_params));
 
-    ui->spc_cur_initeul_seq->addItems(dsm_gui_lib::sortStringList(euler_seq));
+    ui->spc_cur_initeul_seq->addItems(dsm_gui_lib::eulerInputs);
 
     // Data Type Validators
     ui->spc_name->setValidator(noQuotesSpaces);
@@ -136,6 +136,9 @@ void SPC_Menu::receive_data()
     if(!file.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0, "error", file.errorString());
     }
+
+    spc_data.clear();
+    spc_string.clear();
 
     QTextStream in(&file);
     while(!in.atEnd()) {
@@ -264,14 +267,19 @@ void SPC_Menu::on_spc_apply_clicked()
 
     spc_names.sort();
     file_paths.sort();
-
     QStringList other_names = spc_names;
-    other_names.removeAt(spc_names.indexOf(ui->spc_list->currentItem()->text()));
+    other_names.removeOne(ui->spc_list->currentItem()->text());
 
     QString cur_name = ui->spc_name->text();
     if (other_names.contains(cur_name, Qt::CaseInsensitive)) {
-        dsm_gui_lib::warning_message("SC \"" + cur_name + "\" already exists. SC names are NOT case sensitive.");
+        dsm_gui_lib::error_message("SC \"" + cur_name + "\" already exists.\nSC names are NOT case sensitive.");
         return;
+    }
+
+    if (cur_name.compare(ui->spc_list->currentItem()->text())!=0) {
+        connect(this, SIGNAL(name_changed()),this->parent(), SLOT(disable_sub_menus()));
+        emit name_changed();
+        disconnect(this, SIGNAL(name_changed()), 0, 0);
     }
 
     file_path = file_paths[index];
@@ -418,7 +426,7 @@ void SPC_Menu::on_spc_apply_clicked()
 
         switch (line_num) {
         case 1:
-            spc_update.append("<<<<<<<<<<<<<<<<<  42: Spacecraft Description File   >>>>>>>>>>>>>>>>>\n");
+            spc_update.append("<<<<<<<<<<<<<<<<<  42: Spacecraft Description File   >>>>>>>>>>>>>>>>>>>\n");
             break; // header
         case 2:
             data_inp = current_data[0];
@@ -443,7 +451,7 @@ void SPC_Menu::on_spc_apply_clicked()
         case 7:
             /******************************************* HEADER ***************************************************/
             // Orbit Parameters
-            spc_update.append("************************* Orbit Parameters ****************************\n");
+            spc_update.append("************************* Orbit Parameters *****************************\n");
             break;
         case 8: // Orbit Prop
             data_inp = ui->spc_cur_orb_type->currentText();
@@ -466,11 +474,11 @@ void SPC_Menu::on_spc_apply_clicked()
             break;
         case 13: // Ang Vel wrt [NL], Att [QA] wrt [NLF]
             data_inp = ui->spc_cur_angvel_frame1->currentText() + ui->spc_cur_att_param->currentText() + ui->spc_cur_angvel_frame2->currentText();
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "! Ang Vel wrt [NL], Att [QA] wrt [NLF]\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "!  Ang Vel wrt [NL], Att [QA] wrt [NLF]\n");
             break;
         case 14:
             data_inp = ui->spc_cur_angvel_1->text() + "  " + ui->spc_cur_angvel_2->text() + "  " + ui->spc_cur_angvel_3->text();
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "! Ang Vel (deg/sec)\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "!  Ang Vel (deg/sec)\n");
             break;
         case 15:
             data_inp = ui->spc_cur_q1->text() + "  " +  ui->spc_cur_q2->text() + "  " + ui->spc_cur_q3->text() + "  " + ui->spc_cur_q4->text();
@@ -501,7 +509,7 @@ void SPC_Menu::on_spc_apply_clicked()
                 ui->spc_cur_q3->setEnabled(false);
                 ui->spc_cur_q4->setEnabled(false);
             }
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "! Quaternion\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "!  Quaternion\n");
             break;
         case 16:
             data_inp = ui->spc_cur_initeul_1->text() + "  " + ui->spc_cur_initeul_2->text() + "  " + ui->spc_cur_initeul_3->text() + "  " + ui->spc_cur_initeul_seq->currentText();
@@ -532,7 +540,7 @@ void SPC_Menu::on_spc_apply_clicked()
                 ui->spc_cur_q3->setEnabled(false);
                 ui->spc_cur_q4->setEnabled(false);
             }
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "! Angles (deg) & Euler Sequence\n");
+            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "!  Angles (deg) & Euler Sequence\n");
             break;
         }
     }
@@ -562,8 +570,6 @@ void SPC_Menu::on_spc_apply_clicked()
     ui->spc_list->setCurrentRow(index);
 
     write_data();
-
-
 }
 
 
@@ -716,11 +722,6 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
     ui->spc_list->currentItem()->setData(257,current_item_data); // set item data
 
     on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count()-1)); // click the item
-
-    spc_names.append(new_spc);
-    file_paths.append(inout_path+"SC_"+new_spc+".txt");
-
-    QFile::copy(inout_path+"SC_" + old_spc + ".txt", inout_path+"SC_"+new_spc+".txt"); //create the file associated with the S/C and append the file information to the right variables
 
     if (ui->spc_list->count() > 0) {
         on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count() - 2));

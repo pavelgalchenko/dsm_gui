@@ -52,7 +52,7 @@ void MainWindow::on_new_mission_clicked()
 
     QStringList newDefaultFiles = QDir(":/data/__default__/").entryList();
 
-    foreach (QString neededFile, newDefaultFiles) {
+    for (const QString &neededFile : newDefaultFiles) {
         QFile::copy(":/data/__default__/"+neededFile,path+neededFile);
         QFile::copy(":/data/__default__/"+neededFile,path+"__default__/"+neededFile);
     }
@@ -66,6 +66,7 @@ void MainWindow::on_new_mission_clicked()
     ui->SPC_Menu->setEnabled(true);
     ui->ORB_Menu->setEnabled(true);
     ui->SIM_Menu->setEnabled(true);
+    ui->DSM_Menu->setEnabled(true);
 }
 
 void MainWindow::on_load_mission_clicked() {
@@ -283,6 +284,16 @@ void MainWindow::on_SIM_Menu_clicked()
     disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 
+void MainWindow::on_DSM_Menu_clicked() {
+    dsm_menu = new DSM_Menu(this);
+    dsm_menu->setModal(true);
+    dsm_menu->show();
+
+    connect(this, SIGNAL(send_data(QString)), dsm_menu, SLOT(receive_dsmpath(QString)));
+    emit send_data(path);
+    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+}
+
 void MainWindow::enable_sub_menus() {
     ui->Warning->setVisible(false);
     ui->GRH_Menu->setEnabled(true);
@@ -291,6 +302,7 @@ void MainWindow::enable_sub_menus() {
     ui->NOS_Menu->setEnabled(true);
     ui->RGN_Menu->setEnabled(true);
     ui->IPC_Menu->setEnabled(true);
+    ui->DSM_Menu->setEnabled(true);
 }
 
 void MainWindow::disable_sub_menus() {
@@ -301,6 +313,7 @@ void MainWindow::disable_sub_menus() {
     ui->NOS_Menu->setEnabled(false);
     ui->RGN_Menu->setEnabled(false);
     ui->IPC_Menu->setEnabled(false);
+    ui->DSM_Menu->setEnabled(false);
 }
 
 void MainWindow::set_menu_buttons(bool enabled) {
@@ -313,4 +326,5 @@ void MainWindow::set_menu_buttons(bool enabled) {
     ui->NOS_Menu->setEnabled(enabled);
     ui->RGN_Menu->setEnabled(enabled);
     ui->IPC_Menu->setEnabled(enabled);
+    ui->DSM_Menu->setEnabled(enabled);
 }
