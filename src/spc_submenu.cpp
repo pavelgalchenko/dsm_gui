@@ -41,265 +41,88 @@ void SPC_submenu::set_validators()
     QValidator *noQuotesSpaces = new QRegularExpressionValidator(rx1,this);
 
     // Combo Boxes
-    // Fixed
+    QComboBox *combo_boxes_euler [6] = {
+        ui->spc_cur_joint_rotdof_seq, ui->spc_cur_joint_bigi_seq, ui->spc_cur_joint_bogo_seq, ui->spc_cur_joint_trndof_seq,
+        ui->spc_cur_fss_mountseq, ui->spc_cur_strack_mountseq
+    }; // All Euler combo boxes
+
+    dsm_gui_lib::set_mult_cbox_validators(combo_boxes_euler, 6, dsm_gui_lib::eulerInputs);
+
+
+    // All custom comboboxes
     ui->spc_cur_solver->addItems(dsm_gui_lib::sortStringList(solve_dynamics));
-
     ui->spc_cur_masspropref->addItems(dsm_gui_lib::sortStringList(mass_prop_ref));
-
-    // Body - N/A
-    // Joints
     ui->spc_cur_joint_type->addItems(dsm_gui_lib::sortStringList(joint_type));
-
-    ui->spc_cur_joint_rotdof_seq->addItems(dsm_gui_lib::eulerInputs);
     ui->spc_cur_joint_rottype->addItems(dsm_gui_lib::sortStringList(rot_joint_seqtype));
-
-    ui->spc_cur_joint_bigi_seq->addItems(dsm_gui_lib::eulerInputs);
-    ui->spc_cur_joint_bogo_seq->addItems(dsm_gui_lib::eulerInputs);
-
-    ui->spc_cur_joint_trndof_seq->addItems(dsm_gui_lib::eulerInputs);
-
-    // Wheels - N/A
-    // MTBs - N/A
-    // Thrusters
     ui->spc_cur_thruster_mode->addItems(dsm_gui_lib::sortStringList(thruster_mode));
-
-    // Gyro - N/A
-    // Magnetometer - N/A
-    // CSS - N/A
-    // FSS
-    ui->spc_cur_fss_mountseq->addItems(dsm_gui_lib::eulerInputs);
     ui-> spc_cur_fss_boreaxis->addItems(dsm_gui_lib::sortStringList(axis));
-
-    // Star Tracker
-    ui->spc_cur_strack_mountseq->addItems(dsm_gui_lib::eulerInputs);
     ui->spc_cur_strack_boreaxis->addItems(dsm_gui_lib::sortStringList(axis));
 
-    // No more in following sections
+    // Numerical Validators
 
-    // Input Validators
+    QLineEdit *ninf_pinf [47] = {
+        ui->spc_cur_drag,
+        ui->spc_cur_body_pmoi_x, ui->spc_cur_body_pmoi_y, ui->spc_cur_body_pmoi_z,
+        ui->spc_cur_body_poi_x, ui->spc_cur_body_poi_y, ui->spc_cur_body_poi_z,
+        ui->spc_cur_body_com_x, ui->spc_cur_body_com_y, ui->spc_cur_body_com_z,
+        ui->spc_cur_body_cem_x, ui->spc_cur_body_cem_y, ui->spc_cur_body_cem_z,
+        ui->spc_cur_body_cemd_x, ui->spc_cur_body_cemd_y, ui->spc_cur_body_cemd_z,
+        ui->spc_cur_joint_ang0_1, ui->spc_cur_joint_ang0_2, ui->spc_cur_joint_ang0_3,
+        ui->spc_cur_joint_angrate0_1, ui->spc_cur_joint_angrate0_2, ui->spc_cur_joint_angrate0_3,
+        ui->spc_cur_joint_disp0_1, ui->spc_cur_joint_disp0_2, ui->spc_cur_joint_disp0_3,
+        ui->spc_cur_joint_dispr0_1, ui->spc_cur_joint_dispr0_2, ui->spc_cur_joint_dispr0_3,
+        ui->spc_cur_joint_bigi_1, ui->spc_cur_joint_bigi_2, ui->spc_cur_joint_bigi_3,
+        ui->spc_cur_joint_bogo_1, ui->spc_cur_joint_bogo_2, ui->spc_cur_joint_bogo_3,
+        ui->spc_cur_joint_poswrt_in_1, ui->spc_cur_joint_poswrt_in_2, ui->spc_cur_joint_poswrt_in_3,
+        ui->spc_cur_wheel_maxtrq, ui->spc_cur_wheel_maxmom, ui->spc_cur_gyro_initbias,
+        ui->spc_cur_fss_mount_1, ui->spc_cur_fss_mount_2, ui->spc_cur_fss_mount_3,
+        ui->spc_cur_strack_mount_1, ui->spc_cur_strack_mount_2, ui->spc_cur_strack_mount_3,
+        ui->spc_cur_acc_initbias}; // All validators with (-INFINITY, INFINITY)
 
-    ui->spc_cur_drag->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    QLineEdit *zero_pinf [50] = {
+        ui->spc_cur_body_mass,
+        ui->spc_cur_body_pmoi_x, ui->spc_cur_body_pmoi_y, ui->spc_cur_body_pmoi_z,
+        ui->spc_cur_wheel_inertia,
+        ui->spc_cur_mtb_sat,
+        ui->spc_cur_thruster_force,
+        ui->spc_cur_gyro_samptime, ui->spc_cur_gyro_maxrate, ui->spc_cur_gyro_scaleferror,
+        ui->spc_cur_gyro_quant, ui->spc_cur_gyro_angrwalk, ui->spc_cur_gyro_angnoise,
+        ui->spc_cur_gyro_bias_stab, ui->spc_cur_gyro_bias_tspan,
+        ui->spc_cur_mag_samptime, ui->spc_cur_mag_sat, ui->spc_cur_mag_scaleferror,
+        ui->spc_cur_mag_quant, ui->spc_cur_mag_noise,
+        ui->spc_cur_css_samptime, ui->spc_cur_css_halfcone, ui->spc_cur_css_scale, ui->spc_cur_css_quant,
+        ui->spc_cur_fss_samptime, ui->spc_cur_fss_hfov, ui->spc_cur_fss_vfov, ui->spc_cur_fss_noiseang, ui->spc_cur_fss_quant,
+        ui->spc_cur_strack_samptime, ui->spc_cur_strack_hfov, ui->spc_cur_strack_vfov, ui->spc_cur_strack_sun,
+        ui->spc_cur_strack_earth, ui->spc_cur_strack_moon,
+        ui->spc_cur_strack_noiseang_1, ui->spc_cur_strack_noiseang_2, ui->spc_cur_strack_noiseang_3,
+        ui->spc_cur_gps_samptime, ui->spc_cur_gps_posnoise, ui->spc_cur_gps_velnoise, ui->spc_cur_gps_timenoise,
+        ui->spc_cur_acc_samptime, ui->spc_cur_acc_maxacc, ui->spc_cur_acc_scaleerror, ui->spc_cur_acc_quant,
+        ui->spc_cur_acc_dvrandwalk, ui->spc_cur_acc_bias_stab, ui->spc_cur_acc_bias_tspan, ui->spc_cur_acc_dvnoise
+    }; // All validators with [0, INFINITY)
 
-    // Body
-    ui->spc_cur_body_name->setValidator(noQuotes);
-    ui->spc_cur_body_mass->setValidator(new QDoubleValidator(0, INFINITY, 5));
+    QLineEdit *none_one [21] = {
+        ui->spc_cur_wheel_axis_1, ui->spc_cur_wheel_axis_2, ui->spc_cur_wheel_axis_3,
+        ui->spc_cur_mtb_axis_1, ui->spc_cur_mtb_axis_2, ui->spc_cur_mtb_axis_3,
+        ui->spc_cur_thruster_axis_1, ui->spc_cur_thruster_axis_2, ui->spc_cur_thruster_axis_3,
+        ui->spc_cur_gyro_axis_1, ui->spc_cur_gyro_axis_2, ui->spc_cur_gyro_axis_3,
+        ui->spc_cur_mag_axis_1, ui->spc_cur_mag_axis_2, ui->spc_cur_mag_axis_3,
+        ui->spc_cur_css_axis_1, ui->spc_cur_css_axis_2, ui->spc_cur_css_axis_3,
+        ui->spc_cur_acc_axis_1, ui->spc_cur_acc_axis_2,ui->spc_cur_acc_axis_3
+    }; // All validators with [-1, 1]
 
-    ui->spc_cur_body_pmoi_x->setValidator(new QDoubleValidator(0, INFINITY, 5));
-    ui->spc_cur_body_pmoi_y->setValidator(new QDoubleValidator(0, INFINITY, 5));
-    ui->spc_cur_body_pmoi_z->setValidator(new QDoubleValidator(0, INFINITY, 5));
+    dsm_gui_lib::set_mult_validators(ninf_pinf, 47, -INFINITY, INFINITY, 5);
+    dsm_gui_lib::set_mult_validators(zero_pinf, 50, 0, INFINITY, 5);
+    dsm_gui_lib::set_mult_validators(none_one, 21, -1, 1, 5);
 
-    ui->spc_cur_body_poi_x->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_body_poi_y->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_body_poi_z->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    QLineEdit *item_names [12] = {
+        ui->spc_cur_body_name, ui->spc_cur_joint_name, ui->spc_cur_wheel_name, ui->spc_cur_mtb_name, ui->spc_cur_thruster_name,
+        ui->spc_cur_gyro_name, ui->spc_cur_mag_name, ui->spc_cur_css_name, ui->spc_cur_fss_name, ui->spc_cur_strack_name,
+        ui->spc_cur_gps_name, ui->spc_cur_acc_name
+    };
 
-    ui->spc_cur_body_com_x->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_body_com_y->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_body_com_z->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_body_cem_x->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_body_cem_y->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_body_cem_z->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_body_cemd_x->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_body_cemd_y->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_body_cemd_z->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    dsm_gui_lib::set_mult_name_validators(item_names, 12, noQuotes);
 
     ui->spc_cur_body_geom->setValidator(noQuotesSpaces);
-
-    // Joints
-    ui->spc_cur_joint_name->setValidator(noQuotes);
-
-    ui->spc_cur_joint_ang0_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_ang0_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_ang0_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_joint_angrate0_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_angrate0_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_angrate0_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_joint_disp0_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_disp0_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_disp0_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_joint_dispr0_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_dispr0_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_dispr0_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_joint_bigi_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_bigi_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_bigi_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_joint_bogo_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_bogo_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_bogo_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_joint_poswrt_in_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_poswrt_in_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_poswrt_in_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_joint_poswrt_out_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_poswrt_out_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_joint_poswrt_out_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-
-    // Wheels
-    ui->spc_cur_wheel_name->setValidator(noQuotes);
-
-    ui->spc_cur_wheel_initmom->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_wheel_axis_1->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_wheel_axis_2->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_wheel_axis_3->setValidator(new QDoubleValidator(-1, 1, 5));
-
-    ui->spc_cur_wheel_maxtrq->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_wheel_maxmom->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_wheel_inertia->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    // MTBs
-    ui->spc_cur_mtb_name->setValidator(noQuotes);
-
-    ui->spc_cur_mtb_sat->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_mtb_axis_1->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_mtb_axis_2->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_mtb_axis_3->setValidator(new QDoubleValidator(-1, 1, 5));
-
-    // Thrusters
-    ui->spc_cur_thruster_name->setValidator(noQuotes);
-
-    ui->spc_cur_thruster_force->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_thruster_axis_1->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_thruster_axis_2->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_thruster_axis_3->setValidator(new QDoubleValidator(-1, 1, 5));
-
-    // Gyros
-    ui->spc_cur_gyro_name->setValidator(noQuotes);
-
-    ui->spc_cur_gyro_samptime->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_gyro_axis_1->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_gyro_axis_2->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_gyro_axis_3->setValidator(new QDoubleValidator(-1, 1, 5));
-
-    ui->spc_cur_gyro_maxrate->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_gyro_scaleferror->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_gyro_quant->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_gyro_angrwalk->setValidator(new QDoubleValidator(0, INFINITY, 5));
-    ui->spc_cur_gyro_angnoise->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_gyro_bias_stab->setValidator(new QDoubleValidator(0, INFINITY, 5));
-    ui->spc_cur_gyro_bias_tspan->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_gyro_initbias->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    // Mags
-    ui->spc_cur_mag_name->setValidator(noQuotes);
-
-    ui->spc_cur_mag_samptime->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_mag_axis_1->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_mag_axis_2->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_mag_axis_3->setValidator(new QDoubleValidator(-1, 1, 5));
-
-    ui->spc_cur_mag_sat->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_mag_scaleferror->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_mag_quant->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_mag_noise->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    // CSS
-    ui->spc_cur_css_name->setValidator(noQuotes);
-
-    ui->spc_cur_css_samptime->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_css_axis_1->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_css_axis_2->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_css_axis_3->setValidator(new QDoubleValidator(-1, 1, 5));
-
-    ui->spc_cur_css_halfcone->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_css_scale->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_css_quant->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    // FSS
-    ui->spc_cur_fss_name->setValidator(noQuotes);
-
-    ui->spc_cur_fss_samptime->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_fss_mount_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_fss_mount_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_fss_mount_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_fss_hfov->setValidator(new QDoubleValidator(0, INFINITY, 5));
-    ui->spc_cur_fss_vfov->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_fss_noiseang->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_fss_quant->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    // Star Tracker
-    ui->spc_cur_strack_name->setValidator(noQuotes);
-
-    ui->spc_cur_strack_samptime->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_strack_mount_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_strack_mount_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_strack_mount_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_strack_hfov->setValidator(new QDoubleValidator(0, INFINITY, 5));
-    ui->spc_cur_strack_vfov->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_strack_sun->setValidator(new QDoubleValidator(0, INFINITY, 5));
-    ui->spc_cur_strack_earth->setValidator(new QDoubleValidator(0, INFINITY, 5));
-    ui->spc_cur_strack_moon->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_strack_noiseang_1->setValidator(new QDoubleValidator(0, INFINITY, 5));
-    ui->spc_cur_strack_noiseang_2->setValidator(new QDoubleValidator(0, INFINITY, 5));
-    ui->spc_cur_strack_noiseang_3->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    // GPS
-    ui->spc_cur_gps_name->setValidator(noQuotes);
-
-    ui->spc_cur_gps_samptime->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_gps_posnoise->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_gps_velnoise->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_gps_timenoise->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    // Accelerometers
-    ui->spc_cur_acc_name->setValidator(noQuotes);
-
-    ui->spc_cur_acc_samptime->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_acc_axis_1->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_acc_axis_2->setValidator(new QDoubleValidator(-1, 1, 5));
-    ui->spc_cur_acc_axis_3->setValidator(new QDoubleValidator(-1, 1, 5));
-
-    ui->spc_cur_acc_maxacc->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_acc_scaleerror->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_acc_quant->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_acc_dvrandwalk->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_acc_bias_stab->setValidator(new QDoubleValidator(0, INFINITY, 5));
-    ui->spc_cur_acc_bias_tspan->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_acc_dvnoise->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-    ui->spc_cur_acc_initbias->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
 }
 
 
