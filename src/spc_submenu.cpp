@@ -256,7 +256,6 @@ void SPC_submenu::apply_data()
             cur_item_name = spc_item_names[line_num - 1];
             ui->spc_cur_body_list->addItem(cur_item_name);
             tmp_data.append("blankline");
-
         }
         else if (cur_entry == 1 || (cur_entry >= 7 && cur_entry <= 9)){
             // 1 ELEMENT
@@ -296,7 +295,6 @@ void SPC_submenu::apply_data()
             line_string = spc_string[line_num-1];
             line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
 
-
             long joint_line_num = line_num - reset_ind_joint - joint_headers;
             cur_item = floor(joint_line_num/joint_entries);
             cur_entry = joint_line_num % joint_entries;
@@ -329,8 +327,65 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<4; i++) tmp_data.append(line_items[i]);
             }
 
+            if (cur_entry==joint_entries-1){
+                ui->spc_cur_joint_list->setCurrentRow(cur_item);
+                ui->spc_cur_joint_list->currentItem()->setData(256, cur_item_name);
+                ui->spc_cur_joint_list->currentItem()->setData(257, tmp_data);
+                tmp_data.clear();
+            }
+        }
+    }
+
+    /********************** WHEELS *************************/
+
+    wheels = spc_data[reset_ind_wheel + 2].toInt();
+
+    wheel_drag = spc_data[reset_ind_wheel + 0].split(QRegExp("\\s"), Qt::SkipEmptyParts)[0];
+    wheel_jitter = spc_data[reset_ind_wheel + 1].split(QRegExp("\\s"), Qt::SkipEmptyParts)[0];
+
+    if (!QString::compare(wheel_drag, "FALSE")) ui->spc_cur_wheel_glob_drag_off->setChecked(Qt::Checked);
+    else ui->spc_cur_wheel_glob_drag_on->setChecked(Qt::Checked);
+
+    if (!QString::compare(wheel_jitter, "FALSE")) ui->spc_cur_wheel_glob_jitter_off->setChecked(Qt::Checked);
+    else ui->spc_cur_wheel_glob_jitter_on->setChecked(Qt::Checked);
+
+    if (wheels == 0) reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries; // SC_Simple has an example wheel
+    else reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
+
+    ui->spc_cur_wheel_list->clear();
+    tmp_data.clear();
+    if (wheels > 0){
+        for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
+        {
+            line_string = spc_string[line_num-1];
+            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+            long wheel_line_num = line_num - reset_ind_wheel - wheel_headers;
+            cur_item = floor(wheel_line_num/wheel_entries);
+            cur_entry = wheel_line_num % wheel_entries;
+
+            if (cur_entry == 0){
+                cur_item_name = spc_item_names[line_num - 1];
+                ui->spc_cur_wheel_list->addItem(cur_item_name);
+                tmp_data.append("blankline");
+            }
+            else if (cur_entry == 1 || (cur_entry >= 4 && cur_entry <=7)){
+                // 1 ELEMENT
+                // wheel axis -> 1, wheel inertia -> 4, wheel body -> 5, wheel node -> 6, wheel drag/jitter -> 7,
+                tmp_data.append(line_items[0]);
+            }
+            else if (cur_entry == 3){
+                // 2 ELEMENTS
+                // Max torque & max momentum -> 3
+                for (int i=0; i<2; i++) tmp_data.append(line_items[i]);
+            }
+            else if (cur_entry == 2){
+                // 3 ELEMENTS
+                for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
+            }
 
             if (cur_entry==wheel_entries-1){
+
                 ui->spc_cur_wheel_list->setCurrentRow(cur_item);
                 ui->spc_cur_wheel_list->currentItem()->setData(256, cur_item_name);
                 ui->spc_cur_wheel_list->currentItem()->setData(257, tmp_data);
@@ -404,7 +459,7 @@ void SPC_submenu::apply_data()
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
-                ui->spc_cur_mtb_list->addItem(cur_item_name);
+                ui->spc_cur_thruster_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
             }
             else if ((cur_entry >= 1 && cur_entry <= 2) || (cur_entry >= 4 && cur_entry <= 5)){
@@ -679,7 +734,7 @@ void SPC_submenu::apply_data()
                 ui->spc_cur_gps_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
             }
-            else if (cur_entry >= 1 || cur_entry <=5){
+            else if (cur_entry >= 1 && cur_entry <=5){
                 // 1 ELEMENT
                 tmp_data.append(line_items[0]);
             }
@@ -715,7 +770,7 @@ void SPC_submenu::apply_data()
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
-                ui->spc_cur_css_list->addItem(cur_item_name);
+                ui->spc_cur_accel_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
             }
             else if (cur_entry == 1 || (cur_entry >= 3 && cur_entry <=6) || (cur_entry >= 8 && cur_entry <= 10)){

@@ -29,6 +29,7 @@ public:
     static void set_mult_validators(QLineEdit *ui_elem[], int array_length, double lower, double upper, int decimals);
     static void set_mult_name_validators(QLineEdit *ui_elem[], int array_length, QValidator *validator);
     static void set_mult_cbox_validators(QComboBox *ui_elem[], int array_length, const QStringList string_list);
+    static QStringList apply_data_section_end(int cur_entry, long section_entries, long cur_item, QListWidget *ui_elem, QStringList tmp_data, QString cur_item_name);
 
     inline static const QStringList eulerInputs = {"121", "123", "131", "132", "212", "213", "231", "232", "312", "313", "321", "323"};
     inline static const QStringList worldInputs = {"SOL","MERCURY","VENUS","EARTH","MARS","JUPITER","SATURN","URANUS",
