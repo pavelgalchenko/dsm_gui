@@ -271,12 +271,7 @@ void SPC_submenu::apply_data()
             for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
         }
 
-        if (cur_entry==body_entries-1){
-            ui->spc_cur_body_list->setCurrentRow(cur_item);
-            ui->spc_cur_body_list->currentItem()->setData(256, cur_item_name);
-            ui->spc_cur_body_list->currentItem()->setData(257, tmp_data);
-            tmp_data.clear();
-        }
+        dsm_gui_lib::apply_data_section_end(cur_entry, body_entries, cur_item, ui->spc_cur_body_list, tmp_data, cur_item_name);
     }
 
     /***************** JOINTS **************************/
@@ -327,12 +322,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<4; i++) tmp_data.append(line_items[i]);
             }
 
-            if (cur_entry==joint_entries-1){
-                ui->spc_cur_joint_list->setCurrentRow(cur_item);
-                ui->spc_cur_joint_list->currentItem()->setData(256, cur_item_name);
-                ui->spc_cur_joint_list->currentItem()->setData(257, tmp_data);
-                tmp_data.clear();
-            }
+            dsm_gui_lib::apply_data_section_end(cur_entry, joint_entries, cur_item, ui->spc_cur_joint_list, tmp_data, cur_item_name);
         }
     }
 
@@ -384,13 +374,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            if (cur_entry==wheel_entries-1){
-
-                ui->spc_cur_wheel_list->setCurrentRow(cur_item);
-                ui->spc_cur_wheel_list->currentItem()->setData(256, cur_item_name);
-                ui->spc_cur_wheel_list->currentItem()->setData(257, tmp_data);
-                tmp_data.clear();
-            }
+            dsm_gui_lib::apply_data_section_end(cur_entry, wheel_entries, cur_item, ui->spc_cur_wheel_list, tmp_data, cur_item_name);
         }
     }
 
@@ -428,12 +412,8 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            if (cur_entry==mtb_entries-1){
-                ui->spc_cur_mtb_list->setCurrentRow(cur_item);
-                ui->spc_cur_mtb_list->currentItem()->setData(256, cur_item_name);
-                ui->spc_cur_mtb_list->currentItem()->setData(257, tmp_data);
-                tmp_data.clear();
-            }
+
+            dsm_gui_lib::apply_data_section_end(cur_entry, mtb_entries, cur_item, ui->spc_cur_mtb_list, tmp_data, cur_item_name);
         }
     }
 
@@ -471,12 +451,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            if (cur_entry==thr_entries-1){
-                ui->spc_cur_thruster_list->setCurrentRow(cur_item);
-                ui->spc_cur_thruster_list->currentItem()->setData(256, cur_item_name);
-                ui->spc_cur_thruster_list->currentItem()->setData(257, tmp_data);
-                tmp_data.clear();
-            }
+            dsm_gui_lib::apply_data_section_end(cur_entry, thr_entries, cur_item, ui->spc_cur_thruster_list, tmp_data, cur_item_name);
         }
     }
 
@@ -517,12 +492,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            if (cur_entry==gyro_entries-1){
-                ui->spc_cur_gyro_list->setCurrentRow(cur_item);
-                ui->spc_cur_gyro_list->currentItem()->setData(256, cur_item_name);
-                ui->spc_cur_gyro_list->currentItem()->setData(257, tmp_data);
-                tmp_data.clear();
-            }
+            dsm_gui_lib::apply_data_section_end(cur_entry, gyro_entries, cur_item, ui->spc_cur_gyro_list, tmp_data, cur_item_name);
         }
     }
 
@@ -560,12 +530,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            if (cur_entry==mag_entries-1){
-                ui->spc_cur_mag_list->setCurrentRow(cur_item);
-                ui->spc_cur_mag_list->currentItem()->setData(256, cur_item_name);
-                ui->spc_cur_mag_list->currentItem()->setData(257, tmp_data);
-                tmp_data.clear();
-            }
+            dsm_gui_lib::apply_data_section_end(cur_entry, mag_entries, cur_item, ui->spc_cur_mag_list, tmp_data, cur_item_name);
         }
     }
 
@@ -603,12 +568,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            if (cur_entry==css_entries-1){
-                ui->spc_cur_css_list->setCurrentRow(cur_item);
-                ui->spc_cur_css_list->currentItem()->setData(256, cur_item_name);
-                ui->spc_cur_css_list->currentItem()->setData(257, tmp_data);
-                tmp_data.clear();
-            }
+            dsm_gui_lib::apply_data_section_end(cur_entry, css_entries, cur_item, ui->spc_cur_css_list, tmp_data, cur_item_name);
         }
     }
 
@@ -649,12 +609,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<4; i++) tmp_data.append(line_items[i]);
             }
 
-            if (cur_entry==fss_entries-1){
-                ui->spc_cur_fss_list->setCurrentRow(cur_item);
-                ui->spc_cur_fss_list->currentItem()->setData(256, cur_item_name);
-                ui->spc_cur_fss_list->currentItem()->setData(257, tmp_data);
-                tmp_data.clear();
-            }
+            dsm_gui_lib::apply_data_section_end(cur_entry, fss_entries, cur_item, ui->spc_cur_fss_list, tmp_data, cur_item_name);
         }
     }
 
@@ -700,12 +655,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<4; i++) tmp_data.append(line_items[i]);
             }
 
-            if (cur_entry==strack_entries-1){
-                ui->spc_cur_strack_list->setCurrentRow(cur_item);
-                ui->spc_cur_strack_list->currentItem()->setData(256, cur_item_name);
-                ui->spc_cur_strack_list->currentItem()->setData(257, tmp_data);
-                tmp_data.clear();
-            }
+            dsm_gui_lib::apply_data_section_end(cur_entry, strack_entries, cur_item, ui->spc_cur_strack_list, tmp_data, cur_item_name);
         }
     }
 
@@ -739,12 +689,7 @@ void SPC_submenu::apply_data()
                 tmp_data.append(line_items[0]);
             }
 
-            if (cur_entry==gps_entries-1){
-                ui->spc_cur_gps_list->setCurrentRow(cur_item);
-                ui->spc_cur_gps_list->currentItem()->setData(256, cur_item_name);
-                ui->spc_cur_gps_list->currentItem()->setData(257, tmp_data);
-                tmp_data.clear();
-            }
+            dsm_gui_lib::apply_data_section_end(cur_entry, gps_entries, cur_item, ui->spc_cur_gps_list, tmp_data, cur_item_name);
         }
     }
 
@@ -786,12 +731,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            if (cur_entry==acc_entries-1){
-                ui->spc_cur_accel_list->setCurrentRow(cur_item);
-                ui->spc_cur_accel_list->currentItem()->setData(256, cur_item_name);
-                ui->spc_cur_accel_list->currentItem()->setData(257, tmp_data);
-                tmp_data.clear();
-            }
+            dsm_gui_lib::apply_data_section_end(cur_entry, acc_entries, cur_item, ui->spc_cur_accel_list, tmp_data, cur_item_name);
         }
     }
 }
