@@ -114,6 +114,8 @@ void SPC_submenu::set_validators()
     dsm_gui_lib::set_mult_validators(zero_pinf, 50, 0, INFINITY, 5);
     dsm_gui_lib::set_mult_validators(none_one, 21, -1, 1, 5);
 
+    // Name Validators
+
     QLineEdit *item_names [12] = {
         ui->spc_cur_body_name, ui->spc_cur_joint_name, ui->spc_cur_wheel_name, ui->spc_cur_mtb_name, ui->spc_cur_thruster_name,
         ui->spc_cur_gyro_name, ui->spc_cur_mag_name, ui->spc_cur_css_name, ui->spc_cur_fss_name, ui->spc_cur_strack_name,
@@ -250,57 +252,26 @@ void SPC_submenu::apply_data()
         cur_item = floor(body_line_num/body_entries);
         cur_entry = body_line_num % body_entries;
 
-        switch (cur_entry) {
-        case 0: // Body X Header
+        if (cur_entry == 0) {
             cur_item_name = spc_item_names[line_num - 1];
             ui->spc_cur_body_list->addItem(cur_item_name);
             tmp_data.append("blankline");
-            break;
-        case 1: // Mass
-            tmp_data.append(line_items[0]);
 
-            break;
-        case 2: // Moments of Inertia (kg-m^2)
-            tmp_data.append(line_items[0]);
-            tmp_data.append(line_items[1]);
-            tmp_data.append(line_items[2]);
-
-            break;
-        case 3: // Products of Inertia
-            tmp_data.append(line_items[0]);
-            tmp_data.append(line_items[1]);
-            tmp_data.append(line_items[2]);
-
-            break;
-        case 4: // Location of mass center
-            tmp_data.append(line_items[0]);
-            tmp_data.append(line_items[1]);
-            tmp_data.append(line_items[2]);
-
-            break;
-        case 5: // constant embedded momentum
-            tmp_data.append(line_items[0]);
-            tmp_data.append(line_items[1]);
-            tmp_data.append(line_items[2]);
-
-            break;
-        case 6: // constant embedded momentum
-            tmp_data.append(line_items[0]);
-            tmp_data.append(line_items[1]);
-            tmp_data.append(line_items[2]);
-
-            break;
-        case 7:// Geometry File
-            tmp_data.append(line_items[0]);
-
-            break;
-        case 8: // Node
-            tmp_data.append(line_items[0]);
-            break;
-        case 9: // Flex
-            tmp_data.append(line_items[0]);
-            break;
         }
+        else if (cur_entry == 1 || (cur_entry >= 7 && cur_entry <= 9)){
+            // 1 ELEMENT
+            // Mass -> 1, Geometry File -> 7, Node -> 8, Flex -> 9
+            tmp_data.append(line_items[0]);
+
+        }
+        else if (cur_entry == 2 || (cur_entry >= 3 && cur_entry <= 6)){
+            // 3 ELEMENTS
+            // Moments of Inertia -> 2, Products of Inertia -> 3,
+            // Location of mass center -> 4, constant embedded momentum -> 5,
+            // constant embedded momentum dipole -> 6
+            for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
+        }
+
         if (cur_entry==body_entries-1){
             ui->spc_cur_body_list->setCurrentRow(cur_item);
             ui->spc_cur_body_list->currentItem()->setData(256, cur_item_name);
@@ -330,165 +301,36 @@ void SPC_submenu::apply_data()
             cur_item = floor(joint_line_num/joint_entries);
             cur_entry = joint_line_num % joint_entries;
 
-            switch (cur_entry) {
-            case 0: // Joint X Header
+            if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
                 ui->spc_cur_joint_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
-                break;
-            case 1: // Joint Type
-                tmp_data.append(line_items[0]);
-                break;
-            case 2: // Joint Connections (inner and outer body)
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                break;
-            case 3: // RotDOF, RotDOF Seq, Rot Type
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                break;
-            case 4: // Trn DOF, Trn Seq
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                break;
-            case 5: // Rotational Axes Locked?
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-
-                break;
-
-            case 6: // Translational Axes Locked?
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-
-                break;
-            case 7: // Joint initial angle
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-
-                break;
-            case 8: // Joint initial angle rate
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-
-                break;
-            case 9: // Joint initial displacement
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-
-                break;
-            case 10: // Joint initial velocity
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-
-                break;
-            case 11: // Joint Bi Gi angles, sequence
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                tmp_data.append(line_items[3]);
-
-                break;
-            case 12: // Joint Go Bo angles, sequence
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                tmp_data.append(line_items[3]);
-
-                break;
-            case 13: // Joint Position wrt inner body
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-
-                break;
-            case 14: // Joint Position wrt outer body
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-
-                break;
-            case 15: // Joint parameter file
-                tmp_data.append(line_items[0]);
-                break;
             }
-            if (cur_entry==joint_entries-1){
-                ui->spc_cur_joint_list->setCurrentRow(cur_item);
-                ui->spc_cur_joint_list->currentItem()->setData(256, cur_item_name);
-                ui->spc_cur_joint_list->currentItem()->setData(257, tmp_data);
-                tmp_data.clear();
+            else if (cur_entry == 1 || cur_entry == 15){
+                // 1 ELEMENT
+                // Joint type -> 1, Joint parameter file -> 15
+                tmp_data.append(line_items[0]);
             }
-        }
-    }
-
-    /********************** WHEELS *************************/
-
-    wheels = spc_data[reset_ind_wheel + 2].toInt();
-
-    wheel_drag = spc_data[reset_ind_wheel + 0].split(QRegExp("\\s"), Qt::SkipEmptyParts)[0];
-    wheel_jitter = spc_data[reset_ind_wheel + 1].split(QRegExp("\\s"), Qt::SkipEmptyParts)[0];
-
-    if (!QString::compare(wheel_drag, "FALSE")) ui->spc_cur_wheel_glob_drag_off->setChecked(Qt::Checked);
-    else ui->spc_cur_wheel_glob_drag_on->setChecked(Qt::Checked);
-
-    if (!QString::compare(wheel_jitter, "FALSE")) ui->spc_cur_wheel_glob_jitter_off->setChecked(Qt::Checked);
-    else ui->spc_cur_wheel_glob_jitter_on->setChecked(Qt::Checked);
-
-    if (wheels == 0) reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries; // SC_Simple has an example wheel
-    else reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries*wheels;
-
-    ui->spc_cur_wheel_list->clear();
-    tmp_data.clear();
-    if (wheels > 0){
-        for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
-        {
-            line_string = spc_string[line_num-1];
-            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-            long wheel_line_num = line_num - reset_ind_wheel - wheel_headers;
-            cur_item = floor(wheel_line_num/wheel_entries);
-            cur_entry = wheel_line_num % wheel_entries;
-
-            switch (cur_entry){
-            case 0:
-                cur_item_name = spc_item_names[line_num - 1];
-                ui->spc_cur_wheel_list->addItem(cur_item_name);
-                tmp_data.append("blankline");
-                break; // header
-            case 1:
-                tmp_data.append(line_items[0]);
-                break; // wheel axis
-            case 2:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                break;
-            case 3: // Max torque, max momentum
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                break;
-            case 4: // wheel inertia
-                tmp_data.append(line_items[0]);
-                break;
-            case 5: // wheel body
-                tmp_data.append(line_items[0]);
-                break;
-            case 6: // wheel node
-                tmp_data.append(line_items[0]);
-                break;
-            case 7: // wheel drag/jitter file
-                tmp_data.append(line_items[0]);
-                break;
+            else if (cur_entry == 2 || cur_entry == 4){
+                // 2 ELEMENTS
+                // Joint Connections (inner and outer body) -> 2, Trn DOF & Trn Seq -> 4
+                for (int i=0; i<2; i++) tmp_data.append(line_items[i]);
             }
+            else if (cur_entry == 3 || (cur_entry >= 5 && cur_entry <= 10) || (cur_entry >= 13 && cur_entry <= 14)){
+                // 3 ELEMENTS
+                // RotDOF & RotDOF Seq & Rot Type -> 3, Rotational Axes Locked? -> 5, Translational Axes Locked? -> 6
+                // Joint initial angle -> 7, Joint initial angle rate -> 8, Joint initial displacement -> 9, Joint initial velocity -> 10,
+                // Joint Position wrt inner body -> 13, Joint Position wrt outer body -> 14
+                for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
+            }
+            else if (cur_entry >= 11 && cur_entry <= 12){
+                // 4 ELEMENTS
+                // Joint Bi Gi angles & sequence -> 11, Joint Go Bo angles & sequence -> 12
+                for (int i=0; i<4; i++) tmp_data.append(line_items[i]);
+            }
+
+
             if (cur_entry==wheel_entries-1){
-
                 ui->spc_cur_wheel_list->setCurrentRow(cur_item);
                 ui->spc_cur_wheel_list->currentItem()->setData(256, cur_item_name);
                 ui->spc_cur_wheel_list->currentItem()->setData(257, tmp_data);
@@ -517,24 +359,20 @@ void SPC_submenu::apply_data()
             cur_item = floor(mtb_line_num/mtb_entries);
             cur_entry = mtb_line_num % mtb_entries;
 
-            switch (cur_entry){
-            case 0:
+            if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
                 ui->spc_cur_mtb_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
-                break; // header
-            case 1:
-                tmp_data.append(line_items[0]);
-                break;
-            case 2:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                break;
-            case 3:
-                tmp_data.append(line_items[0]);
-                break;
             }
+            else if (cur_entry == 1 || cur_entry == 3){
+                // 1 ELEMENT
+                tmp_data.append(line_items[0]);
+            }
+            else if (cur_entry == 2){
+                // 3 ELEMENTS
+                for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
+            }
+
             if (cur_entry==mtb_entries-1){
                 ui->spc_cur_mtb_list->setCurrentRow(cur_item);
                 ui->spc_cur_mtb_list->currentItem()->setData(256, cur_item_name);
@@ -564,30 +402,20 @@ void SPC_submenu::apply_data()
             cur_item = floor(thr_line_num/thr_entries);
             cur_entry = thr_line_num % thr_entries;
 
-            switch (cur_entry){
-            case 0:
+            if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
-                ui->spc_cur_thruster_list->addItem(cur_item_name);
+                ui->spc_cur_mtb_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
-                break; // header
-            case 1:
-                tmp_data.append(line_items[0]);
-                break;
-            case 2:
-                tmp_data.append(line_items[0]);
-                break;
-            case 3:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                break;
-            case 4:
-                tmp_data.append(line_items[0]);
-                break;
-            case 5:
-                tmp_data.append(line_items[0]);
-                break;
             }
+            else if ((cur_entry >= 1 && cur_entry <= 2) || (cur_entry >= 4 && cur_entry <= 5)){
+                // 1 ELEMENT
+                tmp_data.append(line_items[0]);
+            }
+            else if (cur_entry == 3){
+                // 3 ELEMENTS
+                for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
+            }
+
             if (cur_entry==thr_entries-1){
                 ui->spc_cur_thruster_list->setCurrentRow(cur_item);
                 ui->spc_cur_thruster_list->currentItem()->setData(256, cur_item_name);
@@ -616,46 +444,24 @@ void SPC_submenu::apply_data()
             cur_item = floor(gyro_line_num/gyro_entries);
             cur_entry = gyro_line_num % gyro_entries;
 
-            switch (cur_entry){
-            case 0:
+            if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
                 ui->spc_cur_gyro_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
-                break; // header
-            case 1:
-                tmp_data.append(line_items[0]);
-                break;
-            case 2:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                break;
-            case 3:
-                tmp_data.append(line_items[0]);
-                break;
-            case 4:
-                tmp_data.append(line_items[0]);
-                break;
-            case 5:
-                tmp_data.append(line_items[0]);
-                break;
-            case 6:
-                tmp_data.append(line_items[0]);
-                break;
-            case 7:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                break;
-            case 8:
-                tmp_data.append(line_items[0]);
-                break;
-            case 9:
-                tmp_data.append(line_items[0]);
-                break;
-            case 10:
-                tmp_data.append(line_items[0]);
-                break;
             }
+            else if (cur_entry == 1 || (cur_entry >= 3 && cur_entry <=6) || (cur_entry >= 8 && cur_entry <= 10)){
+                // 1 ELEMENT
+                tmp_data.append(line_items[0]);
+            }
+            else if (cur_entry == 7){
+                // 2 ELEMENTS
+                for (int i=0; i<2; i++) tmp_data.append(line_items[i]);
+            }
+            else if (cur_entry == 2){
+                // 3 ELEMENTS
+                for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
+            }
+
             if (cur_entry==gyro_entries-1){
                 ui->spc_cur_gyro_list->setCurrentRow(cur_item);
                 ui->spc_cur_gyro_list->currentItem()->setData(256, cur_item_name);
@@ -685,36 +491,20 @@ void SPC_submenu::apply_data()
             cur_item = floor(mag_line_num/mag_entries);
             cur_entry = mag_line_num % mag_entries;
 
-            switch (cur_entry){
-            case 0:
+            if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
                 ui->spc_cur_mag_list->addItem("Axis " + QString::number(cur_item));
                 tmp_data.append("blankline");
-                break; // header
-            case 1:
-                tmp_data.append(line_items[0]);
-                break;
-            case 2:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                break;
-            case 3:
-                tmp_data.append(line_items[0]);
-                break;
-            case 4:
-                tmp_data.append(line_items[0]);
-                break;
-            case 5:
-                tmp_data.append(line_items[0]);
-                break;
-            case 6:
-                tmp_data.append(line_items[0]);
-                break;
-            case 7:
-                tmp_data.append(line_items[0]);
-                break;
             }
+            else if (cur_entry == 1 || (cur_entry >= 3 && cur_entry <=7)){
+                // 1 ELEMENT
+                tmp_data.append(line_items[0]);
+            }
+            else if (cur_entry == 2){
+                // 3 ELEMENTS
+                for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
+            }
+
             if (cur_entry==mag_entries-1){
                 ui->spc_cur_mag_list->setCurrentRow(cur_item);
                 ui->spc_cur_mag_list->currentItem()->setData(256, cur_item_name);
@@ -744,36 +534,20 @@ void SPC_submenu::apply_data()
             cur_item = floor(css_line_num/css_entries);
             cur_entry = css_line_num % css_entries;
 
-            switch (cur_entry){
-            case 0:
+            if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
                 ui->spc_cur_css_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
-                break; // header
-            case 1:
-                tmp_data.append(line_items[0]);
-                break;
-            case 2:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                break;
-            case 3:
-                tmp_data.append(line_items[0]);
-                break;
-            case 4:
-                tmp_data.append(line_items[0]);
-                break;
-            case 5:
-                tmp_data.append(line_items[0]);
-                break;
-            case 6:
-                tmp_data.append(line_items[0]);
-                break;
-            case 7:
-                tmp_data.append(line_items[0]);
-                break;
             }
+            else if (cur_entry == 1 || (cur_entry >= 3 && cur_entry <=7)){
+                // 1 ELEMENT
+                tmp_data.append(line_items[0]);
+            }
+            else if (cur_entry == 2){
+                // 3 ELEMENTS
+                for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
+            }
+
             if (cur_entry==css_entries-1){
                 ui->spc_cur_css_list->setCurrentRow(cur_item);
                 ui->spc_cur_css_list->currentItem()->setData(256, cur_item_name);
@@ -802,38 +576,24 @@ void SPC_submenu::apply_data()
             cur_item = floor(fss_line_num/fss_entries);
             cur_entry = fss_line_num % fss_entries;
 
-            switch (cur_entry){
-            case 0:
+            if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
                 ui->spc_cur_fss_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
-                break; // header
-            case 1:
-                tmp_data.append(line_items[0]);
-                break;
-            case 2:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                tmp_data.append(line_items[3]);
-                break;
-            case 3:
-                tmp_data.append(line_items[0]);
-                break;
-            case 4:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                break;
-            case 5:
-                tmp_data.append(line_items[0]);
-                break;
-            case 6:
-                tmp_data.append(line_items[0]);
-                break;
-            case 7:
-                tmp_data.append(line_items[0]);
-                break;
             }
+            else if (cur_entry == 1 || cur_entry == 3 || (cur_entry >= 5 && cur_entry <= 7)){
+                // 1 ELEMENT
+                tmp_data.append(line_items[0]);
+            }
+            else if (cur_entry == 4){
+                // 2 ELEMENTS
+                for (int i=0; i<2; i++) tmp_data.append(line_items[i]);
+            }
+            else if (cur_entry == 2){
+                // 4 ELEMENTS
+                for (int i=0; i<4; i++) tmp_data.append(line_items[i]);
+            }
+
             if (cur_entry==fss_entries-1){
                 ui->spc_cur_fss_list->setCurrentRow(cur_item);
                 ui->spc_cur_fss_list->currentItem()->setData(256, cur_item_name);
@@ -863,42 +623,28 @@ void SPC_submenu::apply_data()
             cur_item = floor(strack_line_num/strack_entries);
             cur_entry = strack_line_num % strack_entries;
 
-            switch (cur_entry){
-            case 0:
+            if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
                 ui->spc_cur_strack_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
-                break; // header
-            case 1:
-                tmp_data.append(line_items[0]);
-                break;
-            case 2:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                tmp_data.append(line_items[3]);
-                break;
-            case 3:
-                tmp_data.append(line_items[0]);
-                break;
-            case 4:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                break;
-            case 5:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                break;
-            case 6:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                break;
-            case 7:
-                tmp_data.append(line_items[0]);
-                break;
             }
+            else if (cur_entry == 1 || cur_entry == 3 || cur_entry == 7){
+                // 1 ELEMENT
+                tmp_data.append(line_items[0]);
+            }
+            else if (cur_entry == 4){
+                // 2 ELEMENTS
+                for (int i=0; i<2; i++) tmp_data.append(line_items[i]);
+            }
+            else if (cur_entry >= 5 && cur_entry <= 6){
+                // 3 ELEMENTS
+                for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
+            }
+            else if (cur_entry == 2){
+                // 4 ELEMENTS
+                for (int i=0; i<4; i++) tmp_data.append(line_items[i]);
+            }
+
             if (cur_entry==strack_entries-1){
                 ui->spc_cur_strack_list->setCurrentRow(cur_item);
                 ui->spc_cur_strack_list->currentItem()->setData(256, cur_item_name);
@@ -928,28 +674,16 @@ void SPC_submenu::apply_data()
             cur_item = floor(gps_line_num/gps_entries);
             cur_entry = gps_line_num % gps_entries;
 
-            switch (cur_entry){
-            case 0:
+            if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
                 ui->spc_cur_gps_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
-                break; // header
-            case 1:
-                tmp_data.append(line_items[0]);
-                break;
-            case 2:
-                tmp_data.append(line_items[0]);
-                break;
-            case 3:
-                tmp_data.append(line_items[0]);
-                break;
-            case 4:
-                tmp_data.append(line_items[0]);
-                break;
-            case 5:
-                tmp_data.append(line_items[0]);
-                break;
             }
+            else if (cur_entry >= 1 || cur_entry <=5){
+                // 1 ELEMENT
+                tmp_data.append(line_items[0]);
+            }
+
             if (cur_entry==gps_entries-1){
                 ui->spc_cur_gps_list->setCurrentRow(cur_item);
                 ui->spc_cur_gps_list->currentItem()->setData(256, cur_item_name);
@@ -979,46 +713,24 @@ void SPC_submenu::apply_data()
             cur_item = floor(acc_line_num/acc_entries);
             cur_entry = acc_line_num % acc_entries;
 
-            switch (cur_entry){
-            case 0:
+            if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
-                ui->spc_cur_accel_list->addItem(cur_item_name);
+                ui->spc_cur_css_list->addItem(cur_item_name);
                 tmp_data.append("blankline");
-                break; // header
-            case 1:
-                tmp_data.append(line_items[0]);
-                break;
-            case 2:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                tmp_data.append(line_items[2]);
-                break;
-            case 3:
-                tmp_data.append(line_items[0]);
-                break;
-            case 4:
-                tmp_data.append(line_items[0]);
-                break;
-            case 5:
-                tmp_data.append(line_items[0]);
-                break;
-            case 6:
-                tmp_data.append(line_items[0]);
-                break;
-            case 7:
-                tmp_data.append(line_items[0]);
-                tmp_data.append(line_items[1]);
-                break;
-            case 8:
-                tmp_data.append(line_items[0]);
-                break;
-            case 9:
-                tmp_data.append(line_items[0]);
-                break;
-            case 10:
-                tmp_data.append(line_items[0]);
-                break;
             }
+            else if (cur_entry == 1 || (cur_entry >= 3 && cur_entry <=6) || (cur_entry >= 8 && cur_entry <= 10)){
+                // 1 ELEMENT
+                tmp_data.append(line_items[0]);
+            }
+            else if (cur_entry == 7){
+                // 2 ELEMENTS
+                for (int i=0; i<2; i++) tmp_data.append(line_items[i]);
+            }
+            else if (cur_entry == 2){
+                // 3 ELEMENTS
+                for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
+            }
+
             if (cur_entry==acc_entries-1){
                 ui->spc_cur_accel_list->setCurrentRow(cur_item);
                 ui->spc_cur_accel_list->currentItem()->setData(256, cur_item_name);
