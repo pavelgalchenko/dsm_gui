@@ -2,6 +2,7 @@
 #include "ui_spc_submenu.h"
 #include "dsm_gui_lib.h"
 #include "spc_menu.h"
+#include <QDebug>
 
 SPC_submenu::SPC_submenu(QWidget *parent):
     QDialog(parent),
@@ -184,14 +185,10 @@ void SPC_submenu::apply_data()
 
     QStringList tmp_list = {};
 
-    long cur_item;
-    long cur_entry;
-
     QString cur_item_name;
 
     QStringList tmp_line_item;
     QStringList tmp_data = {};
-
 
     ui->spc_cur_name_sub->setText(spc_cur_name);
     for(int line_num=17; line_num<reset_ind_body; line_num++)
@@ -226,14 +223,10 @@ void SPC_submenu::apply_data()
         case 24: // Drag coefficient
             ui->spc_cur_drag->setText(line_items[0]);
             break;
-        case 25: // header
-            break;
-        case 26: // header
-            break;
-        case 27: // header
-            break;
         case 28: // number of bodies
             bodies = line_items[0].toInt();
+            break;
+        default: // headers (25, 26, 27)
             break;
         }
     }
@@ -243,15 +236,10 @@ void SPC_submenu::apply_data()
     ui->spc_cur_body_list->clear();
     tmp_data.clear();
 
+
     for (int line_num = reset_ind_body; line_num<reset_ind_joint; line_num++)
     {
-        line_string = spc_string[line_num-1];
-        line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-        long body_line_num = line_num - reset_ind_body;
-        cur_item = floor(body_line_num/body_entries);
-        cur_entry = body_line_num % body_entries;
-
+        auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_body, body_entries, 0);
         if (cur_entry == 0) {
             cur_item_name = spc_item_names[line_num - 1];
             ui->spc_cur_body_list->addItem(cur_item_name);
@@ -287,12 +275,7 @@ void SPC_submenu::apply_data()
     if (joints > 0){
         for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
         {
-            line_string = spc_string[line_num-1];
-            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-            long joint_line_num = line_num - reset_ind_joint - joint_headers;
-            cur_item = floor(joint_line_num/joint_entries);
-            cur_entry = joint_line_num % joint_entries;
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_joint, joint_entries, joint_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -347,12 +330,7 @@ void SPC_submenu::apply_data()
     if (wheels > 0){
         for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
         {
-            line_string = spc_string[line_num-1];
-            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-            long wheel_line_num = line_num - reset_ind_wheel - wheel_headers;
-            cur_item = floor(wheel_line_num/wheel_entries);
-            cur_entry = wheel_line_num % wheel_entries;
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_wheel, wheel_entries, wheel_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -391,12 +369,7 @@ void SPC_submenu::apply_data()
     if (mtbs > 0){
         for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
         {
-            line_string = spc_string[line_num-1];
-            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-            long mtb_line_num = line_num - reset_ind_mtb - mtb_headers;
-            cur_item = floor(mtb_line_num/mtb_entries);
-            cur_entry = mtb_line_num % mtb_entries;
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_mtb, mtb_entries, mtb_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -429,13 +402,8 @@ void SPC_submenu::apply_data()
     tmp_data.clear();
     if (thrusters > 0){
         for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
-        {
-            line_string = spc_string[line_num-1];
-            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-            long thr_line_num = line_num - reset_ind_thr - thr_headers;
-            cur_item = floor(thr_line_num/thr_entries);
-            cur_entry = thr_line_num % thr_entries;
+        {            
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_thr, thr_entries, thr_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -467,12 +435,7 @@ void SPC_submenu::apply_data()
     if (gyros > 0){
         for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
         {
-            line_string = spc_string[line_num-1];
-            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-            long gyro_line_num = line_num - reset_ind_gyro - gyro_headers;
-            cur_item = floor(gyro_line_num/gyro_entries);
-            cur_entry = gyro_line_num % gyro_entries;
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_gyro, gyro_entries, gyro_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -509,12 +472,7 @@ void SPC_submenu::apply_data()
     if (mags > 0){
         for (int line_num = reset_ind_mag + mag_headers; line_num<reset_ind_css; line_num++)
         {
-            line_string = spc_string[line_num-1];
-            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-            long mag_line_num = line_num - reset_ind_mag - mag_headers;
-            cur_item = floor(mag_line_num/mag_entries);
-            cur_entry = mag_line_num % mag_entries;
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_mag, mag_entries, mag_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -547,12 +505,7 @@ void SPC_submenu::apply_data()
     if (css_s > 0){
         for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
         {
-            line_string = spc_string[line_num-1];
-            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-            long css_line_num = line_num - reset_ind_css - css_headers;
-            cur_item = floor(css_line_num/css_entries);
-            cur_entry = css_line_num % css_entries;
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_css, css_entries, css_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -584,12 +537,7 @@ void SPC_submenu::apply_data()
     if (fss_s > 0){
         for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
         {
-            line_string = spc_string[line_num-1];
-            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-            long fss_line_num = line_num - reset_ind_fss - fss_headers;
-            cur_item = floor(fss_line_num/fss_entries);
-            cur_entry = fss_line_num % fss_entries;
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_fss, fss_entries, fss_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -625,13 +573,8 @@ void SPC_submenu::apply_data()
     tmp_data.clear();
     if (stracks > 0){
         for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
-        {
-            line_string = spc_string[line_num-1];
-            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-            long strack_line_num = line_num - reset_ind_strack - strack_headers;
-            cur_item = floor(strack_line_num/strack_entries);
-            cur_entry = strack_line_num % strack_entries;
+        {            
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_strack, strack_entries, strack_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -672,12 +615,7 @@ void SPC_submenu::apply_data()
     if (gps_s > 0){
         for (int line_num = reset_ind_gps + gps_headers; line_num<reset_ind_acc; line_num++)
         {
-            line_string = spc_string[line_num-1];
-            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-            long gps_line_num = line_num - reset_ind_gps - gps_headers;
-            cur_item = floor(gps_line_num/gps_entries);
-            cur_entry = gps_line_num % gps_entries;
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_gps, gps_entries, gps_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -706,12 +644,7 @@ void SPC_submenu::apply_data()
     if (accels > 0){
         for (int line_num = reset_ind_acc + accel_headers; line_num<reset_ind_end; line_num++)
         {
-            line_string = spc_string[line_num-1];
-            line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-            long acc_line_num = line_num - reset_ind_acc - accel_headers;
-            cur_item = floor(acc_line_num/acc_entries);
-            cur_entry = acc_line_num % acc_entries;
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_acc, acc_entries, accel_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -3691,7 +3624,7 @@ void SPC_submenu::proc_add(QListWidget *cur_list, QStringList tmp_data)
     if (cur_list->count() != 0) {
         for(int i = 0; i <= 50; i++) {
             QString newNameTest = new_name;
-            if (i>0) newNameTest += "_" + QString::number(i);
+            if (i>0) newNameTest += QString::number(i);
             if (!all_names.contains(newNameTest)) {
                 new_name = newNameTest;
                 break;

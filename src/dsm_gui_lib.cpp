@@ -107,3 +107,14 @@ QStringList dsm_gui_lib::apply_data_section_end(int cur_entry, long section_entr
     }
     return tmp_data;
 }
+
+std::tuple<long, long, QStringList> dsm_gui_lib::item_entry_lineitems(QStringList spc_string, QStringList spc_data, int line_num, long reset_ind, long entries, long headers){
+    QString line_string = spc_string[line_num-1];
+    QStringList line_items = spc_data[line_num-1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
+
+    long section_line_num = line_num - reset_ind - headers;
+    long cur_item = floor(section_line_num/entries);
+    long cur_entry = section_line_num % entries;
+
+    return {cur_item, cur_entry, line_items};
+}

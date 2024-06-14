@@ -26,10 +26,14 @@ public:
         if (box->isChecked()) output += " ";
         return output;
     }
+
     static void set_mult_validators(QLineEdit *ui_elem[], int array_length, double lower, double upper, int decimals);
     static void set_mult_name_validators(QLineEdit *ui_elem[], int array_length, QValidator *validator);
     static void set_mult_cbox_validators(QComboBox *ui_elem[], int array_length, const QStringList string_list);
     static QStringList apply_data_section_end(int cur_entry, long section_entries, long cur_item, QListWidget *ui_elem, QStringList tmp_data, QString cur_item_name);
+    static std::tuple<long, long, QStringList> item_entry_lineitems(QStringList spc_string, QStringList spc_data, int line_num, long reset_ind, long entries, long headers);
+
+
 
     inline static const QStringList eulerInputs = {"121", "123", "131", "132", "212", "213", "231", "232", "312", "313", "321", "323"};
     inline static const QStringList worldInputs = {"SOL","MERCURY","VENUS","EARTH","MARS","JUPITER","SATURN","URANUS",
