@@ -1210,8 +1210,8 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 2  && ui->actuator_sections->currentIndex()==0)
     {
-
         cur_item_row = ui->spc_cur_wheel_list->currentRow();
+        SPC_submenu::on_actuator_sections_tabBarClicked(0); // "Clicks" the first tab so wheel entries populate
 
         for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
         {
@@ -1402,7 +1402,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         }
     }
 
-    if (ui->sections->currentIndex() == 2&& ui->actuator_sections->currentIndex()==1 && mtbs > 0) {
+    if (ui->sections->currentIndex() == 2 && ui->actuator_sections->currentIndex()==1 && mtbs > 0) {
         ui->spc_cur_mtb_list->setCurrentRow(cur_item_row);
         on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->item(cur_item_row));
     }
