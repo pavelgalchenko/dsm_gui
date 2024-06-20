@@ -2433,7 +2433,7 @@ void SPC_submenu::on_spc_cur_body_remove_clicked()
 
     if (bodies > 0)
     {
-        QListWidgetItem cur_item = *ui->spc_cur_body_list->item(bodies-1);
+        QListWidgetItem cur_item = *ui->spc_cur_body_list->currentItem();
         on_spc_cur_body_list_itemClicked(&cur_item);
     }
 
@@ -2508,7 +2508,8 @@ void SPC_submenu::on_spc_cur_joint_remove_clicked()
     if (joints > 0) joints -= 1;
     if (joints > 0)
     {
-        QListWidgetItem cur_item = *ui->spc_cur_joint_list->item(joints-1);
+
+        QListWidgetItem cur_item = *ui->spc_cur_joint_list->currentItem();
         on_spc_cur_joint_list_itemClicked(&cur_item);
     }
 }
@@ -2625,7 +2626,7 @@ void SPC_submenu::on_spc_cur_wheel_remove_clicked()
     if (wheels > 0) wheels -= 1;
     if (wheels > 0)
     {
-        QListWidgetItem cur_item = *ui->spc_cur_wheel_list->item(wheels-1);
+        QListWidgetItem cur_item = *ui->spc_cur_wheel_list->currentItem();
         on_spc_cur_wheel_list_itemClicked(&cur_item);
     }
 }
@@ -2691,7 +2692,7 @@ void SPC_submenu::on_spc_cur_mtb_remove_clicked()
     if (mtbs > 0) mtbs -= 1;
     if (mtbs > 0)
     {
-        QListWidgetItem cur_item = *ui->spc_cur_mtb_list->item(mtbs-1);
+        QListWidgetItem cur_item = *ui->spc_cur_mtb_list->currentItem();
         on_spc_cur_mtb_list_itemClicked(&cur_item);
     }
 }
@@ -2743,6 +2744,11 @@ void SPC_submenu::on_spc_cur_thruster_remove_clicked()
 {
     delete ui->spc_cur_thruster_list->currentItem();
     if (thrusters > 0) thrusters -= 1;
+    if (thrusters > 0)
+    {
+        QListWidgetItem cur_item = *ui->spc_cur_thruster_list->currentItem();
+        on_spc_cur_thruster_list_itemClicked(&cur_item);
+    }
 }
 
 
@@ -2796,7 +2802,7 @@ void SPC_submenu::on_spc_cur_gyro_remove_clicked()
     if (gyros > 0) gyros -= 1;
     if (gyros > 0)
     {
-        QListWidgetItem cur_item = *ui->spc_cur_gyro_list->item(gyros-1);
+        QListWidgetItem cur_item = *ui->spc_cur_gyro_list->currentItem();
         on_spc_cur_gyro_list_itemClicked(&cur_item);
     }
 
@@ -2866,7 +2872,7 @@ void SPC_submenu::on_spc_cur_mag_remove_clicked()
     if (mags > 0) mags -= 1;
     if (mags > 0)
     {
-        QListWidgetItem cur_item = *ui->spc_cur_mag_list->item(mags-1);
+        QListWidgetItem cur_item = *ui->spc_cur_mag_list->currentItem();
         on_spc_cur_mag_list_itemClicked(&cur_item);
     }
 }
@@ -2927,7 +2933,7 @@ void SPC_submenu::on_spc_cur_css_remove_clicked()
     if (css_s > 0) css_s -= 1;
     if (css_s > 0)
     {
-        QListWidgetItem cur_item = *ui->spc_cur_css_list->item(css_s-1);
+        QListWidgetItem cur_item = *ui->spc_cur_css_list->currentItem();
         on_spc_cur_css_list_itemClicked(&cur_item);
     }
 }
@@ -2988,7 +2994,7 @@ void SPC_submenu::on_spc_cur_fss_remove_clicked()
     if (fss_s > 0) fss_s -= 1;
     if (fss_s > 0)
     {
-        QListWidgetItem cur_item = *ui->spc_cur_fss_list->item(fss_s-1);
+        QListWidgetItem cur_item = *ui->spc_cur_fss_list->currentItem();
         on_spc_cur_fss_list_itemClicked(&cur_item);
     }
 }
@@ -3051,7 +3057,7 @@ void SPC_submenu::on_spc_cur_strack_remove_clicked()
     if (stracks > 0) stracks -= 1;
     if (stracks > 0)
     {
-        QListWidgetItem cur_item = *ui->spc_cur_strack_list->item(stracks-1);
+        QListWidgetItem cur_item = *ui->spc_cur_strack_list->currentItem();
         on_spc_cur_strack_list_itemClicked(&cur_item);
     }
 }
@@ -3119,7 +3125,7 @@ void SPC_submenu::on_spc_cur_gps_remove_clicked()
     if (gps_s > 0) gps_s -= 1;
     if (gps_s > 0)
     {
-        QListWidgetItem cur_item = *ui->spc_cur_gps_list->item(gps_s-1);
+        QListWidgetItem cur_item = *ui->spc_cur_gps_list->currentItem();
         on_spc_cur_gps_list_itemClicked(&cur_item);
     }
 }
@@ -3176,7 +3182,7 @@ void SPC_submenu::on_spc_cur_accel_remove_clicked()
     if (accels > 0) accels -= 1;
     if (accels > 0)
     {
-        QListWidgetItem cur_item = *ui->spc_cur_accel_list->item(accels-1);
+        QListWidgetItem cur_item = *ui->spc_cur_accel_list->currentItem();
         on_spc_cur_accel_list_itemClicked(&cur_item);
     }
 }
@@ -3242,11 +3248,23 @@ void SPC_submenu::on_sections_tabBarClicked(int index)
     if (index == 1) {
         on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->item(0));
         ui->spc_cur_body_list->setCurrentRow(0);
+        if (ui->spc_cur_joint_list->count() > 0) {
+            on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->item(0));
+            ui->spc_cur_joint_list->setCurrentRow(0);
+        }
     }
-    else if (index == 2 && ui->spc_cur_joint_list->count() > 0) {on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->item(0));
-        ui->spc_cur_joint_list->setCurrentRow(0);
+    if (index == 2){
+        if (ui->spc_cur_wheel_list->count() > 0){
+            on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->item(0));
+            ui->spc_cur_wheel_list->setCurrentRow(0);
+        }
     }
-
+    if (index == 3){
+        if (ui->spc_cur_gyro_list->count() > 0) {
+            on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->item(0));
+            ui->spc_cur_gyro_list->setCurrentRow(0);
+        }
+    }
 }
 
 void SPC_submenu::on_actuator_sections_tabBarClicked(int index)
