@@ -2439,7 +2439,6 @@ void SPC_submenu::on_spc_cur_body_remove_clicked()
 
 }
 
-
 void SPC_submenu::on_spc_cur_body_add_clicked()
 {
     bodies += 1;
@@ -2451,7 +2450,6 @@ void SPC_submenu::on_spc_cur_body_add_clicked()
     on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_body_duplicate_clicked()
 {
     if (bodies == 0) return;
@@ -2461,43 +2459,22 @@ void SPC_submenu::on_spc_cur_body_duplicate_clicked()
     on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item)
 {
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
+    QLineEdit *textboxes[19] = {ui->spc_cur_body_pmoi_x, ui->spc_cur_body_pmoi_y, ui->spc_cur_body_pmoi_z,
+                                ui->spc_cur_body_poi_x, ui->spc_cur_body_poi_y, ui->spc_cur_body_poi_z,
+                                ui->spc_cur_body_com_x, ui->spc_cur_body_com_y, ui->spc_cur_body_com_z,
+                                ui->spc_cur_body_cem_x, ui->spc_cur_body_cem_y, ui->spc_cur_body_cem_z,
+                                ui->spc_cur_body_cemd_x, ui->spc_cur_body_cem_y, ui->spc_cur_body_cemd_z,
+                                ui->spc_cur_body_geom, ui->spc_cur_node_file, ui->spc_cur_flex_file};
+    int data_inds[19] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
+    dsm_gui_lib::mult_setText(textboxes, 19, current_data, data_inds);
+
     item->setText(item->data(256).toString());
-
     ui->spc_cur_body_name->setText(item->data(256).toString());
-
-    ui->spc_cur_body_mass->setText(current_data[1]);
-
-    ui->spc_cur_body_pmoi_x->setText(current_data[2]);
-    ui->spc_cur_body_pmoi_y->setText(current_data[3]);
-    ui->spc_cur_body_pmoi_z->setText(current_data[4]);
-
-    ui->spc_cur_body_poi_x->setText(current_data[5]);
-    ui->spc_cur_body_poi_y->setText(current_data[6]);
-    ui->spc_cur_body_poi_z->setText(current_data[7]);
-
-    ui->spc_cur_body_com_x->setText(current_data[8]);
-    ui->spc_cur_body_com_y->setText(current_data[9]);
-    ui->spc_cur_body_com_z->setText(current_data[10]);
-
-    ui->spc_cur_body_cem_x->setText(current_data[11]);
-    ui->spc_cur_body_cem_y->setText(current_data[12]);
-    ui->spc_cur_body_cem_z->setText(current_data[13]);
-
-    ui->spc_cur_body_cemd_x->setText(current_data[14]);
-    ui->spc_cur_body_cemd_y->setText(current_data[15]);
-    ui->spc_cur_body_cemd_z->setText(current_data[16]);
-
-    ui->spc_cur_body_geom->setText(current_data[17]);
-
-    ui->spc_cur_node_file->setText(current_data[18]);
-
-    ui->spc_cur_flex_file->setText(current_data[19]);
 }
 
 // Joint
@@ -2508,7 +2485,6 @@ void SPC_submenu::on_spc_cur_joint_remove_clicked()
     if (joints > 0) joints -= 1;
     if (joints > 0)
     {
-
         QListWidgetItem cur_item = *ui->spc_cur_joint_list->currentItem();
         on_spc_cur_joint_list_itemClicked(&cur_item);
     }
@@ -2529,7 +2505,6 @@ void SPC_submenu::on_spc_cur_joint_add_clicked()
     on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_joint_duplicate_clicked()
 {
     if (joints == 0) return;
@@ -2544,8 +2519,19 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item)
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
-    item->setText(item->data(256).toString());
+    QLineEdit *textboxes[25] = {ui->spc_cur_joint_ang0_1, ui->spc_cur_joint_ang0_2, ui->spc_cur_joint_ang0_3,
+                                ui->spc_cur_joint_angrate0_1, ui->spc_cur_joint_angrate0_2, ui->spc_cur_joint_angrate0_3,
+                                ui->spc_cur_joint_disp0_1, ui->spc_cur_joint_disp0_2, ui->spc_cur_joint_disp0_3,
+                                ui->spc_cur_joint_dispr0_1, ui->spc_cur_joint_dispr0_2, ui->spc_cur_joint_dispr0_3,
+                                ui->spc_cur_joint_bigi_1, ui->spc_cur_joint_bigi_2, ui->spc_cur_joint_bigi_3,
+                                ui->spc_cur_joint_bogo_1, ui->spc_cur_joint_bogo_2, ui->spc_cur_joint_bogo_3,
+                                ui->spc_cur_joint_poswrt_in_1, ui->spc_cur_joint_poswrt_in_2, ui->spc_cur_joint_poswrt_in_3,
+                                ui->spc_cur_joint_poswrt_out_1, ui->spc_cur_joint_poswrt_out_2, ui->spc_cur_joint_poswrt_out_3,
+                                ui->spc_cur_joint_param_file};
+    int data_inds[25] = {15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,31,32,33,35,36,37,38,39,40,41};
+    dsm_gui_lib::mult_setText(textboxes, 25, current_data, data_inds);
 
+    item->setText(item->data(256).toString());
     ui->spc_cur_joint_name->setText(item->data(256).toString());
 
     setQComboBox(ui->spc_cur_joint_type, current_data[1]);
@@ -2569,8 +2555,6 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item)
     if (!QString::compare(current_data[11], "TRUE")) ui->spc_cur_joint_rlock3->setCheckState(Qt::Checked);
     else ui->spc_cur_joint_rlock3->setCheckState(Qt::Unchecked);
 
-
-
     if (!QString::compare(current_data[12], "TRUE")) ui->spc_cur_joint_tlock1->setCheckState(Qt::Checked);
     else ui->spc_cur_joint_tlock1->setCheckState(Qt::Unchecked);
 
@@ -2580,42 +2564,8 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item)
     if (!QString::compare(current_data[14], "TRUE")) ui->spc_cur_joint_tlock3->setCheckState(Qt::Checked);
     else ui->spc_cur_joint_tlock3->setCheckState(Qt::Unchecked);
 
-    ui->spc_cur_joint_ang0_1->setText(current_data[15]);
-    ui->spc_cur_joint_ang0_2->setText(current_data[16]);
-    ui->spc_cur_joint_ang0_3->setText(current_data[17]);
-
-    ui->spc_cur_joint_angrate0_1->setText(current_data[18]);
-    ui->spc_cur_joint_angrate0_2->setText(current_data[19]);
-    ui->spc_cur_joint_angrate0_3->setText(current_data[20]);
-
-    ui->spc_cur_joint_disp0_1->setText(current_data[21]);
-    ui->spc_cur_joint_disp0_2->setText(current_data[22]);
-    ui->spc_cur_joint_disp0_3->setText(current_data[23]);
-
-    ui->spc_cur_joint_dispr0_1->setText(current_data[24]);
-    ui->spc_cur_joint_dispr0_2->setText(current_data[25]);
-    ui->spc_cur_joint_dispr0_3->setText(current_data[26]);
-
-    ui->spc_cur_joint_bigi_1->setText(current_data[27]);
-    ui->spc_cur_joint_bigi_2->setText(current_data[28]);
-    ui->spc_cur_joint_bigi_3->setText(current_data[29]);
     setQComboBox(ui->spc_cur_joint_bigi_seq, current_data[30]);
-
-    ui->spc_cur_joint_bogo_1->setText(current_data[31]);
-    ui->spc_cur_joint_bogo_2->setText(current_data[32]);
-    ui->spc_cur_joint_bogo_3->setText(current_data[33]);
     setQComboBox(ui->spc_cur_joint_bogo_seq, current_data[34]);
-
-    ui->spc_cur_joint_poswrt_in_1->setText(current_data[35]);
-    ui->spc_cur_joint_poswrt_in_2->setText(current_data[36]);
-    ui->spc_cur_joint_poswrt_in_3->setText(current_data[37]);
-
-    ui->spc_cur_joint_poswrt_out_1->setText(current_data[38]);
-    ui->spc_cur_joint_poswrt_out_2->setText(current_data[39]);
-    ui->spc_cur_joint_poswrt_out_3->setText(current_data[40]);
-
-    ui->spc_cur_joint_param_file->setText(current_data[41]);
-
 }
 
 // Wheels -/+/Duplicate/Item Clicked
@@ -2656,25 +2606,19 @@ void SPC_submenu::on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item)
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
+    QLineEdit *textboxes[8] = {ui->spc_cur_wheel_initmom,
+                                ui->spc_cur_wheel_axis_1, ui->spc_cur_wheel_axis_2, ui->spc_cur_wheel_axis_3,
+                                ui->spc_cur_wheel_maxtrq, ui->spc_cur_wheel_maxmom, ui->spc_cur_wheel_inertia,
+                                ui->spc_cur_wheel_drjit_file};
+    int data_inds[8] = {1,2,3,4,5,6,7,10};
+    dsm_gui_lib::mult_setText(textboxes, 8, current_data, data_inds);
+
     item->setText(item->data(256).toString());
 
     ui->spc_cur_wheel_name->setText(item->data(256).toString());
 
-    ui->spc_cur_wheel_initmom->setText(current_data[1]);
-
-    ui->spc_cur_wheel_axis_1->setText(current_data[2]);
-    ui->spc_cur_wheel_axis_2->setText(current_data[3]);
-    ui->spc_cur_wheel_axis_3->setText(current_data[4]);
-
-    ui->spc_cur_wheel_maxtrq->setText(current_data[5]);
-    ui->spc_cur_wheel_maxmom->setText(current_data[6]);
-
-    ui->spc_cur_wheel_inertia->setText(current_data[7]);
-
     ui->spc_cur_wheel_body->setValue(current_data[8].toInt());
     ui->spc_cur_wheel_node->setValue(current_data[9].toInt());
-
-    ui->spc_cur_wheel_drjit_file->setText(current_data[10]);
 
     if (!QString::compare(wheel_drag, "FALSE")) ui->spc_cur_wheel_glob_drag_off->setChecked(Qt::Checked);
     else ui->spc_cur_wheel_glob_drag_on->setChecked(Qt::Checked);
@@ -2684,7 +2628,6 @@ void SPC_submenu::on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item)
 }
 
 // MTB buttons
-
 
 void SPC_submenu::on_spc_cur_mtb_remove_clicked()
 {
@@ -2696,7 +2639,6 @@ void SPC_submenu::on_spc_cur_mtb_remove_clicked()
         on_spc_cur_mtb_list_itemClicked(&cur_item);
     }
 }
-
 
 void SPC_submenu::on_spc_cur_mtb_add_clicked()
 {
@@ -2718,27 +2660,24 @@ void SPC_submenu::on_spc_cur_mtb_duplicate_clicked()
     on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item)
 {
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
+    QLineEdit *textboxes[4] = {ui->spc_cur_mtb_sat,
+                               ui->spc_cur_mtb_axis_1, ui->spc_cur_mtb_axis_2, ui->spc_cur_mtb_axis_3};
+    int data_inds[4] = {1,2,3,4};
+    dsm_gui_lib::mult_setText(textboxes, 4, current_data, data_inds);
+
     item->setText(item->data(256).toString());
 
     ui->spc_cur_mtb_name->setText(item->data(256).toString());
-
-    ui->spc_cur_mtb_sat->setText(current_data[1]);
-
-    ui->spc_cur_mtb_axis_1->setText(current_data[2]);
-    ui->spc_cur_mtb_axis_2->setText(current_data[3]);
-    ui->spc_cur_mtb_axis_3->setText(current_data[4]);
 
     ui->spc_cur_mtb_node->setValue(current_data[5].toInt());
 }
 
 // Thruster buttons
-
 
 void SPC_submenu::on_spc_cur_thruster_remove_clicked()
 {
@@ -2751,7 +2690,6 @@ void SPC_submenu::on_spc_cur_thruster_remove_clicked()
     }
 }
 
-
 void SPC_submenu::on_spc_cur_thruster_add_clicked()
 {
     thrusters += 1;
@@ -2762,7 +2700,6 @@ void SPC_submenu::on_spc_cur_thruster_add_clicked()
     on_spc_cur_thruster_list_itemClicked(ui->spc_cur_thruster_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_thruster_duplicate_clicked()
 {
     if (thrusters == 0) return;
@@ -2772,23 +2709,21 @@ void SPC_submenu::on_spc_cur_thruster_duplicate_clicked()
     on_spc_cur_thruster_list_itemClicked(ui->spc_cur_thruster_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item)
 {
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
-    item->setText(item->data(256).toString());
+    QLineEdit *textboxes[4] = {ui->spc_cur_thruster_force,
+                               ui->spc_cur_thruster_axis_1, ui->spc_cur_thruster_axis_2, ui->spc_cur_thruster_axis_3};
+    int data_inds[4] = {2,3,4,5};
+    dsm_gui_lib::mult_setText(textboxes, 4, current_data, data_inds);
 
+
+    item->setText(item->data(256).toString());
     ui->spc_cur_thruster_name->setText(item->data(256).toString());
 
     setQComboBox(ui->spc_cur_thruster_mode, current_data[1]);
-
-    ui->spc_cur_thruster_force->setText(current_data[2]);
-
-    ui->spc_cur_thruster_axis_1->setText(current_data[3]);
-    ui->spc_cur_thruster_axis_2->setText(current_data[4]);
-    ui->spc_cur_thruster_axis_3->setText(current_data[5]);
 
     ui->spc_cur_thruster_body->setValue(current_data[6].toInt());
     ui->spc_cur_thruster_node->setValue(current_data[7].toInt());
@@ -2807,7 +2742,6 @@ void SPC_submenu::on_spc_cur_gyro_remove_clicked()
     }
 
 }
-
 
 void SPC_submenu::on_spc_cur_gyro_add_clicked()
 {
@@ -2830,36 +2764,20 @@ void SPC_submenu::on_spc_cur_gyro_duplicate_clicked()
     on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item)
 {
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
+    QLineEdit *textboxes[12] = {ui->spc_cur_gyro_samptime,
+                               ui->spc_cur_gyro_axis_1, ui->spc_cur_gyro_axis_2, ui->spc_cur_gyro_axis_3,
+                               ui->spc_cur_gyro_maxrate, ui->spc_cur_gyro_scaleferror, ui->spc_cur_gyro_quant, ui->spc_cur_gyro_angrwalk,
+                               ui->spc_cur_gyro_bias_stab, ui->spc_cur_gyro_bias_tspan, ui->spc_cur_gyro_angnoise, ui->spc_cur_gyro_initbias};
+    int data_inds[12] = {1,2,3,4,5,6,7,8,9,10,11,12};
+    dsm_gui_lib::mult_setText(textboxes, 12, current_data, data_inds);
+
     item->setText(item->data(256).toString());
-
     ui->spc_cur_gyro_name->setText(item->data(256).toString());
-
-    ui->spc_cur_gyro_samptime->setText(current_data[1]);
-
-    ui->spc_cur_gyro_axis_1->setText(current_data[2]);
-    ui->spc_cur_gyro_axis_2->setText(current_data[3]);
-    ui->spc_cur_gyro_axis_3->setText(current_data[4]);
-
-    ui->spc_cur_gyro_maxrate->setText(current_data[5]);
-
-    ui->spc_cur_gyro_scaleferror->setText(current_data[6]);
-
-    ui->spc_cur_gyro_quant->setText(current_data[7]);
-
-    ui->spc_cur_gyro_angrwalk->setText(current_data[8]);
-
-    ui->spc_cur_gyro_bias_stab->setText(current_data[9]);
-    ui->spc_cur_gyro_bias_tspan->setText(current_data[10]);
-
-    ui->spc_cur_gyro_angnoise->setText(current_data[11]);
-
-    ui->spc_cur_gyro_initbias->setText(current_data[12]);
 
     ui->spc_cur_gyro_node->setValue(current_data[13].toInt());
 }
@@ -2877,7 +2795,6 @@ void SPC_submenu::on_spc_cur_mag_remove_clicked()
     }
 }
 
-
 void SPC_submenu::on_spc_cur_mag_add_clicked()
 {
     mags += 1;
@@ -2887,7 +2804,6 @@ void SPC_submenu::on_spc_cur_mag_add_clicked()
    proc_add(ui->spc_cur_mag_list, tmp_data);
     on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->currentItem());
 }
-
 
 void SPC_submenu::on_spc_cur_mag_duplicate_clicked()
 {
@@ -2904,23 +2820,14 @@ void SPC_submenu::on_spc_cur_mag_list_itemClicked(QListWidgetItem *item)
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
+    QLineEdit *textboxes[8] = {ui->spc_cur_mag_samptime,
+                                ui->spc_cur_mag_axis_1, ui->spc_cur_mag_axis_2, ui->spc_cur_mag_axis_3,
+                                ui->spc_cur_mag_sat, ui->spc_cur_mag_scaleferror, ui->spc_cur_mag_quant, ui->spc_cur_mag_noise};
+    int data_inds[8] = {1,2,3,4,5,6,7,8};
+    dsm_gui_lib::mult_setText(textboxes, 8, current_data, data_inds);
+
     item->setText(item->data(256).toString());
-
     ui->spc_cur_mag_name->setText(item->data(256).toString());
-
-    ui->spc_cur_mag_samptime->setText(current_data[1]);
-
-    ui->spc_cur_mag_axis_1->setText(current_data[2]);
-    ui->spc_cur_mag_axis_2->setText(current_data[3]);
-    ui->spc_cur_mag_axis_3->setText(current_data[4]);
-
-    ui->spc_cur_mag_sat->setText(current_data[5]);
-
-    ui->spc_cur_mag_scaleferror->setText(current_data[6]);
-
-    ui->spc_cur_mag_quant->setText(current_data[7]);
-
-    ui->spc_cur_mag_noise->setText(current_data[8]);
 
     ui->spc_cur_mag_node->setValue(current_data[9].toInt());
 }
@@ -2938,7 +2845,6 @@ void SPC_submenu::on_spc_cur_css_remove_clicked()
     }
 }
 
-
 void SPC_submenu::on_spc_cur_css_add_clicked()
 {
     css_s += 1;
@@ -2949,7 +2855,6 @@ void SPC_submenu::on_spc_cur_css_add_clicked()
     on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_css_duplicate_clicked()
 {
     if (css_s == 0) return;
@@ -2959,30 +2864,21 @@ void SPC_submenu::on_spc_cur_css_duplicate_clicked()
     on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_css_list_itemClicked(QListWidgetItem *item)
 {
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
-    item->setText(item->data(256).toString());
+    QLineEdit *textboxes[7] = {ui->spc_cur_css_samptime,
+                               ui->spc_cur_css_axis_1, ui->spc_cur_css_axis_2, ui->spc_cur_css_axis_3,
+                               ui->spc_cur_css_halfcone, ui->spc_cur_css_scale, ui->spc_cur_css_quant};
+    int data_inds[7] = {1,2,3,4,5,6,7};
+    dsm_gui_lib::mult_setText(textboxes, 7, current_data, data_inds);
 
+    item->setText(item->data(256).toString());
     ui->spc_cur_css_name->setText(item->data(256).toString());
 
-    ui->spc_cur_css_samptime->setText(current_data[1]);
-
-    ui->spc_cur_css_axis_1->setText(current_data[2]);
-    ui->spc_cur_css_axis_2->setText(current_data[3]);
-    ui->spc_cur_css_axis_3->setText(current_data[4]);
-
-    ui->spc_cur_css_halfcone->setText(current_data[5]);
-
-    ui->spc_cur_css_scale->setText(current_data[6]);
-
-    ui->spc_cur_css_quant->setText(current_data[7]);
-
     ui->spc_cur_css_body->setValue(current_data[8].toInt());
-
     ui->spc_cur_css_node->setValue(current_data[9].toInt());
 }
 
@@ -2999,7 +2895,6 @@ void SPC_submenu::on_spc_cur_fss_remove_clicked()
     }
 }
 
-
 void SPC_submenu::on_spc_cur_fss_add_clicked()
 {
     fss_s += 1;
@@ -3010,7 +2905,6 @@ void SPC_submenu::on_spc_cur_fss_add_clicked()
     on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_fss_duplicate_clicked()
 {
     if (fss_s == 0) return;
@@ -3020,31 +2914,22 @@ void SPC_submenu::on_spc_cur_fss_duplicate_clicked()
     on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_fss_list_itemClicked(QListWidgetItem *item)
 {
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
-    item->setText(item->data(256).toString());
+    QLineEdit *textboxes[8] = {ui->spc_cur_fss_samptime,
+                               ui->spc_cur_fss_mount_1, ui->spc_cur_fss_mount_2, ui->spc_cur_fss_mount_3,
+                               ui->spc_cur_fss_hfov, ui->spc_cur_fss_vfov, ui->spc_cur_fss_noiseang, ui->spc_cur_fss_quant};
+    int data_inds[8] = {1,2,3,4,7,8,9,10};
+    dsm_gui_lib::mult_setText(textboxes, 8, current_data, data_inds);
 
+    item->setText(item->data(256).toString());
     ui->spc_cur_fss_name->setText(item->data(256).toString());
 
-    ui->spc_cur_fss_samptime->setText(current_data[1]);
-
-    ui->spc_cur_fss_mount_1->setText(current_data[2]);
-    ui->spc_cur_fss_mount_2->setText(current_data[3]);
-    ui->spc_cur_fss_mount_3->setText(current_data[4]);
     setQComboBox(ui->spc_cur_fss_mountseq, current_data[5]);
-
     setQComboBox(ui->spc_cur_fss_boreaxis, current_data[6]);
-
-    ui->spc_cur_fss_hfov->setText(current_data[7]);
-    ui->spc_cur_fss_vfov->setText(current_data[8]);
-
-    ui->spc_cur_fss_noiseang->setText(current_data[9]);
-
-    ui->spc_cur_fss_quant->setText(current_data[10]);
 
     ui->spc_cur_css_node->setValue(current_data[11].toInt());
 }
@@ -3062,7 +2947,6 @@ void SPC_submenu::on_spc_cur_strack_remove_clicked()
     }
 }
 
-
 void SPC_submenu::on_spc_cur_strack_add_clicked()
 {
     stracks += 1;
@@ -3073,7 +2957,6 @@ void SPC_submenu::on_spc_cur_strack_add_clicked()
     on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_strack_duplicate_clicked()
 {
     if (stracks == 0) return;
@@ -3083,41 +2966,30 @@ void SPC_submenu::on_spc_cur_strack_duplicate_clicked()
     on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_strack_list_itemClicked(QListWidgetItem *item)
 {
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
-    item->setText(item->data(256).toString());
+    QLineEdit *textboxes[12] = {ui->spc_cur_strack_samptime,
+                                ui->spc_cur_strack_mount_1, ui->spc_cur_strack_mount_2, ui->spc_cur_strack_mount_3,
+                                ui->spc_cur_strack_hfov, ui->spc_cur_strack_vfov,
+                                ui->spc_cur_strack_sun, ui->spc_cur_strack_earth, ui->spc_cur_strack_moon,
+                                ui->spc_cur_strack_noiseang_1, ui->spc_cur_strack_noiseang_2, ui->spc_cur_strack_noiseang_3};
+    int data_inds[12] = {1,2,3,4,7,8,9,10,11,12,13,14};
+    dsm_gui_lib::mult_setText(textboxes, 12, current_data, data_inds);
 
+    item->setText(item->data(256).toString());
     ui->spc_cur_strack_name->setText(item->data(256).toString());
 
-    ui->spc_cur_strack_samptime->setText(current_data[1]);
-
-    ui->spc_cur_strack_mount_1->setText(current_data[2]);
-    ui->spc_cur_strack_mount_2->setText(current_data[3]);
-    ui->spc_cur_strack_mount_3->setText(current_data[4]);
     setQComboBox(ui->spc_cur_strack_mountseq, current_data[5]);
-
     setQComboBox(ui->spc_cur_strack_boreaxis, current_data[6]);
 
-    ui->spc_cur_strack_hfov->setText(current_data[7]);
-    ui->spc_cur_strack_vfov->setText(current_data[8]);
-
-    ui->spc_cur_strack_sun->setText(current_data[9]);
-    ui->spc_cur_strack_earth->setText(current_data[10]);
-    ui->spc_cur_strack_moon->setText(current_data[11]);
-
-    ui->spc_cur_strack_noiseang_1->setText(current_data[12]);
-    ui->spc_cur_strack_noiseang_2->setText(current_data[13]);
-    ui->spc_cur_strack_noiseang_3->setText(current_data[14]);
-
     ui->spc_cur_strack_node->setValue(current_data[15].toInt());
+
 }
 
 // GPS Buttons
-
 
 void SPC_submenu::on_spc_cur_gps_remove_clicked()
 {
@@ -3130,7 +3002,6 @@ void SPC_submenu::on_spc_cur_gps_remove_clicked()
     }
 }
 
-
 void SPC_submenu::on_spc_cur_gps_add_clicked()
 {
     gps_s += 1;
@@ -3141,7 +3012,6 @@ void SPC_submenu::on_spc_cur_gps_add_clicked()
     on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_gps_duplicate_clicked()
 {
     if (gps_s == 0) return;
@@ -3151,30 +3021,22 @@ void SPC_submenu::on_spc_cur_gps_duplicate_clicked()
     on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_gps_list_itemClicked(QListWidgetItem *item)
 {
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
+    QLineEdit *textboxes[4] = {ui->spc_cur_gps_samptime, ui->spc_cur_gps_posnoise, ui->spc_cur_gps_velnoise, ui->spc_cur_gps_timenoise};
+    int data_inds[4] = {1,2,3,4};
+    dsm_gui_lib::mult_setText(textboxes, 4, current_data, data_inds);
+
     item->setText(item->data(256).toString());
-
-     ui->spc_cur_gps_name->setText(item->data(256).toString());
-
-    ui->spc_cur_gps_samptime->setText(current_data[1]);
-
-    ui->spc_cur_gps_posnoise->setText(current_data[2]);
-
-    ui->spc_cur_gps_velnoise->setText(current_data[3]);
-
-    ui->spc_cur_gps_timenoise->setText(current_data[4]);
+    ui->spc_cur_gps_name->setText(item->data(256).toString());
 
     ui->spc_cur_gps_node->setValue(current_data[5].toInt());
 }
 
 // Accelerometer Buttons
-
-
 
 void SPC_submenu::on_spc_cur_accel_remove_clicked()
 {
@@ -3187,7 +3049,6 @@ void SPC_submenu::on_spc_cur_accel_remove_clicked()
     }
 }
 
-
 void SPC_submenu::on_spc_cur_accel_add_clicked()
 {
     accels += 1;
@@ -3198,7 +3059,6 @@ void SPC_submenu::on_spc_cur_accel_add_clicked()
     on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_accel_duplicate_clicked()
 {
     if (accels == 0) return;
@@ -3208,36 +3068,21 @@ void SPC_submenu::on_spc_cur_accel_duplicate_clicked()
     on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->currentItem());
 }
 
-
 void SPC_submenu::on_spc_cur_accel_list_itemClicked(QListWidgetItem *item)
 {
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
+    QLineEdit *textboxes[12] = {ui->spc_cur_acc_samptime,
+                               ui->spc_cur_acc_axis_1, ui->spc_cur_acc_axis_2, ui->spc_cur_acc_axis_3,
+                               ui->spc_cur_acc_maxacc, ui->spc_cur_acc_scaleerror, ui->spc_cur_acc_quant,
+                               ui->spc_cur_acc_dvrandwalk, ui->spc_cur_acc_bias_stab, ui->spc_cur_acc_bias_tspan,
+                               ui->spc_cur_acc_dvnoise, ui->spc_cur_acc_initbias};
+    int data_inds[12] = {1,2,3,4,5,6,7,8,9,10,11,12};
+    dsm_gui_lib::mult_setText(textboxes, 12, current_data, data_inds);
+
     item->setText(item->data(256).toString());
-
     ui->spc_cur_acc_name->setText(item->data(256).toString());
-
-    ui->spc_cur_acc_samptime->setText(current_data[1]);
-
-    ui->spc_cur_acc_axis_1->setText(current_data[2]);
-    ui->spc_cur_acc_axis_2->setText(current_data[3]);
-    ui->spc_cur_acc_axis_3->setText(current_data[4]);
-
-    ui->spc_cur_acc_maxacc->setText(current_data[5]);
-
-    ui->spc_cur_acc_scaleerror->setText(current_data[6]);
-
-    ui->spc_cur_acc_quant->setText(current_data[7]);
-
-    ui->spc_cur_acc_dvrandwalk->setText(current_data[8]);
-
-    ui->spc_cur_acc_bias_stab->setText(current_data[9]);
-    ui->spc_cur_acc_bias_tspan->setText(current_data[10]);
-
-    ui->spc_cur_acc_dvnoise->setText(current_data[11]);
-
-    ui->spc_cur_acc_initbias->setText(current_data[12]);
 
     ui->spc_cur_gps_node->setValue(current_data[13].toInt());
 }
@@ -3328,7 +3173,6 @@ void SPC_submenu::on_spc_cur_shaker_select_clicked()
     ui->spc_cur_shaker_file->setText(rel_file_path);
 }
 
-
 void SPC_submenu::on_spc_cur_node_select_clicked()
 {
     QString file_name = QFileDialog::getOpenFileName(this, tr("Choose Folder"), inout_path, QString(), nullptr,  QFileDialog::DontUseNativeDialog);
@@ -3355,7 +3199,6 @@ void SPC_submenu::on_spc_cur_flex_select_clicked()
     ui->spc_cur_flex_file->setText(rel_file_path);
 }
 
-
 void SPC_submenu::on_spc_cur_joint_param_select_clicked()
 {
     QString file_name = QFileDialog::getOpenFileName(this, tr("Choose Folder"), inout_path, QString(), nullptr,  QFileDialog::DontUseNativeDialog);
@@ -3368,7 +3211,6 @@ void SPC_submenu::on_spc_cur_joint_param_select_clicked()
 
     ui->spc_cur_joint_param_file->setText(rel_file_path);
 }
-
 
 void SPC_submenu::on_spc_cur_wheel_drjit_select_clicked()
 {
@@ -3383,30 +3225,25 @@ void SPC_submenu::on_spc_cur_wheel_drjit_select_clicked()
     ui->spc_cur_wheel_drjit_file->setText(rel_file_path);
 }
 
-
 void SPC_submenu::on_spc_cur_shaker_clear_clicked()
 {
     ui->spc_cur_shaker_file->setText("NONE");
 }
-
 
 void SPC_submenu::on_spc_cur_node_clear_clicked()
 {
     ui->spc_cur_node_file->setText("NONE");
 }
 
-
 void SPC_submenu::on_spc_cur_flex_clear_clicked()
 {
     ui->spc_cur_flex_file->setText("NONE");
 }
 
-
 void SPC_submenu::on_spc_cur_joint_param_clear_clicked()
 {
     ui->spc_cur_joint_param_file->setText("NONE");
 }
-
 
 void SPC_submenu::on_spc_cur_wheel_drjit_clear_clicked()
 {
@@ -3448,7 +3285,6 @@ void SPC_submenu::proc_add(QListWidget *cur_list, QStringList tmp_data)
     {
         all_names.append(cur_list->item(i)->text());
     }
-
 
     QString new_name = "New";
     if (cur_list->count() != 0) {

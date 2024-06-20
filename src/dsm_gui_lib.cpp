@@ -115,3 +115,9 @@ std::tuple<long, int, QStringList> dsm_gui_lib::item_entry_lineitems(QStringList
 
     return {cur_item, cur_entry, line_items};
 }
+
+void dsm_gui_lib::mult_setText(QLineEdit *ui_elem[], int array_length, QStringList current_data, int data_inds[]){
+    for (int i=0; i<array_length; i++){
+        ui_elem[i]->setText(current_data[data_inds[i]]);
+    }
+}

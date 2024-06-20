@@ -118,7 +118,6 @@ private slots:
     void on_spc_cur_wheel_drjit_clear_clicked();
 
     void on_actuator_sections_tabBarClicked(int index);
-
     void on_sensor_sections_tabBarClicked(int index);
 
     void proc_duplicates(QListWidget *cur_list);
