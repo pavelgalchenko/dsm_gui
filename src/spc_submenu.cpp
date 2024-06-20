@@ -190,6 +190,8 @@ void SPC_submenu::apply_data()
     QStringList tmp_line_item;
     QStringList tmp_data = {};
 
+    std::tuple<QString, QStringList> start_strings;
+
     ui->spc_cur_name_sub->setText(spc_cur_name);
     for(int line_num=17; line_num<reset_ind_body; line_num++)
     {
@@ -239,13 +241,14 @@ void SPC_submenu::apply_data()
 
     for (int line_num = reset_ind_body; line_num<reset_ind_joint; line_num++)
     {
-        auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_body, body_entries, 0);
+        auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_body, body_entries, 0);
         if (cur_entry == 0) {
             cur_item_name = spc_item_names[line_num - 1];
             ui->spc_cur_body_list->addItem(cur_item_name);
             tmp_data.append("blankline");
         }
-        else if (cur_entry == 1 || (cur_entry >= 7 && cur_entry <= 9)){
+
+        if (cur_entry == 1 || (cur_entry >= 7 && cur_entry <= 9)){
             // 1 ELEMENT
             // Mass -> 1, Geometry File -> 7, Node -> 8, Flex -> 9
             tmp_data.append(line_items[0]);
@@ -263,7 +266,6 @@ void SPC_submenu::apply_data()
     }
 
     /***************** JOINTS **************************/
-
     joints = bodies - 1;
 
     ui->spc_cur_joint_list->clear();
@@ -275,7 +277,7 @@ void SPC_submenu::apply_data()
     if (joints > 0){
         for (int line_num = reset_ind_joint + joint_headers; line_num<reset_ind_wheel; line_num++)
         {
-            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_joint, joint_entries, joint_headers);
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_joint, joint_entries, joint_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -330,7 +332,7 @@ void SPC_submenu::apply_data()
     if (wheels > 0){
         for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
         {
-            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_wheel, wheel_entries, wheel_headers);
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_wheel, wheel_entries, wheel_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -369,7 +371,7 @@ void SPC_submenu::apply_data()
     if (mtbs > 0){
         for (int line_num = reset_ind_mtb + mtb_headers; line_num<reset_ind_thr; line_num++)
         {
-            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_mtb, mtb_entries, mtb_headers);
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_mtb, mtb_entries, mtb_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -403,7 +405,7 @@ void SPC_submenu::apply_data()
     if (thrusters > 0){
         for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
         {            
-            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_thr, thr_entries, thr_headers);
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_thr, thr_entries, thr_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -435,7 +437,7 @@ void SPC_submenu::apply_data()
     if (gyros > 0){
         for (int line_num = reset_ind_gyro + gyro_headers; line_num<reset_ind_mag; line_num++)
         {
-            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_gyro, gyro_entries, gyro_headers);
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_gyro, gyro_entries, gyro_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -472,7 +474,7 @@ void SPC_submenu::apply_data()
     if (mags > 0){
         for (int line_num = reset_ind_mag + mag_headers; line_num<reset_ind_css; line_num++)
         {
-            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_mag, mag_entries, mag_headers);
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_mag, mag_entries, mag_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -505,7 +507,7 @@ void SPC_submenu::apply_data()
     if (css_s > 0){
         for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
         {
-            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_css, css_entries, css_headers);
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_css, css_entries, css_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -537,7 +539,7 @@ void SPC_submenu::apply_data()
     if (fss_s > 0){
         for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
         {
-            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_fss, fss_entries, fss_headers);
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_fss, fss_entries, fss_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -574,7 +576,7 @@ void SPC_submenu::apply_data()
     if (stracks > 0){
         for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
         {            
-            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_strack, strack_entries, strack_headers);
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_strack, strack_entries, strack_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -615,7 +617,7 @@ void SPC_submenu::apply_data()
     if (gps_s > 0){
         for (int line_num = reset_ind_gps + gps_headers; line_num<reset_ind_acc; line_num++)
         {
-            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_gps, gps_entries, gps_headers);
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_gps, gps_entries, gps_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -644,7 +646,7 @@ void SPC_submenu::apply_data()
     if (accels > 0){
         for (int line_num = reset_ind_acc + accel_headers; line_num<reset_ind_end; line_num++)
         {
-            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_string, spc_data, line_num, reset_ind_acc, acc_entries, accel_headers);
+            auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_acc, acc_entries, accel_headers);
 
             if (cur_entry == 0){
                 cur_item_name = spc_item_names[line_num - 1];
@@ -788,11 +790,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
         case 24: // Drag coefficient
             data_inp = ui->spc_cur_drag->text();
             break;
-        case 25: // header
-            break;
-        case 26: // header
-            break;
-        case 27: // header
+        case 25: case 26: case 27: // header
             break;
         case 28: // number of bodies
             data_inp = QString::number(bodies);
@@ -1211,7 +1209,6 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     if (ui->sections->currentIndex() == 2  && ui->actuator_sections->currentIndex()==0)
     {
         cur_item_row = ui->spc_cur_wheel_list->currentRow();
-        SPC_submenu::on_actuator_sections_tabBarClicked(0); // "Clicks" the first tab so wheel entries populate
 
         for (int line_num = reset_ind_wheel + wheel_headers; line_num<reset_ind_mtb; line_num++)
         {
@@ -1805,7 +1802,6 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==2)
     {
-
         cur_item_row = ui->spc_cur_css_list->currentRow();
 
         for (int line_num = reset_ind_css + css_headers; line_num<reset_ind_fss; line_num++)
@@ -1927,9 +1923,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==3)
     {
-
         cur_item_row = ui->spc_cur_fss_list->currentRow();
-
 
         for (int line_num = reset_ind_fss + fss_headers; line_num<reset_ind_strack; line_num++)
         {
@@ -2053,9 +2047,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==4)
     {
-
         cur_item_row = ui->spc_cur_strack_list->currentRow();
-
 
         for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
         {
@@ -2181,9 +2173,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==5)
     {
-
         cur_item_row = ui->spc_cur_gps_list->currentRow();
-
 
         for (int line_num = reset_ind_gps + gps_headers; line_num<reset_ind_acc; line_num++)
         {
@@ -2296,9 +2286,7 @@ void SPC_submenu::on_spc_cur_apply_clicked()
 
     if (ui->sections->currentIndex() == 3  && ui->sensor_sections->currentIndex()==6)
     {
-
         cur_item_row = ui->spc_cur_accel_list->currentRow();
-
 
         for (int line_num = reset_ind_acc + accel_headers; line_num<reset_ind_end; line_num++)
         {
@@ -2456,28 +2444,8 @@ void SPC_submenu::on_spc_cur_body_add_clicked()
 {
     bodies += 1;
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("blankline");
-    tmp_data.append("100.0");
-    tmp_data.append("100.0");
-    tmp_data.append("200.0");
-    tmp_data.append("300.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("IonCruiser.obj");
-    tmp_data.append("NONE");
-    tmp_data.append("NONE");
+    QStringList tmp_data = {"blankline", "100.0", "100.0", "200.0", "300.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0",
+                            "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "IonCruiser.obj", "NONE", "NONE"};
 
     proc_add(ui->spc_cur_body_list, tmp_data);
     on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
@@ -2496,7 +2464,6 @@ void SPC_submenu::on_spc_cur_body_duplicate_clicked()
 
 void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item)
 {
-
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
@@ -2551,50 +2518,11 @@ void SPC_submenu::on_spc_cur_joint_add_clicked()
 {
     joints += 1;
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("blankline");
-    tmp_data.append("PASSIVE");
-    tmp_data.append("0");
-    tmp_data.append("1");
-    tmp_data.append("1");
-    tmp_data.append("213");
-    tmp_data.append("GIMBAL");
-    tmp_data.append("0");
-    tmp_data.append("123");
-    tmp_data.append("FALSE");
-    tmp_data.append("FALSE");
-    tmp_data.append("FALSE");
-    tmp_data.append("FALSE");
-    tmp_data.append("FALSE");
-    tmp_data.append("FALSE");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("312");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("312");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("NONE");
+    QStringList tmp_data = {"blankline","PASSIVE","0","1","1","213","GIMBAL","0","123",
+                            "FALSE","FALSE","FALSE","FALSE","FALSE","FALSE",
+                            "0.0","0.0","0.0","0.0","0.0","0.0","0.0","0.0","0.0","0.0","0.0","0.0","0.0","0.0","0.0",
+                            "312","0.0","0.0","0.0","312","0.0","0.0","0.0","0.0","0.0","0.0","NONE"
+};
 
     proc_add(ui->spc_cur_joint_list, tmp_data);
     on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->currentItem());
@@ -2706,19 +2634,7 @@ void SPC_submenu::on_spc_cur_wheel_add_clicked()
 {
     wheels += 1;
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("blankline");
-    tmp_data.append("0.0");
-    tmp_data.append("1.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.14");
-    tmp_data.append("50.0");
-    tmp_data.append("0.012");
-    tmp_data.append("0");
-    tmp_data.append("0");
-    tmp_data.append("NONE");
+    QStringList tmp_data = {"blankline", "0.0", "1.0", "0.0", "0.0", "0.14", "50.0", "0.012", "0", "0", "NONE"};
 
     proc_add(ui->spc_cur_wheel_list, tmp_data);
     on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->currentItem());
@@ -2785,14 +2701,7 @@ void SPC_submenu::on_spc_cur_mtb_add_clicked()
 {
     mtbs += 1;
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("blankline");
-    tmp_data.append("180.0");
-    tmp_data.append("1.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0");
+    QStringList tmp_data = {"blankline", "180.0", "1.0", "0.0", "0.0", "0"};
 
     proc_add(ui->spc_cur_mtb_list, tmp_data);
     on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->currentItem());
@@ -2841,16 +2750,7 @@ void SPC_submenu::on_spc_cur_thruster_add_clicked()
 {
     thrusters += 1;
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("blankline");
-    tmp_data.append("PULSED");
-    tmp_data.append("1.0");
-    tmp_data.append("-1.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0");
-    tmp_data.append("0");
+    QStringList tmp_data = {"blankline", "PULSED", "1.0", "-1.0", "0.0", "0.0", "0", "0"};
 
     proc_add(ui->spc_cur_thruster_list, tmp_data);
     on_spc_cur_thruster_list_itemClicked(ui->spc_cur_thruster_list->currentItem());
@@ -2907,22 +2807,8 @@ void SPC_submenu::on_spc_cur_gyro_add_clicked()
 {
     gyros += 1;
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("blankline");
-    tmp_data.append("0.1");
-    tmp_data.append("1.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("1000.0");
-    tmp_data.append("100.0");
-    tmp_data.append("1.0");
-    tmp_data.append("0.07");
-    tmp_data.append("0.1");
-    tmp_data.append("1.0");
-    tmp_data.append("0.1");
-    tmp_data.append("0.1");
-    tmp_data.append("0");
+    QStringList tmp_data = {"blankline", "0.1", "1.0", "0.0", "0.0", "1000.0", "100.0", "1.0",
+                            "0.07", "0.1", "1.0", "0.1", "0.1", "0"};
 
     proc_add(ui->spc_cur_gyro_list, tmp_data);
     on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->currentItem());
@@ -2990,18 +2876,7 @@ void SPC_submenu::on_spc_cur_mag_add_clicked()
 {
     mags += 1;
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("blankline");
-    tmp_data.append("0.1");
-    tmp_data.append("1.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("60.0E-6");
-    tmp_data.append("0.0");
-    tmp_data.append("1.0E-6");
-    tmp_data.append("1.0E-6");
-    tmp_data.append("0");
+    QStringList tmp_data = {"blankline", "0.1", "1.0", "0.0", "0.0", "60.0E-6", "0.0", "1.0E-6", "1.0E-6", "0"};
 
    proc_add(ui->spc_cur_mag_list, tmp_data);
     on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->currentItem());
@@ -3062,18 +2937,7 @@ void SPC_submenu::on_spc_cur_css_add_clicked()
 {
     css_s += 1;
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("blankline");
-    tmp_data.append("0.1");
-    tmp_data.append("1.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("90.0");
-    tmp_data.append("1.0");
-    tmp_data.append("0.001");
-    tmp_data.append("0");
-    tmp_data.append("0");
+    QStringList tmp_data = {"blankline", "0.1", "1.0", "0.0", "0.0", "90.0", "1.0", "0.001", "0", "0"};
 
     proc_add(ui->spc_cur_css_list, tmp_data);
     on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->currentItem());
@@ -3134,20 +2998,7 @@ void SPC_submenu::on_spc_cur_fss_add_clicked()
 {
     fss_s += 1;
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("blankline");
-    tmp_data.append("0.2");
-    tmp_data.append("70.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("321");
-    tmp_data.append("Z_AXIS");
-    tmp_data.append("32.0");
-    tmp_data.append("32.0");
-    tmp_data.append("0.1");
-    tmp_data.append("0.5");
-    tmp_data.append("0");
+    QStringList tmp_data = {"blankline", "0.2", "70.0", "0.0", "0.0", "321", "Z_AXIS", "32.0", "32.0", "0.1", "0.5", "0"};
 
     proc_add(ui->spc_cur_fss_list, tmp_data);
     on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->currentItem());
@@ -3210,24 +3061,7 @@ void SPC_submenu::on_spc_cur_strack_add_clicked()
 {
     stracks += 1;
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("blankline");
-    tmp_data.append("0.25");
-    tmp_data.append("-90.0");
-    tmp_data.append("90.0");
-    tmp_data.append("00.0");
-    tmp_data.append("321");
-    tmp_data.append("Z_AXIS");
-    tmp_data.append("8.0");
-    tmp_data.append("8.0");
-    tmp_data.append("30.0");
-    tmp_data.append("10.0");
-    tmp_data.append("10.0");
-    tmp_data.append("2.0");
-    tmp_data.append("2.0");
-    tmp_data.append("20.0");
-    tmp_data.append("0");
+    QStringList tmp_data = {"blankline", "0.25", "-90.0", "90.0", "00.0", "321", "Z_AXIS", "8.0", "8.0", "30.0", "10.0", "10.0", "2.0", "2.0", "20.0", "0"};
 
     proc_add(ui->spc_cur_strack_list, tmp_data);
     on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->currentItem());
@@ -3295,14 +3129,7 @@ void SPC_submenu::on_spc_cur_gps_add_clicked()
 {
     gps_s += 1;
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("blankline");
-    tmp_data.append("0.25");
-    tmp_data.append("4.0");
-    tmp_data.append("0.02");
-    tmp_data.append("20.0E-9");
-    tmp_data.append("0");
+    QStringList tmp_data = {"blankline", "0.25", "4.0", "0.02", "20.0E-9", "0"};
 
     proc_add(ui->spc_cur_gps_list, tmp_data);
     on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->currentItem());
@@ -3359,22 +3186,7 @@ void SPC_submenu::on_spc_cur_accel_add_clicked()
 {
     accels += 1;
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("blankline");
-    tmp_data.append("0.1");
-    tmp_data.append("1.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("1.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.05");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("1.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.5");
-    tmp_data.append("0");
+    QStringList tmp_data = {"blankline", "0.1", "1.0", "0.0", "0.0", "1.0", "0.0", "0.05", "0.0", "0.0", "1.0", "0.0", "0.5", "0"};
 
     proc_add(ui->spc_cur_accel_list, tmp_data);
     on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->currentItem());
