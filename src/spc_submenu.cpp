@@ -175,7 +175,6 @@ void SPC_submenu::receive_data()
 
     }
     file.close();
-
 }
 
 void SPC_submenu::apply_data()
@@ -404,7 +403,7 @@ void SPC_submenu::apply_data()
     tmp_data.clear();
     if (thrusters > 0){
         for (int line_num = reset_ind_thr + thr_headers; line_num<reset_ind_gyro; line_num++)
-        {            
+        {
             auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_thr, thr_entries, thr_headers);
 
             if (cur_entry == 0){
@@ -575,7 +574,7 @@ void SPC_submenu::apply_data()
     tmp_data.clear();
     if (stracks > 0){
         for (int line_num = reset_ind_strack + strack_headers; line_num<reset_ind_gps; line_num++)
-        {            
+        {
             auto [cur_item, cur_entry, line_items] = dsm_gui_lib::item_entry_lineitems(spc_data, line_num, reset_ind_strack, strack_entries, strack_headers);
 
             if (cur_entry == 0){
@@ -2464,17 +2463,19 @@ void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item)
     receive_data();
 
     QStringList current_data = item->data(257).toStringList();
-    QLineEdit *textboxes[19] = {ui->spc_cur_body_pmoi_x, ui->spc_cur_body_pmoi_y, ui->spc_cur_body_pmoi_z,
+    QLineEdit *textboxes[19] = {ui->spc_cur_body_mass,
+                                ui->spc_cur_body_pmoi_x, ui->spc_cur_body_pmoi_y, ui->spc_cur_body_pmoi_z,
                                 ui->spc_cur_body_poi_x, ui->spc_cur_body_poi_y, ui->spc_cur_body_poi_z,
                                 ui->spc_cur_body_com_x, ui->spc_cur_body_com_y, ui->spc_cur_body_com_z,
                                 ui->spc_cur_body_cem_x, ui->spc_cur_body_cem_y, ui->spc_cur_body_cem_z,
-                                ui->spc_cur_body_cemd_x, ui->spc_cur_body_cem_y, ui->spc_cur_body_cemd_z,
+                                ui->spc_cur_body_cemd_x, ui->spc_cur_body_cemd_y, ui->spc_cur_body_cemd_z,
                                 ui->spc_cur_body_geom, ui->spc_cur_node_file, ui->spc_cur_flex_file};
     int data_inds[19] = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
-    dsm_gui_lib::mult_setText(textboxes, 19, current_data, data_inds);
 
     item->setText(item->data(256).toString());
     ui->spc_cur_body_name->setText(item->data(256).toString());
+
+    dsm_gui_lib::mult_setText(textboxes, 19, current_data, data_inds);
 }
 
 // Joint

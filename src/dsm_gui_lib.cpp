@@ -1,6 +1,7 @@
 #include "dsm_gui_lib.h"
 #include <QMessageBox>
 #include <QComboBox>
+#include <QDebug>
 
 dsm_gui_lib::dsm_gui_lib() {
 
