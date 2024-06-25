@@ -123,6 +123,7 @@ private slots:
     void proc_duplicates(QListWidget *cur_list);
 
     void proc_add(QListWidget *cur_list, QStringList tmp_data);
+    void destroy_submenu(QString command, QString junk);
 
 private:
     Ui::SPC_submenu *ui;

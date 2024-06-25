@@ -805,14 +805,20 @@ void SPC_Menu::on_spc_conf_clicked()
     receive_data();
     apply_data();
 
-    spc_submenu = new SPC_submenu(this);
-    spc_submenu->setModal(true);
-    spc_submenu->show();
+    if (spc_submenu == nullptr){
+        spc_submenu = new SPC_submenu(this);
+        spc_submenu->setModal(false);
+        spc_submenu->show();
 
-    connect(this, SIGNAL(send_data(QString, QString)), spc_submenu, SLOT(receive_spc_sm_path(QString, QString)));
-    emit send_data(ui->spc_name->text(), inout_path);
-    disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
-
+        connect(this, SIGNAL(send_data(QString, QString)), spc_submenu, SLOT(receive_spc_sm_path(QString, QString)));
+        emit send_data(ui->spc_name->text(), inout_path);
+        disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
+    }
+    else{
+        spc_submenu->show();
+        spc_submenu->raise();
+        spc_submenu->activateWindow();
+    }
 }
 
 
@@ -906,3 +912,22 @@ void SPC_Menu::on_spc_cur_att_param_currentTextChanged(const QString &arg1)
         ui->spc_cur_q4->setEnabled(false);
     }
 }
+
+void SPC_Menu::on_spc_list_currentTextChanged(const QString &currentText)
+{
+    if (spc_submenu != nullptr){
+        connect(this, SIGNAL(send_data(QString, QString)), spc_submenu, SLOT(receive_spc_sm_path(QString, QString)));
+        emit send_data(currentText, inout_path);
+        disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
+    }
+}
+
+void SPC_Menu::on_SPC_Menu_rejected()
+{
+    if (spc_submenu != nullptr){
+        connect(this, SIGNAL(send_data(QString, QString)), spc_submenu, SLOT(destroy_submenu(QString, QString)));
+        emit send_data("Done", "");
+        disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
+    }
+}
+

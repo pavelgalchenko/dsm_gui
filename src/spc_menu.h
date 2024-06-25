@@ -53,6 +53,10 @@ private slots:
 
     void on_spc_cur_att_param_currentTextChanged(const QString &arg1);
 
+    void on_spc_list_currentTextChanged(const QString &currentText);
+
+    void on_SPC_Menu_rejected();
+
 private:
     Ui::SPC_Menu *ui;
 

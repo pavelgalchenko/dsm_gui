@@ -1,8 +1,7 @@
 #include "spc_submenu.h"
 #include "ui_spc_submenu.h"
 #include "dsm_gui_lib.h"
-#include "spc_menu.h"
-#include <QDebug>
+#include "spc_menu.h">
 
 SPC_submenu::SPC_submenu(QWidget *parent):
     QDialog(parent),
@@ -29,8 +28,11 @@ void SPC_submenu::receive_spc_sm_path(QString name, QString path)
 
     inout_path = path;
 
+    ui->spc_cur_name_sub->setText(spc_cur_name);
+
     receive_data();
     apply_data();
+    on_sections_tabBarClicked(ui->sections->currentIndex());
 }
 
 void SPC_submenu::set_validators()
@@ -131,6 +133,12 @@ void SPC_submenu::set_validators()
 
 void SPC_submenu::receive_data()
 {
+    spc_data.clear();
+    spc_string.clear();
+    spc_file_headers.clear();
+    spc_file_descrip.clear();
+    spc_item_names.clear();
+
     // Daniel's regex from ORB_Menu
     // Return everything up to and including ! (exclamation point)
     static QRegularExpression rx1("(.*?)!");
@@ -172,7 +180,6 @@ void SPC_submenu::receive_data()
 
         QRegularExpressionMatch match4 = rx4.match(line);
         spc_item_names.append(match4.captured(1));
-
     }
     file.close();
 }
@@ -3100,16 +3107,10 @@ void SPC_submenu::on_sections_tabBarClicked(int index)
         }
     }
     if (index == 2){
-        if (ui->spc_cur_wheel_list->count() > 0){
-            on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->item(0));
-            ui->spc_cur_wheel_list->setCurrentRow(0);
-        }
+        on_actuator_sections_tabBarClicked(ui->actuator_sections->currentIndex());
     }
     if (index == 3){
-        if (ui->spc_cur_gyro_list->count() > 0) {
-            on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->item(0));
-            ui->spc_cur_gyro_list->setCurrentRow(0);
-        }
+        on_sensor_sections_tabBarClicked(ui->sensor_sections->currentIndex());
     }
 }
 
@@ -3306,4 +3307,10 @@ void SPC_submenu::proc_add(QListWidget *cur_list, QStringList tmp_data)
     cur_list->currentItem()->setData(256, new_name);
     cur_list->currentItem()->setData(257, tmp_data);
     cur_list->sortItems();
+}
+
+void SPC_submenu::destroy_submenu(QString command, QString junk){
+    if (QString::compare(command, "Done") == 0) {
+        QDialog::close();
+    }
 }
