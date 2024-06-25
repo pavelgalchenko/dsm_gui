@@ -52,27 +52,13 @@ void SPC_Menu::set_validators()
     ui->spc_fswsamp->setValidator(new QDoubleValidator(0, INFINITY, 5));
 
 
-    ui->spc_cur_xpos_form->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_ypos_form->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_zpos_form->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    QLineEdit *ninf_pinf [16] = {ui->spc_cur_xpos_form, ui->spc_cur_ypos_form, ui->spc_cur_zpos_form,
+                                ui->spc_cur_xvel_form, ui->spc_cur_yvel_form, ui->spc_cur_zvel_form,
+                                ui->spc_cur_angvel_1, ui->spc_cur_angvel_2, ui->spc_cur_angvel_3,
+                                ui->spc_cur_q1, ui->spc_cur_q2, ui->spc_cur_q3, ui->spc_cur_q4,
+                                ui->spc_cur_initeul_1, ui->spc_cur_initeul_2, ui->spc_cur_initeul_3};
 
-    ui->spc_cur_xvel_form->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_yvel_form->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_zvel_form->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-
-    ui->spc_cur_angvel_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_angvel_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_angvel_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_q1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_q2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_q3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_q4->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-
-    ui->spc_cur_initeul_1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_initeul_2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-    ui->spc_cur_initeul_3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
+    dsm_gui_lib::set_mult_validators(ninf_pinf, 16, -INFINITY, INFINITY, 5);
 
     connect(ui->spc_add, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
     connect(ui->spc_remove, SIGNAL(clicked(bool)), this->parent(), SLOT(disable_sub_menus()));
@@ -255,7 +241,6 @@ void SPC_Menu::apply_data()
         ui->spc_list->currentItem()->setData(257, tmp_data);
 
     }
-
 }
 
 void SPC_Menu::on_spc_apply_clicked()
@@ -593,37 +578,9 @@ void SPC_Menu::write_data()
 void SPC_Menu::on_spc_add_clicked() // Add S/C
 {
 
-    QStringList tmp_data = {};
-
-    tmp_data.append("Simple generic S/C");
-    tmp_data.append("S/C");
-    tmp_data.append("GenScSpriteAlpha.ppm");
-    tmp_data.append("PROTOTYPE_FSW");
-    tmp_data.append("0.2");
-
-    tmp_data.append("FIXED");
-    tmp_data.append("CM");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-
-    tmp_data.append("N");
-    tmp_data.append("A");
-    tmp_data.append("N");
-    tmp_data.append("0.3");
-    tmp_data.append("0.4");
-    tmp_data.append("0.5");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("0.0");
-    tmp_data.append("1.0");
-    tmp_data.append("60.0");
-    tmp_data.append("40.0");
-    tmp_data.append("20.0");
-    tmp_data.append("213");
+    QStringList tmp_data = {"Simple generic S/C", "S/C", "GenScSpriteAlpha.ppm", "PROTOTYPE_FSW", "0.2",
+                            "FIXED", "CM", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0",
+                            "N", "A", "N", "0.3", "0.4", "0.5", "0.0", "0.0", "0.0", "1.0", "60.0", "40.0", "20.0", "213"};
 
     QStringList all_names;
     for (int i = 0; i < ui->spc_list->count(); i++)
