@@ -3,116 +3,111 @@
 
 #include <dsm_gui_lib.h>
 
+#include <QComboBox>
 #include <QDebug>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QRadioButton>
-#include <QComboBox>
-
 
 namespace Ui {
 class ORB_Menu;
 }
 
-class ORB_Menu : public QDialog
-{
-    Q_OBJECT
+class ORB_Menu : public QDialog {
+   Q_OBJECT
 
-public:
-    explicit ORB_Menu(QWidget *parent = nullptr);
-    ~ORB_Menu();
+   public:
+   explicit ORB_Menu(QWidget *parent = nullptr);
+   ~ORB_Menu();
 
-signals:
-    void orbit_changed();
+   signals:
+   void orbit_changed();
 
-private slots:
-    void set_validators();
-    void receive_orbpath(QString);
-    void receive_data(QString file_path);
-    void apply_data();
-    void clear_data();
-    void write_data(QString file_path);
+   private slots:
+   void set_validators();
+   void receive_orbpath(QString);
+   void receive_data(QString file_path);
+   void apply_data();
+   void clear_data();
+   void write_data(QString file_path);
 
-    void string2radiobool(QString boolString, QButtonGroup *buttonGroup);
-    void setQComboBox(QComboBox *comboBox, QString string);
+   void string2radiobool(QString boolString, QButtonGroup *buttonGroup);
+   void setQComboBox(QComboBox *comboBox, QString string);
 
-    void on_orbListRemove_clicked();
-    void on_orbListAdd_clicked();
-    void on_orbList_itemClicked();
+   void on_orbListRemove_clicked();
+   void on_orbListAdd_clicked();
+   void on_orbList_itemClicked();
 
-    void on_loadDefaultButton_clicked();
-    void on_saveDefaultButton_clicked();
-    void on_closeButton_clicked();
-    void on_applyButton_clicked();
+   void on_loadDefaultButton_clicked();
+   void on_saveDefaultButton_clicked();
+   void on_closeButton_clicked();
+   void on_applyButton_clicked();
 
-    void on_orbType_currentTextChanged(const QString &arg1);
+   void on_orbType_currentTextChanged(const QString &arg1);
 
-    void on_orbCentICParam_currentTextChanged(const QString &arg1);
+   void on_orbCentICParam_currentTextChanged(const QString &arg1);
 
-    void on_orbTBodyICParam_currentTextChanged(const QString &arg1);
+   void on_orbTBodyICParam_currentTextChanged(const QString &arg1);
 
-    void on_orbZeroWorld_currentTextChanged(const QString &arg1);
+   void on_orbZeroWorld_currentTextChanged(const QString &arg1);
 
-    void on_orbCentWorld_currentTextChanged(const QString &arg1);
+   void on_orbCentWorld_currentTextChanged(const QString &arg1);
 
-    void on_orbCentFileSelect_clicked();
-    void on_orbTBodyFileSelect_clicked();
+   void on_orbCentFileSelect_clicked();
+   void on_orbTBodyFileSelect_clicked();
 
-    void on_orbListDuplicate_clicked();
+   void on_orbListDuplicate_clicked();
 
-    void on_orbCentPA_on_toggled(bool checked);
+   void on_orbCentPA_on_toggled(bool checked);
 
-    void on_orbTBodyLPoint_currentTextChanged(const QString &text);
+   void on_orbTBodyLPoint_currentTextChanged(const QString &text);
 
-    void checkKepPA();
+   void checkKepPA();
 
+   private:
+   Ui::ORB_Menu *ui;
 
-private:
-    Ui::ORB_Menu *ui;
+   int global_orb_index  = -1;
+   int global_orb_ignore = 0;
 
-    int global_orb_index = -1;
-    int global_orb_ignore = 0;
+   QString oldPeriAlt = "";
+   QString oldApoAlt  = "";
 
-    QString oldPeriAlt = "";
-    QString oldApoAlt = "";
+   QString inout_path;
+   QStringList orb_data;
+   QStringList orb_string;
+   QStringList orb_file_headers; // section headers in the file
+   QStringList orb_file_descrip; // data descriptors in the file
+   QStringList orb_update;
 
-    QString inout_path;
-    QStringList orb_data;
-    QStringList orb_string;
-    QStringList orb_file_headers; // section headers in the file
-    QStringList orb_file_descrip; // data descriptors in the file
-    QStringList orb_update;
+   QHash<QString, QString> orbFileHash;
 
-    QHash<QString, QString> orbFileHash;
+   const QHash<QString, QString> orbTypeInputs = {{"ZERO", "Zero"},
+                                                  {"FLIGHT", "Flight"},
+                                                  {"CENTRAL", "Central"},
+                                                  {"THREE_BODY", "Three Body"}};
 
-    const QHash<QString, QString> orbTypeInputs = {{"ZERO", "Zero"},
-                                                   {"FLIGHT", "Flight"},
-                                                   {"CENTRAL", "Central"},
-                                                   {"THREE_BODY", "Three Body"}};
+   const QHash<QString, QString> orbTBodyLSysInputs = {
+       {"EARTHMOON", "Earth/Moon"},
+       {"SUNEARTH", "Sun/Earth"},
+       {"SUNJUPITER", "Sun/Jupiter"}};
 
-    const QHash<QString, QString> orbTBodyLSysInputs = {{"EARTHMOON", "Earth/Moon"},
-                                                        {"SUNEARTH", "Sun/Earth"},
-                                                        {"SUNJUPITER", "Sun/Jupiter"}};
+   const QHash<QString, QString> orbCentICTypeInputs = {
+       {"KEP", "Keplerian"}, {"RV", "Position/Velocity"}, {"FILE", "File"}};
 
-    const QHash<QString, QString> orbCentICTypeInputs = {{"KEP", "Keplerian"},
-                                                         {"RV", "Position/Velocity"},
-                                                         {"FILE", "File"}};
+   const QHash<QString, QString> orbTBodyPropInputs = {
+       {"LAGDOF_MODES", "Modes"},
+       {"LAGDOF_COWELL", "Cowell"},
+       {"LAGDOF_SPLINE", "Spline"}};
 
-    const QHash<QString, QString> orbTBodyPropInputs = {{"LAGDOF_MODES", "Modes"},
-                                                        {"LAGDOF_COWELL", "Cowell"},
-                                                        {"LAGDOF_SPLINE", "Spline"}};
+   const QHash<QString, QString> orbTBodyICTypeInputs = {
+       {"MODES", "Modes"}, {"XYZ", "Position/Velocity"}, {"FILE", "File"}};
 
-    const QHash<QString, QString> orbTBodyICTypeInputs = {{"MODES", "Modes"},
-                                                          {"XYZ", "Position/Velocity"},
-                                                          {"FILE", "File"}};
+   const QHash<QString, QString> orbFileTypeInputs = {
+       {"TLE", "TLE"}, {"TRV", "TRV"}, {"SPLINE", "Spline"}};
 
-    const QHash<QString, QString> orbFileTypeInputs = {{"TLE", "TLE"},
-                                                       {"TRV", "TRV"},
-                                                       {"SPLINE", "Spline"}};
-
-    const QStringList orbFrameInputs = {"N", "L"};
-    const QStringList lagrangePointInputs   = {"L1", "L2", "L3", "L4", "L5"};
-
+   const QStringList orbFrameInputs      = {"N", "L"};
+   const QStringList lagrangePointInputs = {"L1", "L2", "L3", "L4", "L5"};
 };
 
 #endif // ORB_MENU_H

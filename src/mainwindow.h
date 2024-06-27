@@ -1,73 +1,77 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include "grh_menu.h"
-#include "tdr_menu.h"
-#include "fov_menu.h"
-#include "nos_menu.h"
-#include "rgn_menu.h"
-#include "ipc_menu.h"
-#include "spc_menu.h"
-#include "orb_menu.h"
-#include "sim_menu.h"
-#include "dsm_menu.h"
 #include "dsm_gui_lib.h"
+#include "dsm_menu.h"
+#include "fov_menu.h"
+#include "grh_menu.h"
+#include "ipc_menu.h"
+#include "nos_menu.h"
+#include "orb_menu.h"
+#include "rgn_menu.h"
+#include "sim_menu.h"
+#include "spc_menu.h"
+#include "tdr_menu.h"
+#include <QMainWindow>
 
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui {
+class MainWindow;
+}
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
-{
-    Q_OBJECT
+class MainWindow : public QMainWindow {
+   Q_OBJECT
 
-public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+   public:
+   MainWindow(QWidget *parent = nullptr);
+   ~MainWindow();
 
-signals:
-    void send_data(QString);
+   signals:
+   void send_data(QString);
 
-public slots:
-    void enable_sub_menus();
-    void disable_sub_menus();
+   public slots:
+   void enable_sub_menus();
+   void disable_sub_menus();
 
-private slots:
+   private slots:
 
-    void on_new_mission_clicked();
+   void on_new_mission_clicked();
 
-    void on_GRH_Menu_clicked();
-    void on_TDR_Menu_clicked();
-    void on_FOV_Menu_clicked();
-    void on_NOS_Menu_clicked();
-    void on_RGN_Menu_clicked();
-    void on_IPC_Menu_clicked();
-    void on_SPC_Menu_clicked();
-    void on_ORB_Menu_clicked();
-    void on_SIM_Menu_clicked();
+   void on_GRH_Menu_clicked();
+   void on_TDR_Menu_clicked();
+   void on_FOV_Menu_clicked();
+   void on_NOS_Menu_clicked();
+   void on_RGN_Menu_clicked();
+   void on_IPC_Menu_clicked();
+   void on_SPC_Menu_clicked();
+   void on_ORB_Menu_clicked();
+   void on_SIM_Menu_clicked();
 
-    void on_DSM_Menu_clicked();
-    void on_load_mission_clicked();
-    void set_menu_buttons(bool enabled);
+   void on_DSM_Menu_clicked();
+   void on_load_mission_clicked();
+   void set_menu_buttons(bool enabled);
 
-private:
-    Ui::MainWindow *ui;
+   private:
+   Ui::MainWindow *ui;
 
-    GRH_Menu *grh_menu;
-    TDR_Menu *tdr_menu;
-    FOV_Menu *fov_menu;
-    NOS_Menu *nos_menu;
-    RGN_Menu *rgn_menu;
-    IPC_Menu *ipc_menu;
-    SPC_Menu *spc_menu;
-    ORB_Menu *orb_menu;
-    SIM_Menu *sim_menu;
-    DSM_Menu *dsm_menu;
-    QString path;
+   GRH_Menu *grh_menu;
+   TDR_Menu *tdr_menu;
+   FOV_Menu *fov_menu;
+   NOS_Menu *nos_menu;
+   RGN_Menu *rgn_menu;
+   IPC_Menu *ipc_menu;
+   SPC_Menu *spc_menu;
+   ORB_Menu *orb_menu;
+   SIM_Menu *sim_menu;
+   DSM_Menu *dsm_menu;
+   QString path;
 
-    const QStringList neededFiles = {"Inp_Cmd.txt", "Inp_FOV.txt", "Inp_Graphics.txt", "Inp_IPC.txt", "Inp_NOS3.txt", "Inp_Region.txt", "Inp_Sim.txt", "Inp_TDRS.txt","Inp_DSM.txt"};
+   const QStringList neededFiles = {
+       "Inp_Cmd.txt", "Inp_FOV.txt",  "Inp_Graphics.txt",
+       "Inp_IPC.txt", "Inp_NOS3.txt", "Inp_Region.txt",
+       "Inp_Sim.txt", "Inp_TDRS.txt", "Inp_DSM.txt"};
 };
 #endif // MAINWINDOW_H
