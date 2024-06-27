@@ -3259,10 +3259,10 @@ void SPC_submenu::proc_duplicates(QListWidget *cur_list)
     if (index == -1) return;
 
     QString old_item = cur_list->currentItem()->text();
-    QString new_item = old_item +"_Copy";
+    QString new_item = old_item +" Copy";
     for(int i = 0; i <= 30; i++) {
         QString newItemTest = new_item;
-        if(i>0) newItemTest += "_" + QString::number(i);
+        if(i>0) newItemTest += " " + QString::number(i);
         if(!spc_names.contains(newItemTest)) {
             new_item = newItemTest;
             break;
