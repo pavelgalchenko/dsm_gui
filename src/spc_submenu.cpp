@@ -2,6 +2,7 @@
 #include "ui_spc_submenu.h"
 #include "dsm_gui_lib.h"
 #include "spc_menu.h">
+#include "QDebug"
 
 SPC_submenu::SPC_submenu(QWidget *parent):
     QDialog(parent),
@@ -258,7 +259,6 @@ void SPC_submenu::apply_data()
             // 1 ELEMENT
             // Mass -> 1, Geometry File -> 7, Node -> 8, Flex -> 9
             tmp_data.append(line_items[0]);
-
         }
         else if (cur_entry == 2 || (cur_entry >= 3 && cur_entry <= 6)){
             // 3 ELEMENTS
@@ -267,8 +267,7 @@ void SPC_submenu::apply_data()
             // constant embedded momentum dipole -> 6
             for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
         }
-
-        dsm_gui_lib::apply_data_section_end(cur_entry, body_entries, cur_item, ui->spc_cur_body_list, tmp_data, cur_item_name);
+        tmp_data = dsm_gui_lib::apply_data_section_end(cur_entry, body_entries, cur_item, ui->spc_cur_body_list, tmp_data, cur_item_name);
     }
 
     /***************** JOINTS **************************/
@@ -313,7 +312,8 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<4; i++) tmp_data.append(line_items[i]);
             }
 
-            dsm_gui_lib::apply_data_section_end(cur_entry, joint_entries, cur_item, ui->spc_cur_joint_list, tmp_data, cur_item_name);
+            tmp_data = dsm_gui_lib::apply_data_section_end(cur_entry, joint_entries, cur_item, ui->spc_cur_joint_list, tmp_data, cur_item_name);
+            if (cur_entry==joint_entries-1) tmp_data.clear();
         }
     }
 
@@ -360,7 +360,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            dsm_gui_lib::apply_data_section_end(cur_entry, wheel_entries, cur_item, ui->spc_cur_wheel_list, tmp_data, cur_item_name);
+            tmp_data = dsm_gui_lib::apply_data_section_end(cur_entry, wheel_entries, cur_item, ui->spc_cur_wheel_list, tmp_data, cur_item_name);
         }
     }
 
@@ -394,7 +394,7 @@ void SPC_submenu::apply_data()
             }
 
 
-            dsm_gui_lib::apply_data_section_end(cur_entry, mtb_entries, cur_item, ui->spc_cur_mtb_list, tmp_data, cur_item_name);
+            tmp_data = dsm_gui_lib::apply_data_section_end(cur_entry, mtb_entries, cur_item, ui->spc_cur_mtb_list, tmp_data, cur_item_name);
         }
     }
 
@@ -427,7 +427,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            dsm_gui_lib::apply_data_section_end(cur_entry, thr_entries, cur_item, ui->spc_cur_thruster_list, tmp_data, cur_item_name);
+            tmp_data = dsm_gui_lib::apply_data_section_end(cur_entry, thr_entries, cur_item, ui->spc_cur_thruster_list, tmp_data, cur_item_name);
         }
     }
 
@@ -463,7 +463,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            dsm_gui_lib::apply_data_section_end(cur_entry, gyro_entries, cur_item, ui->spc_cur_gyro_list, tmp_data, cur_item_name);
+            tmp_data = dsm_gui_lib::apply_data_section_end(cur_entry, gyro_entries, cur_item, ui->spc_cur_gyro_list, tmp_data, cur_item_name);
         }
     }
 
@@ -496,7 +496,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            dsm_gui_lib::apply_data_section_end(cur_entry, mag_entries, cur_item, ui->spc_cur_mag_list, tmp_data, cur_item_name);
+            tmp_data = dsm_gui_lib::apply_data_section_end(cur_entry, mag_entries, cur_item, ui->spc_cur_mag_list, tmp_data, cur_item_name);
         }
     }
 
@@ -529,7 +529,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            dsm_gui_lib::apply_data_section_end(cur_entry, css_entries, cur_item, ui->spc_cur_css_list, tmp_data, cur_item_name);
+            tmp_data = dsm_gui_lib::apply_data_section_end(cur_entry, css_entries, cur_item, ui->spc_cur_css_list, tmp_data, cur_item_name);
         }
     }
 
@@ -565,7 +565,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<4; i++) tmp_data.append(line_items[i]);
             }
 
-            dsm_gui_lib::apply_data_section_end(cur_entry, fss_entries, cur_item, ui->spc_cur_fss_list, tmp_data, cur_item_name);
+            tmp_data = dsm_gui_lib::apply_data_section_end(cur_entry, fss_entries, cur_item, ui->spc_cur_fss_list, tmp_data, cur_item_name);
         }
     }
 
@@ -606,7 +606,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<4; i++) tmp_data.append(line_items[i]);
             }
 
-            dsm_gui_lib::apply_data_section_end(cur_entry, strack_entries, cur_item, ui->spc_cur_strack_list, tmp_data, cur_item_name);
+            tmp_data = dsm_gui_lib::apply_data_section_end(cur_entry, strack_entries, cur_item, ui->spc_cur_strack_list, tmp_data, cur_item_name);
         }
     }
 
@@ -635,7 +635,7 @@ void SPC_submenu::apply_data()
                 tmp_data.append(line_items[0]);
             }
 
-            dsm_gui_lib::apply_data_section_end(cur_entry, gps_entries, cur_item, ui->spc_cur_gps_list, tmp_data, cur_item_name);
+            tmp_data = dsm_gui_lib::apply_data_section_end(cur_entry, gps_entries, cur_item, ui->spc_cur_gps_list, tmp_data, cur_item_name);
         }
     }
 
@@ -672,7 +672,7 @@ void SPC_submenu::apply_data()
                 for (int i=0; i<3; i++) tmp_data.append(line_items[i]);
             }
 
-            dsm_gui_lib::apply_data_section_end(cur_entry, acc_entries, cur_item, ui->spc_cur_accel_list, tmp_data, cur_item_name);
+            tmp_data = dsm_gui_lib::apply_data_section_end(cur_entry, acc_entries, cur_item, ui->spc_cur_accel_list, tmp_data, cur_item_name);
         }
     }
 }
@@ -745,7 +745,6 @@ void SPC_submenu::on_spc_cur_close_clicked()
 
 void SPC_submenu::on_spc_cur_apply_clicked()
 {
-
     QFile file(file_path);
     if(!file.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0, "error", file.errorString());
@@ -812,7 +811,6 @@ void SPC_submenu::on_spc_cur_apply_clicked()
     /****************************** SETUP ***************/
     QStringList tmp_data = {}; // Update the list widget data of the body tab we are currently on.
     /************************************* BODY SECTION ***********************************/
-
     reset_ind_joint = reset_ind_body + body_entries*bodies;
 
     if (ui->sections->currentIndex() == 1)
@@ -877,7 +875,6 @@ void SPC_submenu::on_spc_cur_apply_clicked()
             ui->spc_cur_body_list->currentItem()->setData(257, tmp_data);
         }
     }
-
     tmp_data.clear();
 
     for (int line_num = reset_ind_body; line_num<reset_ind_joint; line_num++)

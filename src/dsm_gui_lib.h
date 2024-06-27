@@ -30,7 +30,7 @@ public:
     static void set_mult_validators(QLineEdit *ui_elem[], int array_length, double lower, double upper, int decimals);
     static void set_mult_name_validators(QLineEdit *ui_elem[], int array_length, QValidator *validator);
     static void set_mult_cbox_validators(QComboBox *ui_elem[], int array_length, const QStringList string_list);
-    static void apply_data_section_end(long cur_entry, long section_entries, long cur_item, QListWidget *ui_elem, QStringList tmp_data, QString cur_item_name);
+    static QStringList apply_data_section_end(long cur_entry, long section_entries, long cur_item, QListWidget *ui_elem, QStringList tmp_data, QString cur_item_name);
     static std::tuple<long, int, QStringList> item_entry_lineitems(QStringList spc_data, int line_num, long reset_ind, long entries, long headers);
     static void mult_setText(QLineEdit *ui_elem[], int array_length, QStringList current_data, int data_inds[]);
 

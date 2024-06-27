@@ -99,12 +99,14 @@ void dsm_gui_lib::set_mult_cbox_validators(QComboBox *ui_elem[], int array_lengt
     }
 }
 
-void dsm_gui_lib::apply_data_section_end(long cur_entry, long section_entries, long cur_item, QListWidget *ui_elem, QStringList tmp_data, QString cur_item_name){
+QStringList dsm_gui_lib::apply_data_section_end(long cur_entry, long section_entries, long cur_item, QListWidget *ui_elem, QStringList tmp_data, QString cur_item_name){
     if (cur_entry==section_entries-1){
         ui_elem->setCurrentRow(cur_item);
         ui_elem->currentItem()->setData(256, cur_item_name);
         ui_elem->currentItem()->setData(257, tmp_data);
+        tmp_data.clear();
     }
+    return tmp_data;
 }
 
 std::tuple<long, int, QStringList> dsm_gui_lib::item_entry_lineitems(QStringList spc_data, int line_num, long reset_ind, long entries, long headers){
