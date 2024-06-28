@@ -12,6 +12,7 @@ QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 INCLUDEPATH += /opt/anaconda3/include
+LIBS += -L/opt/anaconda3/lib -lyaml-cpp
 
 SOURCES += \
     dsm_gui_lib.cpp \
