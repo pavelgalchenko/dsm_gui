@@ -3,6 +3,7 @@
 #include "ui_spc_menu.h"
 
 #include <QComboBox>
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
@@ -13,6 +14,8 @@ SPC_Menu::SPC_Menu(QWidget *parent) : QDialog(parent), ui(new Ui::SPC_Menu) {
    ui->setupUi(this);
    ui->quick_tabs->setCurrentIndex(0);
    set_validators();
+
+   new_item = 0;
 }
 
 SPC_Menu::~SPC_Menu() {
@@ -588,6 +591,7 @@ void SPC_Menu::on_spc_apply_clicked() {
    ui->spc_list->setCurrentRow(index);
 
    write_data();
+   on_spc_list_currentTextChanged(ui->spc_list->currentItem()->text());
 }
 
 void SPC_Menu::write_data() {
@@ -607,6 +611,9 @@ void SPC_Menu::write_data() {
 
 void SPC_Menu::on_spc_add_clicked() // Add S/C
 {
+   if (spc_submenu != nullptr) {
+      new_item = 1;
+   }
 
    QStringList tmp_data = {"Simple generic S/C",
                            "S/C",
@@ -646,7 +653,7 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
       for (int i = 0; i <= 50; i++) {
          QString newNameTest = new_name;
          if (i > 0)
-            newNameTest += "_" + QString::number(i);
+            newNameTest += " " + QString::number(i);
          if (!all_names.contains(newNameTest, Qt::CaseInsensitive)) {
             new_name = newNameTest;
             break;
@@ -657,8 +664,12 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
    }
 
    ui->spc_list->addItem(new_name);
+   QList<QListWidgetItem *> cur_items =
+       ui->spc_list->findItems(new_name, Qt::MatchExactly);
 
-   ui->spc_list->setCurrentRow(ui->spc_list->count() - 1);
+   QListWidgetItem *cur_item = cur_items[0]; // there can only be one match
+
+   ui->spc_list->setCurrentItem(cur_item);
 
    ui->spc_list->currentItem()->setData(256, new_name);
 
@@ -673,6 +684,11 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
                inout_path + "SC_" + new_name + ".txt");
    ui->spc_list->sortItems();
    ui->spc_conf->setEnabled(true);
+
+   new_item = 0;
+   if (spc_submenu != nullptr)
+      on_spc_list_currentTextChanged(
+          new_name); // click on the current item to reload submenu
 }
 
 void SPC_Menu::on_spc_remove_clicked() // Remove S/C
@@ -692,10 +708,11 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
 
    QFile::remove(file_path_delete);
 
+   QListWidgetItem *prev_item;
    if (ui->spc_list->count() > 0) {
-      ui->spc_list->setCurrentRow(ui->spc_list->count() - 1);
-      on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count() - 1));
+      prev_item = ui->spc_list->currentItem();
       ui->spc_list->sortItems();
+      on_spc_list_itemClicked(prev_item);
    } else {
       ui->spc_list->setCurrentRow(-1);
       ui->spc_conf->setEnabled(false);
@@ -704,6 +721,10 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
 
 void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
 {
+   if (spc_submenu != nullptr) {
+      new_item = 1;
+   }
+
    int index = ui->spc_list->currentRow();
    if (ui->spc_list->count() == 0)
       return;
@@ -714,7 +735,7 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
    if (index == -1)
       return;
    QString old_spc = ui->spc_list->currentItem()->text();
-   QString new_spc = old_spc + "_Copy";
+   QString new_spc = old_spc + " Copy";
    for (int i = 0; i <= 30; i++) {
       QString newSCTest = new_spc;
       if (i > 0)
@@ -731,8 +752,12 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
    file_paths.append(file_path);
 
    ui->spc_list->addItem(new_spc);
-   ui->spc_list->setCurrentRow(ui->spc_list->count() -
-                               1); // add item, set it as current item
+   QList<QListWidgetItem *> cur_items =
+       ui->spc_list->findItems(new_spc, Qt::MatchExactly);
+
+   QListWidgetItem *cur_item = cur_items[0]; // there can only be one match
+
+   ui->spc_list->setCurrentItem(cur_item);
 
    ui->spc_list->currentItem()->setData(256, new_spc);
    ui->spc_list->currentItem()->setData(257,
@@ -746,6 +771,11 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
       ui->spc_list->setCurrentRow(ui->spc_list->count() - 2);
    }
    ui->spc_list->sortItems();
+
+   new_item = 0;
+   if (spc_submenu != nullptr)
+      on_spc_list_currentTextChanged(
+          new_spc); // click on the current item to reload submenu
 }
 
 void SPC_Menu::on_spc_load_clicked() // Load default S/C
@@ -913,7 +943,7 @@ void SPC_Menu::on_spc_cur_att_param_currentTextChanged(const QString &arg1) {
 }
 
 void SPC_Menu::on_spc_list_currentTextChanged(const QString &currentText) {
-   if (spc_submenu != nullptr) {
+   if (spc_submenu != nullptr && new_item == 0) {
       connect(this, SIGNAL(send_data(QString, QString)), spc_submenu,
               SLOT(receive_spc_sm_path(QString, QString)));
       emit send_data(currentText, inout_path);

@@ -74,6 +74,7 @@ class SPC_Menu : public QDialog {
    QStringList spc_data;
    QStringList spc_update;
    int spc_name_index;
+   int new_item;
 
    QStringList spc_file_headers; // section headers in the file
    QStringList spc_file_descrip; // data descriptors in the file
