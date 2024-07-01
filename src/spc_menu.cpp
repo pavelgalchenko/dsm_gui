@@ -854,6 +854,9 @@ void SPC_Menu::on_spc_conf_clicked() {
               SLOT(receive_spc_sm_path(QString, QString)));
       emit send_data(ui->spc_name->text(), inout_path);
       disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
+
+      spc_submenu->move(SPC_Menu::geometry().x() + spc_submenu->width(),
+                        SPC_Menu::geometry().y() - spc_submenu->height() / 2);
    } else {
       spc_submenu->show();
       spc_submenu->raise();
