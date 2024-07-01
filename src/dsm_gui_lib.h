@@ -43,6 +43,8 @@ class dsm_gui_lib {
    static void mult_setText(QLineEdit *ui_elem[], int array_length,
                             QStringList current_data, int data_inds[]);
 
+   static bool fileExists(QString path);
+
    inline static const QStringList eulerInputs = {"121", "123", "131", "132",
                                                   "212", "213", "231", "232",
                                                   "312", "313", "321", "323"};

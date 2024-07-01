@@ -1,9 +1,7 @@
 #include "spc_menu.h"
 #include "dsm_gui_lib.h"
 #include "ui_spc_menu.h"
-
 #include <QComboBox>
-#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
@@ -782,6 +780,11 @@ void SPC_Menu::on_spc_load_clicked() // Load default S/C
 {
    int response = dsm_gui_lib::warning_message("Load All Default S/C?");
    if (response == QMessageBox::Ok) {
+      if (spc_submenu != nullptr) {
+         new_item = 1;
+         on_SPC_Menu_rejected();
+      }
+
       int num_items = ui->spc_list->count();
       ui->spc_list->clear();
       for (int i = 0; i < num_items; i++) {
@@ -808,7 +811,12 @@ void SPC_Menu::on_spc_load_clicked() // Load default S/C
          receive_data();
          apply_data();
       }
+      ui->spc_list->setCurrentRow(0);
       on_spc_list_itemClicked(ui->spc_list->item(0));
+      if (new_item == 1) {
+         on_spc_conf_clicked();
+         new_item = 0;
+      }
    } else
       return;
 }
@@ -819,6 +827,11 @@ void SPC_Menu::on_spc_save_clicked() {
    int response =
        dsm_gui_lib::warning_message("Save All Current S/C to Defaults?");
    if (response == QMessageBox::Ok) {
+
+      if (spc_submenu != nullptr) {
+         new_item = 1;
+         on_SPC_Menu_rejected();
+      }
 
       for (int i = 0; i < file_paths_default.length(); i++)
          QFile::remove(file_paths_default[i]);
@@ -832,6 +845,10 @@ void SPC_Menu::on_spc_save_clicked() {
                                    spc_names[i] + ".txt");
 
          QFile::copy(file_paths[i], file_paths_default[i]);
+      }
+      if (new_item == 1) {
+         on_spc_conf_clicked();
+         new_item = 0;
       }
    }
 }

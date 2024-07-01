@@ -1,5 +1,4 @@
 #include "spc_submenu.h"
-#include "QDebug"
 #include "dsm_gui_lib.h"
 #include "spc_menu.h">
 #include "ui_spc_submenu.h"
@@ -858,7 +857,16 @@ void SPC_submenu::on_spc_cur_load_clicked() {
    int response = dsm_gui_lib::warning_message("Overwrite SC file?");
    if (response == QMessageBox::Ok) {
       QFile::remove(file_path);
-      QFile::copy(inout_path + "__default__/SC_Simple.txt", file_path);
+      bool simple_exists =
+          dsm_gui_lib::fileExists(inout_path + "__default__/__SCDEFAULT__.txt");
+
+      if (simple_exists) {
+         QFile::copy(inout_path + "__default__/SC_Simple.txt", file_path);
+      } else {
+         QFile::copy(":/data/__default__/SC_Simple.txt",
+                     inout_path + "__default__/__SCDEFAULT__.txt");
+         QFile::copy(inout_path + "__default__/__SCDEFAULT__.txt", file_path);
+      }
 
       receive_data();
       apply_data();

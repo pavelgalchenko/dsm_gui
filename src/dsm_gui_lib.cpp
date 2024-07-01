@@ -1,6 +1,7 @@
 #include "dsm_gui_lib.h"
 #include <QComboBox>
 #include <QDebug>
+#include <QFileInfo>
 #include <QMessageBox>
 
 dsm_gui_lib::dsm_gui_lib() {}
@@ -134,5 +135,15 @@ void dsm_gui_lib::mult_setText(QLineEdit *ui_elem[], int array_length,
                                QStringList current_data, int data_inds[]) {
    for (int i = 0; i < array_length; i++) {
       ui_elem[i]->setText(current_data[data_inds[i]]);
+   }
+}
+
+bool dsm_gui_lib::fileExists(QString path) {
+   QFileInfo check_file(path);
+   // check if file exists and if yes: Is it really a file and not a directory?
+   if (check_file.exists() && check_file.isFile()) {
+      return true;
+   } else {
+      return false;
    }
 }
