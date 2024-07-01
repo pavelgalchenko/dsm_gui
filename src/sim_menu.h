@@ -10,6 +10,7 @@
 #include <QLineEdit>
 #include <QListWidget>
 #include <QMessageBox>
+#include <QMetaEnum>
 #include <QRadioButton>
 #include <QSpinBox>
 
@@ -229,11 +230,6 @@ class SIM_Menu : public QDialog {
 
    QString inoutPath;
    QString filePath;
-   // QStringList simData;
-   // QStringList simString;
-   QStringList simFileHeaders; // section headers in the file
-   QStringList simFileDescrip; // data descriptors in the file
-   // QStringList simUpdate;
 
    QString orbDescription, scDescription, gsDescription;
 
@@ -301,16 +297,6 @@ class SIM_Menu : public QDialog {
       gsLongRole,
       gsLatRole
    };
-
-   QHash<QString, int> headerLines = {
-       {toString(headerLineNames::HEADER), -1},
-       {toString(headerLineNames::CONTROL), -1},
-       {toString(headerLineNames::ORBITS), -1},
-       {toString(headerLineNames::SPACECRAFT), -1},
-       {toString(headerLineNames::ENVIRONMENT), -1},
-       {toString(headerLineNames::BODIES), -1},
-       {toString(headerLineNames::LAGRANGE), -1},
-       {toString(headerLineNames::GROUND), -1}};
 
    QHash<QString, QString> orbFileHash;
    QHash<QString, QString> scFileHash;

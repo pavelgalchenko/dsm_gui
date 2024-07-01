@@ -67,77 +67,85 @@ void SIM_Menu::set_validators() {
            SLOT(enable_sub_menus()));
 
    worldConfigHash.clear();
-   for (QList<QString>::ConstIterator it =
-            dsm_gui_lib::worldInputs.constBegin();
-        it != dsm_gui_lib::worldInputs.constEnd(); ++it) {
-      dsm_gui_lib::WorldID Iw = dsm_gui_lib::World2ID(*it);
+
+   QMetaEnum e = QMetaEnum::fromType<dsm_gui_lib::WorldID>();
+   for (int k = 0; k < e.keyCount(); k++) {
+      dsm_gui_lib::WorldID Iw = e.value(k);
+      QString worldName       = dsm_gui_lib::ID2World(Iw);
       switch (Iw) {
          case dsm_gui_lib::WorldID::SOL:
             worldConfigHash.insert(
-                *it, worldConfig(nullptr, nullptr, nullptr, nullptr, Iw, true));
+                worldName,
+                worldConfig(nullptr, nullptr, nullptr, nullptr, Iw, true));
             break;
          case dsm_gui_lib::WorldID::MERCURY:
-            worldConfigHash.insert(*it,
+            worldConfigHash.insert(worldName,
                                    worldConfig(nullptr, nullptr, nullptr,
                                                ui->simMercuryEn, Iw, false));
             break;
          case dsm_gui_lib::WorldID::VENUS:
-            worldConfigHash.insert(*it, worldConfig(nullptr, nullptr, nullptr,
-                                                    ui->simVenusEn, Iw, false));
+            worldConfigHash.insert(worldName,
+                                   worldConfig(nullptr, nullptr, nullptr,
+                                               ui->simVenusEn, Iw, false));
             break;
          case dsm_gui_lib::WorldID::EARTH:
             worldConfigHash.insert(
-                *it, worldConfig(
-                         new atmoConfig(ui->simF107, ui->simAp, ui->simF107Ap),
-                         new gravConfig(ui->simEarthHarmN, ui->simEarthHarmM),
-                         new magConfig(ui->simIGRFDegree, ui->simIGRFOrder,
-                                       ui->simMagfieldType),
-                         ui->simEarthEn, Iw, true));
+                worldName,
+                worldConfig(
+                    new atmoConfig(ui->simF107, ui->simAp, ui->simF107Ap),
+                    new gravConfig(ui->simEarthHarmN, ui->simEarthHarmM),
+                    new magConfig(ui->simIGRFDegree, ui->simIGRFOrder,
+                                  ui->simMagfieldType),
+                    ui->simEarthEn, Iw, true));
             break;
          case dsm_gui_lib::WorldID::MARS:
             worldConfigHash.insert(
-                *it,
+                worldName,
                 worldConfig(nullptr,
                             new gravConfig(ui->simMarsHarmN, ui->simMarsHarmM),
                             nullptr, ui->simMarsEn, Iw, true));
             break;
          case dsm_gui_lib::WorldID::LUNA:
             worldConfigHash.insert(
-                *it,
+                worldName,
                 worldConfig(nullptr,
                             new gravConfig(ui->simLunaHarmN, ui->simLunaHarmM),
                             nullptr, nullptr, Iw, false));
             break;
          case dsm_gui_lib::WorldID::JUPITER:
-            worldConfigHash.insert(*it,
+            worldConfigHash.insert(worldName,
                                    worldConfig(nullptr, nullptr, nullptr,
                                                ui->simJupiterEn, Iw, true));
             break;
          case dsm_gui_lib::WorldID::SATURN:
-            worldConfigHash.insert(*it, worldConfig(nullptr, nullptr, nullptr,
-                                                    ui->simSaturnEn, Iw, true));
+            worldConfigHash.insert(worldName,
+                                   worldConfig(nullptr, nullptr, nullptr,
+                                               ui->simSaturnEn, Iw, true));
             break;
          case dsm_gui_lib::WorldID::URANUS:
-            worldConfigHash.insert(*it, worldConfig(nullptr, nullptr, nullptr,
-                                                    ui->simUranusEn, Iw, true));
+            worldConfigHash.insert(worldName,
+                                   worldConfig(nullptr, nullptr, nullptr,
+                                               ui->simUranusEn, Iw, true));
             break;
          case dsm_gui_lib::WorldID::NEPTUNE:
-            worldConfigHash.insert(*it,
+            worldConfigHash.insert(worldName,
                                    worldConfig(nullptr, nullptr, nullptr,
                                                ui->simNeptuneEn, Iw, true));
             break;
          case dsm_gui_lib::WorldID::PLUTO:
-            worldConfigHash.insert(*it, worldConfig(nullptr, nullptr, nullptr,
-                                                    ui->simPlutoEn, Iw, true));
+            worldConfigHash.insert(worldName,
+                                   worldConfig(nullptr, nullptr, nullptr,
+                                               ui->simPlutoEn, Iw, true));
             break;
          case dsm_gui_lib::WorldID::MINORBODY:
-            worldConfigHash.insert(*it,
+            worldConfigHash.insert(worldName,
                                    worldConfig(nullptr, nullptr, nullptr,
                                                ui->simAsteroidsEn, Iw, false));
             break;
          default:
-            worldConfigHash.insert(*it, worldConfig(nullptr, nullptr, nullptr,
-                                                    nullptr, Iw, false));
+            worldConfigHash.insert(
+                worldName,
+                worldConfig(nullptr, nullptr, nullptr, nullptr, Iw, false));
             break;
       }
    }
@@ -151,11 +159,6 @@ void SIM_Menu::receive_simpath(QString path) {
 }
 
 void SIM_Menu::receive_data() {
-   // simData.clear();
-   // simString.clear();
-   simFileHeaders.clear();
-   simFileDescrip.clear();
-
    QString newKey;
    QStringList orbFiles = QDir(inoutPath).entryList({"Orb_*.yaml"});
 
