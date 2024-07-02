@@ -72,8 +72,8 @@ class MainWindow : public QMainWindow {
    QString pythonCmd;
 
    const QStringList neededFiles = {
-       "Inp_Cmd.txt", "Inp_FOV.txt",  "Inp_Graphics.txt",
-       "Inp_IPC.txt", "Inp_NOS3.txt", "Inp_Region.txt",
-       "Inp_Sim.txt", "Inp_TDRS.txt", "Inp_DSM.txt"};
+       "Inp_Cmd.txt",  "Inp_FOV.txt",  "Inp_Graphics.txt",
+       "Inp_IPC.txt",  "Inp_NOS3.txt", "Inp_Region.txt",
+       "Inp_Sim.yaml", "Inp_TDRS.txt", "Inp_DSM.txt"};
 };
 #endif // MAINWINDOW_H
