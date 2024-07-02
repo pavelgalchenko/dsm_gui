@@ -68,6 +68,8 @@ class MainWindow : public QMainWindow {
    SIM_Menu *sim_menu;
    DSM_Menu *dsm_menu;
    QString path;
+   QString appPath;
+   QString pythonCmd;
 
    const QStringList neededFiles = {
        "Inp_Cmd.txt", "Inp_FOV.txt",  "Inp_Graphics.txt",

@@ -68,10 +68,12 @@ void SIM_Menu::set_validators() {
 
    worldConfigHash.clear();
 
-   QMetaEnum e = QMetaEnum::fromType<dsm_gui_lib::WorldID>();
-   for (int k = 0; k < e.keyCount(); k++) {
-      dsm_gui_lib::WorldID Iw = e.value(k);
-      QString worldName       = dsm_gui_lib::ID2World(Iw);
+   for (QList<QString>::ConstIterator it =
+            dsm_gui_lib::worldInputs.constBegin();
+        it != dsm_gui_lib::worldInputs.constEnd(); ++it) {
+      dsm_gui_lib::WorldID Iw = dsm_gui_lib::World2ID(*it);
+
+      QString worldName = dsm_gui_lib::ID2World(Iw);
       switch (Iw) {
          case dsm_gui_lib::WorldID::SOL:
             worldConfigHash.insert(
@@ -156,6 +158,13 @@ void SIM_Menu::receive_simpath(QString path) {
    filePath  = inoutPath + "Inp_Sim.yaml";
 
    receive_data();
+}
+void SIM_Menu::receive_apppath(QString path) {
+   appPath = path;
+}
+
+void SIM_Menu::receive_pythoncmd(QString cmd) {
+   pythonCmd = cmd;
 }
 
 void SIM_Menu::receive_data() {
@@ -352,6 +361,8 @@ void SIM_Menu::receive_data() {
 }
 
 void SIM_Menu::write_data(YAML::Node inp_sim) {
+   QStringList params;
+   QProcess p;
    QFile::remove(filePath);
    QFile file(filePath);
    if (!file.open(QFile::WriteOnly)) {
@@ -365,6 +376,10 @@ void SIM_Menu::write_data(YAML::Node inp_sim) {
       in << out.c_str();
    }
    file.close();
+   params << appPath + "/__python__/AddYAMLComments.py" << appPath << inoutPath
+          << "Inp_Sim.yaml";
+   p.start(pythonCmd, params);
+   p.waitForFinished(-1);
 }
 
 void SIM_Menu::clear_data() {

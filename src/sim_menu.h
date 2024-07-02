@@ -10,7 +10,6 @@
 #include <QLineEdit>
 #include <QListWidget>
 #include <QMessageBox>
-#include <QMetaEnum>
 #include <QRadioButton>
 #include <QSpinBox>
 
@@ -170,6 +169,8 @@ class SIM_Menu : public QDialog {
    private slots:
    void set_validators();
    void receive_simpath(QString path);
+   void receive_apppath(QString path);
+   void receive_pythoncmd(QString cmd);
    void receive_data();
    void clear_data();
    void write_data(YAML::Node inp_sim);
@@ -234,6 +235,9 @@ class SIM_Menu : public QDialog {
    QString orbDescription, scDescription, gsDescription;
 
    QString simFile;
+
+   QString appPath;
+   QString pythonCmd;
 
    QList<QCheckBox *> celestialBodies;
    QList<QCheckBox *> lagrangeSystems;

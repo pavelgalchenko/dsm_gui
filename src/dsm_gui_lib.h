@@ -7,9 +7,13 @@
 #include <QComboBox>
 #include <QDialog>
 #include <QFile>
+#include <QProcess>
 #include <QRandomGenerator>
 #include <QTextStream>
 #include <QVariant>
+
+#define STR2(x) #x
+#define STR(X)  STR2(X)
 
 class dsm_gui_lib {
    public:
