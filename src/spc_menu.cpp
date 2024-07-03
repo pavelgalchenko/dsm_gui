@@ -2,6 +2,7 @@
 #include "dsm_gui_lib.h"
 #include "ui_spc_menu.h"
 #include <QComboBox>
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QMessageBox>
@@ -13,7 +14,10 @@ SPC_Menu::SPC_Menu(QWidget *parent) : QDialog(parent), ui(new Ui::SPC_Menu) {
    ui->quick_tabs->setCurrentIndex(0);
    set_validators();
 
-   new_item = 0;
+   new_item   = 0;
+   counter3u  = 0;
+   counter6u  = 0;
+   counter12u = 0;
 }
 
 SPC_Menu::~SPC_Menu() {
@@ -737,7 +741,7 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
    for (int i = 0; i <= 30; i++) {
       QString newSCTest = new_spc;
       if (i > 0)
-         newSCTest += "_" + QString::number(i);
+         newSCTest += " " + QString::number(i);
       if (!spc_names.contains(newSCTest, Qt::CaseInsensitive)) {
          new_spc = newSCTest;
          break;
@@ -877,7 +881,6 @@ void SPC_Menu::on_spc_conf_clicked() {
    } else {
       spc_submenu->show();
       spc_submenu->raise();
-      spc_submenu->activateWindow();
    }
 }
 
@@ -978,4 +981,112 @@ void SPC_Menu::on_SPC_Menu_rejected() {
       emit send_data("Done", "");
       disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
    }
+}
+
+void SPC_Menu::on_sc3u_clicked() {
+   proc_add_template("3U_CubeSat", counter3u);
+   counter3u++;
+}
+
+void SPC_Menu::proc_add_template(QString sc_template_name, long counter) {
+   int response =
+       dsm_gui_lib::warning_message("Load " + sc_template_name + " template?");
+   if (response == QMessageBox::Ok) {
+      on_spc_remove_clicked();
+      load_specific_file(sc_template_name, counter);
+
+   } else
+      return;
+}
+
+void SPC_Menu::on_sc6u_clicked() {
+   proc_add_template("6U_CubeSat", counter3u);
+   counter6u++;
+}
+
+void SPC_Menu::on_sc12u_clicked() {
+   proc_add_template("12U_CubeSat", counter3u);
+   counter12u++;
+}
+
+void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
+   if (spc_submenu != nullptr) {
+      new_item = 1;
+   }
+
+   QStringList tmp_data = {"Simple generic S/C",
+                           "S/C",
+                           "GenScSpriteAlpha.ppm",
+                           "PROTOTYPE_FSW",
+                           "0.2",
+                           "FIXED",
+                           "CM",
+                           "0.0",
+                           "0.0",
+                           "0.0",
+                           "0.0",
+                           "0.0",
+                           "0.0",
+                           "N",
+                           "A",
+                           "N",
+                           "0.3",
+                           "0.4",
+                           "0.5",
+                           "0.0",
+                           "0.0",
+                           "0.0",
+                           "1.0",
+                           "60.0",
+                           "40.0",
+                           "20.0",
+                           "213"};
+
+   QStringList all_names;
+   for (int i = 0; i < ui->spc_list->count(); i++) {
+      all_names.append(ui->spc_list->item(i)->text());
+   }
+
+   QString new_name = load_sc_name + QString::number(counter);
+   if (ui->spc_list->count() != 0) {
+      for (int i = 0; i <= 50; i++) {
+         QString newNameTest = new_name;
+         if (i > 0)
+            newNameTest += " " + QString::number(i);
+         if (!all_names.contains(newNameTest, Qt::CaseInsensitive)) {
+            new_name = newNameTest;
+            break;
+         }
+         if (i == 50)
+            return; // Nothing happens if too many
+      }
+   }
+
+   ui->spc_list->addItem(new_name);
+   QList<QListWidgetItem *> cur_items =
+       ui->spc_list->findItems(new_name, Qt::MatchExactly);
+
+   QListWidgetItem *cur_item = cur_items[0]; // there can only be one match
+
+   ui->spc_list->setCurrentItem(cur_item);
+
+   ui->spc_list->currentItem()->setData(256, new_name);
+
+   ui->spc_list->currentItem()->setData(257, tmp_data);
+   on_spc_list_itemClicked(ui->spc_list->currentItem());
+
+   spc_names.append(new_name);
+   file_path = inout_path + "SC_" + new_name + ".txt";
+   file_paths.append(file_path);
+
+   QFile::copy(":/data/__default__/SC_" + load_sc_name + ".txt",
+               inout_path + "SC_" + new_name + ".txt");
+
+   ui->spc_list->sortItems();
+   ui->spc_conf->setEnabled(true);
+
+   new_item = 0;
+   if (spc_submenu != nullptr)
+      on_spc_list_currentTextChanged(
+          new_name); // click on the current item to reload submenu
 }

@@ -2,6 +2,7 @@
 #include "dsm_gui_lib.h"
 #include "spc_menu.h">
 #include "ui_spc_submenu.h"
+#include <QDebug>
 
 SPC_submenu::SPC_submenu(QWidget *parent)
     : QDialog(parent), ui(new Ui::SPC_submenu) {

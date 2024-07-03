@@ -17,5 +17,9 @@
         <file>__default__/Whl_Simple.txt</file>
         <file>dsm_gui.icns</file>
         <file>__default__/Inp_DSM.txt</file>
+        <file>__default__/SC_6U_CubeSat.txt</file>
+        <file>__default__/SC_12U_CubeSat.txt</file>
+        <file>__default__/SC_3U_CubeSat.txt</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

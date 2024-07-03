@@ -56,6 +56,13 @@ class SPC_Menu : public QDialog {
 
    void on_SPC_Menu_rejected();
 
+   void on_sc3u_clicked();
+   void on_sc6u_clicked();
+   void on_sc12u_clicked();
+
+   void proc_add_template(QString sc_template_name, long counter);
+   void load_specific_file(QString load_sc_name, long counter);
+
    private:
    Ui::SPC_Menu *ui;
 
@@ -75,6 +82,9 @@ class SPC_Menu : public QDialog {
    QStringList spc_update;
    int spc_name_index;
    int new_item;
+   long counter3u;
+   long counter6u;
+   long counter12u;
 
    QStringList spc_file_headers; // section headers in the file
    QStringList spc_file_descrip; // data descriptors in the file
