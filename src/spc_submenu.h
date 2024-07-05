@@ -219,6 +219,9 @@ class SPC_submenu : public QDialog {
    int joints_valid = 1;
 
    public slots:
+
+   signals:
+   void refresh_spc_menu(QString path);
 };
 
 #endif // SPC_SUBMENU_H

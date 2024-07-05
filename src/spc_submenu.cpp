@@ -853,34 +853,28 @@ void SPC_submenu::write_data() {
 }
 
 void SPC_submenu::on_spc_cur_load_clicked() {
-
    file_path    = spc_cur_file;
    int response = dsm_gui_lib::warning_message("Overwrite SC file?");
    if (response == QMessageBox::Ok) {
-      QFile::remove(file_path);
-      bool simple_exists =
-          dsm_gui_lib::fileExists(inout_path + "__default__/__SCDEFAULT__.txt");
+      QString spc_cur_name =
+          spc_cur_file.replace(inout_path, "").chopped(4).mid(3);
 
-      if (simple_exists) {
-         QFile::copy(inout_path + "__default__/SC_Simple.txt", file_path);
-      } else {
-         QFile::copy(":/data/__default__/SC_Simple.txt",
-                     inout_path + "__default__/__SCDEFAULT__.txt");
-         QFile::copy(inout_path + "__default__/__SCDEFAULT__.txt", file_path);
-      }
-
-      receive_data();
-      apply_data();
+      connect(this, SIGNAL(refresh_spc_menu(QString)), this->parent(),
+              SLOT(load_1SC_default(QString)));
+      emit refresh_spc_menu(spc_cur_name);
+      disconnect(this, SIGNAL(refresh_spc_menu(QString)), 0, 0);
    }
 }
 
 //// S/C Buttons
 
 void SPC_submenu::on_spc_cur_save_clicked() {
+   on_spc_cur_apply_clicked();
+   file_path    = spc_cur_file;
    int response = dsm_gui_lib::warning_message("Overwrite Default SC file?");
    if (response == QMessageBox::Ok) {
-      QFile::remove(inout_path + "__default__/SC_Simple.txt");
-      QFile::copy(file_path, inout_path + "__default__/SC_Simple.txt");
+      QFile::remove(inout_path + "__default__/__SCDEFAULT__.txt");
+      QFile::copy(file_path, inout_path + "__default__/__SCDEFAULT__.txt");
       receive_data();
       apply_data();
    }

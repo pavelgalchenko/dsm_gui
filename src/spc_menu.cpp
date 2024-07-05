@@ -74,6 +74,11 @@ void SPC_Menu::set_validators() {
 void SPC_Menu::receive_spcpath(QString path) {
    inout_path = path;
 
+   file_paths_default.clear();
+   file_paths.clear();
+   file_path.clear();
+   spc_names.clear();
+
    QStringList spcDefaultFiles =
        QDir(inout_path + "__default__/").entryList({"SC_*"});
    for (int i = 0; i < spcDefaultFiles.length(); i++) {
@@ -93,7 +98,6 @@ void SPC_Menu::receive_spcpath(QString path) {
              3)); // Everything between "SC_" and ".txt"
       }
 
-      ui->spc_list->clear();
       for (int i = 0; i < file_paths.length(); i++) {
          file_path      = file_paths[i];
          spc_name_index = i;
@@ -105,7 +109,6 @@ void SPC_Menu::receive_spcpath(QString path) {
          receive_data();
          apply_data();
       }
-
       on_spc_list_itemClicked(ui->spc_list->item(0));
       ui->spc_list->setCurrentRow(0);
    }
@@ -264,8 +267,6 @@ void SPC_Menu::on_spc_apply_clicked() {
       return;
    }
 
-   spc_names.sort();
-   file_paths.sort();
    QStringList other_names = spc_names;
    other_names.removeOne(ui->spc_list->currentItem()->text());
 
@@ -650,7 +651,7 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
       all_names.append(ui->spc_list->item(i)->text());
    }
 
-   QString new_name = "New";
+   QString new_name = "DEFAULT";
    if (ui->spc_list->count() != 0) {
       for (int i = 0; i <= 50; i++) {
          QString newNameTest = new_name;
@@ -682,15 +683,21 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
    file_path = inout_path + "SC_" + new_name + ".txt";
    file_paths.append(file_path);
 
-   QFile::copy(":/data/__default__/SC_Simple.txt",
-               inout_path + "SC_" + new_name + ".txt");
+   if (dsm_gui_lib::fileExists(inout_path + "__default__/__SCDEFAULT__.txt")) {
+      QFile::copy(inout_path + "__default__/__SCDEFAULT__.txt",
+                  inout_path + "SC_" + new_name + ".txt");
+
+   } else
+      QFile::copy(":/data/__default__/SC_Simple.txt",
+                  inout_path + "SC_" + new_name + ".txt");
    ui->spc_list->sortItems();
    ui->spc_conf->setEnabled(true);
 
    new_item = 0;
-   if (spc_submenu != nullptr)
+   if (spc_submenu != nullptr) {
       on_spc_list_currentTextChanged(
           new_name); // click on the current item to reload submenu
+   }
 }
 
 void SPC_Menu::on_spc_remove_clicked() // Remove S/C
@@ -983,11 +990,6 @@ void SPC_Menu::on_SPC_Menu_rejected() {
    }
 }
 
-void SPC_Menu::on_sc3u_clicked() {
-   proc_add_template("3U_CubeSat", counter3u);
-   counter3u++;
-}
-
 void SPC_Menu::proc_add_template(QString sc_template_name, long counter) {
    int response =
        dsm_gui_lib::warning_message("Load " + sc_template_name + " template?");
@@ -997,6 +999,16 @@ void SPC_Menu::proc_add_template(QString sc_template_name, long counter) {
 
    } else
       return;
+}
+
+void SPC_Menu::load_1SC_default(QString sc_string) {
+   on_spc_remove_clicked();
+   on_spc_add_clicked();
+}
+
+void SPC_Menu::on_sc3u_clicked() {
+   proc_add_template("3U_CubeSat", counter3u);
+   counter3u++;
 }
 
 void SPC_Menu::on_sc6u_clicked() {
@@ -1047,7 +1059,13 @@ void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
       all_names.append(ui->spc_list->item(i)->text());
    }
 
-   QString new_name = load_sc_name + QString::number(counter);
+   QString new_name;
+
+   if (counter >= 0)
+      new_name = load_sc_name + QString::number(counter);
+   else
+      new_name = load_sc_name;
+
    if (ui->spc_list->count() != 0) {
       for (int i = 0; i <= 50; i++) {
          QString newNameTest = new_name;
