@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 #include <QTextStream>
+#include <QVector>
 
 SPC_Menu::SPC_Menu(QWidget *parent) : QDialog(parent), ui(new Ui::SPC_Menu) {
    ui->setupUi(this);
@@ -80,22 +81,22 @@ void SPC_Menu::receive_spcpath(QString path) {
    spc_names.clear();
 
    QStringList spcDefaultFiles =
-       QDir(inout_path + "__default__/").entryList({"SC_*"});
+       QDir(inout_path + "__default__/").entryList({"SC_*.yaml"});
    for (int i = 0; i < spcDefaultFiles.length(); i++) {
       file_paths_default.append(
           inout_path + "__default__/" +
           spcDefaultFiles[i]); // Full file path of SC file
-      spc_names_default.append(spcDefaultFiles[i].chopped(4).mid(
-          3)); // Everything between "SC_" and ".txt"
+      spc_names_default.append(spcDefaultFiles[i].chopped(5).mid(
+          3)); // Everything between "SC_" and ".yaml"
    }
 
-   QStringList spcFiles = QDir(inout_path).entryList({"SC_*"});
+   QStringList spcFiles = QDir(inout_path).entryList({"SC_*.yaml"});
    if (spcFiles.length() > 0) {
       for (int i = 0; i < spcFiles.length(); i++) {
          file_paths.append(inout_path +
                            spcFiles[i]); // Full file path of SC file
-         spc_names.append(spcFiles[i].chopped(4).mid(
-             3)); // Everything between "SC_" and ".txt"
+         spc_names.append(spcFiles[i].chopped(5).mid(
+             3)); // Everything between "SC_" and ".yaml"
       }
 
       for (int i = 0; i < file_paths.length(); i++) {
@@ -107,7 +108,6 @@ void SPC_Menu::receive_spcpath(QString path) {
          ui->spc_list->setCurrentRow(spc_name_index);
 
          receive_data();
-         apply_data();
       }
       on_spc_list_itemClicked(ui->spc_list->item(0));
       ui->spc_list->setCurrentRow(0);
@@ -119,20 +119,15 @@ void SPC_Menu::receive_spcpath(QString path) {
       ui->spc_conf->setEnabled(true);
 }
 
+void SPC_Menu::receive_apppath(QString path) {
+   appPath = path;
+}
+
+void SPC_Menu::receive_pythoncmd(QString cmd) {
+   pythonCmd = cmd;
+}
+
 void SPC_Menu::receive_data() {
-   // Daniel's regex from ORB_Menu
-   // Return everything up to and including ! (exclamation point)
-   static QRegularExpression rx1("(.*?)!");
-
-   // Return everything between a set of "  " (quotation marks)
-   static QRegularExpression rx2("\"(.*?)\"");
-
-   // If the line does NOT start with an alphanumeric character or " (single
-   // quotation), then return the line as first group. Otherwise return
-   // everything after ! (exclamation point) as second group
-   static QRegularExpression rx3(
-       "(?:(?=^[^[:alnum:]|\"])([^[:alnum:]|\"].*)|(!.*))");
-
    QFile file(file_path);
    if (!file.open(QIODevice::ReadOnly)) {
       QMessageBox::information(0, "error", file.errorString());
@@ -141,124 +136,55 @@ void SPC_Menu::receive_data() {
    spc_data.clear();
    spc_string.clear();
 
-   QTextStream in(&file);
-   while (!in.atEnd()) {
-      QString line                   = in.readLine();
-      QRegularExpressionMatch match1 = rx1.match(line);
-      spc_data.append(
-          match1.captured(1)); // index 0 includes ! character, index 1 does not
+   /* Load Yaml File */
+   cur_spc_yaml = YAML::LoadFile(file_path.toStdString());
 
-      QRegularExpressionMatch match2 = rx2.match(line);
-      spc_string.append(match2.captured(
-          1)); // index 0 includes "" characters, index 1 does not
+   QStringList tmp_data;
 
-      //        line.append("\n");
-      QRegularExpressionMatch match3 = rx3.match(line);
-      if (match3.hasMatch()) {
-         QString capture = match3.captured(1);
-         if (!capture.isEmpty())
-            capture += "\n";
-         spc_file_headers.append(capture);
-         capture = match3.captured(2);
-         if (!capture.isEmpty())
-            capture += "\n";
-         spc_file_descrip.append(capture);
-      }
-   }
+   /* Configuration */
+   tmp_data.append(cur_spc_yaml["Configuration"]["Description"].as<QString>());
+   tmp_data.append(cur_spc_yaml["Configuration"]["Label"].as<QString>());
+   tmp_data.append(cur_spc_yaml["Configuration"]["Sprite File"].as<QString>());
+   tmp_data.append(
+       cur_spc_yaml["Configuration"]["FSW Identifier"].as<QString>());
+   tmp_data.append(
+       cur_spc_yaml["Configuration"]["FSW Sample Time"].as<QString>());
+
+   /* Orbit */
+   tmp_data.append(cur_spc_yaml["Orbit"]["Prop Type"].as<QString>());
+   tmp_data.append(cur_spc_yaml["Orbit"]["Pos Specifier"].as<QString>());
+
+   QVector<QString> data_vector =
+       cur_spc_yaml["Orbit"]["Pos wrt F"].as<QVector<QString>>();
+   for (int i = 0; i < 3; i++)
+      tmp_data.append(data_vector[i]);
+
+   data_vector = cur_spc_yaml["Orbit"]["Vel wrt F"].as<QVector<QString>>();
+   for (int i = 0; i < 3; i++)
+      tmp_data.append(data_vector[i]);
+
+   /* Attitude */
+   tmp_data.append(cur_spc_yaml["Attitude"]["Ang Vel Frame"].as<QString>());
+   tmp_data.append(
+       cur_spc_yaml["Attitude"]["Att Representation"].as<QString>());
+   tmp_data.append(cur_spc_yaml["Attitude"]["Att Frame"].as<QString>());
+   data_vector = cur_spc_yaml["Attitude"]["Ang Vel"].as<QVector<QString>>();
+   for (int i = 0; i < 3; i++)
+      tmp_data.append(data_vector[i]);
+   data_vector = cur_spc_yaml["Attitude"]["Quaternion"].as<QVector<QString>>();
+   for (int i = 0; i < 4; i++)
+      tmp_data.append(data_vector[i]);
+   data_vector = cur_spc_yaml["Attitude"]["Euler Angles"]["Angles"]
+                     .as<QVector<QString>>();
+   for (int i = 0; i < 3; i++)
+      tmp_data.append(data_vector[i]);
+   tmp_data.append(
+       cur_spc_yaml["Attitude"]["Euler Angles"]["Sequence"].as<QString>());
+
+   ui->spc_list->currentItem()->setData(256, spc_names[spc_name_index]);
+   ui->spc_list->currentItem()->setData(257, tmp_data);
+
    file.close();
-}
-
-void SPC_Menu::apply_data() {
-   QStringList line_items;
-   QString line_string;
-
-   QStringList tmp_data = {};
-
-   if (ui->spc_list->count() > 0) {
-      for (int line_num = 1; line_num < 17;
-           line_num++) { // stop after general information
-         line_string = spc_string[line_num - 1];
-         line_items =
-             spc_data[line_num - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-         switch (line_num) {
-               /******************************************* HEADER
-                * ***************************************************/
-            case 1: // File Header
-               break;
-            case 2: // Spacecraft Description
-               tmp_data.append(spc_data[line_num - 1].simplified());
-               // ui->spc_desc->setText(spc_data[line_num-1]);
-               break;
-            case 3: // Spacecraft Label
-               tmp_data.append(line_string.simplified());
-               // ui->spc_label->setText(line_string);
-               break;
-            case 4: // Sprite File Name
-               tmp_data.append(line_items[0]);
-               // ui->spc_sprite->setText(line_items[0]);
-               break;
-            case 5: // Flight Software Identifier
-               tmp_data.append(line_items[0]);
-               // setQComboBox(ui->spc_fswid, line_items[0]);
-               break;
-            case 6: // Flight Software Sample Time
-               tmp_data.append(line_items[0]);
-               // ui->spc_fswsamp->setText(line_items[0]);
-               break;
-            case 7:
-               /******************************************* HEADER
-                * ***************************************************/
-               // Orbit Parameters
-               break;
-            case 8: // Orbit Prop
-               tmp_data.append(line_items[0]);
-               break;
-            case 9: // Pos of CM or ORIGIN wrt F
-               tmp_data.append(line_items[0]);
-               break;
-            case 10: // Pos wrt Formation (m) expressed in F
-               tmp_data.append(line_items[0]);
-               tmp_data.append(line_items[1]);
-               tmp_data.append(line_items[2]);
-               break;
-            case 11: // Vel wrt Formation (m) expressed in F
-               tmp_data.append(line_items[0]);
-               tmp_data.append(line_items[1]);
-               tmp_data.append(line_items[2]);
-               break;
-            case 12: // Initial Attitude Header
-               break;
-            case 13: // Ang Vel wrt [NL], Att [QA] wrt [NLF]
-               line_items = spc_data[line_num - 1].split(QRegExp(""),
-                                                         Qt::SkipEmptyParts);
-               tmp_data.append(line_items[0]);
-               tmp_data.append(line_items[1]);
-               tmp_data.append(line_items[2]);
-               break;
-            case 14:
-               tmp_data.append(line_items[0]);
-               tmp_data.append(line_items[1]);
-               tmp_data.append(line_items[2]);
-               break;
-            case 15:
-               tmp_data.append(line_items[0]);
-               tmp_data.append(line_items[1]);
-               tmp_data.append(line_items[2]);
-               tmp_data.append(line_items[3]);
-               break;
-            case 16:
-               tmp_data.append(line_items[0]);
-               tmp_data.append(line_items[1]);
-               tmp_data.append(line_items[2]);
-
-               tmp_data.append(line_items[3]);
-               break;
-         }
-      }
-      ui->spc_list->currentItem()->setData(256, spc_names[spc_name_index]);
-      ui->spc_list->currentItem()->setData(257, tmp_data);
-   }
 }
 
 void SPC_Menu::on_spc_apply_clicked() {
@@ -288,129 +214,72 @@ void SPC_Menu::on_spc_apply_clicked() {
    file_path = file_paths[index];
    ui->spc_list->currentItem()->setText(cur_name);
    spc_names[index]  = cur_name;
-   file_paths[index] = inout_path + "SC_" + cur_name + ".txt";
+   file_paths[index] = inout_path + "SC_" + cur_name + ".yaml";
    QFile::rename(file_path, file_paths[index]);
    file_path = file_paths[index];
 
    QStringList tmp_data = {};
    QString data_inp     = "";
 
-   for (int line_num = 1; line_num < 17;
-        line_num++) { // append data from "general" information
-      switch (line_num) {
-            /******************************************* HEADER
-             * ***************************************************/
-         case 1: // File Header
-            break;
-         case 2: // Spacecraft Description
-            tmp_data.append(ui->spc_desc->text());
-            break;
-         case 3: // Spacecraft label
-            tmp_data.append(ui->spc_label->text());
-            break;
-         case 4: // Sprite File Name
-            tmp_data.append(ui->spc_sprite->text());
-            break;
-         case 5: // Flight Software Identifier
-            tmp_data.append(ui->spc_fswid->currentText());
-            break;
-         case 6: // Flight Software Sample Time
-            tmp_data.append(ui->spc_fswsamp->text());
-            break;
-         case 7:
-            /******************************************* HEADER
-             * ***************************************************/
-            // Orbit Parameters
-            break;
-         case 8: // Orbit Prop
-            tmp_data.append(ui->spc_cur_orb_type->currentText());
-            break;
-         case 9: // Pos of CM or ORIGIN wrt F
-            tmp_data.append(ui->spc_cur_pos_ref->currentText());
-            break;
-         case 10: // Pos wrt Formation (m) expressed in F
-            tmp_data.append(ui->spc_cur_xpos_form->text());
-            tmp_data.append(ui->spc_cur_ypos_form->text());
-            tmp_data.append(ui->spc_cur_zpos_form->text());
-            break;
-         case 11: // Vel wrt Formation (m) expressed in F
-            tmp_data.append(ui->spc_cur_xvel_form->text());
-            tmp_data.append(ui->spc_cur_yvel_form->text());
-            tmp_data.append(ui->spc_cur_zvel_form->text());
-            break;
-         case 12: // Initial Attitude Header
-            break;
-         case 13: // Ang Vel wrt [NL], Att [QA] wrt [NLF]
-            tmp_data.append(ui->spc_cur_angvel_frame1->currentText());
-            tmp_data.append(ui->spc_cur_att_param->currentText());
-            tmp_data.append(ui->spc_cur_angvel_frame2->currentText());
-            break;
-         case 14:
-            tmp_data.append(ui->spc_cur_angvel_1->text());
-            tmp_data.append(ui->spc_cur_angvel_2->text());
-            tmp_data.append(ui->spc_cur_angvel_3->text());
-            break;
-         case 15:
-            tmp_data.append(ui->spc_cur_q1->text());
-            tmp_data.append(ui->spc_cur_q2->text());
-            tmp_data.append(ui->spc_cur_q3->text());
-            tmp_data.append(ui->spc_cur_q4->text());
+   cur_spc_yaml["Name"] = ui->spc_name->text();
 
-            if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q")) {
-               ui->spc_cur_initeul_1->setEnabled(false);
-               ui->spc_cur_initeul_2->setEnabled(false);
-               ui->spc_cur_initeul_3->setEnabled(false);
+   /* Configuration */
+   YAML::Node conf_node         = cur_spc_yaml["Configuration"];
+   conf_node["Description"]     = ui->spc_desc->text();
+   conf_node["Label"]           = ui->spc_label->text();
+   conf_node["Sprite File"]     = ui->spc_sprite->text();
+   conf_node["FSW Identifier"]  = ui->spc_fswid->currentText();
+   conf_node["FSW Sample Time"] = ui->spc_fswsamp->text();
 
-               ui->spc_cur_initeul_seq->setEnabled(false);
+   /* Orbit */
+   YAML::Node orb_node       = cur_spc_yaml["Orbit"];
+   orb_node["Prop Type"]     = ui->spc_cur_orb_type->currentText();
+   orb_node["Pos Specifier"] = ui->spc_cur_pos_ref->currentText();
 
-               ui->spc_cur_q1->setEnabled(true);
-               ui->spc_cur_q2->setEnabled(true);
-               ui->spc_cur_q3->setEnabled(true);
-               ui->spc_cur_q4->setEnabled(true);
-            } else {
-               ui->spc_cur_initeul_1->setEnabled(true);
-               ui->spc_cur_initeul_2->setEnabled(true);
-               ui->spc_cur_initeul_3->setEnabled(true);
+   QVector<QString> data_vector = {ui->spc_cur_xpos_form->text(),
+                                   ui->spc_cur_ypos_form->text(),
+                                   ui->spc_cur_zpos_form->text()};
+   orb_node["Pos wrt F"]        = data_vector;
 
-               ui->spc_cur_initeul_seq->setEnabled(true);
+   data_vector = {ui->spc_cur_xvel_form->text(), ui->spc_cur_yvel_form->text(),
+                  ui->spc_cur_zvel_form->text()};
+   orb_node["Vel wrt F"] = data_vector;
 
-               ui->spc_cur_q1->setEnabled(false);
-               ui->spc_cur_q2->setEnabled(false);
-               ui->spc_cur_q3->setEnabled(false);
-               ui->spc_cur_q4->setEnabled(false);
-            }
-            break;
-         case 16:
-            tmp_data.append(ui->spc_cur_initeul_1->text());
-            tmp_data.append(ui->spc_cur_initeul_2->text());
-            tmp_data.append(ui->spc_cur_initeul_3->text());
-            tmp_data.append(ui->spc_cur_initeul_seq->currentText());
+   /* Attitude */
+   YAML::Node att_node            = cur_spc_yaml["Attitude"];
+   att_node["Ang Vel Frame"]      = ui->spc_cur_angvel_frame1->currentText();
+   att_node["Att Representation"] = ui->spc_cur_att_param->currentText();
+   att_node["Att Frame"]          = ui->spc_cur_angvel_frame2->currentText();
 
-            if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q")) {
-               ui->spc_cur_initeul_1->setEnabled(false);
-               ui->spc_cur_initeul_2->setEnabled(false);
-               ui->spc_cur_initeul_3->setEnabled(false);
+   data_vector = {ui->spc_cur_angvel_1->text(), ui->spc_cur_angvel_2->text(),
+                  ui->spc_cur_angvel_3->text()};
+   att_node["Ang Vel"] = ui->spc_cur_angvel_frame2->currentText();
 
-               ui->spc_cur_initeul_seq->setEnabled(false);
+   data_vector = {ui->spc_cur_q1->text(), ui->spc_cur_q2->text(),
+                  ui->spc_cur_q3->text(), ui->spc_cur_q4->text()};
 
-               ui->spc_cur_q1->setEnabled(true);
-               ui->spc_cur_q2->setEnabled(true);
-               ui->spc_cur_q3->setEnabled(true);
-               ui->spc_cur_q4->setEnabled(true);
-            } else {
-               ui->spc_cur_initeul_1->setEnabled(true);
-               ui->spc_cur_initeul_2->setEnabled(true);
-               ui->spc_cur_initeul_3->setEnabled(true);
+   if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q")) {
+      ui->spc_cur_initeul_1->setEnabled(false);
+      ui->spc_cur_initeul_2->setEnabled(false);
+      ui->spc_cur_initeul_3->setEnabled(false);
 
-               ui->spc_cur_initeul_seq->setEnabled(true);
+      ui->spc_cur_initeul_seq->setEnabled(false);
 
-               ui->spc_cur_q1->setEnabled(false);
-               ui->spc_cur_q2->setEnabled(false);
-               ui->spc_cur_q3->setEnabled(false);
-               ui->spc_cur_q4->setEnabled(false);
-            }
-            break;
-      }
+      ui->spc_cur_q1->setEnabled(true);
+      ui->spc_cur_q2->setEnabled(true);
+      ui->spc_cur_q3->setEnabled(true);
+      ui->spc_cur_q4->setEnabled(true);
+   } else {
+      ui->spc_cur_initeul_1->setEnabled(true);
+      ui->spc_cur_initeul_2->setEnabled(true);
+      ui->spc_cur_initeul_3->setEnabled(true);
+
+      ui->spc_cur_initeul_seq->setEnabled(true);
+
+      ui->spc_cur_q1->setEnabled(false);
+      ui->spc_cur_q2->setEnabled(false);
+      ui->spc_cur_q3->setEnabled(false);
+      ui->spc_cur_q4->setEnabled(false);
    }
 
    ui->spc_list->currentItem()->setData(256, cur_name);
@@ -418,174 +287,11 @@ void SPC_Menu::on_spc_apply_clicked() {
 
    tmp_data.clear();
 
-   QStringList current_data =
-       ui->spc_list->currentItem()->data(257).toStringList();
-
-   for (int line_num = 1; line_num < 17;
-        line_num++) { // append data from "general" information
-
-      switch (line_num) {
-         case 1:
-            spc_update.append("<<<<<<<<<<<<<<<<<  42: Spacecraft Description "
-                              "File   >>>>>>>>>>>>>>>>>>>\n");
-            break; // header
-         case 2:
-            data_inp = current_data[0];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) +
-                              "!  Description\n");
-            break;
-         case 3:
-            data_inp = "\"" + current_data[1] + "\"";
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) + "!  Label\n");
-            break;
-         case 4:
-            data_inp = current_data[2];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) +
-                              "!  Sprite File Name\n");
-            break;
-         case 5:
-            data_inp = current_data[3];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) +
-                              "!  Flight Software Identifier\n");
-            break;
-         case 6:
-            data_inp = current_data[4];
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) +
-                              "!  FSW Sample Time, sec\n");
-            break;
-         case 7:
-            /******************************************* HEADER
-             * ***************************************************/
-            // Orbit Parameters
-            spc_update.append("************************* Orbit Parameters "
-                              "*****************************\n");
-            break;
-         case 8: // Orbit Prop
-            data_inp = ui->spc_cur_orb_type->currentText();
-            spc_update.append(
-                dsm_gui_lib::whitespace(data_inp) +
-                "!  Orbit Prop FIXED, EULER_HILL, ENCKE, or COWELL\n");
-            break;
-         case 9: // Pos of CM or ORIGIN wrt F
-            data_inp = ui->spc_cur_pos_ref->currentText();
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) +
-                              "!  Pos of CM or ORIGIN, wrt F\n");
-            break;
-         case 10: // Pos wrt Formation (m) expressed in F
-            data_inp = ui->spc_cur_xpos_form->text() + "  " +
-                       ui->spc_cur_ypos_form->text() + "  " +
-                       ui->spc_cur_zpos_form->text();
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) +
-                              "!  Pos wrt Formation (m), expressed in F\n");
-            break;
-         case 11: // Vel wrt Formation (m) expressed in F
-            data_inp = ui->spc_cur_xvel_form->text() + "  " +
-                       ui->spc_cur_yvel_form->text() + "  " +
-                       ui->spc_cur_zvel_form->text();
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) +
-                              "!  Vel wrt Formation (m/s), expressed in F\n");
-            break;
-         case 12: // Initial Attitude Header
-            spc_update.append("*************************** Initial Attitude "
-                              "***************************\n");
-            break;
-         case 13: // Ang Vel wrt [NL], Att [QA] wrt [NLF]
-            data_inp = ui->spc_cur_angvel_frame1->currentText() +
-                       ui->spc_cur_att_param->currentText() +
-                       ui->spc_cur_angvel_frame2->currentText();
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) +
-                              "!  Ang Vel wrt [NL], Att [QA] wrt [NLF]\n");
-            break;
-         case 14:
-            data_inp = ui->spc_cur_angvel_1->text() + "  " +
-                       ui->spc_cur_angvel_2->text() + "  " +
-                       ui->spc_cur_angvel_3->text();
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) +
-                              "!  Ang Vel (deg/sec)\n");
-            break;
-         case 15:
-            data_inp = ui->spc_cur_q1->text() + "  " + ui->spc_cur_q2->text() +
-                       "  " + ui->spc_cur_q3->text() + "  " +
-                       ui->spc_cur_q4->text();
-
-            if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q")) {
-               ui->spc_cur_initeul_1->setEnabled(false);
-               ui->spc_cur_initeul_2->setEnabled(false);
-               ui->spc_cur_initeul_3->setEnabled(false);
-
-               ui->spc_cur_initeul_seq->setEnabled(false);
-
-               ui->spc_cur_q1->setEnabled(true);
-               ui->spc_cur_q2->setEnabled(true);
-               ui->spc_cur_q3->setEnabled(true);
-               ui->spc_cur_q4->setEnabled(true);
-            } else {
-               ui->spc_cur_initeul_1->setEnabled(true);
-               ui->spc_cur_initeul_2->setEnabled(true);
-               ui->spc_cur_initeul_3->setEnabled(true);
-
-               ui->spc_cur_initeul_seq->setEnabled(true);
-
-               ui->spc_cur_q1->setEnabled(false);
-               ui->spc_cur_q2->setEnabled(false);
-               ui->spc_cur_q3->setEnabled(false);
-               ui->spc_cur_q4->setEnabled(false);
-            }
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) +
-                              "!  Quaternion\n");
-            break;
-         case 16:
-            data_inp = ui->spc_cur_initeul_1->text() + "  " +
-                       ui->spc_cur_initeul_2->text() + "  " +
-                       ui->spc_cur_initeul_3->text() + "  " +
-                       ui->spc_cur_initeul_seq->currentText();
-
-            if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q")) {
-               ui->spc_cur_initeul_1->setEnabled(false);
-               ui->spc_cur_initeul_2->setEnabled(false);
-               ui->spc_cur_initeul_3->setEnabled(false);
-
-               ui->spc_cur_initeul_seq->setEnabled(false);
-
-               ui->spc_cur_q1->setEnabled(true);
-               ui->spc_cur_q2->setEnabled(true);
-               ui->spc_cur_q3->setEnabled(true);
-               ui->spc_cur_q4->setEnabled(true);
-            } else {
-               ui->spc_cur_initeul_1->setEnabled(true);
-               ui->spc_cur_initeul_2->setEnabled(true);
-               ui->spc_cur_initeul_3->setEnabled(true);
-
-               ui->spc_cur_initeul_seq->setEnabled(true);
-
-               ui->spc_cur_q1->setEnabled(false);
-               ui->spc_cur_q2->setEnabled(false);
-               ui->spc_cur_q3->setEnabled(false);
-               ui->spc_cur_q4->setEnabled(false);
-            }
-            spc_update.append(dsm_gui_lib::whitespace(data_inp) +
-                              "!  Angles (deg) & Euler Sequence\n");
-            break;
-      }
-   }
-
-   // Read in the rest of the file and append it to the end. Functionally
-   // equivalent to only changing the first 16 lines.
    QFile file(file_path);
    if (!file.open(QIODevice::ReadOnly)) {
       QMessageBox::information(0, "error", file.errorString());
    }
 
-   QTextStream in(&file);
-   long counter = 1;
-   while (!in.atEnd()) {
-      QString line = in.readLine();
-      if (counter > 16) {
-         spc_update.append(line);
-         spc_update.append("\n");
-      }
-      counter++;
-   }
    file.close();
 
    index            = file_paths.indexOf(file_path);
@@ -593,23 +299,30 @@ void SPC_Menu::on_spc_apply_clicked() {
    spc_name_index   = index;
    ui->spc_list->setCurrentRow(index);
 
-   write_data();
+   write_data(cur_spc_yaml);
    on_spc_list_currentTextChanged(ui->spc_list->currentItem()->text());
 }
 
-void SPC_Menu::write_data() {
+void SPC_Menu::write_data(YAML::Node inp_spc) {
+   QStringList params;
+   QProcess p;
    QFile::remove(file_path);
    QFile file(file_path);
    if (!file.open(QFile::WriteOnly)) {
       QMessageBox::information(0, "error", file.errorString());
    } else {
       QTextStream in(&file);
-      for (int i = 0; i < spc_update.size(); i++) {
-         in << spc_update.at(i);
-      }
+      YAML::Emitter out;
+      out.SetIndent(4);
+      out.SetMapFormat(YAML::EMITTER_MANIP::Block);
+      out << inp_spc;
+      in << out.c_str();
    }
-   spc_update.clear();
    file.close();
+   params << appPath + "/__python__/AddYAMLComments.py" << appPath << inout_path
+          << "SC_" << ui->spc_label->text() << ".yaml";
+   p.start(pythonCmd, params);
+   p.waitForFinished(-1);
 }
 
 void SPC_Menu::on_spc_add_clicked() // Add S/C
@@ -820,7 +533,6 @@ void SPC_Menu::on_spc_load_clicked() // Load default S/C
          ui->spc_list->setCurrentRow(ui->spc_list->count() - 1);
 
          receive_data();
-         apply_data();
       }
       ui->spc_list->setCurrentRow(0);
       on_spc_list_itemClicked(ui->spc_list->item(0));
@@ -871,7 +583,6 @@ void SPC_Menu::on_spc_close_clicked() {
 void SPC_Menu::on_spc_conf_clicked() {
    on_spc_apply_clicked();
    receive_data();
-   apply_data();
 
    if (spc_submenu == nullptr) {
       spc_submenu = new SPC_submenu(this);
