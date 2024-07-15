@@ -6,6 +6,7 @@
 #include <QListWidgetItem>
 #include <QStringList>
 
+#include "dsm_gui_lib.h"
 #include "spc_submenu.h"
 
 namespace Ui {
@@ -39,10 +40,11 @@ class SPC_Menu : public QDialog {
    void on_spc_list_itemClicked(QListWidgetItem *item);
 
    void receive_data();
-   void apply_data();
-   void write_data();
+   void write_data(YAML::Node inp_spc);
 
-   void receive_spcpath(QString);
+   void receive_spcpath(QString path);
+   void receive_apppath(QString path);
+   void receive_pythoncmd(QString cmd);
 
    void on_spc_list_itemActivated(QListWidgetItem *item);
 
@@ -108,6 +110,10 @@ class SPC_Menu : public QDialog {
    const QStringList angvel_wrt = {"N", "L"};
    const QStringList att_params = {"Q", "A"};
    const QStringList att_wrt    = {"N", "L", "F"};
+
+   YAML::Node cur_spc_yaml;
+   QString appPath;
+   QString pythonCmd;
 };
 
 #endif // SPC_Menu_H
