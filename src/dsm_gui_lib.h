@@ -2,14 +2,18 @@
 #define DSM_GUI_LIB_H
 
 #include "qlistwidget.h"
+#include "qtyaml.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialog>
 #include <QFile>
-#include <QLineEdit>
+#include <QProcess>
 #include <QRandomGenerator>
 #include <QTextStream>
 #include <QVariant>
+
+#define STR2(x) #x
+#define STR(X)  STR2(X)
 
 class dsm_gui_lib {
    public:
@@ -104,6 +108,13 @@ class dsm_gui_lib {
          box->removeItem(ind);
       } else
          box->setCurrentIndex(ind);
+   }
+
+   inline static WorldID World2ID(QString world) {
+      return (WorldID)worldInputs.indexOf(world);
+   };
+   inline static QString ID2World(WorldID id) {
+      return worldInputs[(int)id];
    }
 
    private:

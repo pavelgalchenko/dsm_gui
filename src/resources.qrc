@@ -16,9 +16,17 @@
         <file>__default__/Whl_Simple.txt</file>
         <file>dsm_gui.icns</file>
         <file>__default__/Inp_DSM.txt</file>
-        <file>__default__/SC_6U_CubeSat.txt</file>
-        <file>__default__/SC_12U_CubeSat.txt</file>
-        <file>__default__/SC_3U_CubeSat.txt</file>
+        <file>__default__/Inp_DSM.yaml</file>
+        <file>__default__/Inp_FOV.yaml</file>
+        <file>__default__/Inp_Graphics.yaml</file>
+        <file>__default__/Inp_IPC.yaml</file>
+        <file>__default__/Inp_NOS3.yaml</file>
+        <file>__default__/Inp_Region.yaml</file>
+        <file>__default__/Inp_Sim.yaml</file>
+        <file>__default__/Inp_TDRS.yaml</file>
+        <file>__default__/Nodes_Simple.yaml</file>
+        <file>__default__/Orb_LEO.yaml</file>
+        <file>__default__/SC_Simple.yaml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
