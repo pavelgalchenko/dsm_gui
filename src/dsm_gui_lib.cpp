@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QFileInfo>
 #include <QComboBox>
+#include <QLineEdit>
 #include <QMessageBox>
 
 dsm_gui_lib::dsm_gui_lib() {}

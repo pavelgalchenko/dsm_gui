@@ -11,6 +11,11 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow) {
    ui->setupUi(this);
    ui->Warning->setVisible(false);
+   appPath = STR(INSTALL_PATH);
+   QProcess p;
+   p.start("which", {"python"});
+   p.waitForFinished(-1);
+   pythonCmd = p.readAll().trimmed();
 }
 
 MainWindow::~MainWindow() {
@@ -283,6 +288,16 @@ void MainWindow::on_SIM_Menu_clicked() {
    connect(this, SIGNAL(send_data(QString)), sim_menu,
            SLOT(receive_simpath(QString)));
    emit send_data(path);
+   disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+
+   connect(this, SIGNAL(send_data(QString)), sim_menu,
+           SLOT(receive_apppath(QString)));
+   emit send_data(appPath);
+   disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+
+   connect(this, SIGNAL(send_data(QString)), sim_menu,
+           SLOT(receive_pythoncmd(QString)));
+   emit send_data(pythonCmd);
    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 

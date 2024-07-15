@@ -2,14 +2,18 @@
 #define DSM_GUI_LIB_H
 
 #include "qlistwidget.h"
+#include "qtyaml.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialog>
 #include <QFile>
-#include <QLineEdit>
+#include <QProcess>
 #include <QRandomGenerator>
 #include <QTextStream>
 #include <QVariant>
+
+#define STR2(x) #x
+#define STR(X)  STR2(X)
 
 class dsm_gui_lib {
    public:
@@ -48,6 +52,65 @@ class dsm_gui_lib {
    inline static const QStringList eulerInputs = {"121", "123", "131", "132",
                                                   "212", "213", "231", "232",
                                                   "312", "313", "321", "323"};
+   enum class WorldID {
+      SOL,
+      MERCURY,
+      VENUS,
+      EARTH,
+      MARS,
+      JUPITER,
+      SATURN,
+      URANUS,
+      NEPTUNE,
+      PLUTO,
+      LUNA,
+      PHOBOS,
+      DEIMOS,
+      IO,
+      EUROPA,
+      GANYMEDE,
+      CALLISTO,
+      AMALTHEA,
+      HIMALITA,
+      ELARA,
+      PASIPHAE,
+      SINOPE,
+      LYSITHEA,
+      CARME,
+      ANANKE,
+      LEDA,
+      THEBE,
+      ADRASTEA,
+      METIS,
+      MIMAS,
+      ENCELADUS,
+      TETHYS,
+      DIONE,
+      RHEA,
+      TITAN,
+      HYPERION,
+      IAPETUS,
+      PHOEBE,
+      JANUS,
+      EPIMETHEUS,
+      HELENE,
+      TELESTO,
+      CALYPSO,
+      ATLAS,
+      PROMETHEUS,
+      PANDORA,
+      PAN,
+      ARIEL,
+      UMBRIEL,
+      TITANIA,
+      OBERON,
+      MIRANDA,
+      TRITON,
+      NERIED,
+      CHARON,
+      MINORBODY,
+   };
+
    inline static const QStringList worldInputs = {
        "SOL",       "MERCURY",  "VENUS",    "EARTH",    "MARS",
        "JUPITER",   "SATURN",   "URANUS",   "NEPTUNE",  "PLUTO",
@@ -104,6 +167,13 @@ class dsm_gui_lib {
          box->removeItem(ind);
       } else
          box->setCurrentIndex(ind);
+   }
+
+   inline static WorldID World2ID(QString world) {
+      return (WorldID)worldInputs.indexOf(world);
+   };
+   inline static QString ID2World(WorldID id) {
+      return worldInputs[(int)id];
    }
 
    private:
