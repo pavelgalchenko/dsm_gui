@@ -37,10 +37,10 @@ class dsm_gui_lib {
                                         QValidator *validator);
    static void set_mult_cbox_validators(QComboBox *ui_elem[], int array_length,
                                         const QStringList string_list);
-   static QStringList
-   apply_data_section_end(long cur_entry, long section_entries, long cur_item,
-                          QListWidget *ui_elem, QStringList tmp_data,
-                          QString cur_item_name);
+   static QStringList apply_data_section_end(long cur_item,
+                                             QListWidget *ui_elem,
+                                             QStringList tmp_data,
+                                             QString cur_item_name);
    static std::tuple<long, int, QStringList>
    item_entry_lineitems(QStringList spc_data, int line_num, long reset_ind,
                         long entries, long headers);

@@ -2,7 +2,6 @@
 #include <QComboBox>
 #include <QDebug>
 #include <QFileInfo>
-#include <QComboBox>
 #include <QLineEdit>
 #include <QMessageBox>
 
@@ -108,15 +107,14 @@ void dsm_gui_lib::set_mult_cbox_validators(QComboBox *ui_elem[],
    }
 }
 
-QStringList dsm_gui_lib::apply_data_section_end(
-    long cur_entry, long section_entries, long cur_item, QListWidget *ui_elem,
-    QStringList tmp_data, QString cur_item_name) {
-   if (cur_entry == section_entries - 1) {
-      ui_elem->setCurrentRow(cur_item);
-      ui_elem->currentItem()->setData(256, cur_item_name);
-      ui_elem->currentItem()->setData(257, tmp_data);
-      tmp_data.clear();
-   }
+QStringList dsm_gui_lib::apply_data_section_end(long cur_item,
+                                                QListWidget *ui_elem,
+                                                QStringList tmp_data,
+                                                QString cur_item_name) {
+   ui_elem->setCurrentRow(cur_item);
+   ui_elem->currentItem()->setData(256, cur_item_name);
+   ui_elem->currentItem()->setData(257, tmp_data);
+   tmp_data.clear();
    return tmp_data;
 }
 

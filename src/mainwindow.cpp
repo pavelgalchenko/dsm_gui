@@ -257,6 +257,16 @@ void MainWindow::on_SPC_Menu_clicked() {
            SLOT(receive_spcpath(QString)));
    emit send_data(path);
    disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+
+   connect(this, SIGNAL(send_data(QString)), spc_menu,
+           SLOT(receive_apppath(QString)));
+   emit send_data(appPath);
+   disconnect(this, SIGNAL(send_data(QString)), 0, 0);
+
+   connect(this, SIGNAL(send_data(QString)), spc_menu,
+           SLOT(receive_pythoncmd(QString)));
+   emit send_data(pythonCmd);
+   disconnect(this, SIGNAL(send_data(QString)), 0, 0);
 }
 
 void MainWindow::on_ORB_Menu_clicked() {

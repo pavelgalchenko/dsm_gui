@@ -32,6 +32,14 @@ void SPC_submenu::receive_spc_sm_path(QString name, QString path) {
    on_sections_tabBarClicked(ui->sections->currentIndex());
 }
 
+void SPC_submenu::receive_apppath(QString path, QString junk) {
+   appPath = path;
+}
+
+void SPC_submenu::receive_pythoncmd(QString cmd, QString junk) {
+   pythonCmd = cmd;
+}
+
 void SPC_submenu::set_validators() {
    QRegularExpression rx("[^\"]*");
    QRegularExpression rx1("[^\" ]*");
@@ -199,63 +207,482 @@ void SPC_submenu::set_validators() {
 }
 
 void SPC_submenu::receive_data() {
-   spc_data.clear();
-   spc_string.clear();
-   spc_file_headers.clear();
-   spc_file_descrip.clear();
-   spc_item_names.clear();
-
-   // Daniel's regex from ORB_Menu
-   // Return everything up to and including ! (exclamation point)
-   static QRegularExpression rx1("(.*?)!");
-
-   // Return everything between a set of " " (quotation marks)
-   static QRegularExpression rx2("\"(.*?)\"");
-
-   // If the line does NOT start with an alphanumeric character or " (single
-   // quotation), then return the line as first group. Otherwise return
-   // everything after ! (exclamation point) as second group
-   static QRegularExpression rx3(
-       "(?:(?=^[^[:alnum:]|\"])([^[:alnum:]|\"].*)|(!.*))");
-
-   // used to capture the name of the item between equal signs (any number of
-   // equal signs, one space, then any string, then one space, then any number
-   // of equal signs)
-   static QRegularExpression rx4("=+\\s+([A-Za-z0-9 ]+?)\\s+=+");
-
    QFile file(file_path);
    if (!file.open(QIODevice::ReadOnly)) {
       QMessageBox::information(0, "error", file.errorString());
    }
 
-   QTextStream in(&file);
-   while (!in.atEnd()) {
-      QString line                   = in.readLine();
-      QRegularExpressionMatch match1 = rx1.match(line);
-      spc_data.append(
-          match1.captured(1)); // index 0 includes ! character, index 1 does not
+   spc_data.clear();
+   spc_string.clear();
 
-      QRegularExpressionMatch match2 = rx2.match(line);
-      spc_string.append(match2.captured(
-          1)); // index 0 includes "" characters, index 1 does not
+   /* Load Yaml File */
+   cur_spc_yaml = YAML::LoadFile(file_path.toStdString());
 
-      //        line.append("\n");
-      QRegularExpressionMatch match3 = rx3.match(line);
-      if (match3.hasMatch()) {
-         QString capture = match3.captured(1);
-         if (!capture.isEmpty())
-            capture += "\n";
-         spc_file_headers.append(capture);
-         capture = match3.captured(2);
-         if (!capture.isEmpty())
-            capture += "\n";
-         spc_file_descrip.append(capture);
-      }
+   QStringList tmp_data;
+   QVector<QString> data_vector;
+   long index = 0;
 
-      QRegularExpressionMatch match4 = rx4.match(line);
-      spc_item_names.append(match4.captured(1));
+   /* Dynamics Flags */
+
+   setQComboBox(ui->spc_cur_solver,
+                cur_spc_yaml["Dynamics Flags"]["Method"].as<QString>());
+   if (!QString::compare(
+           cur_spc_yaml["Dynamics Flags"]["Compute Constraints"].as<QString>(),
+           "true"))
+      ui->spc_cur_con_on->setChecked(true);
+   else
+      ui->spc_cur_con_off->setChecked(true);
+
+   if (!QString::compare(
+           cur_spc_yaml["Dynamics Flags"]["Mass Reference Point"].as<QString>(),
+           "true"))
+      ui->spc_cur_flex_on->setChecked(true);
+   else
+      ui->spc_cur_flex_off->setChecked(true);
+
+   if (!QString::compare(
+           cur_spc_yaml["Dynamics Flags"]["2nd Order Flex"].as<QString>(),
+           "true"))
+      ui->spc_cur_2flex_on->setChecked(true);
+   else
+      ui->spc_cur_2flex_off->setChecked(true);
+   ui->spc_cur_shaker_file->setText(
+       cur_spc_yaml["Dynamics Flags"]["Shaker File Name"].as<QString>());
+   ui->spc_cur_drag->setText(
+       cur_spc_yaml["Dynamics Flags"]["Drag Coefficient"].as<QString>());
+
+   /* Bodies */
+   ui->spc_cur_body_list->clear();
+   YAML::Node body_node = cur_spc_yaml["Bodies"];
+   index                = 0;
+
+   bodies = body_node.size();
+   for (YAML::const_iterator it = body_node.begin(); it != body_node.end();
+        ++it) {
+      YAML::Node cur_node = *it;
+      QString item_name   = cur_node["Name"].as<QString>();
+      ui->spc_cur_body_list->addItem(item_name);
+
+      tmp_data.append(cur_node["Mass"].as<QString>());
+      data_vector = cur_node["MOI"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      data_vector = cur_node["POI"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      data_vector = cur_node["Pos of CM"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      data_vector = cur_node["Constant Momentum"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      data_vector = cur_node["Constant Dipole"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      tmp_data.append(cur_node["Geometry File Name"].as<QString>());
+      tmp_data.append(cur_node["Node File Name"].as<QString>());
+      tmp_data.append(cur_node["Flex File Name"].as<QString>());
+      tmp_data = dsm_gui_lib::apply_data_section_end(
+          index, ui->spc_cur_body_list, tmp_data, item_name);
+      index++;
    }
-   file.close();
+
+   /* Joints */
+   ui->spc_cur_joint_list->clear();
+   YAML::Node joint_node = cur_spc_yaml["Joints"];
+   index                 = 0;
+
+   joints = joint_node.size();
+   for (YAML::const_iterator it = joint_node.begin(); it != joint_node.end();
+        ++it) {
+      YAML::Node cur_node = *it;
+      QString item_name   = cur_node["Name"].as<QString>();
+      ui->spc_cur_joint_list->addItem(item_name);
+
+      tmp_data.append(cur_node["Joint Type"].as<QString>());
+      data_vector = cur_node["Joint Connections"].as<QVector<QString>>();
+      for (int i = 0; i < 2; i++)
+         tmp_data.append(data_vector[i]);
+
+      tmp_data.append(cur_node["Rot DOF"].as<QString>());
+      tmp_data.append(cur_node["Rot Sequence"].as<QString>());
+      tmp_data.append(cur_node["Rot Type"].as<QString>());
+      tmp_data.append(cur_node["Trn DOF"].as<QString>());
+      tmp_data.append(cur_node["Trn Sequence"].as<QString>());
+
+      data_vector = cur_node["Rot DOF Locked"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      data_vector = cur_node["Trn DOF Locked"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      data_vector = cur_node["Init Angles"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      data_vector = cur_node["Init Angle Rates"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      data_vector = cur_node["Init Displacement"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      data_vector = cur_node["Init Displacement Rates"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      data_vector = cur_node["Bi-Gi Angles"]["Angles"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      tmp_data.append(cur_node["Bi-Gi Angles"]["Sequence"].as<QString>());
+
+      data_vector = cur_node["Bo-Go Angles"]["Angles"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      tmp_data.append(cur_node["Bo-Go Angles"]["Sequence"].as<QString>());
+
+      data_vector = cur_node["Pos wrt Inner Body"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+      data_vector = cur_node["Pos wrt Outer Body"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+      tmp_data.append(cur_node["Parm File Name"].as<QString>());
+
+      tmp_data = dsm_gui_lib::apply_data_section_end(
+          index, ui->spc_cur_body_list, tmp_data, item_name);
+      index++;
+   }
+
+   /* Wheels */
+   ui->spc_cur_wheel_list->clear();
+
+   QMap<QString, QString> wheel_params =
+       cur_spc_yaml["Wheel Params"].as<QMap<QString, QString>>();
+
+   wheel_drag   = wheel_params["Drag"];
+   wheel_jitter = wheel_params["Jitter"];
+
+   if (!QString::compare(wheel_drag, "false"))
+      ui->spc_cur_wheel_glob_drag_off->setChecked(Qt::Checked);
+   else
+      ui->spc_cur_wheel_glob_drag_on->setChecked(Qt::Checked);
+
+   if (!QString::compare(wheel_jitter, "false"))
+      ui->spc_cur_wheel_glob_jitter_off->setChecked(Qt::Checked);
+   else
+      ui->spc_cur_wheel_glob_jitter_on->setChecked(Qt::Checked);
+
+   YAML::Node wheel_node = cur_spc_yaml["Wheels"];
+   index                 = 0;
+
+   wheels = wheel_node.size();
+
+   for (YAML::const_iterator it = wheel_node.begin(); it != wheel_node.end();
+        ++it) {
+      YAML::Node cur_node = *it;
+      QString item_name   = cur_node["Name"].as<QString>();
+      ui->spc_cur_wheel_list->addItem(item_name);
+
+      tmp_data.append(cur_node["Initial Momentum"].as<QString>());
+      data_vector = cur_node["Axis"].as<QVector<QString>>();
+      for (int i = 0; i < 2; i++)
+         tmp_data.append(data_vector[i]);
+
+      tmp_data.append(cur_node["Max Torque"].as<QString>());
+      tmp_data.append(cur_node["Max Momentum"].as<QString>());
+      tmp_data.append(cur_node["Rotor Inertia"].as<QString>());
+      tmp_data.append(cur_node["Body"]["Index"].as<QString>());
+      tmp_data.append(cur_node["Node"].as<QString>());
+
+      tmp_data.append(cur_node["Drag-Jitter File Name"].as<QString>());
+
+      tmp_data = dsm_gui_lib::apply_data_section_end(
+          index, ui->spc_cur_joint_list, tmp_data, item_name);
+      index++;
+   }
+
+   /* MTBs */
+   ui->spc_cur_mtb_list->clear();
+
+   YAML::Node mtb_node = cur_spc_yaml["MTBs"];
+   index               = 0;
+
+   mtbs = mtb_node.size();
+
+   for (YAML::const_iterator it = mtb_node.begin(); it != mtb_node.end();
+        ++it) {
+      YAML::Node cur_node = *it;
+      QString item_name   = cur_node["Name"].as<QString>();
+      ui->spc_cur_mtb_list->addItem(item_name);
+
+      tmp_data.append(cur_node["Saturation"].as<QString>());
+      data_vector = cur_node["Axis"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      tmp_data.append(cur_node["Node"].as<QString>());
+
+      tmp_data = dsm_gui_lib::apply_data_section_end(
+          index, ui->spc_cur_mtb_list, tmp_data, item_name);
+      index++;
+   }
+
+   /* Thrusters */
+   ui->spc_cur_thruster_list->clear();
+
+   YAML::Node thruster_node = cur_spc_yaml["Thrusters"];
+   index                    = 0;
+
+   thrusters = thruster_node.size();
+
+   for (YAML::const_iterator it = thruster_node.begin();
+        it != thruster_node.end(); ++it) {
+      YAML::Node cur_node = *it;
+      QString item_name   = cur_node["Name"].as<QString>();
+      ui->spc_cur_thruster_list->addItem(item_name);
+
+      tmp_data.append(cur_node["Mode"].as<QString>());
+      tmp_data.append(cur_node["Force"].as<QString>());
+      data_vector = cur_node["Axis"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      tmp_data.append(cur_node["Body"]["Index"].as<QString>());
+      tmp_data.append(cur_node["Node"].as<QString>());
+
+      tmp_data = dsm_gui_lib::apply_data_section_end(
+          index, ui->spc_cur_thruster_list, tmp_data, item_name);
+      index++;
+   }
+
+   /* Gyros */
+   ui->spc_cur_gyro_list->clear();
+
+   YAML::Node gyro_node = cur_spc_yaml["Gyros"];
+   index                = 0;
+
+   gyros = gyro_node.size();
+
+   for (YAML::const_iterator it = gyro_node.begin(); it != gyro_node.end();
+        ++it) {
+      YAML::Node cur_node = *it;
+      QString item_name   = cur_node["Name"].as<QString>();
+      ui->spc_cur_gyro_list->addItem(item_name);
+
+      tmp_data.append(cur_node["Sample Time"].as<QString>());
+      data_vector = cur_node["Axis"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      tmp_data.append(cur_node["Max Rate"].as<QString>());
+      tmp_data.append(cur_node["Scale Factor"].as<QString>());
+      tmp_data.append(cur_node["Quantization"].as<QString>());
+      tmp_data.append(cur_node["Angle Random Walk"].as<QString>());
+      tmp_data.append(cur_node["Bias Stability"].as<QString>());
+      tmp_data.append(cur_node["Bias Stability Timespan"].as<QString>());
+      tmp_data.append(cur_node["Angle Noise"].as<QString>());
+      tmp_data.append(cur_node["Initial Bias"].as<QString>());
+      tmp_data.append(cur_node["Node"].as<QString>());
+
+      tmp_data = dsm_gui_lib::apply_data_section_end(
+          index, ui->spc_cur_gyro_list, tmp_data, item_name);
+      index++;
+   }
+
+   /* Magnetometers */
+   ui->spc_cur_mag_list->clear();
+
+   YAML::Node mag_node = cur_spc_yaml["Magnetometers"];
+   index               = 0;
+
+   mags = mag_node.size();
+
+   for (YAML::const_iterator it = mag_node.begin(); it != mag_node.end();
+        ++it) {
+      YAML::Node cur_node = *it;
+      QString item_name   = cur_node["Name"].as<QString>();
+      ui->spc_cur_mag_list->addItem(item_name);
+
+      tmp_data.append(cur_node["Sample Time"].as<QString>());
+      data_vector = cur_node["Axis"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      tmp_data.append(cur_node["Max Rate"].as<QString>());
+      tmp_data.append(cur_node["Scale Factor"].as<QString>());
+      tmp_data.append(cur_node["Quantization"].as<QString>());
+      tmp_data.append(cur_node["Noise"].as<QString>());
+      tmp_data.append(cur_node["Node"].as<QString>());
+
+      tmp_data = dsm_gui_lib::apply_data_section_end(
+          index, ui->spc_cur_mag_list, tmp_data, item_name);
+      index++;
+   }
+
+   /* CSSs */
+   ui->spc_cur_css_list->clear();
+
+   YAML::Node css_node = cur_spc_yaml["CSSs"];
+   index               = 0;
+
+   css_s = css_node.size();
+
+   for (YAML::const_iterator it = css_node.begin(); it != css_node.end();
+        ++it) {
+      YAML::Node cur_node = *it;
+      QString item_name   = cur_node["Name"].as<QString>();
+      ui->spc_cur_css_list->addItem(item_name);
+
+      tmp_data.append(cur_node["Sample Time"].as<QString>());
+      data_vector = cur_node["Axis"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      tmp_data.append(cur_node["Half Cone Angle"].as<QString>());
+      tmp_data.append(cur_node["Scale Factor"].as<QString>());
+      tmp_data.append(cur_node["Quantization"].as<QString>());
+      tmp_data.append(cur_node["Body"]["Index"].as<QString>());
+      tmp_data.append(cur_node["Node"].as<QString>());
+
+      tmp_data = dsm_gui_lib::apply_data_section_end(
+          index, ui->spc_cur_css_list, tmp_data, item_name);
+      index++;
+   }
+
+   /* FSSs */
+   ui->spc_cur_fss_list->clear();
+
+   YAML::Node fss_node = cur_spc_yaml["FSSs"];
+   index               = 0;
+
+   fss_s = fss_node.size();
+
+   for (YAML::const_iterator it = fss_node.begin(); it != fss_node.end();
+        ++it) {
+      YAML::Node cur_node = *it;
+      QString item_name   = cur_node["Name"].as<QString>();
+      ui->spc_cur_fss_list->addItem(item_name);
+
+      tmp_data.append(cur_node["Sample Time"].as<QString>());
+
+      data_vector = cur_node["Mounting Angle"]["Angles"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      tmp_data.append(cur_node["Mounting Angles"]["Sequence"].as<QString>());
+      tmp_data.append(cur_node["Boresight Axis"].as<QString>());
+      tmp_data.append(cur_node["FOV Size"].as<QString>());
+      tmp_data.append(cur_node["Noise Equivalent Angle"].as<QString>());
+      tmp_data.append(cur_node["Quantization"].as<QString>());
+      tmp_data.append(cur_node["Node"].as<QString>());
+
+      tmp_data = dsm_gui_lib::apply_data_section_end(
+          index, ui->spc_cur_fss_list, tmp_data, item_name);
+      index++;
+   }
+
+   /* STs */
+   ui->spc_cur_strack_list->clear();
+
+   YAML::Node strack_node = cur_spc_yaml["STs"];
+   index                  = 0;
+
+   stracks = strack_node.size();
+
+   for (YAML::const_iterator it = strack_node.begin(); it != strack_node.end();
+        ++it) {
+      YAML::Node cur_node = *it;
+      QString item_name   = cur_node["Name"].as<QString>();
+      ui->spc_cur_strack_list->addItem(item_name);
+
+      tmp_data.append(cur_node["Sample Time"].as<QString>());
+
+      data_vector = cur_node["Mounting Angle"]["Angles"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
+      tmp_data.append(cur_node["Mounting Angles"]["Sequence"].as<QString>());
+      tmp_data.append(cur_node["Boresight Axis"].as<QString>());
+      tmp_data.append(cur_node["FOV Size"].as<QString>());
+      tmp_data.append(cur_node["Exclusion Angles"]["Sun"].as<QString>());
+      tmp_data.append(cur_node["Exclusion Angles"]["Earth"].as<QString>());
+      tmp_data.append(cur_node["Exclusion Angles"]["Luna"].as<QString>());
+      tmp_data.append(cur_node["Noise Equivalent Angle"].as<QString>());
+      tmp_data.append(cur_node["Node"].as<QString>());
+
+      tmp_data = dsm_gui_lib::apply_data_section_end(
+          index, ui->spc_cur_strack_list, tmp_data, item_name);
+      index++;
+   }
+
+   /* GPSs */
+   ui->spc_cur_strack_list->clear();
+
+   YAML::Node gps_node = cur_spc_yaml["GPSs"];
+   index               = 0;
+
+   gps_s = gps_node.size();
+
+   for (YAML::const_iterator it = gps_node.begin(); it != gps_node.end();
+        ++it) {
+      YAML::Node cur_node = *it;
+      QString item_name   = cur_node["Name"].as<QString>();
+      ui->spc_cur_gps_list->addItem(item_name);
+
+      tmp_data.append(cur_node["Sample Time"].as<QString>());
+      tmp_data.append(cur_node["Position Noise"].as<QString>());
+      tmp_data.append(cur_node["Velocity Noise"].as<QString>());
+      tmp_data.append(cur_node["Time Noise"]["Sun"].as<QString>());
+      tmp_data.append(cur_node["Node"].as<QString>());
+
+      tmp_data = dsm_gui_lib::apply_data_section_end(
+          index, ui->spc_cur_strack_list, tmp_data, item_name);
+      index++;
+   }
+
+   /* Accelerometers */
+   ui->spc_cur_accel_list->clear();
+
+   YAML::Node acc_node = cur_spc_yaml["Accelerometers"];
+   index               = 0;
+
+   accels = acc_node.size();
+
+   for (YAML::const_iterator it = acc_node.begin(); it != acc_node.end();
+        ++it) {
+      YAML::Node cur_node = *it;
+      QString item_name   = cur_node["Name"].as<QString>();
+      ui->spc_cur_accel_list->addItem(item_name);
+
+      tmp_data.append(cur_node["Sample Time"].as<QString>());
+      data_vector = cur_node["Axis"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+      tmp_data.append(cur_node["Max Acceleration"].as<QString>());
+      tmp_data.append(cur_node["Scale Factor"].as<QString>());
+      tmp_data.append(cur_node["Quantization"].as<QString>());
+      tmp_data.append(cur_node["DV Random Walk"].as<QString>());
+      tmp_data.append(cur_node["Bias Stability"].as<QString>());
+      tmp_data.append(cur_node["Bias Stability Timespan"].as<QString>());
+      tmp_data.append(cur_node["DV Noise"].as<QString>());
+      tmp_data.append(cur_node["Initial Bias"].as<QString>());
+      tmp_data.append(cur_node["Node"].as<QString>());
+
+      tmp_data = dsm_gui_lib::apply_data_section_end(
+          index, ui->spc_cur_strack_list, tmp_data, item_name);
+      index++;
+   }
 }
 
 void SPC_submenu::apply_data() {
@@ -873,8 +1300,8 @@ void SPC_submenu::on_spc_cur_save_clicked() {
    file_path    = spc_cur_file;
    int response = dsm_gui_lib::warning_message("Overwrite Default SC file?");
    if (response == QMessageBox::Ok) {
-      QFile::remove(inout_path + "__default__/__SCDEFAULT__.txt");
-      QFile::copy(file_path, inout_path + "__default__/__SCDEFAULT__.txt");
+      QFile::remove(inout_path + "__default__/__SCDEFAULT__.yaml");
+      QFile::copy(file_path, inout_path + "__default__/__SCDEFAULT__.yaml");
       receive_data();
       apply_data();
    }

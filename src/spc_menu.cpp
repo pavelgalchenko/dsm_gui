@@ -393,16 +393,16 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
    on_spc_list_itemClicked(ui->spc_list->currentItem());
 
    spc_names.append(new_name);
-   file_path = inout_path + "SC_" + new_name + ".txt";
+   file_path = inout_path + "SC_" + new_name + ".yaml";
    file_paths.append(file_path);
 
-   if (dsm_gui_lib::fileExists(inout_path + "__default__/__SCDEFAULT__.txt")) {
-      QFile::copy(inout_path + "__default__/__SCDEFAULT__.txt",
-                  inout_path + "SC_" + new_name + ".txt");
+   if (dsm_gui_lib::fileExists(inout_path + "__default__/__SCDEFAULT__.yaml")) {
+      QFile::copy(inout_path + "__default__/__SCDEFAULT__.yaml",
+                  inout_path + "SC_" + new_name + ".yaml");
 
    } else
-      QFile::copy(":/data/__default__/SC_Simple.txt",
-                  inout_path + "SC_" + new_name + ".txt");
+      QFile::copy(":/data/__default__/__SCDEFAULT__.yaml",
+                  inout_path + "SC_" + new_name + ".yaml");
    ui->spc_list->sortItems();
    ui->spc_conf->setEnabled(true);
 
@@ -469,7 +469,7 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
    }
 
    spc_names.append(new_spc);
-   file_path = inout_path + "SC_" + new_spc + ".txt";
+   file_path = inout_path + "SC_" + new_spc + ".yaml";
    QFile::copy(file_paths[index], file_path);
    file_paths.append(file_path);
 
@@ -521,7 +521,7 @@ void SPC_Menu::on_spc_load_clicked() // Load default S/C
       spc_names.clear();
 
       for (int i = 0; i < spc_names_default.length(); i++) {
-         file_path = inout_path + "SC_" + spc_names_default[i] + ".txt";
+         file_path = inout_path + "SC_" + spc_names_default[i] + ".yaml";
          file_paths.append(file_path);
          spc_names.append(spc_names_default[i]);
 
@@ -565,7 +565,7 @@ void SPC_Menu::on_spc_save_clicked() {
       for (int i = 0; i < ui->spc_list->count(); i++) {
          spc_names_default.append(spc_names[i]);
          file_paths_default.append(inout_path + "__default__/" + "SC_" +
-                                   spc_names[i] + ".txt");
+                                   spc_names[i] + ".yaml");
 
          QFile::copy(file_paths[i], file_paths_default[i]);
       }
@@ -592,6 +592,16 @@ void SPC_Menu::on_spc_conf_clicked() {
       connect(this, SIGNAL(send_data(QString, QString)), spc_submenu,
               SLOT(receive_spc_sm_path(QString, QString)));
       emit send_data(ui->spc_name->text(), inout_path);
+      disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
+
+      connect(this, SIGNAL(send_data(QString, QString)), spc_submenu,
+              SLOT(receive_apppath(QString, QString)));
+      emit send_data(appPath, "");
+      disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
+
+      connect(this, SIGNAL(send_data(QString, QString)), spc_submenu,
+              SLOT(receive_pythoncmd(QString, QString)));
+      emit send_data(pythonCmd, "");
       disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
 
       spc_submenu->move(SPC_Menu::geometry().x() + spc_submenu->width(),
@@ -805,11 +815,11 @@ void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
    on_spc_list_itemClicked(ui->spc_list->currentItem());
 
    spc_names.append(new_name);
-   file_path = inout_path + "SC_" + new_name + ".txt";
+   file_path = inout_path + "SC_" + new_name + ".yaml";
    file_paths.append(file_path);
 
-   QFile::copy(":/data/__default__/SC_" + load_sc_name + ".txt",
-               inout_path + "SC_" + new_name + ".txt");
+   QFile::copy(":/data/__default__/SC_" + load_sc_name + ".yaml",
+               inout_path + "SC_" + new_name + ".yaml");
 
    ui->spc_list->sortItems();
    ui->spc_conf->setEnabled(true);
