@@ -20,7 +20,7 @@ SPC_submenu::~SPC_submenu() {
 
 void SPC_submenu::receive_spc_sm_path(QString name, QString path) {
    spc_cur_name = name; // store name
-   spc_cur_file = path + "SC_" + spc_cur_name + ".txt";
+   spc_cur_file = path + "SC_" + spc_cur_name + ".yaml";
    file_path    = spc_cur_file;
 
    inout_path = path;
@@ -207,6 +207,7 @@ void SPC_submenu::set_validators() {
 }
 
 void SPC_submenu::receive_data() {
+   qDebug() << "Test";
    QFile file(file_path);
    if (!file.open(QIODevice::ReadOnly)) {
       QMessageBox::information(0, "error", file.errorString());
@@ -1357,6 +1358,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
    file.close();
 
    QVector<QString> data_vector = {};
+   QStringList tmp_data;
 
    /* Dynamics Flags */
    cur_spc_yaml["Dynamics Flags"]["Method"] = ui->spc_cur_solver->currentText();
@@ -1392,34 +1394,52 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Index"] = i;
       cur_node["Mass"]  = ui->spc_cur_body_mass->text();
 
-      data_vector     = {ui->spc_cur_body_pmoi_x->text(),
-                         ui->spc_cur_body_pmoi_y->text(),
-                         ui->spc_cur_body_pmoi_z->text()};
-      cur_node["MOI"] = data_vector;
+      cur_node["MOI"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_body_pmoi_x->text(), ui->spc_cur_body_pmoi_y->text(),
+          ui->spc_cur_body_pmoi_z->text());
 
-      data_vector     = {ui->spc_cur_body_poi_x->text(),
-                         ui->spc_cur_body_poi_y->text(),
-                         ui->spc_cur_body_poi_z->text()};
-      cur_node["POI"] = data_vector;
+      cur_node["POI"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_body_poi_x->text(), ui->spc_cur_body_poi_y->text(),
+          ui->spc_cur_body_poi_z->text());
 
-      data_vector            = {ui->spc_cur_body_com_x->text(),
-                                ui->spc_cur_body_com_y->text(),
-                                ui->spc_cur_body_com_z->text()};
-      cur_node["Pos of COM"] = data_vector;
+      cur_node["Pos of COM"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_body_com_x->text(), ui->spc_cur_body_com_y->text(),
+          ui->spc_cur_body_com_z->text());
 
-      data_vector                   = {ui->spc_cur_body_cem_x->text(),
-                                       ui->spc_cur_body_cem_y->text(),
-                                       ui->spc_cur_body_cem_z->text()};
-      cur_node["Constant Momentum"] = data_vector;
+      cur_node["Constant Momentum"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_body_cem_x->text(), ui->spc_cur_body_cem_y->text(),
+          ui->spc_cur_body_cem_z->text());
 
-      data_vector                 = {ui->spc_cur_body_cemd_x->text(),
-                                     ui->spc_cur_body_cemd_y->text(),
-                                     ui->spc_cur_body_cemd_z->text()};
-      cur_node["Constant Dipole"] = data_vector;
+      cur_node["Constant Dipole"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_body_cemd_x->text(), ui->spc_cur_body_cemd_y->text(),
+          ui->spc_cur_body_cemd_z->text());
 
       cur_node["Geometry File Name"] = ui->spc_cur_body_geom->text();
       cur_node["Node File Name"]     = ui->spc_cur_node_file->text();
       cur_node["Flex File Name"]     = ui->spc_cur_flex_file->text();
+
+      tmp_data.append(ui->spc_cur_body_pmoi_x->text());
+      tmp_data.append(ui->spc_cur_body_pmoi_y->text());
+      tmp_data.append(ui->spc_cur_body_pmoi_z->text());
+      tmp_data.append(ui->spc_cur_body_poi_x->text());
+      tmp_data.append(ui->spc_cur_body_poi_y->text());
+      tmp_data.append(ui->spc_cur_body_poi_z->text());
+      tmp_data.append(ui->spc_cur_body_com_x->text());
+      tmp_data.append(ui->spc_cur_body_com_y->text());
+      tmp_data.append(ui->spc_cur_body_com_z->text());
+      tmp_data.append(ui->spc_cur_body_cem_x->text());
+      tmp_data.append(ui->spc_cur_body_cem_y->text());
+      tmp_data.append(ui->spc_cur_body_cem_z->text());
+      tmp_data.append(ui->spc_cur_body_cemd_x->text());
+      tmp_data.append(ui->spc_cur_body_cemd_y->text());
+      tmp_data.append(ui->spc_cur_body_cemd_z->text());
+      tmp_data.append(ui->spc_cur_body_geom->text());
+      tmp_data.append(ui->spc_cur_node_file->text());
+      tmp_data.append(ui->spc_cur_flex_file->text());
+      ui->spc_cur_body_list->currentItem()->setData(
+          256, ui->spc_cur_body_name->text());
+      ui->spc_cur_body_list->currentItem()->setData(257, tmp_data);
+      tmp_data.clear();
    }
 
    /* Joints */

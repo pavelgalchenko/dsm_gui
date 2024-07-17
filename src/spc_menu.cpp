@@ -140,6 +140,7 @@ void SPC_Menu::receive_data() {
    cur_spc_yaml = YAML::LoadFile(file_path.toStdString());
 
    QStringList tmp_data;
+   QVector<QString> data_vector;
 
    /* Configuration */
    tmp_data.append(cur_spc_yaml["Configuration"]["Description"].as<QString>());
@@ -154,8 +155,7 @@ void SPC_Menu::receive_data() {
    tmp_data.append(cur_spc_yaml["Orbit"]["Prop Type"].as<QString>());
    tmp_data.append(cur_spc_yaml["Orbit"]["Pos Specifier"].as<QString>());
 
-   QVector<QString> data_vector =
-       cur_spc_yaml["Orbit"]["Pos wrt F"].as<QVector<QString>>();
+   data_vector = cur_spc_yaml["Orbit"]["Pos wrt F"].as<QVector<QString>>();
    for (int i = 0; i < 3; i++)
       tmp_data.append(data_vector[i]);
 
@@ -219,7 +219,6 @@ void SPC_Menu::on_spc_apply_clicked() {
    file_path = file_paths[index];
 
    QStringList tmp_data = {};
-   QString data_inp     = "";
 
    cur_spc_yaml["Name"] = ui->spc_name->text();
 
@@ -242,14 +241,13 @@ void SPC_Menu::on_spc_apply_clicked() {
    orb_node["Prop Type"]     = ui->spc_cur_orb_type->currentText();
    orb_node["Pos Specifier"] = ui->spc_cur_pos_ref->currentText();
 
-   QVector<QString> data_vector = {ui->spc_cur_xpos_form->text(),
-                                   ui->spc_cur_ypos_form->text(),
-                                   ui->spc_cur_zpos_form->text()};
-   orb_node["Pos wrt F"]        = data_vector;
+   orb_node["Pos wrt F"] = dsm_gui_lib::create_QVec3(
+       ui->spc_cur_xpos_form->text(), ui->spc_cur_ypos_form->text(),
+       ui->spc_cur_zpos_form->text());
 
-   data_vector = {ui->spc_cur_xvel_form->text(), ui->spc_cur_yvel_form->text(),
-                  ui->spc_cur_zvel_form->text()};
-   orb_node["Vel wrt F"] = data_vector;
+   orb_node["Vel wrt F"] = dsm_gui_lib::create_QVec3(
+       ui->spc_cur_xvel_form->text(), ui->spc_cur_yvel_form->text(),
+       ui->spc_cur_zvel_form->text());
 
    tmp_data.append(ui->spc_cur_orb_type->currentText());
    tmp_data.append(ui->spc_cur_pos_ref->currentText());
@@ -266,12 +264,20 @@ void SPC_Menu::on_spc_apply_clicked() {
    att_node["Att Representation"] = ui->spc_cur_att_param->currentText();
    att_node["Att Frame"]          = ui->spc_cur_angvel_frame2->currentText();
 
-   data_vector = {ui->spc_cur_angvel_1->text(), ui->spc_cur_angvel_2->text(),
-                  ui->spc_cur_angvel_3->text()};
-   att_node["Ang Vel"] = ui->spc_cur_angvel_frame2->currentText();
+   att_node["Ang Vel"] = dsm_gui_lib::create_QVec3(
+       ui->spc_cur_angvel_1->text(), ui->spc_cur_angvel_2->text(),
+       ui->spc_cur_angvel_3->text());
 
-   data_vector = {ui->spc_cur_q1->text(), ui->spc_cur_q2->text(),
-                  ui->spc_cur_q3->text(), ui->spc_cur_q4->text()};
+   att_node["Quaternion"] = dsm_gui_lib::create_QVec4(
+       ui->spc_cur_q1->text(), ui->spc_cur_q2->text(), ui->spc_cur_q3->text(),
+       ui->spc_cur_q4->text());
+
+   att_node["Euler Angles"]["Angles"] = dsm_gui_lib::create_QVec3(
+       ui->spc_cur_initeul_1->text(), ui->spc_cur_initeul_2->text(),
+       ui->spc_cur_initeul_3->text());
+
+   att_node["Euler Angles"]["Sequence"] =
+       ui->spc_cur_initeul_seq->currentText();
 
    if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q")) {
       ui->spc_cur_initeul_1->setEnabled(false);

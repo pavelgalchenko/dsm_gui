@@ -147,3 +147,20 @@ bool dsm_gui_lib::fileExists(QString path) {
       return false;
    }
 }
+
+QVector<QString> dsm_gui_lib::create_QVec2(QString arg1, QString arg2) {
+   QVector<QString> tmp_data_vector = {arg1, arg2};
+   return tmp_data_vector;
+}
+
+QVector<QString> dsm_gui_lib::create_QVec3(QString arg1, QString arg2,
+                                           QString arg3) {
+   QVector<QString> tmp_data_vector = {arg1, arg2, arg3};
+   return tmp_data_vector;
+}
+
+QVector<QString> dsm_gui_lib::create_QVec4(QString arg1, QString arg2,
+                                           QString arg3, QString arg4) {
+   QVector<QString> tmp_data_vector = {arg1, arg2, arg3, arg4};
+   return tmp_data_vector;
+}

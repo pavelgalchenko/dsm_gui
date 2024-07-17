@@ -49,6 +49,12 @@ class dsm_gui_lib {
 
    static bool fileExists(QString path);
 
+   static QVector<QString> create_QVec2(QString arg1, QString arg2);
+   static QVector<QString> create_QVec3(QString arg1, QString arg2,
+                                        QString arg3);
+   static QVector<QString> create_QVec4(QString arg1, QString arg2,
+                                        QString arg3, QString arg4);
+
    inline static const QStringList eulerInputs = {"121", "123", "131", "132",
                                                   "212", "213", "231", "232",
                                                   "312", "313", "321", "323"};
