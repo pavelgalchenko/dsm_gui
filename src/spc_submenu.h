@@ -31,7 +31,7 @@ class SPC_submenu : public QDialog {
 
    void receive_data();
    void apply_data();
-   void write_data();
+   void write_data(YAML::Node inp_spc);
 
    void set_validators();
 
@@ -133,7 +133,7 @@ class SPC_submenu : public QDialog {
    QString spc_cur_file;
 
    QString appPath;
-   QString cmd;
+   QString pythonCmd;
    YAML::Node cur_spc_yaml;
    // All ComboBox options
    const QStringList orbit_type = {"FIXED", "EULER_HILL", "ENCKE", "COWELL"};
