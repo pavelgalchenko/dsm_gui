@@ -28,7 +28,6 @@ void SPC_submenu::receive_spc_sm_path(QString name, QString path) {
    ui->spc_cur_name_sub->setText(spc_cur_name);
 
    receive_data();
-   apply_data();
    on_sections_tabBarClicked(ui->sections->currentIndex());
 }
 
@@ -207,7 +206,6 @@ void SPC_submenu::set_validators() {
 }
 
 void SPC_submenu::receive_data() {
-   qDebug() << "Test";
    QFile file(file_path);
    if (!file.open(QIODevice::ReadOnly)) {
       QMessageBox::information(0, "error", file.errorString());
@@ -260,34 +258,36 @@ void SPC_submenu::receive_data() {
    bodies = body_node.size();
    for (YAML::const_iterator it = body_node.begin(); it != body_node.end();
         ++it) {
-      YAML::Node cur_node = *it;
-      QString item_name   = cur_node["Name"].as<QString>();
+      QMap<QString, QString> cur_node = it->as<QMap<QString, QString>>();
+
+      QString item_name = cur_node["Name"];
       ui->spc_cur_body_list->addItem(item_name);
 
-      tmp_data.append(cur_node["Mass"].as<QString>());
-      data_vector = cur_node["MOI"].as<QVector<QString>>();
-      for (int i = 0; i < 3; i++)
-         tmp_data.append(data_vector[i]);
+      // tmp_data.append(cur_node["Mass"]);
+      // data_vector = cur_node["MOI"];
+      // for (int i = 0; i < 3; i++)
+      //    tmp_data.append(data_vector[i]);
 
-      data_vector = cur_node["POI"].as<QVector<QString>>();
-      for (int i = 0; i < 3; i++)
-         tmp_data.append(data_vector[i]);
+      // data_vector = cur_node["POI"];
+      // for (int i = 0; i < 3; i++)
+      //    tmp_data.append(data_vector[i]);
 
-      data_vector = cur_node["Pos of CM"].as<QVector<QString>>();
-      for (int i = 0; i < 3; i++)
-         tmp_data.append(data_vector[i]);
+      // data_vector = cur_node["Pos of CM"];
+      // for (int i = 0; i < 3; i++)
+      //    tmp_data.append(data_vector[i]);
 
-      data_vector = cur_node["Constant Momentum"].as<QVector<QString>>();
-      for (int i = 0; i < 3; i++)
-         tmp_data.append(data_vector[i]);
+      // data_vector = cur_node["Constant Momentum"];
+      // for (int i = 0; i < 3; i++)
+      //    tmp_data.append(data_vector[i]);
 
-      data_vector = cur_node["Constant Dipole"].as<QVector<QString>>();
-      for (int i = 0; i < 3; i++)
-         tmp_data.append(data_vector[i]);
+      // data_vector = cur_node["Constant Dipole"];
+      // for (int i = 0; i < 3; i++)
+      //    tmp_data.append(data_vector[i]);
 
-      tmp_data.append(cur_node["Geometry File Name"].as<QString>());
-      tmp_data.append(cur_node["Node File Name"].as<QString>());
-      tmp_data.append(cur_node["Flex File Name"].as<QString>());
+      tmp_data.append(cur_node["Geometry File Name"]);
+      tmp_data.append(cur_node["Node File Name"]);
+      tmp_data.append(cur_node["Flex File Name"]);
+
       tmp_data = dsm_gui_lib::apply_data_section_end(
           index, ui->spc_cur_body_list, tmp_data, item_name);
       index++;
@@ -686,603 +686,7 @@ void SPC_submenu::receive_data() {
    }
 }
 
-void SPC_submenu::apply_data() {
-   // QStringList line_items;
-   // QString line_string;
-
-   // QStringList tmp_list = {};
-
-   // QString cur_item_name;
-
-   // QStringList tmp_line_item;
-   // QStringList tmp_data = {};
-
-   // std::tuple<QString, QStringList> start_strings;
-
-   // ui->spc_cur_name_sub->setText(spc_cur_name);
-   // for (int line_num = 17; line_num < reset_ind_body; line_num++) {
-   //    line_string = spc_string[line_num - 1];
-   //    line_items =
-   //        spc_data[line_num - 1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-
-   //    switch (line_num) {
-   //       case 17: // Dynamics Flags Header
-   //          break;
-   //       case 18:
-   //          setQComboBox(ui->spc_cur_solver, line_items[0]);
-   //          break;
-   //       case 19: // Compute constraint forces and torques
-   //          if (!QString::compare(line_items[0], "TRUE"))
-   //             ui->spc_cur_con_on->setChecked(true);
-   //          else
-   //             ui->spc_cur_con_off->setChecked(true);
-   //          break;
-   //       case 20: // mass props referenced to ...
-   //          setQComboBox(ui->spc_cur_masspropref, line_items[0]);
-   //          break;
-   //       case 21: // Flex active
-   //          if (!QString::compare(line_items[0], "TRUE"))
-   //             ui->spc_cur_flex_on->setChecked(true);
-   //          else
-   //             ui->spc_cur_flex_off->setChecked(true);
-   //          break;
-   //       case 22: // include 2nd order flex terms
-   //          if (!QString::compare(line_items[0], "TRUE"))
-   //             ui->spc_cur_2flex_on->setChecked(true);
-   //          else
-   //             ui->spc_cur_2flex_off->setChecked(true);
-   //          break;
-   //       case 23: // Shaker file name
-   //          ui->spc_cur_shaker_file->setText(line_items[0]);
-   //          break;
-   //       case 24: // Drag coefficient
-   //          ui->spc_cur_drag->setText(line_items[0]);
-   //          break;
-   //       case 28: // number of bodies
-   //          bodies = line_items[0].toInt();
-   //          break;
-   //       default: // headers (25, 26, 27)
-   //          break;
-   //    }
-   // }
-   // reset_ind_joint = reset_ind_body + body_entries * bodies;
-
-   // ui->spc_cur_body_list->clear();
-   // tmp_data.clear();
-
-   // for (int line_num = reset_ind_body; line_num < reset_ind_joint;
-   // line_num++) {
-   //    auto [cur_item, cur_entry, line_items] =
-   //        dsm_gui_lib::item_entry_lineitems(spc_data, line_num,
-   //        reset_ind_body,
-   //                                          body_entries, 0);
-   //    if (cur_entry == 0) {
-   //       cur_item_name = spc_item_names[line_num - 1];
-   //       ui->spc_cur_body_list->addItem(cur_item_name);
-   //       tmp_data.append("blankline");
-   //    }
-
-   //    if (cur_entry == 1 || (cur_entry >= 7 && cur_entry <= 9)) {
-   //       // 1 ELEMENT
-   //       // Mass -> 1, Geometry File -> 7, Node -> 8, Flex -> 9
-   //       tmp_data.append(line_items[0]);
-   //    } else if (cur_entry == 2 || (cur_entry >= 3 && cur_entry <= 6)) {
-   //       // 3 ELEMENTS
-   //       // Moments of Inertia -> 2, Products of Inertia -> 3,
-   //       // Location of mass center -> 4, constant embedded momentum -> 5,
-   //       // constant embedded momentum dipole -> 6
-   //       for (int i = 0; i < 3; i++)
-   //          tmp_data.append(line_items[i]);
-   //    }
-   //    tmp_data = dsm_gui_lib::apply_data_section_end(
-   //        cur_entry, body_entries, cur_item, ui->spc_cur_body_list, tmp_data,
-   //        cur_item_name);
-   // }
-
-   // /***************** JOINTS **************************/
-   // joints = bodies - 1;
-
-   // ui->spc_cur_joint_list->clear();
-   // tmp_data.clear();
-
-   // if (joints == 0)
-   //    reset_ind_wheel = reset_ind_joint + joint_headers +
-   //                      joint_entries; // SC_Simple has an example joint
-   // else
-   //    reset_ind_wheel =
-   //        reset_ind_joint + joint_headers + joint_entries * joints;
-
-   // if (joints > 0) {
-   //    for (int line_num = reset_ind_joint + joint_headers;
-   //         line_num < reset_ind_wheel; line_num++) {
-   //       auto [cur_item, cur_entry, line_items] =
-   //           dsm_gui_lib::item_entry_lineitems(spc_data, line_num,
-   //                                             reset_ind_joint,
-   //                                             joint_entries, joint_headers);
-
-   //       if (cur_entry == 0) {
-   //          cur_item_name = spc_item_names[line_num - 1];
-   //          ui->spc_cur_joint_list->addItem(cur_item_name);
-   //          tmp_data.append("blankline");
-   //       } else if (cur_entry == 1 || cur_entry == 15) {
-   //          // 1 ELEMENT
-   //          // Joint type -> 1, Joint parameter file -> 15
-   //          tmp_data.append(line_items[0]);
-   //       } else if (cur_entry == 2 || cur_entry == 4) {
-   //          // 2 ELEMENTS
-   //          // Joint Connections (inner and outer body) -> 2, Trn DOF & Trn
-   //          Seq
-   //          // -> 4
-   //          for (int i = 0; i < 2; i++)
-   //             tmp_data.append(line_items[i]);
-   //       } else if (cur_entry == 3 || (cur_entry >= 5 && cur_entry <= 10) ||
-   //                  (cur_entry >= 13 && cur_entry <= 14)) {
-   //          // 3 ELEMENTS
-   //          // RotDOF & RotDOF Seq & Rot Type -> 3, Rotational Axes Locked?
-   //          ->
-   //          // 5, Translational Axes Locked? -> 6 Joint initial angle -> 7,
-   //          // Joint initial angle rate -> 8, Joint initial displacement ->
-   //          9,
-   //          // Joint initial velocity -> 10, Joint Position wrt inner body ->
-   //          // 13, Joint Position wrt outer body -> 14
-   //          for (int i = 0; i < 3; i++)
-   //             tmp_data.append(line_items[i]);
-   //       } else if (cur_entry >= 11 && cur_entry <= 12) {
-   //          // 4 ELEMENTS
-   //          // Joint Bi Gi angles & sequence -> 11, Joint Go Bo angles &
-   //          // sequence -> 12
-   //          for (int i = 0; i < 4; i++)
-   //             tmp_data.append(line_items[i]);
-   //       }
-
-   //       tmp_data = dsm_gui_lib::apply_data_section_end(
-   //           cur_entry, joint_entries, cur_item, ui->spc_cur_joint_list,
-   //           tmp_data, cur_item_name);
-   //       if (cur_entry == joint_entries - 1)
-   //          tmp_data.clear();
-   //    }
-   // }
-
-   // /********************** WHEELS *************************/
-
-   // wheels = spc_data[reset_ind_wheel + 2].toInt();
-
-   // wheel_drag   = spc_data[reset_ind_wheel + 0].split(QRegExp("\\s"),
-   //                                                    Qt::SkipEmptyParts)[0];
-   // wheel_jitter = spc_data[reset_ind_wheel + 1].split(QRegExp("\\s"),
-   //                                                    Qt::SkipEmptyParts)[0];
-
-   // if (!QString::compare(wheel_drag, "FALSE"))
-   //    ui->spc_cur_wheel_glob_drag_off->setChecked(Qt::Checked);
-   // else
-   //    ui->spc_cur_wheel_glob_drag_on->setChecked(Qt::Checked);
-
-   // if (!QString::compare(wheel_jitter, "FALSE"))
-   //    ui->spc_cur_wheel_glob_jitter_off->setChecked(Qt::Checked);
-   // else
-   //    ui->spc_cur_wheel_glob_jitter_on->setChecked(Qt::Checked);
-
-   // if (wheels == 0)
-   //    reset_ind_mtb = reset_ind_wheel + wheel_headers +
-   //                    wheel_entries; // SC_Simple has an example wheel
-   // else
-   //    reset_ind_mtb = reset_ind_wheel + wheel_headers + wheel_entries *
-   //    wheels;
-
-   // ui->spc_cur_wheel_list->clear();
-   // tmp_data.clear();
-   // if (wheels > 0) {
-   //    for (int line_num = reset_ind_wheel + wheel_headers;
-   //         line_num < reset_ind_mtb; line_num++) {
-   //       auto [cur_item, cur_entry, line_items] =
-   //           dsm_gui_lib::item_entry_lineitems(spc_data, line_num,
-   //                                             reset_ind_wheel,
-   //                                             wheel_entries, wheel_headers);
-
-   //       if (cur_entry == 0) {
-   //          cur_item_name = spc_item_names[line_num - 1];
-   //          ui->spc_cur_wheel_list->addItem(cur_item_name);
-   //          tmp_data.append("blankline");
-   //       } else if (cur_entry == 1 || (cur_entry >= 4 && cur_entry <= 7)) {
-   //          // 1 ELEMENT
-   //          // wheel axis -> 1, wheel inertia -> 4, wheel body -> 5, wheel
-   //          node
-   //          // -> 6, wheel drag/jitter -> 7,
-   //          tmp_data.append(line_items[0]);
-   //       } else if (cur_entry == 3) {
-   //          // 2 ELEMENTS
-   //          // Max torque & max momentum -> 3
-   //          for (int i = 0; i < 2; i++)
-   //             tmp_data.append(line_items[i]);
-   //       } else if (cur_entry == 2) {
-   //          // 3 ELEMENTS
-   //          for (int i = 0; i < 3; i++)
-   //             tmp_data.append(line_items[i]);
-   //       }
-
-   //       tmp_data = dsm_gui_lib::apply_data_section_end(
-   //           cur_entry, wheel_entries, cur_item, ui->spc_cur_wheel_list,
-   //           tmp_data, cur_item_name);
-   //    }
-   // }
-
-   // /**************** MTBS ************************/
-
-   // mtbs = spc_data[reset_ind_mtb].toInt();
-
-   // if (mtbs == 0)
-   //    reset_ind_thr = reset_ind_mtb + mtb_headers +
-   //                    mtb_entries; // SC_Simple has an example wheel
-   // else
-   //    reset_ind_thr = reset_ind_mtb + mtb_headers + mtb_entries * mtbs;
-
-   // ui->spc_cur_mtb_list->clear();
-   // tmp_data.clear();
-   // if (mtbs > 0) {
-   //    for (int line_num = reset_ind_mtb + mtb_headers; line_num <
-   //    reset_ind_thr;
-   //         line_num++) {
-   //       auto [cur_item, cur_entry, line_items] =
-   //           dsm_gui_lib::item_entry_lineitems(
-   //               spc_data, line_num, reset_ind_mtb, mtb_entries,
-   //               mtb_headers);
-
-   //       if (cur_entry == 0) {
-   //          cur_item_name = spc_item_names[line_num - 1];
-   //          ui->spc_cur_mtb_list->addItem(cur_item_name);
-   //          tmp_data.append("blankline");
-   //       } else if (cur_entry == 1 || cur_entry == 3) {
-   //          // 1 ELEMENT
-   //          tmp_data.append(line_items[0]);
-   //       } else if (cur_entry == 2) {
-   //          // 3 ELEMENTS
-   //          for (int i = 0; i < 3; i++)
-   //             tmp_data.append(line_items[i]);
-   //       }
-
-   //       tmp_data = dsm_gui_lib::apply_data_section_end(
-   //           cur_entry, mtb_entries, cur_item, ui->spc_cur_mtb_list,
-   //           tmp_data, cur_item_name);
-   //    }
-   // }
-
-   // /**************** THRUSTERS ************************/
-
-   // thrusters = spc_data[reset_ind_thr].toInt();
-
-   // if (thrusters == 0)
-   //    reset_ind_gyro = reset_ind_thr + thr_headers +
-   //                     thr_entries; // SC_Simple has an example wheel
-   // else
-   //    reset_ind_gyro = reset_ind_thr + thr_headers + thr_entries * thrusters;
-
-   // ui->spc_cur_thruster_list->clear();
-   // tmp_data.clear();
-   // if (thrusters > 0) {
-   //    for (int line_num = reset_ind_thr + thr_headers;
-   //         line_num < reset_ind_gyro; line_num++) {
-   //       auto [cur_item, cur_entry, line_items] =
-   //           dsm_gui_lib::item_entry_lineitems(
-   //               spc_data, line_num, reset_ind_thr, thr_entries,
-   //               thr_headers);
-
-   //       if (cur_entry == 0) {
-   //          cur_item_name = spc_item_names[line_num - 1];
-   //          ui->spc_cur_thruster_list->addItem(cur_item_name);
-   //          tmp_data.append("blankline");
-   //       } else if ((cur_entry >= 1 && cur_entry <= 2) ||
-   //                  (cur_entry >= 4 && cur_entry <= 5)) {
-   //          // 1 ELEMENT
-   //          tmp_data.append(line_items[0]);
-   //       } else if (cur_entry == 3) {
-   //          // 3 ELEMENTS
-   //          for (int i = 0; i < 3; i++)
-   //             tmp_data.append(line_items[i]);
-   //       }
-
-   //       tmp_data = dsm_gui_lib::apply_data_section_end(
-   //           cur_entry, thr_entries, cur_item, ui->spc_cur_thruster_list,
-   //           tmp_data, cur_item_name);
-   //    }
-   // }
-
-   // /**************** GYROS ************************/
-
-   // gyros = spc_data[reset_ind_gyro].toInt();
-
-   // if (gyros == 0)
-   //    reset_ind_mag = reset_ind_gyro + gyro_headers +
-   //                    gyro_entries; // SC_Simple has an example wheel
-   // else
-   //    reset_ind_mag = reset_ind_gyro + gyro_headers + gyro_entries * gyros;
-
-   // ui->spc_cur_gyro_list->clear();
-   // tmp_data.clear();
-   // if (gyros > 0) {
-   //    for (int line_num = reset_ind_gyro + gyro_headers;
-   //         line_num < reset_ind_mag; line_num++) {
-   //       auto [cur_item, cur_entry, line_items] =
-   //           dsm_gui_lib::item_entry_lineitems(spc_data, line_num,
-   //                                             reset_ind_gyro, gyro_entries,
-   //                                             gyro_headers);
-
-   //       if (cur_entry == 0) {
-   //          cur_item_name = spc_item_names[line_num - 1];
-   //          ui->spc_cur_gyro_list->addItem(cur_item_name);
-   //          tmp_data.append("blankline");
-   //       } else if (cur_entry == 1 || (cur_entry >= 3 && cur_entry <= 6) ||
-   //                  (cur_entry >= 8 && cur_entry <= 10)) {
-   //          // 1 ELEMENT
-   //          tmp_data.append(line_items[0]);
-   //       } else if (cur_entry == 7) {
-   //          // 2 ELEMENTS
-   //          for (int i = 0; i < 2; i++)
-   //             tmp_data.append(line_items[i]);
-   //       } else if (cur_entry == 2) {
-   //          // 3 ELEMENTS
-   //          for (int i = 0; i < 3; i++)
-   //             tmp_data.append(line_items[i]);
-   //       }
-
-   //       tmp_data = dsm_gui_lib::apply_data_section_end(
-   //           cur_entry, gyro_entries, cur_item, ui->spc_cur_gyro_list,
-   //           tmp_data, cur_item_name);
-   //    }
-   // }
-
-   // /**************** MAGNETOMETERS ************************/
-
-   // mags = spc_data[reset_ind_mag].toInt();
-
-   // if (mags == 0)
-   //    reset_ind_css = reset_ind_mag + mag_headers +
-   //                    mag_entries; // SC_Simple has an example wheel
-   // else
-   //    reset_ind_css = reset_ind_mag + mag_headers + mag_entries * mags;
-
-   // ui->spc_cur_mag_list->clear();
-   // tmp_data.clear();
-   // if (mags > 0) {
-   //    for (int line_num = reset_ind_mag + mag_headers; line_num <
-   //    reset_ind_css;
-   //         line_num++) {
-   //       auto [cur_item, cur_entry, line_items] =
-   //           dsm_gui_lib::item_entry_lineitems(
-   //               spc_data, line_num, reset_ind_mag, mag_entries,
-   //               mag_headers);
-
-   //       if (cur_entry == 0) {
-   //          cur_item_name = spc_item_names[line_num - 1];
-   //          ui->spc_cur_mag_list->addItem("Axis " +
-   //          QString::number(cur_item)); tmp_data.append("blankline");
-   //       } else if (cur_entry == 1 || (cur_entry >= 3 && cur_entry <= 7)) {
-   //          // 1 ELEMENT
-   //          tmp_data.append(line_items[0]);
-   //       } else if (cur_entry == 2) {
-   //          // 3 ELEMENTS
-   //          for (int i = 0; i < 3; i++)
-   //             tmp_data.append(line_items[i]);
-   //       }
-
-   //       tmp_data = dsm_gui_lib::apply_data_section_end(
-   //           cur_entry, mag_entries, cur_item, ui->spc_cur_mag_list,
-   //           tmp_data, cur_item_name);
-   //    }
-   // }
-
-   // /**************** CSS ************************/
-
-   // css_s = spc_data[reset_ind_css].toInt();
-
-   // if (css_s == 0)
-   //    reset_ind_fss = reset_ind_css + css_headers +
-   //                    css_entries; // SC_Simple has an example wheel
-   // else
-   //    reset_ind_fss = reset_ind_css + css_headers + css_entries * css_s;
-
-   // ui->spc_cur_css_list->clear();
-   // tmp_data.clear();
-   // if (css_s > 0) {
-   //    for (int line_num = reset_ind_css + css_headers; line_num <
-   //    reset_ind_fss;
-   //         line_num++) {
-   //       auto [cur_item, cur_entry, line_items] =
-   //           dsm_gui_lib::item_entry_lineitems(
-   //               spc_data, line_num, reset_ind_css, css_entries,
-   //               css_headers);
-
-   //       if (cur_entry == 0) {
-   //          cur_item_name = spc_item_names[line_num - 1];
-   //          ui->spc_cur_css_list->addItem(cur_item_name);
-   //          tmp_data.append("blankline");
-   //       } else if (cur_entry == 1 || (cur_entry >= 3 && cur_entry <= 7)) {
-   //          // 1 ELEMENT
-   //          tmp_data.append(line_items[0]);
-   //       } else if (cur_entry == 2) {
-   //          // 3 ELEMENTS
-   //          for (int i = 0; i < 3; i++)
-   //             tmp_data.append(line_items[i]);
-   //       }
-
-   //       tmp_data = dsm_gui_lib::apply_data_section_end(
-   //           cur_entry, css_entries, cur_item, ui->spc_cur_css_list,
-   //           tmp_data, cur_item_name);
-   //    }
-   // }
-
-   // /**************** FSS ************************/
-
-   // fss_s = spc_data[reset_ind_fss].toInt();
-
-   // if (fss_s == 0)
-   //    reset_ind_strack = reset_ind_fss + fss_headers +
-   //                       fss_entries; // SC_Simple has an example wheel
-   // else
-   //    reset_ind_strack = reset_ind_fss + fss_headers + fss_entries * fss_s;
-
-   // ui->spc_cur_fss_list->clear();
-   // tmp_data.clear();
-   // if (fss_s > 0) {
-   //    for (int line_num = reset_ind_fss + fss_headers;
-   //         line_num < reset_ind_strack; line_num++) {
-   //       auto [cur_item, cur_entry, line_items] =
-   //           dsm_gui_lib::item_entry_lineitems(
-   //               spc_data, line_num, reset_ind_fss, fss_entries,
-   //               fss_headers);
-
-   //       if (cur_entry == 0) {
-   //          cur_item_name = spc_item_names[line_num - 1];
-   //          ui->spc_cur_fss_list->addItem(cur_item_name);
-   //          tmp_data.append("blankline");
-   //       } else if (cur_entry == 1 || cur_entry == 3 ||
-   //                  (cur_entry >= 5 && cur_entry <= 7)) {
-   //          // 1 ELEMENT
-   //          tmp_data.append(line_items[0]);
-   //       } else if (cur_entry == 4) {
-   //          // 2 ELEMENTS
-   //          for (int i = 0; i < 2; i++)
-   //             tmp_data.append(line_items[i]);
-   //       } else if (cur_entry == 2) {
-   //          // 4 ELEMENTS
-   //          for (int i = 0; i < 4; i++)
-   //             tmp_data.append(line_items[i]);
-   //       }
-
-   //       tmp_data = dsm_gui_lib::apply_data_section_end(
-   //           cur_entry, fss_entries, cur_item, ui->spc_cur_fss_list,
-   //           tmp_data, cur_item_name);
-   //    }
-   // }
-
-   // /**************** STAR TRACKER ************************/
-
-   // stracks = spc_data[reset_ind_strack].toInt();
-
-   // if (stracks == 0)
-   //    reset_ind_gps = reset_ind_strack + strack_headers +
-   //                    strack_entries; // SC_Simple has an example wheel
-   // else
-   //    reset_ind_gps =
-   //        reset_ind_strack + strack_headers + strack_entries * stracks;
-
-   // ui->spc_cur_strack_list->clear();
-   // tmp_data.clear();
-   // if (stracks > 0) {
-   //    for (int line_num = reset_ind_strack + strack_headers;
-   //         line_num < reset_ind_gps; line_num++) {
-   //       auto [cur_item, cur_entry, line_items] =
-   //           dsm_gui_lib::item_entry_lineitems(spc_data, line_num,
-   //                                             reset_ind_strack,
-   //                                             strack_entries,
-   //                                             strack_headers);
-
-   //       if (cur_entry == 0) {
-   //          cur_item_name = spc_item_names[line_num - 1];
-   //          ui->spc_cur_strack_list->addItem(cur_item_name);
-   //          tmp_data.append("blankline");
-   //       } else if (cur_entry == 1 || cur_entry == 3 || cur_entry == 7) {
-   //          // 1 ELEMENT
-   //          tmp_data.append(line_items[0]);
-   //       } else if (cur_entry == 4) {
-   //          // 2 ELEMENTS
-   //          for (int i = 0; i < 2; i++)
-   //             tmp_data.append(line_items[i]);
-   //       } else if (cur_entry >= 5 && cur_entry <= 6) {
-   //          // 3 ELEMENTS
-   //          for (int i = 0; i < 3; i++)
-   //             tmp_data.append(line_items[i]);
-   //       } else if (cur_entry == 2) {
-   //          // 4 ELEMENTS
-   //          for (int i = 0; i < 4; i++)
-   //             tmp_data.append(line_items[i]);
-   //       }
-
-   //       tmp_data = dsm_gui_lib::apply_data_section_end(
-   //           cur_entry, strack_entries, cur_item, ui->spc_cur_strack_list,
-   //           tmp_data, cur_item_name);
-   //    }
-   // }
-
-   // /**************** GPS ************************/
-
-   // gps_s = spc_data[reset_ind_gps].toInt();
-
-   // if (gps_s == 0)
-   //    reset_ind_acc = reset_ind_gps + gps_headers +
-   //                    gps_entries; // SC_Simple has an example wheel
-   // else
-   //    reset_ind_acc = reset_ind_gps + gps_headers + gps_entries * gps_s;
-
-   // ui->spc_cur_gps_list->clear();
-   // tmp_data.clear();
-   // if (gps_s > 0) {
-   //    for (int line_num = reset_ind_gps + gps_headers; line_num <
-   //    reset_ind_acc;
-   //         line_num++) {
-   //       auto [cur_item, cur_entry, line_items] =
-   //           dsm_gui_lib::item_entry_lineitems(
-   //               spc_data, line_num, reset_ind_gps, gps_entries,
-   //               gps_headers);
-
-   //       if (cur_entry == 0) {
-   //          cur_item_name = spc_item_names[line_num - 1];
-   //          ui->spc_cur_gps_list->addItem(cur_item_name);
-   //          tmp_data.append("blankline");
-   //       } else if (cur_entry >= 1 && cur_entry <= 5) {
-   //          // 1 ELEMENT
-   //          tmp_data.append(line_items[0]);
-   //       }
-
-   //       tmp_data = dsm_gui_lib::apply_data_section_end(
-   //           cur_entry, gps_entries, cur_item, ui->spc_cur_gps_list,
-   //           tmp_data, cur_item_name);
-   //    }
-   // }
-
-   // /**************** ACCELEROMETER ************************/
-
-   // accels = spc_data[reset_ind_acc].toInt();
-
-   // if (accels == 0)
-   //    reset_ind_end = reset_ind_acc + accel_headers +
-   //                    acc_entries; // SC_Simple has an example wheel
-   // else
-   //    reset_ind_end = reset_ind_acc + accel_headers + acc_entries * accels;
-
-   // ui->spc_cur_accel_list->clear();
-   // tmp_data.clear();
-   // if (accels > 0) {
-   //    for (int line_num = reset_ind_acc + accel_headers;
-   //         line_num < reset_ind_end; line_num++) {
-   //       auto [cur_item, cur_entry, line_items] =
-   //           dsm_gui_lib::item_entry_lineitems(
-   //               spc_data, line_num, reset_ind_acc, acc_entries,
-   //               accel_headers);
-
-   //       if (cur_entry == 0) {
-   //          cur_item_name = spc_item_names[line_num - 1];
-   //          ui->spc_cur_accel_list->addItem(cur_item_name);
-   //          tmp_data.append("blankline");
-   //       } else if (cur_entry == 1 || (cur_entry >= 3 && cur_entry <= 6) ||
-   //                  (cur_entry >= 8 && cur_entry <= 10)) {
-   //          // 1 ELEMENT
-   //          tmp_data.append(line_items[0]);
-   //       } else if (cur_entry == 7) {
-   //          // 2 ELEMENTS
-   //          for (int i = 0; i < 2; i++)
-   //             tmp_data.append(line_items[i]);
-   //       } else if (cur_entry == 2) {
-   //          // 3 ELEMENTS
-   //          for (int i = 0; i < 3; i++)
-   //             tmp_data.append(line_items[i]);
-   //       }
-
-   //       tmp_data = dsm_gui_lib::apply_data_section_end(
-   //           cur_entry, acc_entries, cur_item, ui->spc_cur_accel_list,
-   //           tmp_data, cur_item_name);
-   //    }
-   // }
-}
+void SPC_submenu::apply_data() {}
 
 void SPC_submenu::write_data(YAML::Node inp_spc) {
    QStringList params;
@@ -1436,6 +840,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       tmp_data.append(ui->spc_cur_body_geom->text());
       tmp_data.append(ui->spc_cur_node_file->text());
       tmp_data.append(ui->spc_cur_flex_file->text());
+
       ui->spc_cur_body_list->currentItem()->setData(
           256, ui->spc_cur_body_name->text());
       ui->spc_cur_body_list->currentItem()->setData(257, tmp_data);
@@ -1450,9 +855,9 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Name"]  = ui->spc_cur_joint_list->currentItem()->text();
       cur_node["Index"] = i;
 
-      data_vector               = {ui->spc_cur_joint_in->text(),
-                                   ui->spc_cur_joint_out->text()};
-      cur_node["Body Indicies"] = data_vector;
+      cur_node["Body Indicies"] = dsm_gui_lib::create_QVec2(
+          ui->spc_cur_joint_in->text(), ui->spc_cur_joint_out->text());
+      ;
 
       cur_node["Joint Type"]   = ui->spc_cur_joint_type->currentText();
       cur_node["Rot DOF"]      = ui->spc_cur_joint_rotdof->text();
@@ -1462,87 +867,156 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Trn DOF"]      = ui->spc_cur_joint_trndof->text();
       cur_node["Trn Sequence"] = ui->spc_cur_joint_trndof_seq->currentText();
 
-      data_vector = {"", "", ""};
+      QString data1, data2, data3;
 
       if (ui->spc_cur_joint_rlock1->isChecked())
-         data_vector[0] = "true";
+         data1 = "true";
       else
-         data_vector[0] = "false";
+         data1 = "false";
 
       if (ui->spc_cur_joint_rlock2->isChecked())
-         data_vector[1] = "true";
+         data2 = "true";
       else
-         data_vector[1] = "false";
+         data2 = "false";
 
       if (ui->spc_cur_joint_rlock3->isChecked())
-         data_vector[2] = "true";
+         data3 = "true";
       else
-         data_vector[2] = "false";
+         data3 = "false";
 
-      cur_node["Rot DOF Locked"] = data_vector;
-
-      data_vector = {"", "", ""};
+      cur_node["Rot DOF Locked"] =
+          dsm_gui_lib::create_QVec3(data1, data2, data3);
 
       if (ui->spc_cur_joint_tlock1->isChecked())
-         data_vector[0] = "true";
+         data1 = "true";
       else
-         data_vector[0] = "false";
+         data1 = "false";
 
       if (ui->spc_cur_joint_tlock2->isChecked())
-         data_vector[1] = "true";
+         data2 = "true";
       else
-         data_vector[1] = "false";
+         data2 = "false";
 
       if (ui->spc_cur_joint_tlock3->isChecked())
-         data_vector[2] = "true";
+         data3 = "true";
       else
-         data_vector[2] = "false";
+         data3 = "false";
 
-      cur_node["Trn DOF Locked"] = data_vector;
+      cur_node["Trn DOF Locked"] =
+          dsm_gui_lib::create_QVec3(data1, data2, data3);
 
-      data_vector             = {ui->spc_cur_joint_ang0_1->text(),
-                                 ui->spc_cur_joint_ang0_2->text(),
-                                 ui->spc_cur_joint_ang0_3->text()};
-      cur_node["Init Angles"] = data_vector;
+      cur_node["Init Angles"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_joint_ang0_1->text(), ui->spc_cur_joint_ang0_2->text(),
+          ui->spc_cur_joint_ang0_3->text());
 
-      data_vector                  = {ui->spc_cur_joint_angrate0_1->text(),
-                                      ui->spc_cur_joint_angrate0_2->text(),
-                                      ui->spc_cur_joint_angrate0_3->text()};
-      cur_node["Init Angle Rates"] = data_vector;
+      cur_node["Init Angle Rates"] =
+          dsm_gui_lib::create_QVec3(ui->spc_cur_joint_angrate0_1->text(),
+                                    ui->spc_cur_joint_angrate0_2->text(),
+                                    ui->spc_cur_joint_angrate0_3->text());
 
-      data_vector                   = {ui->spc_cur_joint_disp0_1->text(),
-                                       ui->spc_cur_joint_disp0_2->text(),
-                                       ui->spc_cur_joint_disp0_3->text()};
-      cur_node["Init Displacement"] = data_vector;
+      cur_node["Init Displacement"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_joint_disp0_1->text(), ui->spc_cur_joint_disp0_2->text(),
+          ui->spc_cur_joint_disp0_3->text());
 
-      data_vector                         = {ui->spc_cur_joint_dispr0_1->text(),
-                                             ui->spc_cur_joint_dispr0_2->text(),
-                                             ui->spc_cur_joint_dispr0_3->text()};
-      cur_node["Init Displacement Rates"] = data_vector;
+      cur_node["Init Displacement Rates"] =
+          dsm_gui_lib::create_QVec3(ui->spc_cur_joint_dispr0_1->text(),
+                                    ui->spc_cur_joint_dispr0_2->text(),
+                                    ui->spc_cur_joint_dispr0_3->text());
 
-      data_vector                        = {ui->spc_cur_joint_bigi_1->text(),
-                                            ui->spc_cur_joint_bigi_2->text(),
-                                            ui->spc_cur_joint_bigi_3->text()};
-      cur_node["Bi-Gi Angles"]["Angles"] = data_vector;
+      cur_node["Bi-Gi Angles"]["Angles"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_joint_bigi_1->text(), ui->spc_cur_joint_bigi_2->text(),
+          ui->spc_cur_joint_bigi_3->text());
+
       cur_node["Bi-Gi Angles"]["Sequence"] =
           ui->spc_cur_joint_bigi_seq->currentText();
 
-      data_vector                        = {ui->spc_cur_joint_bogo_1->text(),
-                                            ui->spc_cur_joint_bogo_2->text(),
-                                            ui->spc_cur_joint_bogo_3->text()};
-      cur_node["Bo-Go Angles"]["Angles"] = data_vector;
+      cur_node["Bo-Go Angles"]["Angles"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_joint_bogo_1->text(), ui->spc_cur_joint_bogo_2->text(),
+          ui->spc_cur_joint_bogo_3->text());
       cur_node["Bo-Go Angles"]["Sequence"] =
           ui->spc_cur_joint_bogo_seq->currentText();
 
-      data_vector                    = {ui->spc_cur_joint_poswrt_in_1->text(),
-                                        ui->spc_cur_joint_poswrt_in_2->text(),
-                                        ui->spc_cur_joint_poswrt_in_3->text()};
-      cur_node["Pos wrt Inner Body"] = data_vector;
+      cur_node["Pos wrt Inner Body"] =
+          dsm_gui_lib::create_QVec3(ui->spc_cur_joint_poswrt_in_1->text(),
+                                    ui->spc_cur_joint_poswrt_in_2->text(),
+                                    ui->spc_cur_joint_poswrt_in_3->text());
 
-      data_vector                    = {ui->spc_cur_joint_poswrt_out_1->text(),
-                                        ui->spc_cur_joint_poswrt_out_2->text(),
-                                        ui->spc_cur_joint_poswrt_out_3->text()};
-      cur_node["Pos wrt Outer Body"] = data_vector;
+      cur_node["Pos wrt Outer Body"] =
+          dsm_gui_lib::create_QVec3(ui->spc_cur_joint_poswrt_out_1->text(),
+                                    ui->spc_cur_joint_poswrt_out_2->text(),
+                                    ui->spc_cur_joint_poswrt_out_3->text());
+
+      tmp_data.append(ui->spc_cur_joint_type->currentText());
+      tmp_data.append(ui->spc_cur_joint_in->text());
+      tmp_data.append(ui->spc_cur_joint_out->text());
+      tmp_data.append(ui->spc_cur_joint_rotdof->text());
+      tmp_data.append(ui->spc_cur_joint_rotdof_seq->currentText());
+      tmp_data.append(ui->spc_cur_joint_rottype->currentText());
+      tmp_data.append(ui->spc_cur_joint_trndof->text());
+      tmp_data.append(ui->spc_cur_joint_trndof_seq->currentText());
+
+      if (ui->spc_cur_joint_rlock1->isChecked())
+         tmp_data.append("true");
+      else
+         tmp_data.append("false");
+
+      if (ui->spc_cur_joint_rlock2->isChecked())
+         tmp_data.append("true");
+      else
+         tmp_data.append("false");
+
+      if (ui->spc_cur_joint_rlock3->isChecked())
+         tmp_data.append("true");
+      else
+         tmp_data.append("FALSE");
+
+      if (ui->spc_cur_joint_tlock1->isChecked())
+         tmp_data.append("true");
+      else
+         tmp_data.append("false");
+
+      if (ui->spc_cur_joint_tlock2->isChecked())
+         tmp_data.append("true");
+      else
+         tmp_data.append("false");
+
+      if (ui->spc_cur_joint_tlock3->isChecked())
+         tmp_data.append("true");
+      else
+         tmp_data.append("FALSE");
+
+      tmp_data.append(ui->spc_cur_joint_ang0_1->text());
+      tmp_data.append(ui->spc_cur_joint_ang0_2->text());
+      tmp_data.append(ui->spc_cur_joint_ang0_3->text());
+      tmp_data.append(ui->spc_cur_joint_angrate0_1->text());
+      tmp_data.append(ui->spc_cur_joint_angrate0_2->text());
+      tmp_data.append(ui->spc_cur_joint_angrate0_3->text());
+      tmp_data.append(ui->spc_cur_joint_disp0_1->text());
+      tmp_data.append(ui->spc_cur_joint_disp0_2->text());
+      tmp_data.append(ui->spc_cur_joint_disp0_3->text());
+      tmp_data.append(ui->spc_cur_joint_dispr0_1->text());
+      tmp_data.append(ui->spc_cur_joint_dispr0_2->text());
+      tmp_data.append(ui->spc_cur_joint_dispr0_3->text());
+      tmp_data.append(ui->spc_cur_joint_bigi_1->text());
+      tmp_data.append(ui->spc_cur_joint_bigi_2->text());
+      tmp_data.append(ui->spc_cur_joint_bigi_3->text());
+      tmp_data.append(ui->spc_cur_joint_bigi_seq->currentText());
+      tmp_data.append(ui->spc_cur_joint_bogo_1->text());
+      tmp_data.append(ui->spc_cur_joint_bogo_2->text());
+      tmp_data.append(ui->spc_cur_joint_bogo_3->text());
+      tmp_data.append(ui->spc_cur_joint_bogo_seq->currentText());
+      tmp_data.append(ui->spc_cur_joint_poswrt_in_1->text());
+      tmp_data.append(ui->spc_cur_joint_poswrt_in_2->text());
+      tmp_data.append(ui->spc_cur_joint_poswrt_in_3->text());
+      tmp_data.append(ui->spc_cur_joint_poswrt_out_1->text());
+      tmp_data.append(ui->spc_cur_joint_poswrt_out_2->text());
+      tmp_data.append(ui->spc_cur_joint_poswrt_out_3->text());
+      tmp_data.append(ui->spc_cur_joint_param_file->text());
+
+      ui->spc_cur_joint_list->currentItem()->setData(
+          256, ui->spc_cur_joint_name->text());
+      ui->spc_cur_joint_list->currentItem()->setData(257, tmp_data);
+      tmp_data.clear();
    }
 
    /* Wheels */
@@ -1559,10 +1033,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
       cur_node["Initial Momentum"] = ui->spc_cur_wheel_initmom->text();
 
-      data_vector      = {ui->spc_cur_wheel_axis_1->text(),
-                          ui->spc_cur_wheel_axis_2->text(),
-                          ui->spc_cur_wheel_axis_3->text()};
-      cur_node["Axis"] = data_vector;
+      cur_node["Axis"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_wheel_axis_1->text(), ui->spc_cur_wheel_axis_2->text(),
+          ui->spc_cur_wheel_axis_3->text());
+      ;
 
       cur_node["Max Torque"]   = ui->spc_cur_wheel_initmom->text();
       cur_node["Max Momentum"] = ui->spc_cur_wheel_maxmom->text();
@@ -1572,6 +1046,22 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           cur_spc_yaml["Bodies"][ui->spc_cur_wheel_body->cleanText().toInt()];
 
       cur_node["Node"] = ui->spc_cur_wheel_node->cleanText();
+
+      tmp_data.append(ui->spc_cur_wheel_initmom->text());
+      tmp_data.append(ui->spc_cur_wheel_axis_1->text());
+      tmp_data.append(ui->spc_cur_wheel_axis_2->text());
+      tmp_data.append(ui->spc_cur_wheel_axis_3->text());
+      tmp_data.append(ui->spc_cur_wheel_maxtrq->text());
+      tmp_data.append(ui->spc_cur_wheel_maxmom->text());
+      tmp_data.append(ui->spc_cur_wheel_inertia->text());
+      tmp_data.append(ui->spc_cur_wheel_body->cleanText());
+      tmp_data.append(ui->spc_cur_wheel_node->cleanText());
+      tmp_data.append(ui->spc_cur_wheel_drjit_file->text());
+
+      ui->spc_cur_wheel_list->currentItem()->setData(
+          256, ui->spc_cur_wheel_name->text());
+      ui->spc_cur_wheel_list->currentItem()->setData(257, tmp_data);
+      tmp_data.clear();
    }
 
    /* MTBs */
@@ -1585,11 +1075,21 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
       cur_node["Saturation"] = ui->spc_cur_mtb_sat->text();
 
-      data_vector      = {ui->spc_cur_mtb_axis_1->text(),
-                          ui->spc_cur_mtb_axis_2->text(),
-                          ui->spc_cur_mtb_axis_3->text()};
-      cur_node["Axis"] = data_vector;
+      cur_node["Axis"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_mtb_axis_1->text(), ui->spc_cur_mtb_axis_2->text(),
+          ui->spc_cur_mtb_axis_3->text());
       cur_node["Node"] = ui->spc_cur_mtb_node->cleanText();
+
+      tmp_data.append(ui->spc_cur_mtb_sat->text());
+      tmp_data.append(ui->spc_cur_mtb_axis_1->text());
+      tmp_data.append(ui->spc_cur_mtb_axis_2->text());
+      tmp_data.append(ui->spc_cur_mtb_axis_3->text());
+      tmp_data.append(ui->spc_cur_mtb_node->text());
+
+      ui->spc_cur_mtb_list->currentItem()->setData(
+          256, ui->spc_cur_mtb_name->text());
+      ui->spc_cur_mtb_list->currentItem()->setData(257, tmp_data);
+      tmp_data.clear();
    }
 
    /* Thrusters */
@@ -1604,11 +1104,24 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Mode"]  = ui->spc_cur_thruster_mode->currentText();
       cur_node["Force"] = ui->spc_cur_thruster_force->text();
 
-      data_vector      = {ui->spc_cur_thruster_axis_1->text(),
-                          ui->spc_cur_thruster_axis_2->text(),
-                          ui->spc_cur_thruster_axis_3->text()};
-      cur_node["Axis"] = data_vector;
+      cur_node["Axis"] =
+          dsm_gui_lib::create_QVec3(ui->spc_cur_thruster_axis_1->text(),
+                                    ui->spc_cur_thruster_axis_2->text(),
+                                    ui->spc_cur_thruster_axis_3->text());
       cur_node["Node"] = ui->spc_cur_thruster_node->cleanText();
+
+      tmp_data.append(ui->spc_cur_thruster_mode->currentText());
+      tmp_data.append(ui->spc_cur_thruster_force->text());
+      tmp_data.append(ui->spc_cur_thruster_axis_1->text());
+      tmp_data.append(ui->spc_cur_thruster_axis_2->text());
+      tmp_data.append(ui->spc_cur_thruster_axis_3->text());
+      tmp_data.append(ui->spc_cur_thruster_body->text());
+      tmp_data.append(ui->spc_cur_thruster_node->text());
+
+      ui->spc_cur_thruster_list->currentItem()->setData(
+          256, ui->spc_cur_thruster_name->text());
+      ui->spc_cur_thruster_list->currentItem()->setData(257, tmp_data);
+      tmp_data.clear();
    }
 
    /* Gyros */
@@ -1622,10 +1135,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
       cur_node["Mode"] = ui->spc_cur_gyro_samptime->text();
 
-      data_vector                   = {ui->spc_cur_gyro_axis_1->text(),
-                                       ui->spc_cur_gyro_axis_2->text(),
-                                       ui->spc_cur_gyro_axis_3->text()};
-      cur_node["Axis"]              = data_vector;
+      cur_node["Axis"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_gyro_axis_1->text(), ui->spc_cur_gyro_axis_2->text(),
+          ui->spc_cur_gyro_axis_3->text());
+      ;
       cur_node["Max Rate"]          = ui->spc_cur_gyro_maxrate->text();
       cur_node["Scale Factor"]      = ui->spc_cur_gyro_scaleferror->text();
       cur_node["Quantization"]      = ui->spc_cur_gyro_quant->text();
@@ -1636,6 +1149,25 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Initial Bias"]            = ui->spc_cur_gyro_initbias->text();
 
       cur_node["Node"] = ui->spc_cur_gyro_node->cleanText();
+
+      tmp_data.append(ui->spc_cur_gyro_samptime->text());
+      tmp_data.append(ui->spc_cur_gyro_axis_1->text());
+      tmp_data.append(ui->spc_cur_gyro_axis_2->text());
+      tmp_data.append(ui->spc_cur_gyro_axis_3->text());
+      tmp_data.append(ui->spc_cur_gyro_maxrate->text());
+      tmp_data.append(ui->spc_cur_gyro_scaleferror->text());
+      tmp_data.append(ui->spc_cur_gyro_quant->text());
+      tmp_data.append(ui->spc_cur_gyro_angrwalk->text());
+      tmp_data.append(ui->spc_cur_gyro_bias_stab->text());
+      tmp_data.append(ui->spc_cur_gyro_bias_tspan->text());
+      tmp_data.append(ui->spc_cur_gyro_angnoise->text());
+      tmp_data.append(ui->spc_cur_gyro_initbias->text());
+      tmp_data.append(ui->spc_cur_gyro_node->text());
+
+      ui->spc_cur_gyro_list->currentItem()->setData(
+          256, ui->spc_cur_gyro_name->text());
+      ui->spc_cur_gyro_list->currentItem()->setData(257, tmp_data);
+      tmp_data.clear();
    }
 
    /* Magnetometers */
@@ -1648,16 +1180,31 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
       cur_node["Sample Time"] = ui->spc_cur_mag_samptime->text();
 
-      data_vector              = {ui->spc_cur_mag_axis_1->text(),
-                                  ui->spc_cur_mag_axis_2->text(),
-                                  ui->spc_cur_mag_axis_3->text()};
-      cur_node["Axis"]         = data_vector;
+      cur_node["Axis"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_mag_axis_1->text(), ui->spc_cur_mag_axis_2->text(),
+          ui->spc_cur_mag_axis_3->text());
+      ;
       cur_node["Saturation"]   = ui->spc_cur_mag_sat->text();
       cur_node["Scale Factor"] = ui->spc_cur_mag_scaleferror->text();
       cur_node["Quantization"] = ui->spc_cur_mag_quant->text();
       cur_node["Noise"]        = ui->spc_cur_mag_noise->text();
 
       cur_node["Node"] = ui->spc_cur_mag_node->cleanText();
+
+      tmp_data.append(ui->spc_cur_mag_samptime->text());
+      tmp_data.append(ui->spc_cur_mag_axis_1->text());
+      tmp_data.append(ui->spc_cur_mag_axis_2->text());
+      tmp_data.append(ui->spc_cur_mag_axis_3->text());
+      tmp_data.append(ui->spc_cur_mag_sat->text());
+      tmp_data.append(ui->spc_cur_mag_scaleferror->text());
+      tmp_data.append(ui->spc_cur_mag_quant->text());
+      tmp_data.append(ui->spc_cur_mag_noise->text());
+      tmp_data.append(ui->spc_cur_mag_node->text());
+
+      ui->spc_cur_mag_list->currentItem()->setData(
+          256, ui->spc_cur_mag_name->text());
+      ui->spc_cur_mag_list->currentItem()->setData(257, tmp_data);
+      tmp_data.clear();
    }
 
    /* CSSs */
@@ -1670,10 +1217,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
       cur_node["Sample Time"] = ui->spc_cur_css_samptime->text();
 
-      data_vector                 = {ui->spc_cur_css_axis_1->text(),
-                                     ui->spc_cur_css_axis_2->text(),
-                                     ui->spc_cur_css_axis_3->text()};
-      cur_node["Axis"]            = data_vector;
+      cur_node["Axis"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_css_axis_1->text(), ui->spc_cur_css_axis_2->text(),
+          ui->spc_cur_css_axis_3->text());
+      ;
       cur_node["Half Cone Angle"] = ui->spc_cur_css_halfcone->text();
       cur_node["Scale Factor"]    = ui->spc_cur_css_scale->text();
       cur_node["Quantization"]    = ui->spc_cur_css_quant->text();
@@ -1681,6 +1228,21 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           cur_spc_yaml["Bodies"][ui->spc_cur_css_body->text().toInt()];
 
       cur_node["Node"] = ui->spc_cur_css_node->cleanText();
+
+      tmp_data.append(ui->spc_cur_css_samptime->text());
+      tmp_data.append(ui->spc_cur_css_axis_1->text());
+      tmp_data.append(ui->spc_cur_css_axis_2->text());
+      tmp_data.append(ui->spc_cur_css_axis_3->text());
+      tmp_data.append(ui->spc_cur_css_halfcone->text());
+      tmp_data.append(ui->spc_cur_css_scale->text());
+      tmp_data.append(ui->spc_cur_css_quant->text());
+      tmp_data.append(ui->spc_cur_css_body->text());
+      tmp_data.append(ui->spc_cur_css_node->text());
+
+      ui->spc_cur_css_list->currentItem()->setData(
+          256, ui->spc_cur_css_name->text());
+      ui->spc_cur_css_list->currentItem()->setData(257, tmp_data);
+      tmp_data.clear();
    }
 
    /* FSSs */
@@ -1693,21 +1255,37 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
       cur_node["Sample Time"] = ui->spc_cur_fss_samptime->text();
 
-      data_vector                           = {ui->spc_cur_fss_mount_1->text(),
-                                               ui->spc_cur_fss_mount_2->text(),
-                                               ui->spc_cur_fss_mount_3->text()};
-      cur_node["Mounting Angles"]["Angles"] = data_vector;
+      cur_node["Mounting Angles"]["Angles"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_fss_mount_1->text(), ui->spc_cur_fss_mount_2->text(),
+          ui->spc_cur_fss_mount_3->text());
+      ;
       cur_node["Mounting Angles"]["Sequence"] =
           ui->spc_cur_fss_mountseq->currentText();
       cur_node["Boresight Axis"] = ui->spc_cur_fss_boreaxis->currentText();
 
-      data_vector = {ui->spc_cur_fss_hfov->text(),
-                     ui->spc_cur_fss_vfov->text()};
-
-      cur_node["FOV Size"]               = data_vector;
+      cur_node["FOV Size"] = dsm_gui_lib::create_QVec2(
+          ui->spc_cur_fss_hfov->text(), ui->spc_cur_fss_vfov->text());
+      ;
       cur_node["Noise Equivalent Angle"] = ui->spc_cur_fss_noiseang->text();
       cur_node["Quantization"]           = ui->spc_cur_fss_quant->text();
       cur_node["Node"]                   = ui->spc_cur_fss_node->cleanText();
+
+      tmp_data.append(ui->spc_cur_fss_samptime->text());
+      tmp_data.append(ui->spc_cur_fss_mount_1->text());
+      tmp_data.append(ui->spc_cur_fss_mount_2->text());
+      tmp_data.append(ui->spc_cur_fss_mount_3->text());
+      tmp_data.append(ui->spc_cur_fss_mountseq->currentText());
+      tmp_data.append(ui->spc_cur_fss_boreaxis->currentText());
+      tmp_data.append(ui->spc_cur_fss_hfov->text());
+      tmp_data.append(ui->spc_cur_fss_vfov->text());
+      tmp_data.append(ui->spc_cur_fss_noiseang->text());
+      tmp_data.append(ui->spc_cur_fss_quant->text());
+      tmp_data.append(ui->spc_cur_fss_node->text());
+
+      ui->spc_cur_fss_list->currentItem()->setData(
+          256, ui->spc_cur_fss_name->text());
+      ui->spc_cur_fss_list->currentItem()->setData(257, tmp_data);
+      tmp_data.clear();
    }
 
    /* STs */
@@ -1720,10 +1298,11 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
       cur_node["Sample Time"] = ui->spc_cur_strack_samptime->text();
 
-      data_vector = {ui->spc_cur_strack_mount_1->text(),
-                     ui->spc_cur_strack_mount_2->text(),
-                     ui->spc_cur_strack_mount_3->text()};
-      cur_node["Mounting Angles"]["Angles"] = data_vector;
+      cur_node["Mounting Angles"]["Angles"] =
+          dsm_gui_lib::create_QVec3(ui->spc_cur_strack_mount_1->text(),
+                                    ui->spc_cur_strack_mount_2->text(),
+                                    ui->spc_cur_strack_mount_3->text());
+      ;
       cur_node["Mounting Angles"]["Sequence"] =
           ui->spc_cur_strack_mountseq->currentText();
       cur_node["Boresight Axis"] = ui->spc_cur_strack_boreaxis->currentText();
@@ -1731,7 +1310,9 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       data_vector = {ui->spc_cur_strack_hfov->text(),
                      ui->spc_cur_strack_vfov->text()};
 
-      cur_node["FOV Size"]                  = data_vector;
+      cur_node["FOV Size"] = dsm_gui_lib::create_QVec2(
+          ui->spc_cur_strack_hfov->text(), ui->spc_cur_strack_vfov->text());
+      ;
       cur_node["Exclusion Angles"]["Sun"]   = ui->spc_cur_strack_sun->text();
       cur_node["Exclusion Angles"]["Earth"] = ui->spc_cur_strack_earth->text();
       cur_node["Exclusion Angles"]["Luna"]  = ui->spc_cur_strack_moon->text();
@@ -1740,8 +1321,31 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
                      ui->spc_cur_strack_noiseang_2->text(),
                      ui->spc_cur_strack_noiseang_3->text()};
 
-      cur_node["Noise Equivalent Angle"] = data_vector;
-      cur_node["Node"]                   = ui->spc_cur_strack_node->cleanText();
+      cur_node["Noise Equivalent Angle"] =
+          dsm_gui_lib::create_QVec3(ui->spc_cur_strack_noiseang_1->text(),
+                                    ui->spc_cur_strack_noiseang_2->text(),
+                                    ui->spc_cur_strack_noiseang_3->text());
+      cur_node["Node"] = ui->spc_cur_strack_node->cleanText();
+
+      tmp_data.append(ui->spc_cur_strack_samptime->text());
+      tmp_data.append(ui->spc_cur_strack_mount_1->text());
+      tmp_data.append(ui->spc_cur_strack_mount_2->text());
+      tmp_data.append(ui->spc_cur_strack_mount_3->text());
+      tmp_data.append(ui->spc_cur_strack_mountseq->currentText());
+      tmp_data.append(ui->spc_cur_strack_boreaxis->currentText());
+      tmp_data.append(ui->spc_cur_strack_hfov->text());
+      tmp_data.append(ui->spc_cur_strack_vfov->text());
+      tmp_data.append(ui->spc_cur_strack_sun->text());
+      tmp_data.append(ui->spc_cur_strack_earth->text());
+      tmp_data.append(ui->spc_cur_strack_moon->text());
+      tmp_data.append(ui->spc_cur_strack_noiseang_1->text());
+      tmp_data.append(ui->spc_cur_strack_noiseang_2->text());
+      tmp_data.append(ui->spc_cur_strack_noiseang_3->text());
+      tmp_data.append(ui->spc_cur_strack_node->text());
+
+      ui->spc_cur_strack_list->currentItem()->setData(
+          256, ui->spc_cur_strack_name->text());
+      ui->spc_cur_strack_list->currentItem()->setData(257, tmp_data);
    }
 
    /* GPSs */
@@ -1758,6 +1362,17 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Velocity Noise"] = ui->spc_cur_gps_velnoise->text();
       cur_node["Time Noise"]     = ui->spc_cur_gps_timenoise->text();
       cur_node["Node"]           = ui->spc_cur_gps_node->cleanText();
+
+      tmp_data.append(ui->spc_cur_gps_samptime->text());
+      tmp_data.append(ui->spc_cur_gps_posnoise->text());
+      tmp_data.append(ui->spc_cur_gps_velnoise->text());
+      tmp_data.append(ui->spc_cur_gps_timenoise->text());
+      tmp_data.append(ui->spc_cur_gps_node->text());
+
+      ui->spc_cur_gps_list->currentItem()->setData(
+          256, ui->spc_cur_gps_name->text());
+      ui->spc_cur_gps_list->currentItem()->setData(257, tmp_data);
+      tmp_data.clear();
    }
 
    /* Accelerometers */
@@ -1770,10 +1385,11 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Index"] = i;
 
       cur_node["Sample Time"] = ui->spc_cur_acc_samptime->text();
-      data_vector             = {ui->spc_cur_acc_axis_1->text(),
-                                 ui->spc_cur_acc_axis_2->text(),
-                                 ui->spc_cur_acc_axis_3->text()};
-      cur_node["Axis"]        = data_vector;
+
+      cur_node["Axis"] = dsm_gui_lib::create_QVec3(
+          ui->spc_cur_acc_axis_1->text(), ui->spc_cur_acc_axis_2->text(),
+          ui->spc_cur_acc_axis_3->text());
+      ;
 
       cur_node["Max Acceleration"]        = ui->spc_cur_acc_maxacc->text();
       cur_node["Scale Factor"]            = ui->spc_cur_acc_scaleerror->text();
@@ -1784,6 +1400,25 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["DV Noise"]                = ui->spc_cur_acc_dvnoise->text();
       cur_node["Initial Bias"]            = ui->spc_cur_acc_initbias->text();
       cur_node["Node"]                    = ui->spc_cur_acc_node->cleanText();
+
+      tmp_data.append(ui->spc_cur_acc_samptime->text());
+      tmp_data.append(ui->spc_cur_acc_axis_1->text());
+      tmp_data.append(ui->spc_cur_acc_axis_2->text());
+      tmp_data.append(ui->spc_cur_acc_axis_3->text());
+      tmp_data.append(ui->spc_cur_acc_maxacc->text());
+      tmp_data.append(ui->spc_cur_acc_scaleerror->text());
+      tmp_data.append(ui->spc_cur_acc_quant->text());
+      tmp_data.append(ui->spc_cur_acc_dvrandwalk->text());
+      tmp_data.append(ui->spc_cur_acc_bias_stab->text());
+      tmp_data.append(ui->spc_cur_acc_bias_tspan->text());
+      tmp_data.append(ui->spc_cur_acc_dvnoise->text());
+      tmp_data.append(ui->spc_cur_acc_initbias->text());
+      tmp_data.append(ui->spc_cur_acc_node->text());
+
+      ui->spc_cur_accel_list->currentItem()->setData(
+          256, ui->spc_cur_acc_name->text());
+      ui->spc_cur_accel_list->currentItem()->setData(257, tmp_data);
+      tmp_data.clear();
    }
 
    write_data(cur_spc_yaml);
@@ -1944,32 +1579,32 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item) {
    ui->spc_cur_joint_trndof->setValue(current_data[7].toInt());
    setQComboBox(ui->spc_cur_joint_trndof_seq, current_data[8]);
 
-   if (!QString::compare(current_data[9], "TRUE"))
+   if (!QString::compare(current_data[9], "true"))
       ui->spc_cur_joint_rlock1->setCheckState(Qt::Checked);
    else
       ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
 
-   if (!QString::compare(current_data[10], "TRUE"))
+   if (!QString::compare(current_data[10], "true"))
       ui->spc_cur_joint_rlock2->setCheckState(Qt::Checked);
    else
       ui->spc_cur_joint_rlock2->setCheckState(Qt::Unchecked);
 
-   if (!QString::compare(current_data[11], "TRUE"))
+   if (!QString::compare(current_data[11], "true"))
       ui->spc_cur_joint_rlock3->setCheckState(Qt::Checked);
    else
       ui->spc_cur_joint_rlock3->setCheckState(Qt::Unchecked);
 
-   if (!QString::compare(current_data[12], "TRUE"))
+   if (!QString::compare(current_data[12], "true"))
       ui->spc_cur_joint_tlock1->setCheckState(Qt::Checked);
    else
       ui->spc_cur_joint_tlock1->setCheckState(Qt::Unchecked);
 
-   if (!QString::compare(current_data[13], "TRUE"))
+   if (!QString::compare(current_data[13], "true"))
       ui->spc_cur_joint_tlock2->setCheckState(Qt::Checked);
    else
       ui->spc_cur_joint_tlock2->setCheckState(Qt::Unchecked);
 
-   if (!QString::compare(current_data[14], "TRUE"))
+   if (!QString::compare(current_data[14], "true"))
       ui->spc_cur_joint_tlock3->setCheckState(Qt::Checked);
    else
       ui->spc_cur_joint_tlock3->setCheckState(Qt::Unchecked);

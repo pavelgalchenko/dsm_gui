@@ -74,6 +74,7 @@ Bodies:
   #       Node File Name:       [[Filename]]
   #       Flex File Name:       [[NONE/Filename]]
   - Body:
+      Name: Body 0
       Index: 0
       Mass: 100.0
       MOI: [100.0, 200.0, 300.0]
