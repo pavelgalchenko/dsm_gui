@@ -231,6 +231,12 @@ void SPC_Menu::on_spc_apply_clicked() {
    conf_node["FSW Identifier"]  = ui->spc_fswid->currentText();
    conf_node["FSW Sample Time"] = ui->spc_fswsamp->text();
 
+   tmp_data.append(ui->spc_desc->text());
+   tmp_data.append(ui->spc_label->text());
+   tmp_data.append(ui->spc_sprite->text());
+   tmp_data.append(ui->spc_fswid->currentText());
+   tmp_data.append(ui->spc_fswsamp->text());
+
    /* Orbit */
    YAML::Node orb_node       = cur_spc_yaml["Orbit"];
    orb_node["Prop Type"]     = ui->spc_cur_orb_type->currentText();
@@ -244,6 +250,15 @@ void SPC_Menu::on_spc_apply_clicked() {
    data_vector = {ui->spc_cur_xvel_form->text(), ui->spc_cur_yvel_form->text(),
                   ui->spc_cur_zvel_form->text()};
    orb_node["Vel wrt F"] = data_vector;
+
+   tmp_data.append(ui->spc_cur_orb_type->currentText());
+   tmp_data.append(ui->spc_cur_pos_ref->currentText());
+   tmp_data.append(ui->spc_cur_xpos_form->text());
+   tmp_data.append(ui->spc_cur_ypos_form->text());
+   tmp_data.append(ui->spc_cur_zpos_form->text());
+   tmp_data.append(ui->spc_cur_xvel_form->text());
+   tmp_data.append(ui->spc_cur_yvel_form->text());
+   tmp_data.append(ui->spc_cur_zvel_form->text());
 
    /* Attitude */
    YAML::Node att_node            = cur_spc_yaml["Attitude"];
@@ -281,6 +296,21 @@ void SPC_Menu::on_spc_apply_clicked() {
       ui->spc_cur_q3->setEnabled(false);
       ui->spc_cur_q4->setEnabled(false);
    }
+
+   tmp_data.append(ui->spc_cur_angvel_frame1->currentText());
+   tmp_data.append(ui->spc_cur_att_param->currentText());
+   tmp_data.append(ui->spc_cur_angvel_frame2->currentText());
+   tmp_data.append(ui->spc_cur_angvel_1->text());
+   tmp_data.append(ui->spc_cur_angvel_2->text());
+   tmp_data.append(ui->spc_cur_angvel_3->text());
+   tmp_data.append(ui->spc_cur_q1->text());
+   tmp_data.append(ui->spc_cur_q2->text());
+   tmp_data.append(ui->spc_cur_q3->text());
+   tmp_data.append(ui->spc_cur_q4->text());
+   tmp_data.append(ui->spc_cur_initeul_1->text());
+   tmp_data.append(ui->spc_cur_initeul_2->text());
+   tmp_data.append(ui->spc_cur_initeul_3->text());
+   tmp_data.append(ui->spc_cur_initeul_seq->currentText());
 
    ui->spc_list->currentItem()->setData(256, cur_name);
    ui->spc_list->currentItem()->setData(257, tmp_data);
@@ -613,15 +643,11 @@ void SPC_Menu::on_spc_conf_clicked() {
 }
 
 void SPC_Menu::on_spc_list_itemClicked(QListWidgetItem *item) {
-
    QStringList current_data = item->data(257).toStringList();
 
    ui->spc_name->setText(item->data(256).toString());
-
    ui->spc_desc->setText(current_data[0]);
-
    ui->spc_label->setText(current_data[1]);
-
    ui->spc_sprite->setText(current_data[2]);
 
    setQComboBox(ui->spc_fswid, current_data[3]);
@@ -629,7 +655,6 @@ void SPC_Menu::on_spc_list_itemClicked(QListWidgetItem *item) {
    ui->spc_fswsamp->setText(current_data[4]);
 
    setQComboBox(ui->spc_cur_orb_type, current_data[5]);
-
    setQComboBox(ui->spc_cur_pos_ref, current_data[6]);
 
    ui->spc_cur_xpos_form->setText(current_data[7]);
