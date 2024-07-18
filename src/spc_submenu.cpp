@@ -264,7 +264,6 @@ void SPC_submenu::receive_data() {
       QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_body_list->addItem(item_name);
 
-      tmp_data.append("blankline");
       tmp_data.append(cur_node["Mass"].as<QString>());
       data_vector = cur_node["MOI"].as<QVector<QString>>();
       for (int i = 0; i < 3; i++)
@@ -309,7 +308,6 @@ void SPC_submenu::receive_data() {
       QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_joint_list->addItem(item_name);
 
-      tmp_data.append("blankline");
       tmp_data.append(cur_node["Joint Type"].as<QString>());
       data_vector = cur_node["Joint Connections"].as<QVector<QString>>();
       for (int i = 0; i < 2; i++)
@@ -402,7 +400,6 @@ void SPC_submenu::receive_data() {
       QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_wheel_list->addItem(item_name);
 
-      tmp_data.append("blankline");
       tmp_data.append(cur_node["Initial Momentum"].as<QString>());
       data_vector = cur_node["Axis"].as<QVector<QString>>();
       for (int i = 0; i < 3; i++)
@@ -437,7 +434,6 @@ void SPC_submenu::receive_data() {
       QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_mtb_list->addItem(item_name);
 
-      tmp_data.append("blankline");
       tmp_data.append(cur_node["Saturation"].as<QString>());
       data_vector = cur_node["Axis"].as<QVector<QString>>();
       for (int i = 0; i < 3; i++)
@@ -466,7 +462,6 @@ void SPC_submenu::receive_data() {
       QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_thruster_list->addItem(item_name);
 
-      tmp_data.append("blankline");
       tmp_data.append(cur_node["Mode"].as<QString>());
       tmp_data.append(cur_node["Force"].as<QString>());
       data_vector = cur_node["Axis"].as<QVector<QString>>();
@@ -501,7 +496,6 @@ void SPC_submenu::receive_data() {
       for (int i = 0; i < 3; i++)
          tmp_data.append(data_vector[i]);
 
-      tmp_data.append("blankline");
       tmp_data.append(cur_node["Max Rate"].as<QString>());
       tmp_data.append(cur_node["Scale Factor"].as<QString>());
       tmp_data.append(cur_node["Quantization"].as<QString>());
@@ -538,7 +532,6 @@ void SPC_submenu::receive_data() {
       for (int i = 0; i < 3; i++)
          tmp_data.append(data_vector[i]);
 
-      tmp_data.append("blankline");
       tmp_data.append(cur_node["Max Rate"].as<QString>());
       tmp_data.append(cur_node["Scale Factor"].as<QString>());
       tmp_data.append(cur_node["Quantization"].as<QString>());
@@ -598,7 +591,6 @@ void SPC_submenu::receive_data() {
       QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_fss_list->addItem(item_name);
 
-      tmp_data.append("blankline");
       tmp_data.append(cur_node["Sample Time"].as<QString>());
 
       data_vector = cur_node["Mounting Angle"]["Angles"].as<QVector<QString>>();
@@ -669,7 +661,6 @@ void SPC_submenu::receive_data() {
       QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_gps_list->addItem(item_name);
 
-      tmp_data.append("blankline");
       tmp_data.append(cur_node["Sample Time"].as<QString>());
       tmp_data.append(cur_node["Position Noise"].as<QString>());
       tmp_data.append(cur_node["Velocity Noise"].as<QString>());
@@ -697,7 +688,6 @@ void SPC_submenu::receive_data() {
       QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_accel_list->addItem(item_name);
 
-      tmp_data.append("blankline");
       tmp_data.append(cur_node["Sample Time"].as<QString>());
       data_vector = cur_node["Axis"].as<QVector<QString>>();
       for (int i = 0; i < 3; i++)
@@ -766,7 +756,6 @@ void SPC_submenu::on_spc_cur_save_clicked() {
       QFile::remove(inout_path + "__default__/__SCDEFAULT__.yaml");
       QFile::copy(file_path, inout_path + "__default__/__SCDEFAULT__.yaml");
       receive_data();
-      apply_data();
    }
 }
 
@@ -795,39 +784,43 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
    QVector<QString> data_vector = {};
    QStringList tmp_data;
+   long index;
 
-   /* Dynamics Flags */
-   cur_spc_yaml["Dynamics Flags"]["Method"] = ui->spc_cur_solver->currentText();
-   if (ui->spc_cur_con_on->isChecked())
-      cur_spc_yaml["Dynamics Flags"]["Compute Constraints"] = "true";
-   else
-      cur_spc_yaml["Dynamics Flags"]["Compute Constraints"] = "false";
+   if (ui->sections->currentIndex() == 0) {
+      /* Dynamics Flags */
+      cur_spc_yaml["Dynamics Flags"]["Method"] =
+          ui->spc_cur_solver->currentText();
+      if (ui->spc_cur_con_on->isChecked())
+         cur_spc_yaml["Dynamics Flags"]["Compute Constraints"] = "true";
+      else
+         cur_spc_yaml["Dynamics Flags"]["Compute Constraints"] = "false";
 
-   cur_spc_yaml["Dynamics Flags"]["Mass Reference Point"] =
-       ui->spc_cur_masspropref->currentText();
+      cur_spc_yaml["Dynamics Flags"]["Mass Reference Point"] =
+          ui->spc_cur_masspropref->currentText();
 
-   if (ui->spc_cur_flex_on->isChecked())
-      cur_spc_yaml["Dynamics Flags"]["Flex Active"] = "true";
-   else
-      cur_spc_yaml["Dynamics Flags"]["Flex Active"] = "false";
+      if (ui->spc_cur_flex_on->isChecked())
+         cur_spc_yaml["Dynamics Flags"]["Flex Active"] = "true";
+      else
+         cur_spc_yaml["Dynamics Flags"]["Flex Active"] = "false";
 
-   if (ui->spc_cur_2flex_on->isChecked())
-      cur_spc_yaml["Dynamics Flags"]["2nd Order Flex"] = "true";
-   else
-      cur_spc_yaml["Dynamics Flags"]["2nd Order Flex"] = "false";
+      if (ui->spc_cur_2flex_on->isChecked())
+         cur_spc_yaml["Dynamics Flags"]["2nd Order Flex"] = "true";
+      else
+         cur_spc_yaml["Dynamics Flags"]["2nd Order Flex"] = "false";
 
-   cur_spc_yaml["Dynamics Flags"]["Shaker File Name"] =
-       ui->spc_cur_shaker_file->text();
-   cur_spc_yaml["Dynamics Flags"]["Drag Coefficient"] =
-       ui->spc_cur_drag->text();
+      cur_spc_yaml["Dynamics Flags"]["Shaker File Name"] =
+          ui->spc_cur_shaker_file->text();
+      cur_spc_yaml["Dynamics Flags"]["Drag Coefficient"] =
+          ui->spc_cur_drag->text();
+   } else if (ui->sections->currentIndex() == 1) {
+      /* Bodies */
+      index = ui->spc_cur_body_list->currentRow();
 
-   /* Bodies */
-   for (int i = 0; i < bodies; i++) {
-      ui->spc_cur_body_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Bodies"][i]["Body"];
+      YAML::Node top_node;
+      YAML::Node cur_node;
 
       cur_node["Name"]  = ui->spc_cur_body_list->currentItem()->text();
-      cur_node["Index"] = i;
+      cur_node["Index"] = index;
       cur_node["Mass"]  = ui->spc_cur_body_mass->text();
 
       cur_node["MOI"] = dsm_gui_lib::create_QVec3(
@@ -853,6 +846,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Geometry File Name"] = ui->spc_cur_body_geom->text();
       cur_node["Node File Name"]     = ui->spc_cur_node_file->text();
       cur_node["Flex File Name"]     = ui->spc_cur_flex_file->text();
+      cur_node.SetStyle(YAML::EmitterStyle::Flow);
+
+      top_node["Body"]              = cur_node;
+      cur_spc_yaml["Bodies"][index] = top_node;
 
       tmp_data.append(ui->spc_cur_body_pmoi_x->text());
       tmp_data.append(ui->spc_cur_body_pmoi_y->text());
@@ -877,27 +874,27 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           256, ui->spc_cur_body_name->text());
       ui->spc_cur_body_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
-   }
 
-   /* Joints */
-   for (int i = 0; i < joints; i++) {
-      ui->spc_cur_joint_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Joints"][i]["Joint"];
+      /* Joints */
+      index = ui->spc_cur_joint_list->currentRow();
 
-      cur_node["Name"]  = ui->spc_cur_joint_list->currentItem()->text();
-      cur_node["Index"] = i;
+      YAML::Node top_node2;
+      YAML::Node cur_node2;
 
-      cur_node["Body Indicies"] = dsm_gui_lib::create_QVec2(
+      cur_node2["Name"]  = ui->spc_cur_joint_list->currentItem()->text();
+      cur_node2["Index"] = index;
+
+      cur_node2["Body Indicies"] = dsm_gui_lib::create_QVec2(
           ui->spc_cur_joint_in->text(), ui->spc_cur_joint_out->text());
       ;
 
-      cur_node["Joint Type"]   = ui->spc_cur_joint_type->currentText();
-      cur_node["Rot DOF"]      = ui->spc_cur_joint_rotdof->text();
-      cur_node["Rot Sequence"] = ui->spc_cur_joint_rotdof_seq->currentText();
-      cur_node["Rot Type"]     = ui->spc_cur_joint_rottype->currentText();
+      cur_node2["Joint Type"]   = ui->spc_cur_joint_type->currentText();
+      cur_node2["Rot DOF"]      = ui->spc_cur_joint_rotdof->text();
+      cur_node2["Rot Sequence"] = ui->spc_cur_joint_rotdof_seq->currentText();
+      cur_node2["Rot Type"]     = ui->spc_cur_joint_rottype->currentText();
 
-      cur_node["Trn DOF"]      = ui->spc_cur_joint_trndof->text();
-      cur_node["Trn Sequence"] = ui->spc_cur_joint_trndof_seq->currentText();
+      cur_node2["Trn DOF"]      = ui->spc_cur_joint_trndof->text();
+      cur_node2["Trn Sequence"] = ui->spc_cur_joint_trndof_seq->currentText();
 
       QString data1, data2, data3;
 
@@ -916,7 +913,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       else
          data3 = "false";
 
-      cur_node["Rot DOF Locked"] =
+      cur_node2["Rot DOF Locked"] =
           dsm_gui_lib::create_QVec3(data1, data2, data3);
 
       if (ui->spc_cur_joint_tlock1->isChecked())
@@ -934,49 +931,53 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       else
          data3 = "false";
 
-      cur_node["Trn DOF Locked"] =
+      cur_node2["Trn DOF Locked"] =
           dsm_gui_lib::create_QVec3(data1, data2, data3);
 
-      cur_node["Init Angles"] = dsm_gui_lib::create_QVec3(
+      cur_node2["Init Angles"] = dsm_gui_lib::create_QVec3(
           ui->spc_cur_joint_ang0_1->text(), ui->spc_cur_joint_ang0_2->text(),
           ui->spc_cur_joint_ang0_3->text());
 
-      cur_node["Init Angle Rates"] =
+      cur_node2["Init Angle Rates"] =
           dsm_gui_lib::create_QVec3(ui->spc_cur_joint_angrate0_1->text(),
                                     ui->spc_cur_joint_angrate0_2->text(),
                                     ui->spc_cur_joint_angrate0_3->text());
 
-      cur_node["Init Displacement"] = dsm_gui_lib::create_QVec3(
+      cur_node2["Init Displacement"] = dsm_gui_lib::create_QVec3(
           ui->spc_cur_joint_disp0_1->text(), ui->spc_cur_joint_disp0_2->text(),
           ui->spc_cur_joint_disp0_3->text());
 
-      cur_node["Init Displacement Rates"] =
+      cur_node2["Init Displacement Rates"] =
           dsm_gui_lib::create_QVec3(ui->spc_cur_joint_dispr0_1->text(),
                                     ui->spc_cur_joint_dispr0_2->text(),
                                     ui->spc_cur_joint_dispr0_3->text());
 
-      cur_node["Bi-Gi Angles"]["Angles"] = dsm_gui_lib::create_QVec3(
+      cur_node2["Bi-Gi Angles"]["Angles"] = dsm_gui_lib::create_QVec3(
           ui->spc_cur_joint_bigi_1->text(), ui->spc_cur_joint_bigi_2->text(),
           ui->spc_cur_joint_bigi_3->text());
 
       cur_node["Bi-Gi Angles"]["Sequence"] =
           ui->spc_cur_joint_bigi_seq->currentText();
 
-      cur_node["Bo-Go Angles"]["Angles"] = dsm_gui_lib::create_QVec3(
+      cur_node2["Bo-Go Angles"]["Angles"] = dsm_gui_lib::create_QVec3(
           ui->spc_cur_joint_bogo_1->text(), ui->spc_cur_joint_bogo_2->text(),
           ui->spc_cur_joint_bogo_3->text());
-      cur_node["Bo-Go Angles"]["Sequence"] =
+      cur_node2["Bo-Go Angles"]["Sequence"] =
           ui->spc_cur_joint_bogo_seq->currentText();
 
-      cur_node["Pos wrt Inner Body"] =
+      cur_node2["Pos wrt Inner Body"] =
           dsm_gui_lib::create_QVec3(ui->spc_cur_joint_poswrt_in_1->text(),
                                     ui->spc_cur_joint_poswrt_in_2->text(),
                                     ui->spc_cur_joint_poswrt_in_3->text());
 
-      cur_node["Pos wrt Outer Body"] =
+      cur_node2["Pos wrt Outer Body"] =
           dsm_gui_lib::create_QVec3(ui->spc_cur_joint_poswrt_out_1->text(),
                                     ui->spc_cur_joint_poswrt_out_2->text(),
                                     ui->spc_cur_joint_poswrt_out_3->text());
+
+      cur_node2.SetStyle(YAML::EmitterStyle::Flow);
+      top_node["Joint"]             = cur_node2;
+      cur_spc_yaml["Joints"][index] = top_node2;
 
       tmp_data.append(ui->spc_cur_joint_type->currentText());
       tmp_data.append(ui->spc_cur_joint_in->text());
@@ -1049,19 +1050,22 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           256, ui->spc_cur_joint_name->text());
       ui->spc_cur_joint_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
-   }
 
-   /* Wheels */
-   QMap<QString, QString> global_wheel_params = {{"Drag", wheel_drag},
-                                                 {"Jitter", wheel_jitter}};
-   cur_spc_yaml["Wheel Params"]               = global_wheel_params;
+      ui->spc_cur_joint_list->setCurrentRow(index);
+   } else if (ui->sections->currentIndex() == 2 &&
+              ui->actuator_sections->currentIndex() == 0) {
+      /* Wheels */
+      QMap<QString, QString> global_wheel_params = {{"Drag", wheel_drag},
+                                                    {"Jitter", wheel_jitter}};
+      cur_spc_yaml["Wheel Params"]               = global_wheel_params;
 
-   for (int i = 0; i < wheels; i++) {
-      ui->spc_cur_body_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Wheels"][i]["Wheel"];
+      index = ui->spc_cur_wheel_list->currentRow();
+
+      YAML::Node top_node;
+      YAML::Node cur_node;
 
       cur_node["Name"]  = ui->spc_cur_wheel_list->currentItem()->text();
-      cur_node["Index"] = i;
+      cur_node["Index"] = index;
 
       cur_node["Initial Momentum"] = ui->spc_cur_wheel_initmom->text();
 
@@ -1070,14 +1074,20 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           ui->spc_cur_wheel_axis_3->text());
       ;
 
-      cur_node["Max Torque"]   = ui->spc_cur_wheel_initmom->text();
+      cur_node["Max Torque"]   = ui->spc_cur_wheel_maxtrq->text();
       cur_node["Max Momentum"] = ui->spc_cur_wheel_maxmom->text();
 
       cur_node["Rotor Inertia"] = ui->spc_cur_wheel_inertia->text();
       cur_node["Body"] =
-          cur_spc_yaml["Bodies"][ui->spc_cur_wheel_body->cleanText().toInt()];
+          cur_spc_yaml["Bodies"][ui->spc_cur_wheel_body->cleanText().toInt()]
+                      ["Body"];
 
-      cur_node["Node"] = ui->spc_cur_wheel_node->cleanText();
+      cur_node["Node"]                  = ui->spc_cur_wheel_node->cleanText();
+      cur_node["Drag-Jitter File Name"] = ui->spc_cur_wheel_drjit_file->text();
+      cur_node.SetStyle(YAML::EmitterStyle::Flow);
+
+      top_node["Wheel"]             = cur_node;
+      cur_spc_yaml["Wheels"][index] = top_node;
 
       tmp_data.append(ui->spc_cur_wheel_initmom->text());
       tmp_data.append(ui->spc_cur_wheel_axis_1->text());
@@ -1094,16 +1104,17 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           256, ui->spc_cur_wheel_name->text());
       ui->spc_cur_wheel_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
-   }
 
-   /* MTBs */
+   } else if (ui->sections->currentIndex() == 2 &&
+              ui->actuator_sections->currentIndex() == 1) {
+      /* MTBs */
 
-   for (int i = 0; i < mtbs; i++) {
-      ui->spc_cur_mtb_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["MTBs"][i]["MTB"];
+      index = ui->spc_cur_wheel_list->currentRow();
+      YAML::Node top_node;
+      YAML::Node cur_node;
 
       cur_node["Name"]  = ui->spc_cur_mtb_list->currentItem()->text();
-      cur_node["Index"] = i;
+      cur_node["Index"] = index;
 
       cur_node["Saturation"] = ui->spc_cur_mtb_sat->text();
 
@@ -1111,6 +1122,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           ui->spc_cur_mtb_axis_1->text(), ui->spc_cur_mtb_axis_2->text(),
           ui->spc_cur_mtb_axis_3->text());
       cur_node["Node"] = ui->spc_cur_mtb_node->cleanText();
+
+      top_node["MTB"]             = cur_node;
+      cur_spc_yaml["MTBs"][index] = top_node;
+      cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
       tmp_data.append(ui->spc_cur_mtb_sat->text());
       tmp_data.append(ui->spc_cur_mtb_axis_1->text());
@@ -1122,16 +1137,15 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           256, ui->spc_cur_mtb_name->text());
       ui->spc_cur_mtb_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
-   }
-
-   /* Thrusters */
-
-   for (int i = 0; i < thrusters; i++) {
-      ui->spc_cur_thruster_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Thrusters"][i]["Thruster"];
+   } else if (ui->sections->currentIndex() == 2 &&
+              ui->actuator_sections->currentIndex() == 2) {
+      /* Thrusters */
+      index = ui->spc_cur_thruster_list->currentRow();
+      YAML::Node top_node;
+      YAML::Node cur_node;
 
       cur_node["Name"]  = ui->spc_cur_thruster_list->currentItem()->text();
-      cur_node["Index"] = i;
+      cur_node["Index"] = index;
 
       cur_node["Mode"]  = ui->spc_cur_thruster_mode->currentText();
       cur_node["Force"] = ui->spc_cur_thruster_force->text();
@@ -1140,7 +1154,14 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           dsm_gui_lib::create_QVec3(ui->spc_cur_thruster_axis_1->text(),
                                     ui->spc_cur_thruster_axis_2->text(),
                                     ui->spc_cur_thruster_axis_3->text());
+      cur_node["Body"] =
+          cur_spc_yaml["Bodies"][ui->spc_cur_thruster_body->cleanText().toInt()]
+                      ["Body"];
       cur_node["Node"] = ui->spc_cur_thruster_node->cleanText();
+      cur_node.SetStyle(YAML::EmitterStyle::Flow);
+
+      top_node["Thruster"]             = cur_node;
+      cur_spc_yaml["Thrusters"][index] = top_node;
 
       tmp_data.append(ui->spc_cur_thruster_mode->currentText());
       tmp_data.append(ui->spc_cur_thruster_force->text());
@@ -1154,16 +1175,17 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           256, ui->spc_cur_thruster_name->text());
       ui->spc_cur_thruster_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
-   }
 
-   /* Gyros */
+   } else if (ui->sections->currentIndex() == 3 &&
+              ui->sensor_sections->currentIndex() == 0) {
+      /* Gyros */
+      index = ui->spc_cur_gyro_list->currentRow();
 
-   for (int i = 0; i < gyros; i++) {
-      ui->spc_cur_gyro_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Gyros"][i]["Gyro"];
+      YAML::Node top_node;
+      YAML::Node cur_node;
 
       cur_node["Name"]  = ui->spc_cur_gyro_list->currentItem()->text();
-      cur_node["Index"] = i;
+      cur_node["Index"] = index;
 
       cur_node["Mode"] = ui->spc_cur_gyro_samptime->text();
 
@@ -1181,6 +1203,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Initial Bias"]            = ui->spc_cur_gyro_initbias->text();
 
       cur_node["Node"] = ui->spc_cur_gyro_node->cleanText();
+      cur_node.SetStyle(YAML::EmitterStyle::Flow);
+
+      top_node["Gyro"]             = cur_node;
+      cur_spc_yaml["Gyros"][index] = top_node;
 
       tmp_data.append(ui->spc_cur_gyro_samptime->text());
       tmp_data.append(ui->spc_cur_gyro_axis_1->text());
@@ -1200,52 +1226,61 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           256, ui->spc_cur_gyro_name->text());
       ui->spc_cur_gyro_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
-   }
 
-   /* Magnetometers */
-   for (int i = 0; i < mags; i++) {
-      ui->spc_cur_mag_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Magnetometers"][i]["Magnetometer"];
+   } else if (ui->sections->currentIndex() == 3 &&
+              ui->sensor_sections->currentIndex() == 3) {
+      /* Magnetometers */
+      index = ui->spc_cur_mag_list->currentRow();
+      for (int i = 0; i < mags; i++) {
+         ui->spc_cur_mag_list->setCurrentRow(i);
+         YAML::Node top_node;
+         YAML::Node cur_node;
 
-      cur_node["Name"]  = ui->spc_cur_mag_list->currentItem()->text();
-      cur_node["Index"] = i;
+         cur_node["Name"]  = ui->spc_cur_mag_list->currentItem()->text();
+         cur_node["Index"] = index;
 
-      cur_node["Sample Time"] = ui->spc_cur_mag_samptime->text();
+         cur_node["Sample Time"] = ui->spc_cur_mag_samptime->text();
 
-      cur_node["Axis"] = dsm_gui_lib::create_QVec3(
-          ui->spc_cur_mag_axis_1->text(), ui->spc_cur_mag_axis_2->text(),
-          ui->spc_cur_mag_axis_3->text());
-      ;
-      cur_node["Saturation"]   = ui->spc_cur_mag_sat->text();
-      cur_node["Scale Factor"] = ui->spc_cur_mag_scaleferror->text();
-      cur_node["Quantization"] = ui->spc_cur_mag_quant->text();
-      cur_node["Noise"]        = ui->spc_cur_mag_noise->text();
+         cur_node["Axis"] = dsm_gui_lib::create_QVec3(
+             ui->spc_cur_mag_axis_1->text(), ui->spc_cur_mag_axis_2->text(),
+             ui->spc_cur_mag_axis_3->text());
+         ;
+         cur_node["Saturation"]   = ui->spc_cur_mag_sat->text();
+         cur_node["Scale Factor"] = ui->spc_cur_mag_scaleferror->text();
+         cur_node["Quantization"] = ui->spc_cur_mag_quant->text();
+         cur_node["Noise"]        = ui->spc_cur_mag_noise->text();
 
-      cur_node["Node"] = ui->spc_cur_mag_node->cleanText();
+         cur_node["Node"] = ui->spc_cur_mag_node->cleanText();
+         cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
-      tmp_data.append(ui->spc_cur_mag_samptime->text());
-      tmp_data.append(ui->spc_cur_mag_axis_1->text());
-      tmp_data.append(ui->spc_cur_mag_axis_2->text());
-      tmp_data.append(ui->spc_cur_mag_axis_3->text());
-      tmp_data.append(ui->spc_cur_mag_sat->text());
-      tmp_data.append(ui->spc_cur_mag_scaleferror->text());
-      tmp_data.append(ui->spc_cur_mag_quant->text());
-      tmp_data.append(ui->spc_cur_mag_noise->text());
-      tmp_data.append(ui->spc_cur_mag_node->text());
+         top_node["Magnetometer"]             = cur_node;
+         cur_spc_yaml["Magnetometers"][index] = top_node;
 
-      ui->spc_cur_mag_list->currentItem()->setData(
-          256, ui->spc_cur_mag_name->text());
-      ui->spc_cur_mag_list->currentItem()->setData(257, tmp_data);
-      tmp_data.clear();
-   }
+         tmp_data.append(ui->spc_cur_mag_samptime->text());
+         tmp_data.append(ui->spc_cur_mag_axis_1->text());
+         tmp_data.append(ui->spc_cur_mag_axis_2->text());
+         tmp_data.append(ui->spc_cur_mag_axis_3->text());
+         tmp_data.append(ui->spc_cur_mag_sat->text());
+         tmp_data.append(ui->spc_cur_mag_scaleferror->text());
+         tmp_data.append(ui->spc_cur_mag_quant->text());
+         tmp_data.append(ui->spc_cur_mag_noise->text());
+         tmp_data.append(ui->spc_cur_mag_node->text());
 
-   /* CSSs */
-   for (int i = 0; i < css_s; i++) {
-      ui->spc_cur_css_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["CSSs"][i]["CSS"];
+         ui->spc_cur_mag_list->currentItem()->setData(
+             256, ui->spc_cur_mag_name->text());
+         ui->spc_cur_mag_list->currentItem()->setData(257, tmp_data);
+         tmp_data.clear();
+      }
+      ui->spc_cur_mag_list->setCurrentRow(index);
+   } else if (ui->sections->currentIndex() == 3 &&
+              ui->sensor_sections->currentIndex() == 4) {
+      /* CSSs */
+      index = ui->spc_cur_css_list->currentRow();
+      YAML::Node top_node;
+      YAML::Node cur_node;
 
       cur_node["Name"]  = ui->spc_cur_css_list->currentItem()->text();
-      cur_node["Index"] = i;
+      cur_node["Index"] = index;
 
       cur_node["Sample Time"] = ui->spc_cur_css_samptime->text();
 
@@ -1260,6 +1295,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           cur_spc_yaml["Bodies"][ui->spc_cur_css_body->text().toInt()]["Body"];
 
       cur_node["Node"] = ui->spc_cur_css_node->cleanText();
+      cur_node.SetStyle(YAML::EmitterStyle::Flow);
+
+      top_node["CSS"]             = cur_node;
+      cur_spc_yaml["CSSs"][index] = top_node;
 
       tmp_data.append(ui->spc_cur_css_samptime->text());
       tmp_data.append(ui->spc_cur_css_axis_1->text());
@@ -1275,15 +1314,16 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           256, ui->spc_cur_css_name->text());
       ui->spc_cur_css_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
-   }
 
-   /* FSSs */
-   for (int i = 0; i < fss_s; i++) {
-      ui->spc_cur_fss_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["FSSs"][i]["FSS"];
+   } else if (ui->sections->currentIndex() == 3 &&
+              ui->sensor_sections->currentIndex() == 4) {
+      /* FSSs */
+      index = ui->spc_cur_fss_list->currentRow();
+      YAML::Node top_node;
+      YAML::Node cur_node;
 
       cur_node["Name"]  = ui->spc_cur_fss_list->currentItem()->text();
-      cur_node["Index"] = i;
+      cur_node["Index"] = index;
 
       cur_node["Sample Time"] = ui->spc_cur_fss_samptime->text();
 
@@ -1301,6 +1341,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Noise Equivalent Angle"] = ui->spc_cur_fss_noiseang->text();
       cur_node["Quantization"]           = ui->spc_cur_fss_quant->text();
       cur_node["Node"]                   = ui->spc_cur_fss_node->cleanText();
+      cur_node.SetStyle(YAML::EmitterStyle::Flow);
+
+      top_node["FSS"]             = cur_node;
+      cur_spc_yaml["FSSs"][index] = top_node;
 
       tmp_data.append(ui->spc_cur_fss_samptime->text());
       tmp_data.append(ui->spc_cur_fss_mount_1->text());
@@ -1318,15 +1362,16 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           256, ui->spc_cur_fss_name->text());
       ui->spc_cur_fss_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
-   }
 
-   /* STs */
-   for (int i = 0; i < stracks; i++) {
-      ui->spc_cur_strack_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["STs"][i]["ST"];
+   } else if (ui->sections->currentIndex() == 3 &&
+              ui->sensor_sections->currentIndex() == 5) {
+      /* STs */
+      index = ui->spc_cur_strack_list->currentRow();
+      YAML::Node top_node;
+      YAML::Node cur_node;
 
       cur_node["Name"]  = ui->spc_cur_strack_list->currentItem()->text();
-      cur_node["Index"] = i;
+      cur_node["Index"] = index;
 
       cur_node["Sample Time"] = ui->spc_cur_strack_samptime->text();
 
@@ -1358,6 +1403,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
                                     ui->spc_cur_strack_noiseang_2->text(),
                                     ui->spc_cur_strack_noiseang_3->text());
       cur_node["Node"] = ui->spc_cur_strack_node->cleanText();
+      cur_node.SetStyle(YAML::EmitterStyle::Flow);
+
+      top_node["ST"]             = cur_node;
+      cur_spc_yaml["STs"][index] = top_node;
 
       tmp_data.append(ui->spc_cur_strack_samptime->text());
       tmp_data.append(ui->spc_cur_strack_mount_1->text());
@@ -1378,22 +1427,26 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       ui->spc_cur_strack_list->currentItem()->setData(
           256, ui->spc_cur_strack_name->text());
       ui->spc_cur_strack_list->currentItem()->setData(257, tmp_data);
-   }
 
-   /* GPSs */
-
-   for (int i = 0; i < gps_s; i++) {
-      ui->spc_cur_gps_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["GPSs"][i]["GPS"];
+   } else if (ui->sections->currentIndex() == 3 &&
+              ui->sensor_sections->currentIndex() == 6) {
+      /* GPSs */
+      index = ui->spc_cur_gps_list->currentRow();
+      YAML::Node top_node;
+      YAML::Node cur_node;
 
       cur_node["Name"]  = ui->spc_cur_gps_list->currentItem()->text();
-      cur_node["Index"] = i;
+      cur_node["Index"] = index;
 
       cur_node["Sample Time"]    = ui->spc_cur_gps_samptime->text();
       cur_node["Position Noise"] = ui->spc_cur_gps_posnoise->text();
       cur_node["Velocity Noise"] = ui->spc_cur_gps_velnoise->text();
       cur_node["Time Noise"]     = ui->spc_cur_gps_timenoise->text();
       cur_node["Node"]           = ui->spc_cur_gps_node->cleanText();
+      cur_node.SetStyle(YAML::EmitterStyle::Flow);
+
+      top_node["GPS"]             = cur_node;
+      cur_spc_yaml["GPSs"][index] = top_node;
 
       tmp_data.append(ui->spc_cur_gps_samptime->text());
       tmp_data.append(ui->spc_cur_gps_posnoise->text());
@@ -1405,23 +1458,22 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           256, ui->spc_cur_gps_name->text());
       ui->spc_cur_gps_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
-   }
 
-   /* Accelerometers */
-
-   for (int i = 0; i < accels; i++) {
-      ui->spc_cur_accel_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Accelerometers"][i]["Accelerometer"];
+   } else if (ui->sections->currentIndex() == 3 &&
+              ui->sensor_sections->currentIndex() == 7) {
+      /* Accelerometers */
+      index = ui->spc_cur_accel_list->currentRow();
+      YAML::Node top_node;
+      YAML::Node cur_node;
 
       cur_node["Name"]  = ui->spc_cur_accel_list->currentItem()->text();
-      cur_node["Index"] = i;
+      cur_node["Index"] = index;
 
       cur_node["Sample Time"] = ui->spc_cur_acc_samptime->text();
 
       cur_node["Axis"] = dsm_gui_lib::create_QVec3(
           ui->spc_cur_acc_axis_1->text(), ui->spc_cur_acc_axis_2->text(),
           ui->spc_cur_acc_axis_3->text());
-      ;
 
       cur_node["Max Acceleration"]        = ui->spc_cur_acc_maxacc->text();
       cur_node["Scale Factor"]            = ui->spc_cur_acc_scaleerror->text();
@@ -1432,6 +1484,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["DV Noise"]                = ui->spc_cur_acc_dvnoise->text();
       cur_node["Initial Bias"]            = ui->spc_cur_acc_initbias->text();
       cur_node["Node"]                    = ui->spc_cur_acc_node->cleanText();
+      cur_node.SetStyle(YAML::EmitterStyle::Flow);
+
+      top_node["Accelerometer"]             = cur_node;
+      cur_spc_yaml["Accelerometers"][index] = top_node;
 
       tmp_data.append(ui->spc_cur_acc_samptime->text());
       tmp_data.append(ui->spc_cur_acc_axis_1->text());
@@ -1452,6 +1508,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       ui->spc_cur_accel_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
    }
+
    write_data(cur_spc_yaml);
 }
 
@@ -1526,8 +1583,8 @@ void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item) {
                                ui->spc_cur_body_cemd_y, ui->spc_cur_body_cemd_z,
                                ui->spc_cur_body_geom,   ui->spc_cur_node_file,
                                ui->spc_cur_flex_file};
-   int data_inds[19]        = {1,  2,  3,  4,  5,  6,  7,  8,  9, 10,
-                               11, 12, 13, 14, 15, 16, 17, 18, 19};
+   int data_inds[19]        = {0,  1,  2,  3,  4,  5,  6,  7,  8, 9,
+                               10, 11, 12, 13, 14, 15, 16, 17, 18};
 
    item->setText(item->data(256).toString());
    ui->spc_cur_body_name->setText(item->data(256).toString());
@@ -1587,24 +1644,24 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item) {
        ui->spc_cur_joint_poswrt_in_3,  ui->spc_cur_joint_poswrt_out_1,
        ui->spc_cur_joint_poswrt_out_2, ui->spc_cur_joint_poswrt_out_3,
        ui->spc_cur_joint_param_file};
-   int data_inds[25] = {15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
-                        28, 29, 31, 32, 33, 35, 36, 37, 38, 39, 40, 41};
+   int data_inds[25] = {14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
+                        27, 28, 30, 31, 32, 34, 35, 36, 37, 38, 39, 40};
    dsm_gui_lib::mult_setText(textboxes, 25, current_data, data_inds);
 
    item->setText(item->data(256).toString());
    ui->spc_cur_joint_name->setText(item->data(256).toString());
 
-   setQComboBox(ui->spc_cur_joint_type, current_data[1]);
+   setQComboBox(ui->spc_cur_joint_type, current_data[0]);
 
-   ui->spc_cur_joint_in->setValue(current_data[2].toInt());
-   ui->spc_cur_joint_out->setValue(current_data[3].toInt());
+   ui->spc_cur_joint_in->setValue(current_data[1].toInt());
+   ui->spc_cur_joint_out->setValue(current_data[2].toInt());
 
-   ui->spc_cur_joint_rotdof->setValue(current_data[4].toInt());
-   setQComboBox(ui->spc_cur_joint_rotdof_seq, current_data[5]);
-   setQComboBox(ui->spc_cur_joint_rottype, current_data[6]);
+   ui->spc_cur_joint_rotdof->setValue(current_data[3].toInt());
+   setQComboBox(ui->spc_cur_joint_rotdof_seq, current_data[4]);
+   setQComboBox(ui->spc_cur_joint_rottype, current_data[5]);
 
-   ui->spc_cur_joint_trndof->setValue(current_data[7].toInt());
-   setQComboBox(ui->spc_cur_joint_trndof_seq, current_data[8]);
+   ui->spc_cur_joint_trndof->setValue(current_data[6].toInt());
+   setQComboBox(ui->spc_cur_joint_trndof_seq, current_data[7]);
 
    if (!QString::compare(current_data[9], "true"))
       ui->spc_cur_joint_rlock1->setCheckState(Qt::Checked);
@@ -1636,8 +1693,8 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item) {
    else
       ui->spc_cur_joint_tlock3->setCheckState(Qt::Unchecked);
 
-   setQComboBox(ui->spc_cur_joint_bigi_seq, current_data[30]);
-   setQComboBox(ui->spc_cur_joint_bogo_seq, current_data[34]);
+   setQComboBox(ui->spc_cur_joint_bigi_seq, current_data[29]);
+   setQComboBox(ui->spc_cur_joint_bogo_seq, current_data[33]);
 }
 
 // Wheels -/+/Duplicate/Item Clicked
@@ -1679,22 +1736,22 @@ void SPC_submenu::on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item) {
        ui->spc_cur_wheel_axis_2,  ui->spc_cur_wheel_axis_3,
        ui->spc_cur_wheel_maxtrq,  ui->spc_cur_wheel_maxmom,
        ui->spc_cur_wheel_inertia, ui->spc_cur_wheel_drjit_file};
-   int data_inds[8] = {1, 2, 3, 4, 5, 6, 7, 10};
+   int data_inds[8] = {0, 1, 2, 3, 4, 5, 6, 9};
    dsm_gui_lib::mult_setText(textboxes, 8, current_data, data_inds);
 
    item->setText(item->data(256).toString());
 
    ui->spc_cur_wheel_name->setText(item->data(256).toString());
 
-   ui->spc_cur_wheel_body->setValue(current_data[8].toInt());
-   ui->spc_cur_wheel_node->setValue(current_data[9].toInt());
+   ui->spc_cur_wheel_body->setValue(current_data[7].toInt());
+   ui->spc_cur_wheel_node->setValue(current_data[8].toInt());
 
-   if (!QString::compare(wheel_drag, "FALSE"))
+   if (!QString::compare(wheel_drag, "false"))
       ui->spc_cur_wheel_glob_drag_off->setChecked(Qt::Checked);
    else
       ui->spc_cur_wheel_glob_drag_on->setChecked(Qt::Checked);
 
-   if (!QString::compare(wheel_jitter, "FALSE"))
+   if (!QString::compare(wheel_jitter, "false"))
       ui->spc_cur_wheel_glob_jitter_off->setChecked(Qt::Checked);
    else
       ui->spc_cur_wheel_glob_jitter_on->setChecked(Qt::Checked);
@@ -1734,14 +1791,14 @@ void SPC_submenu::on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item) {
    QStringList current_data = item->data(257).toStringList();
    QLineEdit *textboxes[4]  = {ui->spc_cur_mtb_sat, ui->spc_cur_mtb_axis_1,
                                ui->spc_cur_mtb_axis_2, ui->spc_cur_mtb_axis_3};
-   int data_inds[4]         = {1, 2, 3, 4};
+   int data_inds[4]         = {0, 1, 2, 3};
    dsm_gui_lib::mult_setText(textboxes, 4, current_data, data_inds);
 
    item->setText(item->data(256).toString());
 
    ui->spc_cur_mtb_name->setText(item->data(256).toString());
 
-   ui->spc_cur_mtb_node->setValue(current_data[5].toInt());
+   ui->spc_cur_mtb_node->setValue(current_data[4].toInt());
 }
 
 // Thruster buttons
@@ -1781,16 +1838,16 @@ void SPC_submenu::on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item) {
    QLineEdit *textboxes[4]  = {
        ui->spc_cur_thruster_force, ui->spc_cur_thruster_axis_1,
        ui->spc_cur_thruster_axis_2, ui->spc_cur_thruster_axis_3};
-   int data_inds[4] = {2, 3, 4, 5};
+   int data_inds[4] = {1, 2, 3, 4};
    dsm_gui_lib::mult_setText(textboxes, 4, current_data, data_inds);
 
    item->setText(item->data(256).toString());
    ui->spc_cur_thruster_name->setText(item->data(256).toString());
 
-   setQComboBox(ui->spc_cur_thruster_mode, current_data[1]);
+   setQComboBox(ui->spc_cur_thruster_mode, current_data[0]);
 
-   ui->spc_cur_thruster_body->setValue(current_data[6].toInt());
-   ui->spc_cur_thruster_node->setValue(current_data[7].toInt());
+   ui->spc_cur_thruster_body->setValue(current_data[5].toInt());
+   ui->spc_cur_thruster_node->setValue(current_data[6].toInt());
 }
 
 // Gyro buttons
@@ -1834,13 +1891,13 @@ void SPC_submenu::on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item) {
        ui->spc_cur_gyro_quant,     ui->spc_cur_gyro_angrwalk,
        ui->spc_cur_gyro_bias_stab, ui->spc_cur_gyro_bias_tspan,
        ui->spc_cur_gyro_angnoise,  ui->spc_cur_gyro_initbias};
-   int data_inds[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+   int data_inds[12] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
    dsm_gui_lib::mult_setText(textboxes, 12, current_data, data_inds);
 
    item->setText(item->data(256).toString());
    ui->spc_cur_gyro_name->setText(item->data(256).toString());
 
-   ui->spc_cur_gyro_node->setValue(current_data[13].toInt());
+   ui->spc_cur_gyro_node->setValue(current_data[12].toInt());
 }
 
 // Magnetometer buttons
@@ -1881,13 +1938,13 @@ void SPC_submenu::on_spc_cur_mag_list_itemClicked(QListWidgetItem *item) {
        ui->spc_cur_mag_axis_2,   ui->spc_cur_mag_axis_3,
        ui->spc_cur_mag_sat,      ui->spc_cur_mag_scaleferror,
        ui->spc_cur_mag_quant,    ui->spc_cur_mag_noise};
-   int data_inds[8] = {1, 2, 3, 4, 5, 6, 7, 8};
+   int data_inds[8] = {0, 1, 2, 3, 4, 5, 6, 7};
    dsm_gui_lib::mult_setText(textboxes, 8, current_data, data_inds);
 
    item->setText(item->data(256).toString());
    ui->spc_cur_mag_name->setText(item->data(256).toString());
 
-   ui->spc_cur_mag_node->setValue(current_data[9].toInt());
+   ui->spc_cur_mag_node->setValue(current_data[8].toInt());
 }
 
 // CSS buttons
@@ -1927,14 +1984,14 @@ void SPC_submenu::on_spc_cur_css_list_itemClicked(QListWidgetItem *item) {
                                ui->spc_cur_css_axis_2,   ui->spc_cur_css_axis_3,
                                ui->spc_cur_css_halfcone, ui->spc_cur_css_scale,
                                ui->spc_cur_css_quant};
-   int data_inds[7]         = {1, 2, 3, 4, 5, 6, 7};
+   int data_inds[7]         = {0, 1, 2, 3, 4, 5, 6};
    dsm_gui_lib::mult_setText(textboxes, 7, current_data, data_inds);
 
    item->setText(item->data(256).toString());
    ui->spc_cur_css_name->setText(item->data(256).toString());
 
-   ui->spc_cur_css_body->setValue(current_data[8].toInt());
-   ui->spc_cur_css_node->setValue(current_data[9].toInt());
+   ui->spc_cur_css_body->setValue(current_data[7].toInt());
+   ui->spc_cur_css_node->setValue(current_data[8].toInt());
 }
 
 // FSS Buttons
@@ -1974,16 +2031,16 @@ void SPC_submenu::on_spc_cur_fss_list_itemClicked(QListWidgetItem *item) {
                               ui->spc_cur_fss_mount_2,  ui->spc_cur_fss_mount_3,
                               ui->spc_cur_fss_hfov,     ui->spc_cur_fss_vfov,
                               ui->spc_cur_fss_noiseang, ui->spc_cur_fss_quant};
-   int data_inds[8]        = {1, 2, 3, 4, 7, 8, 9, 10};
+   int data_inds[8]        = {0, 1, 2, 3, 6, 7, 8, 9};
    dsm_gui_lib::mult_setText(textboxes, 8, current_data, data_inds);
 
    item->setText(item->data(256).toString());
    ui->spc_cur_fss_name->setText(item->data(256).toString());
 
-   setQComboBox(ui->spc_cur_fss_mountseq, current_data[5]);
-   setQComboBox(ui->spc_cur_fss_boreaxis, current_data[6]);
+   setQComboBox(ui->spc_cur_fss_mountseq, current_data[4]);
+   setQComboBox(ui->spc_cur_fss_boreaxis, current_data[5]);
 
-   ui->spc_cur_css_node->setValue(current_data[11].toInt());
+   ui->spc_cur_css_node->setValue(current_data[10].toInt());
 }
 
 // Star Tracker Buttons
@@ -2027,16 +2084,16 @@ void SPC_submenu::on_spc_cur_strack_list_itemClicked(QListWidgetItem *item) {
        ui->spc_cur_strack_sun,        ui->spc_cur_strack_earth,
        ui->spc_cur_strack_moon,       ui->spc_cur_strack_noiseang_1,
        ui->spc_cur_strack_noiseang_2, ui->spc_cur_strack_noiseang_3};
-   int data_inds[12] = {1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14};
+   int data_inds[12] = {0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13};
    dsm_gui_lib::mult_setText(textboxes, 12, current_data, data_inds);
 
    item->setText(item->data(256).toString());
    ui->spc_cur_strack_name->setText(item->data(256).toString());
 
-   setQComboBox(ui->spc_cur_strack_mountseq, current_data[5]);
-   setQComboBox(ui->spc_cur_strack_boreaxis, current_data[6]);
+   setQComboBox(ui->spc_cur_strack_mountseq, current_data[4]);
+   setQComboBox(ui->spc_cur_strack_boreaxis, current_data[5]);
 
-   ui->spc_cur_strack_node->setValue(current_data[15].toInt());
+   ui->spc_cur_strack_node->setValue(current_data[14].toInt());
 }
 
 // GPS Buttons
@@ -2074,13 +2131,13 @@ void SPC_submenu::on_spc_cur_gps_list_itemClicked(QListWidgetItem *item) {
    QLineEdit *textboxes[4]  = {
        ui->spc_cur_gps_samptime, ui->spc_cur_gps_posnoise,
        ui->spc_cur_gps_velnoise, ui->spc_cur_gps_timenoise};
-   int data_inds[4] = {1, 2, 3, 4};
+   int data_inds[4] = {0, 1, 2, 3};
    dsm_gui_lib::mult_setText(textboxes, 4, current_data, data_inds);
 
    item->setText(item->data(256).toString());
    ui->spc_cur_gps_name->setText(item->data(256).toString());
 
-   ui->spc_cur_gps_node->setValue(current_data[5].toInt());
+   ui->spc_cur_gps_node->setValue(current_data[4].toInt());
 }
 
 // Accelerometer Buttons
@@ -2123,13 +2180,13 @@ void SPC_submenu::on_spc_cur_accel_list_itemClicked(QListWidgetItem *item) {
        ui->spc_cur_acc_quant,     ui->spc_cur_acc_dvrandwalk,
        ui->spc_cur_acc_bias_stab, ui->spc_cur_acc_bias_tspan,
        ui->spc_cur_acc_dvnoise,   ui->spc_cur_acc_initbias};
-   int data_inds[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+   int data_inds[12] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
    dsm_gui_lib::mult_setText(textboxes, 12, current_data, data_inds);
 
    item->setText(item->data(256).toString());
    ui->spc_cur_acc_name->setText(item->data(256).toString());
 
-   ui->spc_cur_gps_node->setValue(current_data[13].toInt());
+   ui->spc_cur_gps_node->setValue(current_data[12].toInt());
 }
 
 // Misc
