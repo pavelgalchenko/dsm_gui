@@ -258,35 +258,37 @@ void SPC_submenu::receive_data() {
    bodies = body_node.size();
    for (YAML::const_iterator it = body_node.begin(); it != body_node.end();
         ++it) {
-      QMap<QString, QString> cur_node = it->as<QMap<QString, QString>>();
+      YAML::Node node_seq = *it;
+      YAML::Node cur_node = node_seq["Body"];
 
-      QString item_name = cur_node["Name"];
+      QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_body_list->addItem(item_name);
 
-      // tmp_data.append(cur_node["Mass"]);
-      // data_vector = cur_node["MOI"];
-      // for (int i = 0; i < 3; i++)
-      //    tmp_data.append(data_vector[i]);
+      tmp_data.append("blankline");
+      tmp_data.append(cur_node["Mass"].as<QString>());
+      data_vector = cur_node["MOI"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
 
-      // data_vector = cur_node["POI"];
-      // for (int i = 0; i < 3; i++)
-      //    tmp_data.append(data_vector[i]);
+      data_vector = cur_node["POI"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
 
-      // data_vector = cur_node["Pos of CM"];
-      // for (int i = 0; i < 3; i++)
-      //    tmp_data.append(data_vector[i]);
+      data_vector = cur_node["Pos of CM"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
 
-      // data_vector = cur_node["Constant Momentum"];
-      // for (int i = 0; i < 3; i++)
-      //    tmp_data.append(data_vector[i]);
+      data_vector = cur_node["Constant Momentum"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
 
-      // data_vector = cur_node["Constant Dipole"];
-      // for (int i = 0; i < 3; i++)
-      //    tmp_data.append(data_vector[i]);
+      data_vector = cur_node["Constant Dipole"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
 
-      tmp_data.append(cur_node["Geometry File Name"]);
-      tmp_data.append(cur_node["Node File Name"]);
-      tmp_data.append(cur_node["Flex File Name"]);
+      tmp_data.append(cur_node["Geometry File Name"].as<QString>());
+      tmp_data.append(cur_node["Node File Name"].as<QString>());
+      tmp_data.append(cur_node["Flex File Name"].as<QString>());
 
       tmp_data = dsm_gui_lib::apply_data_section_end(
           index, ui->spc_cur_body_list, tmp_data, item_name);
@@ -301,10 +303,13 @@ void SPC_submenu::receive_data() {
    joints = joint_node.size();
    for (YAML::const_iterator it = joint_node.begin(); it != joint_node.end();
         ++it) {
-      YAML::Node cur_node = *it;
-      QString item_name   = cur_node["Name"].as<QString>();
+      YAML::Node node_seq = *it;
+      YAML::Node cur_node = node_seq["Joint"];
+
+      QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_joint_list->addItem(item_name);
 
+      tmp_data.append("blankline");
       tmp_data.append(cur_node["Joint Type"].as<QString>());
       data_vector = cur_node["Joint Connections"].as<QVector<QString>>();
       for (int i = 0; i < 2; i++)
@@ -361,7 +366,7 @@ void SPC_submenu::receive_data() {
       tmp_data.append(cur_node["Parm File Name"].as<QString>());
 
       tmp_data = dsm_gui_lib::apply_data_section_end(
-          index, ui->spc_cur_body_list, tmp_data, item_name);
+          index, ui->spc_cur_joint_list, tmp_data, item_name);
       index++;
    }
 
@@ -391,13 +396,16 @@ void SPC_submenu::receive_data() {
 
    for (YAML::const_iterator it = wheel_node.begin(); it != wheel_node.end();
         ++it) {
-      YAML::Node cur_node = *it;
-      QString item_name   = cur_node["Name"].as<QString>();
+      YAML::Node node_seq = *it;
+      YAML::Node cur_node = node_seq["Wheel"];
+
+      QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_wheel_list->addItem(item_name);
 
+      tmp_data.append("blankline");
       tmp_data.append(cur_node["Initial Momentum"].as<QString>());
       data_vector = cur_node["Axis"].as<QVector<QString>>();
-      for (int i = 0; i < 2; i++)
+      for (int i = 0; i < 3; i++)
          tmp_data.append(data_vector[i]);
 
       tmp_data.append(cur_node["Max Torque"].as<QString>());
@@ -409,7 +417,7 @@ void SPC_submenu::receive_data() {
       tmp_data.append(cur_node["Drag-Jitter File Name"].as<QString>());
 
       tmp_data = dsm_gui_lib::apply_data_section_end(
-          index, ui->spc_cur_joint_list, tmp_data, item_name);
+          index, ui->spc_cur_wheel_list, tmp_data, item_name);
       index++;
    }
 
@@ -423,10 +431,13 @@ void SPC_submenu::receive_data() {
 
    for (YAML::const_iterator it = mtb_node.begin(); it != mtb_node.end();
         ++it) {
-      YAML::Node cur_node = *it;
-      QString item_name   = cur_node["Name"].as<QString>();
+      YAML::Node node_seq = *it;
+      YAML::Node cur_node = node_seq["MTB"];
+
+      QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_mtb_list->addItem(item_name);
 
+      tmp_data.append("blankline");
       tmp_data.append(cur_node["Saturation"].as<QString>());
       data_vector = cur_node["Axis"].as<QVector<QString>>();
       for (int i = 0; i < 3; i++)
@@ -449,10 +460,13 @@ void SPC_submenu::receive_data() {
 
    for (YAML::const_iterator it = thruster_node.begin();
         it != thruster_node.end(); ++it) {
-      YAML::Node cur_node = *it;
-      QString item_name   = cur_node["Name"].as<QString>();
+      YAML::Node node_seq = *it;
+      YAML::Node cur_node = node_seq["Thruster"];
+
+      QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_thruster_list->addItem(item_name);
 
+      tmp_data.append("blankline");
       tmp_data.append(cur_node["Mode"].as<QString>());
       tmp_data.append(cur_node["Force"].as<QString>());
       data_vector = cur_node["Axis"].as<QVector<QString>>();
@@ -466,7 +480,6 @@ void SPC_submenu::receive_data() {
           index, ui->spc_cur_thruster_list, tmp_data, item_name);
       index++;
    }
-
    /* Gyros */
    ui->spc_cur_gyro_list->clear();
 
@@ -477,8 +490,10 @@ void SPC_submenu::receive_data() {
 
    for (YAML::const_iterator it = gyro_node.begin(); it != gyro_node.end();
         ++it) {
-      YAML::Node cur_node = *it;
-      QString item_name   = cur_node["Name"].as<QString>();
+      YAML::Node node_seq = *it;
+      YAML::Node cur_node = node_seq["Gyro"];
+
+      QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_gyro_list->addItem(item_name);
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
@@ -486,6 +501,7 @@ void SPC_submenu::receive_data() {
       for (int i = 0; i < 3; i++)
          tmp_data.append(data_vector[i]);
 
+      tmp_data.append("blankline");
       tmp_data.append(cur_node["Max Rate"].as<QString>());
       tmp_data.append(cur_node["Scale Factor"].as<QString>());
       tmp_data.append(cur_node["Quantization"].as<QString>());
@@ -511,8 +527,10 @@ void SPC_submenu::receive_data() {
 
    for (YAML::const_iterator it = mag_node.begin(); it != mag_node.end();
         ++it) {
-      YAML::Node cur_node = *it;
-      QString item_name   = cur_node["Name"].as<QString>();
+      YAML::Node node_seq = *it;
+      YAML::Node cur_node = node_seq["Magnetometer"];
+
+      QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_mag_list->addItem(item_name);
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
@@ -520,6 +538,7 @@ void SPC_submenu::receive_data() {
       for (int i = 0; i < 3; i++)
          tmp_data.append(data_vector[i]);
 
+      tmp_data.append("blankline");
       tmp_data.append(cur_node["Max Rate"].as<QString>());
       tmp_data.append(cur_node["Scale Factor"].as<QString>());
       tmp_data.append(cur_node["Quantization"].as<QString>());
@@ -541,8 +560,10 @@ void SPC_submenu::receive_data() {
 
    for (YAML::const_iterator it = css_node.begin(); it != css_node.end();
         ++it) {
-      YAML::Node cur_node = *it;
-      QString item_name   = cur_node["Name"].as<QString>();
+      YAML::Node node_seq = *it;
+      YAML::Node cur_node = node_seq["CSS"];
+
+      QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_css_list->addItem(item_name);
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
@@ -571,10 +592,13 @@ void SPC_submenu::receive_data() {
 
    for (YAML::const_iterator it = fss_node.begin(); it != fss_node.end();
         ++it) {
-      YAML::Node cur_node = *it;
-      QString item_name   = cur_node["Name"].as<QString>();
+      YAML::Node node_seq = *it;
+      YAML::Node cur_node = node_seq["FSS"];
+
+      QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_fss_list->addItem(item_name);
 
+      tmp_data.append("blankline");
       tmp_data.append(cur_node["Sample Time"].as<QString>());
 
       data_vector = cur_node["Mounting Angle"]["Angles"].as<QVector<QString>>();
@@ -603,8 +627,10 @@ void SPC_submenu::receive_data() {
 
    for (YAML::const_iterator it = strack_node.begin(); it != strack_node.end();
         ++it) {
-      YAML::Node cur_node = *it;
-      QString item_name   = cur_node["Name"].as<QString>();
+      YAML::Node node_seq = *it;
+      YAML::Node cur_node = node_seq["ST"];
+
+      QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_strack_list->addItem(item_name);
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
@@ -637,10 +663,13 @@ void SPC_submenu::receive_data() {
 
    for (YAML::const_iterator it = gps_node.begin(); it != gps_node.end();
         ++it) {
-      YAML::Node cur_node = *it;
-      QString item_name   = cur_node["Name"].as<QString>();
+      YAML::Node node_seq = *it;
+      YAML::Node cur_node = node_seq["GPS"];
+
+      QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_gps_list->addItem(item_name);
 
+      tmp_data.append("blankline");
       tmp_data.append(cur_node["Sample Time"].as<QString>());
       tmp_data.append(cur_node["Position Noise"].as<QString>());
       tmp_data.append(cur_node["Velocity Noise"].as<QString>());
@@ -662,10 +691,13 @@ void SPC_submenu::receive_data() {
 
    for (YAML::const_iterator it = acc_node.begin(); it != acc_node.end();
         ++it) {
-      YAML::Node cur_node = *it;
-      QString item_name   = cur_node["Name"].as<QString>();
+      YAML::Node node_seq = *it;
+      YAML::Node cur_node = node_seq["Accelerometer"];
+
+      QString item_name = cur_node["Name"].as<QString>();
       ui->spc_cur_accel_list->addItem(item_name);
 
+      tmp_data.append("blankline");
       tmp_data.append(cur_node["Sample Time"].as<QString>());
       data_vector = cur_node["Axis"].as<QVector<QString>>();
       for (int i = 0; i < 3; i++)
@@ -792,7 +824,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
    /* Bodies */
    for (int i = 0; i < bodies; i++) {
       ui->spc_cur_body_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Bodies"][i];
+      YAML::Node cur_node = cur_spc_yaml["Bodies"][i]["Body"];
 
       cur_node["Name"]  = ui->spc_cur_body_list->currentItem()->text();
       cur_node["Index"] = i;
@@ -850,7 +882,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
    /* Joints */
    for (int i = 0; i < joints; i++) {
       ui->spc_cur_joint_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Bodies"][i];
+      YAML::Node cur_node = cur_spc_yaml["Joints"][i]["Joint"];
 
       cur_node["Name"]  = ui->spc_cur_joint_list->currentItem()->text();
       cur_node["Index"] = i;
@@ -1026,7 +1058,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
    for (int i = 0; i < wheels; i++) {
       ui->spc_cur_body_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Wheels"][i];
+      YAML::Node cur_node = cur_spc_yaml["Wheels"][i]["Wheel"];
 
       cur_node["Name"]  = ui->spc_cur_wheel_list->currentItem()->text();
       cur_node["Index"] = i;
@@ -1068,7 +1100,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
    for (int i = 0; i < mtbs; i++) {
       ui->spc_cur_mtb_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["MTBs"][i];
+      YAML::Node cur_node = cur_spc_yaml["MTBs"][i]["MTB"];
 
       cur_node["Name"]  = ui->spc_cur_mtb_list->currentItem()->text();
       cur_node["Index"] = i;
@@ -1096,7 +1128,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
    for (int i = 0; i < thrusters; i++) {
       ui->spc_cur_thruster_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Thrusters"][i];
+      YAML::Node cur_node = cur_spc_yaml["Thrusters"][i]["Thruster"];
 
       cur_node["Name"]  = ui->spc_cur_thruster_list->currentItem()->text();
       cur_node["Index"] = i;
@@ -1128,7 +1160,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
    for (int i = 0; i < gyros; i++) {
       ui->spc_cur_gyro_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Gyros"][i];
+      YAML::Node cur_node = cur_spc_yaml["Gyros"][i]["Gyro"];
 
       cur_node["Name"]  = ui->spc_cur_gyro_list->currentItem()->text();
       cur_node["Index"] = i;
@@ -1173,7 +1205,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
    /* Magnetometers */
    for (int i = 0; i < mags; i++) {
       ui->spc_cur_mag_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Magnetometers"][i];
+      YAML::Node cur_node = cur_spc_yaml["Magnetometers"][i]["Magnetometer"];
 
       cur_node["Name"]  = ui->spc_cur_mag_list->currentItem()->text();
       cur_node["Index"] = i;
@@ -1210,7 +1242,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
    /* CSSs */
    for (int i = 0; i < css_s; i++) {
       ui->spc_cur_css_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["CSSs"][i];
+      YAML::Node cur_node = cur_spc_yaml["CSSs"][i]["CSS"];
 
       cur_node["Name"]  = ui->spc_cur_css_list->currentItem()->text();
       cur_node["Index"] = i;
@@ -1225,7 +1257,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Scale Factor"]    = ui->spc_cur_css_scale->text();
       cur_node["Quantization"]    = ui->spc_cur_css_quant->text();
       cur_node["Body"] =
-          cur_spc_yaml["Bodies"][ui->spc_cur_css_body->text().toInt()];
+          cur_spc_yaml["Bodies"][ui->spc_cur_css_body->text().toInt()]["Body"];
 
       cur_node["Node"] = ui->spc_cur_css_node->cleanText();
 
@@ -1248,7 +1280,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
    /* FSSs */
    for (int i = 0; i < fss_s; i++) {
       ui->spc_cur_fss_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["FSSs"][i];
+      YAML::Node cur_node = cur_spc_yaml["FSSs"][i]["FSS"];
 
       cur_node["Name"]  = ui->spc_cur_fss_list->currentItem()->text();
       cur_node["Index"] = i;
@@ -1291,7 +1323,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
    /* STs */
    for (int i = 0; i < stracks; i++) {
       ui->spc_cur_strack_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["STs"][i];
+      YAML::Node cur_node = cur_spc_yaml["STs"][i]["ST"];
 
       cur_node["Name"]  = ui->spc_cur_strack_list->currentItem()->text();
       cur_node["Index"] = i;
@@ -1352,7 +1384,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
    for (int i = 0; i < gps_s; i++) {
       ui->spc_cur_gps_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["GPSs"][i];
+      YAML::Node cur_node = cur_spc_yaml["GPSs"][i]["GPS"];
 
       cur_node["Name"]  = ui->spc_cur_gps_list->currentItem()->text();
       cur_node["Index"] = i;
@@ -1379,7 +1411,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
    for (int i = 0; i < accels; i++) {
       ui->spc_cur_accel_list->setCurrentRow(i);
-      YAML::Node cur_node = cur_spc_yaml["Accelerometers"][i];
+      YAML::Node cur_node = cur_spc_yaml["Accelerometers"][i]["Accelerometer"];
 
       cur_node["Name"]  = ui->spc_cur_accel_list->currentItem()->text();
       cur_node["Index"] = i;
@@ -1420,7 +1452,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       ui->spc_cur_accel_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
    }
-
    write_data(cur_spc_yaml);
 }
 
@@ -1484,8 +1515,6 @@ void SPC_submenu::on_spc_cur_body_duplicate_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item) {
-   receive_data();
-
    QStringList current_data = item->data(257).toStringList();
    QLineEdit *textboxes[19] = {ui->spc_cur_body_mass,   ui->spc_cur_body_pmoi_x,
                                ui->spc_cur_body_pmoi_y, ui->spc_cur_body_pmoi_z,
@@ -1543,8 +1572,6 @@ void SPC_submenu::on_spc_cur_joint_duplicate_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item) {
-   receive_data();
-
    QStringList current_data = item->data(257).toStringList();
    QLineEdit *textboxes[25] = {
        ui->spc_cur_joint_ang0_1,       ui->spc_cur_joint_ang0_2,
@@ -1645,10 +1672,9 @@ void SPC_submenu::on_spc_cur_wheel_duplicate_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item) {
-   receive_data();
-
    QStringList current_data = item->data(257).toStringList();
-   QLineEdit *textboxes[8]  = {
+
+   QLineEdit *textboxes[8] = {
        ui->spc_cur_wheel_initmom, ui->spc_cur_wheel_axis_1,
        ui->spc_cur_wheel_axis_2,  ui->spc_cur_wheel_axis_3,
        ui->spc_cur_wheel_maxtrq,  ui->spc_cur_wheel_maxmom,
@@ -1705,8 +1731,6 @@ void SPC_submenu::on_spc_cur_mtb_duplicate_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item) {
-   receive_data();
-
    QStringList current_data = item->data(257).toStringList();
    QLineEdit *textboxes[4]  = {ui->spc_cur_mtb_sat, ui->spc_cur_mtb_axis_1,
                                ui->spc_cur_mtb_axis_2, ui->spc_cur_mtb_axis_3};
@@ -1753,8 +1777,6 @@ void SPC_submenu::on_spc_cur_thruster_duplicate_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item) {
-   receive_data();
-
    QStringList current_data = item->data(257).toStringList();
    QLineEdit *textboxes[4]  = {
        ui->spc_cur_thruster_force, ui->spc_cur_thruster_axis_1,
@@ -1804,8 +1826,6 @@ void SPC_submenu::on_spc_cur_gyro_duplicate_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item) {
-   receive_data();
-
    QStringList current_data = item->data(257).toStringList();
    QLineEdit *textboxes[12] = {
        ui->spc_cur_gyro_samptime,  ui->spc_cur_gyro_axis_1,
@@ -1855,8 +1875,6 @@ void SPC_submenu::on_spc_cur_mag_duplicate_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_mag_list_itemClicked(QListWidgetItem *item) {
-   receive_data();
-
    QStringList current_data = item->data(257).toStringList();
    QLineEdit *textboxes[8]  = {
        ui->spc_cur_mag_samptime, ui->spc_cur_mag_axis_1,
@@ -1904,8 +1922,6 @@ void SPC_submenu::on_spc_cur_css_duplicate_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_css_list_itemClicked(QListWidgetItem *item) {
-   receive_data();
-
    QStringList current_data = item->data(257).toStringList();
    QLineEdit *textboxes[7]  = {ui->spc_cur_css_samptime, ui->spc_cur_css_axis_1,
                                ui->spc_cur_css_axis_2,   ui->spc_cur_css_axis_3,
@@ -1953,8 +1969,6 @@ void SPC_submenu::on_spc_cur_fss_duplicate_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_fss_list_itemClicked(QListWidgetItem *item) {
-   receive_data();
-
    QStringList current_data = item->data(257).toStringList();
    QLineEdit *textboxes[8] = {ui->spc_cur_fss_samptime, ui->spc_cur_fss_mount_1,
                               ui->spc_cur_fss_mount_2,  ui->spc_cur_fss_mount_3,
@@ -2005,8 +2019,6 @@ void SPC_submenu::on_spc_cur_strack_duplicate_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_strack_list_itemClicked(QListWidgetItem *item) {
-   receive_data();
-
    QStringList current_data = item->data(257).toStringList();
    QLineEdit *textboxes[12] = {
        ui->spc_cur_strack_samptime,   ui->spc_cur_strack_mount_1,
@@ -2058,8 +2070,6 @@ void SPC_submenu::on_spc_cur_gps_duplicate_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_gps_list_itemClicked(QListWidgetItem *item) {
-   receive_data();
-
    QStringList current_data = item->data(257).toStringList();
    QLineEdit *textboxes[4]  = {
        ui->spc_cur_gps_samptime, ui->spc_cur_gps_posnoise,
@@ -2105,8 +2115,6 @@ void SPC_submenu::on_spc_cur_accel_duplicate_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_accel_list_itemClicked(QListWidgetItem *item) {
-   receive_data();
-
    QStringList current_data = item->data(257).toStringList();
    QLineEdit *textboxes[12] = {
        ui->spc_cur_acc_samptime,  ui->spc_cur_acc_axis_1,
