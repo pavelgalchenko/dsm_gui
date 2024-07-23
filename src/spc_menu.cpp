@@ -133,9 +133,6 @@ void SPC_Menu::receive_data() {
       QMessageBox::information(0, "error", file.errorString());
    }
 
-   spc_data.clear();
-   spc_string.clear();
-
    /* Load Yaml File */
    cur_spc_yaml = YAML::LoadFile(file_path.toStdString());
 
@@ -193,6 +190,9 @@ void SPC_Menu::on_spc_apply_clicked() {
       return;
    }
 
+   /* Load Yaml File */
+   cur_spc_yaml = YAML::LoadFile(file_path.toStdString());
+
    QStringList other_names = spc_names;
    other_names.removeOne(ui->spc_list->currentItem()->text());
 
@@ -216,7 +216,8 @@ void SPC_Menu::on_spc_apply_clicked() {
    spc_names[index]  = cur_name;
    file_paths[index] = inout_path + "SC_" + cur_name + ".yaml";
    QFile::rename(file_path, file_paths[index]);
-   file_path = file_paths[index];
+   file_path    = file_paths[index];
+   cur_spc_yaml = YAML::LoadFile(file_path.toStdString());
 
    QStringList tmp_data = {};
 

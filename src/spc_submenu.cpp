@@ -261,7 +261,12 @@ void SPC_submenu::receive_data() {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["Body"];
 
-      QString item_name = cur_node["Name"].as<QString>();
+      QString item_name;
+
+      if (cur_node["Name"])
+         item_name = cur_node["Name"].as<QString>();
+      else
+         item_name = "Body_" + QString::number(index);
       ui->spc_cur_body_list->addItem(item_name);
 
       tmp_data.append(cur_node["Mass"].as<QString>());
@@ -305,13 +310,15 @@ void SPC_submenu::receive_data() {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["Joint"];
 
-      QString item_name = cur_node["Name"].as<QString>();
+      QString item_name;
+
+      if (cur_node["Name"])
+         item_name = cur_node["Name"].as<QString>();
+      else
+         item_name = "Joint_" + QString::number(index);
       ui->spc_cur_joint_list->addItem(item_name);
 
       tmp_data.append(cur_node["Joint Type"].as<QString>());
-      data_vector = cur_node["Joint Connections"].as<QVector<QString>>();
-      for (int i = 0; i < 2; i++)
-         tmp_data.append(data_vector[i]);
 
       tmp_data.append(cur_node["Rot DOF"].as<QString>());
       tmp_data.append(cur_node["Rot Sequence"].as<QString>());
@@ -397,7 +404,12 @@ void SPC_submenu::receive_data() {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["Wheel"];
 
-      QString item_name = cur_node["Name"].as<QString>();
+      QString item_name;
+
+      if (cur_node["Name"])
+         item_name = cur_node["Name"].as<QString>();
+      else
+         item_name = "Wheel_" + QString::number(index);
       ui->spc_cur_wheel_list->addItem(item_name);
 
       tmp_data.append(cur_node["Initial Momentum"].as<QString>());
@@ -431,7 +443,12 @@ void SPC_submenu::receive_data() {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["MTB"];
 
-      QString item_name = cur_node["Name"].as<QString>();
+      QString item_name;
+
+      if (cur_node["Name"])
+         item_name = cur_node["Name"].as<QString>();
+      else
+         item_name = "MTB_" + QString::number(index);
       ui->spc_cur_mtb_list->addItem(item_name);
 
       tmp_data.append(cur_node["Saturation"].as<QString>());
@@ -459,7 +476,12 @@ void SPC_submenu::receive_data() {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["Thruster"];
 
-      QString item_name = cur_node["Name"].as<QString>();
+      QString item_name;
+
+      if (cur_node["Name"])
+         item_name = cur_node["Name"].as<QString>();
+      else
+         item_name = "Thr_" + QString::number(index);
       ui->spc_cur_thruster_list->addItem(item_name);
 
       tmp_data.append(cur_node["Mode"].as<QString>());
@@ -488,7 +510,12 @@ void SPC_submenu::receive_data() {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["Gyro"];
 
-      QString item_name = cur_node["Name"].as<QString>();
+      QString item_name;
+
+      if (cur_node["Name"])
+         item_name = cur_node["Name"].as<QString>();
+      else
+         item_name = "Gyro_" + QString::number(index);
       ui->spc_cur_gyro_list->addItem(item_name);
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
@@ -524,7 +551,12 @@ void SPC_submenu::receive_data() {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["Magnetometer"];
 
-      QString item_name = cur_node["Name"].as<QString>();
+      QString item_name;
+
+      if (cur_node["Name"])
+         item_name = cur_node["Name"].as<QString>();
+      else
+         item_name = "Mag_" + QString::number(index);
       ui->spc_cur_mag_list->addItem(item_name);
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
@@ -556,7 +588,12 @@ void SPC_submenu::receive_data() {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["CSS"];
 
-      QString item_name = cur_node["Name"].as<QString>();
+      QString item_name;
+
+      if (cur_node["Name"])
+         item_name = cur_node["Name"].as<QString>();
+      else
+         item_name = "CSS_" + QString::number(index);
       ui->spc_cur_css_list->addItem(item_name);
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
@@ -588,7 +625,12 @@ void SPC_submenu::receive_data() {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["FSS"];
 
-      QString item_name = cur_node["Name"].as<QString>();
+      QString item_name;
+
+      if (cur_node["Name"])
+         item_name = cur_node["Name"].as<QString>();
+      else
+         item_name = "FSS_" + QString::number(index);
       ui->spc_cur_fss_list->addItem(item_name);
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
@@ -622,7 +664,12 @@ void SPC_submenu::receive_data() {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["ST"];
 
-      QString item_name = cur_node["Name"].as<QString>();
+      QString item_name;
+
+      if (cur_node["Name"])
+         item_name = cur_node["Name"].as<QString>();
+      else
+         item_name = "ST_" + QString::number(index);
       ui->spc_cur_strack_list->addItem(item_name);
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
@@ -658,7 +705,12 @@ void SPC_submenu::receive_data() {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["GPS"];
 
-      QString item_name = cur_node["Name"].as<QString>();
+      QString item_name;
+
+      if (cur_node["Name"])
+         item_name = cur_node["Name"].as<QString>();
+      else
+         item_name = "GPS_" + QString::number(index);
       ui->spc_cur_gps_list->addItem(item_name);
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
@@ -685,7 +737,12 @@ void SPC_submenu::receive_data() {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["Accelerometer"];
 
-      QString item_name = cur_node["Name"].as<QString>();
+      QString item_name;
+
+      if (cur_node["Name"])
+         item_name = cur_node["Name"].as<QString>();
+      else
+         item_name = "Acc_" + QString::number(index);
       ui->spc_cur_accel_list->addItem(item_name);
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
@@ -726,10 +783,11 @@ void SPC_submenu::write_data(YAML::Node inp_spc) {
       in << out.c_str();
    }
    file.close();
-   params << appPath + "/__python__/AddYAMLComments.py" << appPath << inout_path
-          << "SC_" << ui->spc_cur_name_sub->text() << ".yaml";
-   p.start(pythonCmd, params);
-   p.waitForFinished(-1);
+   // params << appPath + "/__python__/AddYAMLComments.py" << appPath <<
+   // inout_path
+   //        << "SC_" << ui->spc_cur_name_sub->text() << ".yaml";
+   // p.start(pythonCmd, params);
+   // p.waitForFinished(-1);
 }
 
 void SPC_submenu::on_spc_cur_load_clicked() {
@@ -864,7 +922,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           ui->spc_cur_body_poi_x->text(), ui->spc_cur_body_poi_y->text(),
           ui->spc_cur_body_poi_z->text());
 
-      cur_node["Pos of COM"] = dsm_gui_lib::create_QVec3(
+      cur_node["Pos of CM"] = dsm_gui_lib::create_QVec3(
           ui->spc_cur_body_com_x->text(), ui->spc_cur_body_com_y->text(),
           ui->spc_cur_body_com_z->text());
 
@@ -879,7 +937,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Geometry File Name"] = ui->spc_cur_body_geom->text();
       cur_node["Node File Name"]     = ui->spc_cur_node_file->text();
       cur_node["Flex File Name"]     = ui->spc_cur_flex_file->text();
-      cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
       top_node["Body"]              = cur_node;
       cur_spc_yaml["Bodies"][index] = top_node;
@@ -1010,7 +1067,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
              ui->spc_cur_joint_bigi_1->text(), ui->spc_cur_joint_bigi_2->text(),
              ui->spc_cur_joint_bigi_3->text());
 
-         cur_node["Bi-Gi Angles"]["Sequence"] =
+         cur_node2["Bi-Gi Angles"]["Sequence"] =
              ui->spc_cur_joint_bigi_seq->currentText();
 
          cur_node2["Bo-Go Angles"]["Angles"] = dsm_gui_lib::create_QVec3(
@@ -1029,8 +1086,9 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
                                        ui->spc_cur_joint_poswrt_out_2->text(),
                                        ui->spc_cur_joint_poswrt_out_3->text());
 
-         cur_node2.SetStyle(YAML::EmitterStyle::Flow);
-         top_node["Joint"]             = cur_node2;
+         cur_node2["Parm File Name"] = ui->spc_cur_joint_param_file->text();
+
+         top_node2["Joint"]            = cur_node2;
          cur_spc_yaml["Joints"][index] = top_node2;
 
          tmp_data.append(ui->spc_cur_joint_type->currentText());
@@ -1139,7 +1197,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
       cur_node["Node"]                  = ui->spc_cur_wheel_node->cleanText();
       cur_node["Drag-Jitter File Name"] = ui->spc_cur_wheel_drjit_file->text();
-      cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
       top_node["Wheel"]             = cur_node;
       cur_spc_yaml["Wheels"][index] = top_node;
@@ -1181,7 +1238,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
       top_node["MTB"]             = cur_node;
       cur_spc_yaml["MTBs"][index] = top_node;
-      cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
       tmp_data.append(ui->spc_cur_mtb_sat->text());
       tmp_data.append(ui->spc_cur_mtb_axis_1->text());
@@ -1216,7 +1272,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           cur_spc_yaml["Bodies"][ui->spc_cur_thruster_body->cleanText().toInt()]
                       ["Body"];
       cur_node["Node"] = ui->spc_cur_thruster_node->cleanText();
-      cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
       top_node["Thruster"]             = cur_node;
       cur_spc_yaml["Thrusters"][index] = top_node;
@@ -1263,7 +1318,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Initial Bias"]            = ui->spc_cur_gyro_initbias->text();
 
       cur_node["Node"] = ui->spc_cur_gyro_node->cleanText();
-      cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
       top_node["Gyro"]             = cur_node;
       cur_spc_yaml["Gyros"][index] = top_node;
@@ -1312,7 +1366,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
          cur_node["Noise"]        = ui->spc_cur_mag_noise->text();
 
          cur_node["Node"] = ui->spc_cur_mag_node->cleanText();
-         cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
          top_node["Magnetometer"]             = cur_node;
          cur_spc_yaml["Magnetometers"][index] = top_node;
@@ -1357,7 +1410,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           cur_spc_yaml["Bodies"][ui->spc_cur_css_body->text().toInt()]["Body"];
 
       cur_node["Node"] = ui->spc_cur_css_node->cleanText();
-      cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
       top_node["CSS"]             = cur_node;
       cur_spc_yaml["CSSs"][index] = top_node;
@@ -1404,7 +1456,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Noise Equivalent Angle"] = ui->spc_cur_fss_noiseang->text();
       cur_node["Quantization"]           = ui->spc_cur_fss_quant->text();
       cur_node["Node"]                   = ui->spc_cur_fss_node->cleanText();
-      cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
       top_node["FSS"]             = cur_node;
       cur_spc_yaml["FSSs"][index] = top_node;
@@ -1467,7 +1518,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
                                     ui->spc_cur_strack_noiseang_2->text(),
                                     ui->spc_cur_strack_noiseang_3->text());
       cur_node["Node"] = ui->spc_cur_strack_node->cleanText();
-      cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
       top_node["ST"]             = cur_node;
       cur_spc_yaml["STs"][index] = top_node;
@@ -1509,7 +1559,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["Velocity Noise"] = ui->spc_cur_gps_velnoise->text();
       cur_node["Time Noise"]     = ui->spc_cur_gps_timenoise->text();
       cur_node["Node"]           = ui->spc_cur_gps_node->cleanText();
-      cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
       top_node["GPS"]             = cur_node;
       cur_spc_yaml["GPSs"][index] = top_node;
@@ -1551,7 +1600,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_node["DV Noise"]                = ui->spc_cur_acc_dvnoise->text();
       cur_node["Initial Bias"]            = ui->spc_cur_acc_initbias->text();
       cur_node["Node"]                    = ui->spc_cur_acc_node->cleanText();
-      cur_node.SetStyle(YAML::EmitterStyle::Flow);
 
       top_node["Accelerometer"]             = cur_node;
       cur_spc_yaml["Accelerometers"][index] = top_node;
@@ -1628,6 +1676,7 @@ void SPC_submenu::on_spc_cur_body_add_clicked() {
 
    proc_add(ui->spc_cur_body_list, tmp_data);
    on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_body_duplicate_clicked() {
