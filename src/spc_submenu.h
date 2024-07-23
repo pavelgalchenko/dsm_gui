@@ -150,6 +150,7 @@ class SPC_submenu : public QDialog {
    const QStringList rot_joint_seqtype = {"GIMBAL", "SPHERICAL"};
    const QStringList thruster_mode     = {"PULSED", "PROPORTIONAL"};
    const QStringList axis              = {"X_AXIS", "Y_AXIS", "Z_AXIS"};
+   int come_from_bodyjoint;
 
    int cur_item_row;
 

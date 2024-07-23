@@ -115,7 +115,7 @@
          <bool>true</bool>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="dynamics">
          <attribute name="title">
@@ -1021,7 +1021,7 @@
              <item>
               <widget class="QTabWidget" name="tabWidget_2">
                <property name="currentIndex">
-                <number>0</number>
+                <number>3</number>
                </property>
                <widget class="QWidget" name="tab_3">
                 <attribute name="title">
@@ -4311,14 +4311,14 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_wheel_glob_drag"/>
-  <buttongroup name="spc_cur_wheel_glob_jitter"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>
    </property>
   </buttongroup>
   <buttongroup name="spc_cur_2flex"/>
+  <buttongroup name="spc_cur_flex"/>
+  <buttongroup name="spc_cur_wheel_glob_jitter"/>
  </buttongroups>
 </ui>

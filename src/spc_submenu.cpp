@@ -12,6 +12,8 @@ SPC_submenu::SPC_submenu(QWidget *parent)
    ui->sections->setCurrentIndex(0);
    ui->actuator_sections->setCurrentIndex(0);
    ui->sensor_sections->setCurrentIndex(0);
+
+   come_from_bodyjoint = 0;
 }
 
 SPC_submenu::~SPC_submenu() {
@@ -317,6 +319,10 @@ void SPC_submenu::receive_data() {
       else
          item_name = "Joint_" + QString::number(index);
       ui->spc_cur_joint_list->addItem(item_name);
+
+      data_vector = cur_node["Body Indicies"].as<QVector<QString>>();
+      for (int i = 0; i < 2; i++)
+         tmp_data.append(data_vector[i]);
 
       tmp_data.append(cur_node["Joint Type"].as<QString>());
 
@@ -872,6 +878,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           ui->spc_cur_drag->text();
    } else if (ui->sections->currentIndex() == 1) {
       /* Bodies */
+
       index                    = ui->spc_cur_body_list->currentRow();
       YAML::Node cur_body_node = cur_spc_yaml["Bodies"][index]["Body"];
 
@@ -1128,7 +1135,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
          if (ui->spc_cur_joint_tlock3->isChecked())
             tmp_data.append("true");
          else
-            tmp_data.append("FALSE");
+            tmp_data.append("false");
 
          tmp_data.append(ui->spc_cur_joint_ang0_1->text());
          tmp_data.append(ui->spc_cur_joint_ang0_2->text());
@@ -1648,6 +1655,7 @@ void SPC_submenu::on_spc_cur_body_remove_clicked() {
    if (bodies > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_body_list->currentItem();
       on_spc_cur_body_list_itemClicked(&cur_item);
+      on_spc_cur_apply_clicked();
    }
 }
 
@@ -1686,6 +1694,7 @@ void SPC_submenu::on_spc_cur_body_duplicate_clicked() {
 
    proc_duplicates(ui->spc_cur_body_list);
    on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item) {
@@ -1726,7 +1735,7 @@ void SPC_submenu::on_spc_cur_joint_add_clicked() {
 
    QStringList tmp_data = {
        "PASSIVE", "0",     "1",     "1",     "213",   "GIMBAL", "0",
-       "123",     "FALSE", "FALSE", "FALSE", "FALSE", "FALSE",  "FALSE",
+       "123",     "false", "false", "false", "false", "false",  "false",
        "0.0",     "0.0",   "0.0",   "0.0",   "0.0",   "0.0",    "0.0",
        "0.0",     "0.0",   "0.0",   "0.0",   "0.0",   "0.0",    "0.0",
        "0.0",     "312",   "0.0",   "0.0",   "0.0",   "312",    "0.0",
@@ -1734,6 +1743,7 @@ void SPC_submenu::on_spc_cur_joint_add_clicked() {
 
    proc_add(ui->spc_cur_joint_list, tmp_data);
    on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_joint_duplicate_clicked() {
@@ -1743,6 +1753,7 @@ void SPC_submenu::on_spc_cur_joint_duplicate_clicked() {
 
    proc_duplicates(ui->spc_cur_joint_list);
    on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item) {
@@ -1780,32 +1791,32 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item) {
    ui->spc_cur_joint_trndof->setValue(current_data[6].toInt());
    setQComboBox(ui->spc_cur_joint_trndof_seq, current_data[7]);
 
-   if (!QString::compare(current_data[9], "true"))
+   if (!QString::compare(current_data[8], "true"))
       ui->spc_cur_joint_rlock1->setCheckState(Qt::Checked);
    else
       ui->spc_cur_joint_rlock1->setCheckState(Qt::Unchecked);
 
-   if (!QString::compare(current_data[10], "true"))
+   if (!QString::compare(current_data[9], "true"))
       ui->spc_cur_joint_rlock2->setCheckState(Qt::Checked);
    else
       ui->spc_cur_joint_rlock2->setCheckState(Qt::Unchecked);
 
-   if (!QString::compare(current_data[11], "true"))
+   if (!QString::compare(current_data[10], "true"))
       ui->spc_cur_joint_rlock3->setCheckState(Qt::Checked);
    else
       ui->spc_cur_joint_rlock3->setCheckState(Qt::Unchecked);
 
-   if (!QString::compare(current_data[12], "true"))
+   if (!QString::compare(current_data[11], "true"))
       ui->spc_cur_joint_tlock1->setCheckState(Qt::Checked);
    else
       ui->spc_cur_joint_tlock1->setCheckState(Qt::Unchecked);
 
-   if (!QString::compare(current_data[13], "true"))
+   if (!QString::compare(current_data[12], "true"))
       ui->spc_cur_joint_tlock2->setCheckState(Qt::Checked);
    else
       ui->spc_cur_joint_tlock2->setCheckState(Qt::Unchecked);
 
-   if (!QString::compare(current_data[14], "true"))
+   if (!QString::compare(current_data[13], "true"))
       ui->spc_cur_joint_tlock3->setCheckState(Qt::Checked);
    else
       ui->spc_cur_joint_tlock3->setCheckState(Qt::Unchecked);
@@ -1823,6 +1834,7 @@ void SPC_submenu::on_spc_cur_wheel_remove_clicked() {
    if (wheels > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_wheel_list->currentItem();
       on_spc_cur_wheel_list_itemClicked(&cur_item);
+      on_spc_cur_apply_clicked();
    }
 }
 
@@ -1834,6 +1846,7 @@ void SPC_submenu::on_spc_cur_wheel_add_clicked() {
 
    proc_add(ui->spc_cur_wheel_list, tmp_data);
    on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_wheel_duplicate_clicked() {
@@ -1843,6 +1856,7 @@ void SPC_submenu::on_spc_cur_wheel_duplicate_clicked() {
 
    proc_duplicates(ui->spc_cur_wheel_list);
    on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item) {
@@ -1883,6 +1897,7 @@ void SPC_submenu::on_spc_cur_mtb_remove_clicked() {
    if (mtbs > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_mtb_list->currentItem();
       on_spc_cur_mtb_list_itemClicked(&cur_item);
+      on_spc_cur_apply_clicked();
    }
 }
 
@@ -1893,6 +1908,7 @@ void SPC_submenu::on_spc_cur_mtb_add_clicked() {
 
    proc_add(ui->spc_cur_mtb_list, tmp_data);
    on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_mtb_duplicate_clicked() {
@@ -1902,6 +1918,7 @@ void SPC_submenu::on_spc_cur_mtb_duplicate_clicked() {
 
    proc_duplicates(ui->spc_cur_mtb_list);
    on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item) {
@@ -1927,6 +1944,7 @@ void SPC_submenu::on_spc_cur_thruster_remove_clicked() {
    if (thrusters > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_thruster_list->currentItem();
       on_spc_cur_thruster_list_itemClicked(&cur_item);
+      on_spc_cur_apply_clicked();
    }
 }
 
@@ -1938,6 +1956,7 @@ void SPC_submenu::on_spc_cur_thruster_add_clicked() {
    proc_add(ui->spc_cur_thruster_list, tmp_data);
    on_spc_cur_thruster_list_itemClicked(
        ui->spc_cur_thruster_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_thruster_duplicate_clicked() {
@@ -1948,6 +1967,7 @@ void SPC_submenu::on_spc_cur_thruster_duplicate_clicked() {
    proc_duplicates(ui->spc_cur_thruster_list);
    on_spc_cur_thruster_list_itemClicked(
        ui->spc_cur_thruster_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item) {
@@ -1976,6 +1996,7 @@ void SPC_submenu::on_spc_cur_gyro_remove_clicked() {
    if (gyros > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_gyro_list->currentItem();
       on_spc_cur_gyro_list_itemClicked(&cur_item);
+      on_spc_cur_apply_clicked();
    }
 }
 
@@ -1988,6 +2009,7 @@ void SPC_submenu::on_spc_cur_gyro_add_clicked() {
 
    proc_add(ui->spc_cur_gyro_list, tmp_data);
    on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_gyro_duplicate_clicked() {
@@ -1997,6 +2019,7 @@ void SPC_submenu::on_spc_cur_gyro_duplicate_clicked() {
 
    proc_duplicates(ui->spc_cur_gyro_list);
    on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item) {
@@ -2026,6 +2049,7 @@ void SPC_submenu::on_spc_cur_mag_remove_clicked() {
    if (mags > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_mag_list->currentItem();
       on_spc_cur_mag_list_itemClicked(&cur_item);
+      on_spc_cur_apply_clicked();
    }
 }
 
@@ -2037,6 +2061,7 @@ void SPC_submenu::on_spc_cur_mag_add_clicked() {
 
    proc_add(ui->spc_cur_mag_list, tmp_data);
    on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_mag_duplicate_clicked() {
@@ -2046,6 +2071,7 @@ void SPC_submenu::on_spc_cur_mag_duplicate_clicked() {
 
    proc_duplicates(ui->spc_cur_mag_list);
    on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_mag_list_itemClicked(QListWidgetItem *item) {
@@ -2073,6 +2099,7 @@ void SPC_submenu::on_spc_cur_css_remove_clicked() {
    if (css_s > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_css_list->currentItem();
       on_spc_cur_css_list_itemClicked(&cur_item);
+      on_spc_cur_apply_clicked();
    }
 }
 
@@ -2084,6 +2111,7 @@ void SPC_submenu::on_spc_cur_css_add_clicked() {
 
    proc_add(ui->spc_cur_css_list, tmp_data);
    on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_css_duplicate_clicked() {
@@ -2093,6 +2121,7 @@ void SPC_submenu::on_spc_cur_css_duplicate_clicked() {
 
    proc_duplicates(ui->spc_cur_css_list);
    on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_css_list_itemClicked(QListWidgetItem *item) {
@@ -2120,6 +2149,7 @@ void SPC_submenu::on_spc_cur_fss_remove_clicked() {
    if (fss_s > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_fss_list->currentItem();
       on_spc_cur_fss_list_itemClicked(&cur_item);
+      on_spc_cur_apply_clicked();
    }
 }
 
@@ -2131,6 +2161,7 @@ void SPC_submenu::on_spc_cur_fss_add_clicked() {
 
    proc_add(ui->spc_cur_fss_list, tmp_data);
    on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_fss_duplicate_clicked() {
@@ -2140,6 +2171,7 @@ void SPC_submenu::on_spc_cur_fss_duplicate_clicked() {
 
    proc_duplicates(ui->spc_cur_fss_list);
    on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_fss_list_itemClicked(QListWidgetItem *item) {
@@ -2169,6 +2201,7 @@ void SPC_submenu::on_spc_cur_strack_remove_clicked() {
    if (stracks > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_strack_list->currentItem();
       on_spc_cur_strack_list_itemClicked(&cur_item);
+      on_spc_cur_apply_clicked();
    }
 }
 
@@ -2181,6 +2214,7 @@ void SPC_submenu::on_spc_cur_strack_add_clicked() {
 
    proc_add(ui->spc_cur_strack_list, tmp_data);
    on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_strack_duplicate_clicked() {
@@ -2190,6 +2224,7 @@ void SPC_submenu::on_spc_cur_strack_duplicate_clicked() {
 
    proc_duplicates(ui->spc_cur_strack_list);
    on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_strack_list_itemClicked(QListWidgetItem *item) {
@@ -2222,6 +2257,7 @@ void SPC_submenu::on_spc_cur_gps_remove_clicked() {
    if (gps_s > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_gps_list->currentItem();
       on_spc_cur_gps_list_itemClicked(&cur_item);
+      on_spc_cur_apply_clicked();
    }
 }
 
@@ -2232,6 +2268,7 @@ void SPC_submenu::on_spc_cur_gps_add_clicked() {
 
    proc_add(ui->spc_cur_gps_list, tmp_data);
    on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_gps_duplicate_clicked() {
@@ -2241,6 +2278,7 @@ void SPC_submenu::on_spc_cur_gps_duplicate_clicked() {
 
    proc_duplicates(ui->spc_cur_gps_list);
    on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_gps_list_itemClicked(QListWidgetItem *item) {
@@ -2266,6 +2304,7 @@ void SPC_submenu::on_spc_cur_accel_remove_clicked() {
    if (accels > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_accel_list->currentItem();
       on_spc_cur_accel_list_itemClicked(&cur_item);
+      on_spc_cur_apply_clicked();
    }
 }
 
@@ -2277,6 +2316,7 @@ void SPC_submenu::on_spc_cur_accel_add_clicked() {
 
    proc_add(ui->spc_cur_accel_list, tmp_data);
    on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_accel_duplicate_clicked() {
@@ -2286,6 +2326,7 @@ void SPC_submenu::on_spc_cur_accel_duplicate_clicked() {
 
    proc_duplicates(ui->spc_cur_accel_list);
    on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->currentItem());
+   on_spc_cur_apply_clicked();
 }
 
 void SPC_submenu::on_spc_cur_accel_list_itemClicked(QListWidgetItem *item) {
@@ -2308,7 +2349,17 @@ void SPC_submenu::on_spc_cur_accel_list_itemClicked(QListWidgetItem *item) {
 
 // Misc
 void SPC_submenu::on_sections_tabBarClicked(int index) {
+   if (come_from_bodyjoint == 1) {
+      // if (joints != bodies - 1) {
+      //    joints_valid = 0;
+      //    dsm_gui_lib::error_message(
+      //        "The number of joints must equal number of bodies minus one.");
+      //    on_sections_tabBarClicked(1);
+      // }
+   }
+
    if (index == 1) {
+      come_from_bodyjoint = 1;
       on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->item(0));
       ui->spc_cur_body_list->setCurrentRow(0);
       if (ui->spc_cur_joint_list->count() > 0) {
@@ -2317,9 +2368,11 @@ void SPC_submenu::on_sections_tabBarClicked(int index) {
       }
    }
    if (index == 2) {
+      come_from_bodyjoint = 0;
       on_actuator_sections_tabBarClicked(ui->actuator_sections->currentIndex());
    }
    if (index == 3) {
+      come_from_bodyjoint = 0;
       on_sensor_sections_tabBarClicked(ui->sensor_sections->currentIndex());
    }
 }
@@ -2522,6 +2575,16 @@ void SPC_submenu::proc_add(QListWidget *cur_list, QStringList tmp_data) {
 
 void SPC_submenu::destroy_submenu(QString command, QString junk) {
    if (QString::compare(command, "Done") == 0) {
+      // if (come_from_bodyjoint == 1) {
+      //    if (joints != bodies - 1) {
+      //       joints_valid = 0;
+      //       dsm_gui_lib::error_message(
+      //           "The number of joints must equal number of bodies minus
+      //           one.");
+      //       on_sections_tabBarClicked(1);
+      //    }
+      // } else
+      //    come_from_bodyjoint = 0;
       QDialog::close();
    }
 }
