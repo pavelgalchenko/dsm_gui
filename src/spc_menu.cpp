@@ -220,7 +220,6 @@ void SPC_Menu::on_spc_apply_clicked() {
    cur_spc_yaml = YAML::LoadFile(file_path.toStdString());
 
    QStringList tmp_data = {};
-
    cur_spc_yaml["Name"] = ui->spc_name->text();
 
    /* Configuration */
@@ -351,8 +350,11 @@ void SPC_Menu::write_data(YAML::Node inp_spc) {
       QTextStream in(&file);
       YAML::Emitter out;
       out.SetIndent(4);
-      out.SetMapFormat(YAML::EMITTER_MANIP::Block);
+      out.SetMapFormat(YAML::Block);
+
+      out << YAML::Comment(top_comment.toStdString());
       out << inp_spc;
+
       in << out.c_str();
    }
    file.close();

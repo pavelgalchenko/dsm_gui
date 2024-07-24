@@ -111,6 +111,7 @@ class SPC_Menu : public QDialog {
    const QStringList att_params = {"Q", "A"};
    const QStringList att_wrt    = {"N", "L", "F"};
 
+   YAML::Node spc_comments;
    YAML::Node cur_spc_yaml;
    QString appPath;
    QString pythonCmd;
