@@ -164,3 +164,19 @@ QVector<QString> dsm_gui_lib::create_QVec4(QString arg1, QString arg2,
    QVector<QString> tmp_data_vector = {arg1, arg2, arg3, arg4};
    return tmp_data_vector;
 }
+
+QString dsm_gui_lib::generate_comment(QString str_search, QString cur_line,
+                                      YAML::Node comments) {
+   QString string_to_append = "";
+   if (!QString::compare(cur_line, str_search + ":")) {
+      QString cur_comments      = comments[str_search].as<QString>();
+      QStringList comments_list = cur_comments.split("\n");
+
+      for (int j = 0; j < comments_list.size() - 1; j++) {
+         string_to_append += "    # " + comments_list[j];
+         if (j < comments_list.size() - 1)
+            string_to_append += "\n";
+      }
+   }
+   return string_to_append;
+}

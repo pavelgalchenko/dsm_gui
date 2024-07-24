@@ -117,6 +117,18 @@ void SPC_Menu::receive_spcpath(QString path) {
       ui->spc_conf->setEnabled(false);
    else
       ui->spc_conf->setEnabled(true);
+
+   QFile target(inout_path + "__default__/SC_comments.yaml");
+   QString comment_path =
+       inout_path + "__default__/yaml_comments/SC_comments.yaml";
+
+   if (target.exists())
+      target.remove();
+
+   QFile::copy(":/data/__default__/yaml_comments/SC_comments.yaml",
+               comment_path);
+
+   spc_comments = YAML::LoadFile(comment_path.toStdString());
 }
 
 void SPC_Menu::receive_apppath(QString path) {
@@ -347,15 +359,38 @@ void SPC_Menu::write_data(YAML::Node inp_spc) {
    if (!file.open(QFile::WriteOnly)) {
       QMessageBox::information(0, "error", file.errorString());
    } else {
+      QString in_pc;
+      QStringList in_pc_lines;
       QTextStream in(&file);
       YAML::Emitter out;
+
+      QStringList sc_fields = {
+          "Configuration", "Orbit",     "Attitude",     "Dynamics Flags",
+          "Bodies",        "Joints",    "Wheel Params", "Wheels",
+          "MTBs",          "Thrusters", "Gyros",        "Magnetometers",
+          "CSSs",          "FSSs",      "STs",          "GPSs",
+          "Accelerometers"};
+
       out.SetIndent(4);
       out.SetMapFormat(YAML::Block);
 
-      out << YAML::Comment(top_comment.toStdString());
       out << inp_spc;
 
-      in << out.c_str();
+      in_pc       = out.c_str();
+      in_pc_lines = in_pc.split("\n");
+      in << "%YAML 1.2\n---\n";
+      for (int i = 0; i < in_pc_lines.size(); i++) {
+         QString cur_line = in_pc_lines[i];
+         in << in_pc_lines[i] + "\n";
+         if (i == 0) {
+            in << R"(# <<<<<<<<<<<<<<<<<  42: Spacecraft Description File   >>>>>>>>>>>>>>>>>>>)";
+            in << "\n";
+         }
+
+         for (int j = 0; j < sc_fields.size(); j++)
+            in << dsm_gui_lib::generate_comment(sc_fields[j], in_pc_lines[i],
+                                                spc_comments);
+      }
    }
    file.close();
    params << appPath + "/__python__/AddYAMLComments.py" << appPath << inout_path

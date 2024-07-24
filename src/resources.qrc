@@ -27,6 +27,17 @@
         <file>__default__/Nodes_Simple.yaml</file>
         <file>__default__/Orb_LEO.yaml</file>
         <file>__default__/__SCDEFAULT__.yaml</file>
+        <file>__default__/yaml_comments/InpDSM_comments.yaml</file>
+        <file>__default__/yaml_comments/InpFOV_comments.yaml</file>
+        <file>__default__/yaml_comments/InpGraphics_comments.yaml</file>
+        <file>__default__/yaml_comments/InpIPC_comments.yaml</file>
+        <file>__default__/yaml_comments/InpNOS3_comments.yaml</file>
+        <file>__default__/yaml_comments/InpRegion_comments.yaml</file>
+        <file>__default__/yaml_comments/InpSim_comments.yaml</file>
+        <file>__default__/yaml_comments/InpTDRS_comments.yaml</file>
+        <file>__default__/yaml_comments/Nodes_comments.yaml</file>
+        <file>__default__/yaml_comments/Orb_comments.yaml</file>
+        <file>__default__/yaml_comments/SC_comments.yaml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
