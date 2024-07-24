@@ -494,7 +494,7 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
    if (index == -1)
       return;
    QString old_spc = ui->spc_list->currentItem()->text();
-   QString new_spc = old_spc + " Copy";
+   QString new_spc = old_spc + "_Copy";
    for (int i = 0; i <= 30; i++) {
       QString newSCTest = new_spc;
       if (i > 0)
@@ -573,7 +573,7 @@ void SPC_Menu::on_spc_load_clicked() // Load default S/C
       }
       ui->spc_list->setCurrentRow(0);
       on_spc_list_itemClicked(ui->spc_list->item(0));
-      if (new_item == 1) {
+      if (new_item == 1 && spc_submenu != nullptr) {
          on_spc_conf_clicked();
          new_item = 0;
       }
@@ -606,7 +606,7 @@ void SPC_Menu::on_spc_save_clicked() {
 
          QFile::copy(file_paths[i], file_paths_default[i]);
       }
-      if (new_item == 1) {
+      if (new_item == 1 && spc_submenu != nullptr) {
          on_spc_conf_clicked();
          new_item = 0;
       }
