@@ -878,7 +878,6 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           ui->spc_cur_drag->text();
    } else if (ui->sections->currentIndex() == 1) {
       /* Bodies */
-
       index                    = ui->spc_cur_body_list->currentRow();
       YAML::Node cur_body_node = cur_spc_yaml["Bodies"][index]["Body"];
 
@@ -1647,10 +1646,11 @@ void SPC_submenu::on_spc_cur_body_remove_clicked() {
       return;
    }
 
-   delete ui->spc_cur_body_list->currentItem();
-
-   if (bodies > 1)
+   if (bodies > 1) {
       bodies -= 1;
+      cur_spc_yaml["Bodies"].remove(ui->spc_cur_body_list->currentRow());
+      delete ui->spc_cur_body_list->currentItem();
+   }
 
    if (bodies > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_body_list->currentItem();
@@ -1721,12 +1721,15 @@ void SPC_submenu::on_spc_cur_body_list_itemClicked(QListWidgetItem *item) {
 // Joint
 
 void SPC_submenu::on_spc_cur_joint_remove_clicked() {
-   delete ui->spc_cur_joint_list->currentItem();
-   if (joints > 0)
+   if (joints > 0) {
       joints -= 1;
+      cur_spc_yaml["Joints"].remove(ui->spc_cur_joint_list->currentRow());
+      delete ui->spc_cur_joint_list->currentItem();
+   }
    if (joints > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_joint_list->currentItem();
       on_spc_cur_joint_list_itemClicked(&cur_item);
+      on_spc_cur_apply_clicked();
    }
 }
 
@@ -1828,9 +1831,11 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item) {
 // Wheels -/+/Duplicate/Item Clicked
 
 void SPC_submenu::on_spc_cur_wheel_remove_clicked() {
-   delete ui->spc_cur_wheel_list->currentItem();
-   if (wheels > 0)
+   if (wheels > 0) {
       wheels -= 1;
+      cur_spc_yaml["Wheels"].remove(ui->spc_cur_wheel_list->currentRow());
+      delete ui->spc_cur_wheel_list->currentItem();
+   }
    if (wheels > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_wheel_list->currentItem();
       on_spc_cur_wheel_list_itemClicked(&cur_item);
@@ -1891,9 +1896,11 @@ void SPC_submenu::on_spc_cur_wheel_list_itemClicked(QListWidgetItem *item) {
 // MTB buttons
 
 void SPC_submenu::on_spc_cur_mtb_remove_clicked() {
-   delete ui->spc_cur_mtb_list->currentItem();
-   if (mtbs > 0)
+   if (mtbs > 0) {
       mtbs -= 1;
+      cur_spc_yaml["MTBs"].remove(ui->spc_cur_mtb_list->currentRow());
+      delete ui->spc_cur_mtb_list->currentItem();
+   }
    if (mtbs > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_mtb_list->currentItem();
       on_spc_cur_mtb_list_itemClicked(&cur_item);
@@ -1938,9 +1945,11 @@ void SPC_submenu::on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item) {
 // Thruster buttons
 
 void SPC_submenu::on_spc_cur_thruster_remove_clicked() {
-   delete ui->spc_cur_thruster_list->currentItem();
-   if (thrusters > 0)
+   if (thrusters > 0) {
       thrusters -= 1;
+      cur_spc_yaml["Thrusters"].remove(ui->spc_cur_thruster_list->currentRow());
+      delete ui->spc_cur_thruster_list->currentItem();
+   }
    if (thrusters > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_thruster_list->currentItem();
       on_spc_cur_thruster_list_itemClicked(&cur_item);
@@ -1991,8 +2000,11 @@ void SPC_submenu::on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item) {
 
 void SPC_submenu::on_spc_cur_gyro_remove_clicked() {
    delete ui->spc_cur_gyro_list->currentItem();
-   if (gyros > 0)
+   if (gyros > 0) {
       gyros -= 1;
+      cur_spc_yaml["Gyros"].remove(ui->spc_cur_gyro_list->currentRow());
+      delete ui->spc_cur_gyro_list->currentItem();
+   }
    if (gyros > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_gyro_list->currentItem();
       on_spc_cur_gyro_list_itemClicked(&cur_item);
@@ -2043,9 +2055,11 @@ void SPC_submenu::on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item) {
 // Magnetometer buttons
 
 void SPC_submenu::on_spc_cur_mag_remove_clicked() {
-   delete ui->spc_cur_mag_list->currentItem();
-   if (mags > 0)
+   if (mags > 0) {
       mags -= 1;
+      cur_spc_yaml["Magnetometer"].remove(ui->spc_cur_mag_list->currentRow());
+      delete ui->spc_cur_mag_list->currentItem();
+   }
    if (mags > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_mag_list->currentItem();
       on_spc_cur_mag_list_itemClicked(&cur_item);
@@ -2093,9 +2107,11 @@ void SPC_submenu::on_spc_cur_mag_list_itemClicked(QListWidgetItem *item) {
 // CSS buttons
 
 void SPC_submenu::on_spc_cur_css_remove_clicked() {
-   delete ui->spc_cur_css_list->currentItem();
-   if (css_s > 0)
+   if (css_s > 0) {
       css_s -= 1;
+      cur_spc_yaml["CSSs"].remove(ui->spc_cur_css_list->currentRow());
+      delete ui->spc_cur_css_list->currentItem();
+   }
    if (css_s > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_css_list->currentItem();
       on_spc_cur_css_list_itemClicked(&cur_item);
@@ -2143,9 +2159,11 @@ void SPC_submenu::on_spc_cur_css_list_itemClicked(QListWidgetItem *item) {
 // FSS Buttons
 
 void SPC_submenu::on_spc_cur_fss_remove_clicked() {
-   delete ui->spc_cur_fss_list->currentItem();
-   if (fss_s > 0)
+   if (fss_s > 0) {
       fss_s -= 1;
+      cur_spc_yaml["FSSs"].remove(ui->spc_cur_fss_list->currentRow());
+      delete ui->spc_cur_fss_list->currentItem();
+   }
    if (fss_s > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_fss_list->currentItem();
       on_spc_cur_fss_list_itemClicked(&cur_item);
@@ -2195,9 +2213,11 @@ void SPC_submenu::on_spc_cur_fss_list_itemClicked(QListWidgetItem *item) {
 // Star Tracker Buttons
 
 void SPC_submenu::on_spc_cur_strack_remove_clicked() {
-   delete ui->spc_cur_strack_list->currentItem();
-   if (stracks > 0)
+   if (stracks > 0) {
       stracks -= 1;
+      cur_spc_yaml["STs"].remove(ui->spc_cur_strack_list->currentRow());
+      delete ui->spc_cur_strack_list->currentItem();
+   }
    if (stracks > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_strack_list->currentItem();
       on_spc_cur_strack_list_itemClicked(&cur_item);
@@ -2251,7 +2271,11 @@ void SPC_submenu::on_spc_cur_strack_list_itemClicked(QListWidgetItem *item) {
 // GPS Buttons
 
 void SPC_submenu::on_spc_cur_gps_remove_clicked() {
-   delete ui->spc_cur_gps_list->currentItem();
+   if (gps_s > 0) {
+      gps_s -= 1;
+      cur_spc_yaml["GPSs"].remove(ui->spc_cur_gps_list->currentRow());
+      delete ui->spc_cur_gps_list->currentItem();
+   }
    if (gps_s > 0)
       gps_s -= 1;
    if (gps_s > 0) {
@@ -2298,9 +2322,12 @@ void SPC_submenu::on_spc_cur_gps_list_itemClicked(QListWidgetItem *item) {
 // Accelerometer Buttons
 
 void SPC_submenu::on_spc_cur_accel_remove_clicked() {
-   delete ui->spc_cur_accel_list->currentItem();
-   if (accels > 0)
+   if (accels > 0) {
       accels -= 1;
+      cur_spc_yaml["Accelerometers"].remove(
+          ui->spc_cur_accel_list->currentRow());
+      delete ui->spc_cur_accel_list->currentItem();
+   }
    if (accels > 0) {
       QListWidgetItem cur_item = *ui->spc_cur_accel_list->currentItem();
       on_spc_cur_accel_list_itemClicked(&cur_item);
