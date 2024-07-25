@@ -352,8 +352,6 @@ void SPC_Menu::on_spc_apply_clicked() {
 }
 
 void SPC_Menu::write_data(YAML::Node inp_spc) {
-   QStringList params;
-   QProcess p;
    QFile::remove(file_path);
    QFile file(file_path);
    if (!file.open(QFile::WriteOnly)) {
@@ -393,10 +391,6 @@ void SPC_Menu::write_data(YAML::Node inp_spc) {
       }
    }
    file.close();
-   params << appPath + "/__python__/AddYAMLComments.py" << appPath << inout_path
-          << "SC_" << ui->spc_label->text() << ".yaml";
-   p.start(pythonCmd, params);
-   p.waitForFinished(-1);
 }
 
 void SPC_Menu::on_spc_add_clicked() // Add S/C

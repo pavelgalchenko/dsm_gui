@@ -226,6 +226,8 @@ class SPC_submenu : public QDialog {
 
    int joints_valid = 1;
 
+   YAML::Node spc_comments;
+
    public slots:
 
    signals:
