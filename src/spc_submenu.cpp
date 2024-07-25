@@ -529,7 +529,6 @@ void SPC_submenu::receive_data() {
       YAML::Node cur_node = node_seq["Gyro"];
 
       QString item_name;
-
       if (cur_node["Name"])
          item_name = cur_node["Name"].as<QString>();
       else
@@ -1231,7 +1230,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
              ui->spc_cur_joint_list->item(index2));
       }
    } else if (ui->sections->currentIndex() == 2 &&
-              ui->actuator_sections->currentIndex() == 0 && wheels > 0) {
+              ui->actuator_sections->currentIndex() == 0) {
       /* Wheels */
       QMap<QString, QString> global_wheel_params = {{"Drag", wheel_drag},
                                                     {"Jitter", wheel_jitter}};
@@ -1291,10 +1290,12 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       for (index = wheels; index < tmp_size; index++) {
          cur_spc_yaml["Wheels"].remove(index);
       }
-      on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->item(index2));
+      if (wheels > 0)
+         on_spc_cur_wheel_list_itemClicked(
+             ui->spc_cur_wheel_list->item(index2));
 
    } else if (ui->sections->currentIndex() == 2 &&
-              ui->actuator_sections->currentIndex() == 1 && mtbs > 0) {
+              ui->actuator_sections->currentIndex() == 1) {
       /* MTBs */
 
       index2   = ui->spc_cur_mtb_list->currentRow();
@@ -1334,10 +1335,11 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       for (index = mtbs; index < tmp_size; index++) {
          cur_spc_yaml["MTBs"].remove(index);
       }
-      on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->item(index));
+      if (mtbs > 0)
+         on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->item(index2));
 
    } else if (ui->sections->currentIndex() == 2 &&
-              ui->actuator_sections->currentIndex() == 2 && thrusters > 0) {
+              ui->actuator_sections->currentIndex() == 2) {
       /* Thrusters */
       index2   = ui->spc_cur_thruster_list->currentRow();
       tmp_size = cur_spc_yaml["Thrusters"].size();
@@ -1384,11 +1386,12 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       for (index = thrusters; index < tmp_size; index++) {
          cur_spc_yaml["Thrusters"].remove(index);
       }
-      on_spc_cur_thruster_list_itemClicked(
-          ui->spc_cur_thruster_list->item(index2));
+      if (thrusters > 0)
+         on_spc_cur_thruster_list_itemClicked(
+             ui->spc_cur_thruster_list->item(index2));
 
    } else if (ui->sections->currentIndex() == 3 &&
-              ui->sensor_sections->currentIndex() == 0 && gyros > 0) {
+              ui->sensor_sections->currentIndex() == 0) {
       /* Gyros */
       index2   = ui->spc_cur_gyro_list->currentRow();
       tmp_size = cur_spc_yaml["Gyros"].size();
@@ -1403,12 +1406,13 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
          cur_node["Name"]  = ui->spc_cur_gyro_name->text();
          cur_node["Index"] = index;
 
-         cur_node["Mode"] = ui->spc_cur_gyro_samptime->text();
+         cur_node["Sample Time"] = ui->spc_cur_gyro_samptime->text();
 
          cur_node["Axis"] = dsm_gui_lib::create_QVec3(
              ui->spc_cur_gyro_axis_1->text(), ui->spc_cur_gyro_axis_2->text(),
              ui->spc_cur_gyro_axis_3->text());
          ;
+         qDebug() << "1";
          cur_node["Max Rate"]          = ui->spc_cur_gyro_maxrate->text();
          cur_node["Scale Factor"]      = ui->spc_cur_gyro_scaleferror->text();
          cur_node["Quantization"]      = ui->spc_cur_gyro_quant->text();
@@ -1418,11 +1422,14 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
              ui->spc_cur_gyro_bias_tspan->text();
          cur_node["Angle Noise"]  = ui->spc_cur_gyro_angnoise->text();
          cur_node["Initial Bias"] = ui->spc_cur_gyro_initbias->text();
+         qDebug() << "2";
 
          cur_node["Node"] = ui->spc_cur_gyro_node->cleanText();
 
          top_node["Gyro"]             = cur_node;
          cur_spc_yaml["Gyros"][index] = top_node;
+
+         qDebug() << "3";
 
          tmp_data.append(ui->spc_cur_gyro_samptime->text());
          tmp_data.append(ui->spc_cur_gyro_axis_1->text());
@@ -1443,13 +1450,15 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
          ui->spc_cur_gyro_list->currentItem()->setData(257, tmp_data);
          tmp_data.clear();
       }
+
       for (index = gyros; index < tmp_size; index++) {
          cur_spc_yaml["Gyros"].remove(index);
       }
-      on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->item(index2));
+      if (gyros > 0)
+         on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->item(index2));
 
    } else if (ui->sections->currentIndex() == 3 &&
-              ui->sensor_sections->currentIndex() == 3 && mags > 0) {
+              ui->sensor_sections->currentIndex() == 3) {
       /* Magnetometers */
       index2   = ui->spc_cur_mag_list->currentRow();
       tmp_size = cur_spc_yaml["Magnetometers"].size();
@@ -1498,9 +1507,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       for (index = mags; index < tmp_size; index++) {
          cur_spc_yaml["Magnetometers"].remove(index);
       }
-      on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->item(index2));
+      if (mags > 0)
+         on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->item(index2));
    } else if (ui->sections->currentIndex() == 3 &&
-              ui->sensor_sections->currentIndex() == 4 && css_s > 0) {
+              ui->sensor_sections->currentIndex() == 4) {
       /* CSSs */
       index2   = ui->spc_cur_css_list->currentRow();
       tmp_size = cur_spc_yaml["CSSs"].size();
@@ -1550,7 +1560,8 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       for (index = css_s; index < tmp_size; index++) {
          cur_spc_yaml["CSSs"].remove(index);
       }
-      on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->item(index2));
+      if (css_s > 0)
+         on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->item(index2));
 
    } else if (ui->sections->currentIndex() == 3 &&
               ui->sensor_sections->currentIndex() == 4) {
@@ -1608,7 +1619,8 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       for (index = fss_s; index < tmp_size; index++) {
          cur_spc_yaml["FSSs"].remove(index);
       }
-      on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->item(index2));
+      if (fss_s > 0)
+         on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->item(index2));
 
    } else if (ui->sections->currentIndex() == 3 &&
               ui->sensor_sections->currentIndex() == 5) {
@@ -1687,7 +1699,9 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       for (index = stracks; index < tmp_size; index++) {
          cur_spc_yaml["STs"].remove(index);
       }
-      on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->item(index2));
+      if (stracks > 0)
+         on_spc_cur_strack_list_itemClicked(
+             ui->spc_cur_strack_list->item(index2));
 
    } else if (ui->sections->currentIndex() == 3 &&
               ui->sensor_sections->currentIndex() == 6) {
@@ -1728,7 +1742,8 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       for (index = gps_s; index < tmp_size; index++) {
          cur_spc_yaml["GPSs"].remove(index);
       }
-      on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->item(index2));
+      if (gps_s > 0)
+         on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->item(index2));
 
    } else if (ui->sections->currentIndex() == 3 &&
               ui->sensor_sections->currentIndex() == 7) {
@@ -1788,7 +1803,8 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       for (index = accels; index < tmp_size; index++) {
          cur_spc_yaml["Accelerometers"].remove(index);
       }
-      on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->item(index));
+      if (accels > 0)
+         on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->item(index));
    }
 
    write_data(cur_spc_yaml);
@@ -2141,7 +2157,6 @@ void SPC_submenu::on_spc_cur_gyro_remove_clicked() {
    delete ui->spc_cur_gyro_list->currentItem();
    if (gyros > 0) {
       gyros -= 1;
-      cur_spc_yaml["Gyros"].remove(ui->spc_cur_gyro_list->currentRow());
       delete ui->spc_cur_gyro_list->currentItem();
    }
    on_spc_cur_apply_clicked();
@@ -2192,7 +2207,6 @@ void SPC_submenu::on_spc_cur_gyro_list_itemClicked(QListWidgetItem *item) {
 void SPC_submenu::on_spc_cur_mag_remove_clicked() {
    if (mags > 0) {
       mags -= 1;
-      cur_spc_yaml["Magnetometer"].remove(ui->spc_cur_mag_list->currentRow());
       delete ui->spc_cur_mag_list->currentItem();
    }
    on_spc_cur_apply_clicked();
@@ -2240,7 +2254,6 @@ void SPC_submenu::on_spc_cur_mag_list_itemClicked(QListWidgetItem *item) {
 void SPC_submenu::on_spc_cur_css_remove_clicked() {
    if (css_s > 0) {
       css_s -= 1;
-      cur_spc_yaml["CSSs"].remove(ui->spc_cur_css_list->currentRow());
       delete ui->spc_cur_css_list->currentItem();
    }
    on_spc_cur_apply_clicked();
@@ -2288,7 +2301,6 @@ void SPC_submenu::on_spc_cur_css_list_itemClicked(QListWidgetItem *item) {
 void SPC_submenu::on_spc_cur_fss_remove_clicked() {
    if (fss_s > 0) {
       fss_s -= 1;
-      cur_spc_yaml["FSSs"].remove(ui->spc_cur_fss_list->currentRow());
       delete ui->spc_cur_fss_list->currentItem();
    }
    on_spc_cur_apply_clicked();
@@ -2338,7 +2350,6 @@ void SPC_submenu::on_spc_cur_fss_list_itemClicked(QListWidgetItem *item) {
 void SPC_submenu::on_spc_cur_strack_remove_clicked() {
    if (stracks > 0) {
       stracks -= 1;
-      cur_spc_yaml["STs"].remove(ui->spc_cur_strack_list->currentRow());
       delete ui->spc_cur_strack_list->currentItem();
    }
    on_spc_cur_apply_clicked();
@@ -2392,7 +2403,6 @@ void SPC_submenu::on_spc_cur_strack_list_itemClicked(QListWidgetItem *item) {
 void SPC_submenu::on_spc_cur_gps_remove_clicked() {
    if (gps_s > 0) {
       gps_s -= 1;
-      cur_spc_yaml["GPSs"].remove(ui->spc_cur_gps_list->currentRow());
       delete ui->spc_cur_gps_list->currentItem();
    }
    on_spc_cur_apply_clicked();
@@ -2437,8 +2447,6 @@ void SPC_submenu::on_spc_cur_gps_list_itemClicked(QListWidgetItem *item) {
 void SPC_submenu::on_spc_cur_accel_remove_clicked() {
    if (accels > 0) {
       accels -= 1;
-      cur_spc_yaml["Accelerometers"].remove(
-          ui->spc_cur_accel_list->currentRow());
       delete ui->spc_cur_accel_list->currentItem();
    }
    on_spc_cur_apply_clicked();
