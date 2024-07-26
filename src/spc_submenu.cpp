@@ -515,6 +515,7 @@ void SPC_submenu::receive_data() {
           index, ui->spc_cur_thruster_list, tmp_data, item_name);
       index++;
    }
+
    /* Gyros */
    ui->spc_cur_gyro_list->clear();
 
@@ -581,7 +582,7 @@ void SPC_submenu::receive_data() {
       for (int i = 0; i < 3; i++)
          tmp_data.append(data_vector[i]);
 
-      tmp_data.append(cur_node["Max Rate"].as<QString>());
+      tmp_data.append(cur_node["Saturation"].as<QString>());
       tmp_data.append(cur_node["Scale Factor"].as<QString>());
       tmp_data.append(cur_node["Quantization"].as<QString>());
       tmp_data.append(cur_node["Noise"].as<QString>());
@@ -652,13 +653,17 @@ void SPC_submenu::receive_data() {
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
 
-      data_vector = cur_node["Mounting Angle"]["Angles"].as<QVector<QString>>();
+      data_vector =
+          cur_node["Mounting Angles"]["Angles"].as<QVector<QString>>();
       for (int i = 0; i < 3; i++)
          tmp_data.append(data_vector[i]);
 
       tmp_data.append(cur_node["Mounting Angles"]["Sequence"].as<QString>());
       tmp_data.append(cur_node["Boresight Axis"].as<QString>());
-      tmp_data.append(cur_node["FOV Size"].as<QString>());
+      data_vector = cur_node["FOV Size"].as<QVector<QString>>();
+      for (int i = 0; i < 2; i++)
+         tmp_data.append(data_vector[i]);
+
       tmp_data.append(cur_node["Noise Equivalent Angle"].as<QString>());
       tmp_data.append(cur_node["Quantization"].as<QString>());
       tmp_data.append(cur_node["Node"].as<QString>());
@@ -691,17 +696,23 @@ void SPC_submenu::receive_data() {
 
       tmp_data.append(cur_node["Sample Time"].as<QString>());
 
-      data_vector = cur_node["Mounting Angle"]["Angles"].as<QVector<QString>>();
+      data_vector =
+          cur_node["Mounting Angles"]["Angles"].as<QVector<QString>>();
       for (int i = 0; i < 3; i++)
          tmp_data.append(data_vector[i]);
 
       tmp_data.append(cur_node["Mounting Angles"]["Sequence"].as<QString>());
       tmp_data.append(cur_node["Boresight Axis"].as<QString>());
-      tmp_data.append(cur_node["FOV Size"].as<QString>());
+      data_vector = cur_node["FOV Size"].as<QVector<QString>>();
+      for (int i = 0; i < 2; i++)
+         tmp_data.append(data_vector[i]);
       tmp_data.append(cur_node["Exclusion Angles"]["Sun"].as<QString>());
       tmp_data.append(cur_node["Exclusion Angles"]["Earth"].as<QString>());
       tmp_data.append(cur_node["Exclusion Angles"]["Luna"].as<QString>());
-      tmp_data.append(cur_node["Noise Equivalent Angle"].as<QString>());
+      data_vector = cur_node["Noise Equivalent Angle"].as<QVector<QString>>();
+      for (int i = 0; i < 3; i++)
+         tmp_data.append(data_vector[i]);
+
       tmp_data.append(cur_node["Node"].as<QString>());
 
       tmp_data = dsm_gui_lib::apply_data_section_end(

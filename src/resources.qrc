@@ -38,6 +38,9 @@
         <file>__default__/yaml_comments/Nodes_comments.yaml</file>
         <file>__default__/yaml_comments/Orb_comments.yaml</file>
         <file>__default__/yaml_comments/SC_comments.yaml</file>
+        <file>__default__/SC_3U_CubeSat.yaml</file>
+        <file>__default__/SC_6U_CubeSat.yaml</file>
+        <file>__default__/SC_12U_CubeSat.yaml</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>
