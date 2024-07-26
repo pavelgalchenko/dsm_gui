@@ -1,6 +1,6 @@
 #include "spc_submenu.h"
 #include "dsm_gui_lib.h"
-#include "spc_menu.h">
+#include "spc_menu.h"
 #include "ui_spc_submenu.h"
 #include <QDebug>
 
@@ -1325,6 +1325,7 @@ void SPC_submenu::apply_data() {
          cur_node["Axis"] = dsm_gui_lib::create_QVec3(
              ui->spc_cur_gyro_axis_1->text(), ui->spc_cur_gyro_axis_2->text(),
              ui->spc_cur_gyro_axis_3->text());
+
          cur_node["Max Rate"]          = ui->spc_cur_gyro_maxrate->text();
          cur_node["Scale Factor"]      = ui->spc_cur_gyro_scaleferror->text();
          cur_node["Quantization"]      = ui->spc_cur_gyro_quant->text();
@@ -1747,7 +1748,6 @@ void SPC_submenu::write_data(YAML::Node inp_spc) {
       in_pc_lines = in_pc.split("\n");
       in << "%YAML 1.2\n---\n";
       for (int i = 0; i < in_pc_lines.size(); i++) {
-         QString cur_line = in_pc_lines[i];
          in << in_pc_lines[i] + "\n";
          if (i == 0) {
             in << R"(# <<<<<<<<<<<<<<<<<  42: Spacecraft Description File   >>>>>>>>>>>>>>>>>>>)";
@@ -1814,7 +1814,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
 
    QVector<QString> data_vector = {};
    QStringList tmp_data;
-   long index, tmp_size;
+   long index;
 
    if (ui->sections->currentIndex() == 0) {
       /* Dynamics Flags */
@@ -2151,8 +2151,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
                                                     {"Jitter", wheel_jitter}};
       cur_spc_yaml["Wheel Params"]               = global_wheel_params;
 
-      index    = ui->spc_cur_wheel_list->currentRow();
-      tmp_size = cur_spc_yaml["Wheels"].size();
+      index = ui->spc_cur_wheel_list->currentRow();
 
       YAML::Node top_node;
       YAML::Node cur_node;
@@ -2243,8 +2242,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
    } else if (ui->sections->currentIndex() == 2 &&
               ui->actuator_sections->currentIndex() == 2) {
       /* Thrusters */
-      index    = ui->spc_cur_thruster_list->currentRow();
-      tmp_size = cur_spc_yaml["Thrusters"].size();
+      index = ui->spc_cur_thruster_list->currentRow();
 
       YAML::Node top_node;
       YAML::Node cur_node;
@@ -2289,8 +2287,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
    } else if (ui->sections->currentIndex() == 3 &&
               ui->sensor_sections->currentIndex() == 0) {
       /* Gyros */
-      index    = ui->spc_cur_gyro_list->currentRow();
-      tmp_size = cur_spc_yaml["Gyros"].size();
+      index = ui->spc_cur_gyro_list->currentRow();
 
       YAML::Node top_node;
       YAML::Node cur_node;
@@ -2343,8 +2340,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
    } else if (ui->sections->currentIndex() == 3 &&
               ui->sensor_sections->currentIndex() == 1) {
       /* Magnetometers */
-      index    = ui->spc_cur_mag_list->currentRow();
-      tmp_size = cur_spc_yaml["Magnetometers"].size();
+      index = ui->spc_cur_mag_list->currentRow();
 
       YAML::Node top_node;
       YAML::Node cur_node;
@@ -2949,7 +2945,6 @@ void SPC_submenu::on_spc_cur_mtb_list_itemClicked(QListWidgetItem *item) {
 void SPC_submenu::on_spc_cur_thruster_remove_clicked() {
    if (thrusters > 0) {
       thrusters -= 1;
-      cur_spc_yaml["Thrusters"].remove(ui->spc_cur_thruster_list->currentRow());
       delete ui->spc_cur_thruster_list->currentItem();
    }
    apply_data();
@@ -2997,7 +2992,6 @@ void SPC_submenu::on_spc_cur_thruster_list_itemClicked(QListWidgetItem *item) {
 // Gyro buttons
 
 void SPC_submenu::on_spc_cur_gyro_remove_clicked() {
-   delete ui->spc_cur_gyro_list->currentItem();
    if (gyros > 0) {
       gyros -= 1;
       delete ui->spc_cur_gyro_list->currentItem();
