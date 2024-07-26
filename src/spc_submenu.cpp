@@ -32,7 +32,7 @@ void SPC_submenu::receive_spc_sm_path(QString name, QString path) {
    receive_data();
    on_sections_tabBarClicked(ui->sections->currentIndex());
 
-   QFile target(inout_path + "__default__/SC_comments.yaml");
+   QFile target(inout_path + "__default__/yaml_comments/SC_comments.yaml");
    QString comment_path =
        inout_path + "__default__/yaml_comments/SC_comments.yaml";
 

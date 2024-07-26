@@ -118,12 +118,16 @@ void SPC_Menu::receive_spcpath(QString path) {
    else
       ui->spc_conf->setEnabled(true);
 
-   QFile target(inout_path + "__default__/SC_comments.yaml");
+   QFile target(inout_path + "__default__/yaml_comments/SC_comments.yaml");
+   QDir target_dir(inout_path + "__default__/yaml_comments");
+   QDir target_dir_up(inout_path + "__default__");
    QString comment_path =
        inout_path + "__default__/yaml_comments/SC_comments.yaml";
 
    if (target.exists())
       target.remove();
+   if (!target_dir.exists())
+      target_dir_up.mkdir("yaml_comments");
 
    QFile::copy(":/data/__default__/yaml_comments/SC_comments.yaml",
                comment_path);
@@ -437,7 +441,7 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
       for (int i = 0; i <= 50; i++) {
          QString newNameTest = new_name;
          if (i > 0)
-            newNameTest += " " + QString::number(i);
+            newNameTest += "_" + QString::number(i);
          if (!all_names.contains(newNameTest, Qt::CaseInsensitive)) {
             new_name = newNameTest;
             break;
@@ -529,7 +533,7 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
    for (int i = 0; i <= 30; i++) {
       QString newSCTest = new_spc;
       if (i > 0)
-         newSCTest += " " + QString::number(i);
+         newSCTest += "_" + QString::number(i);
       if (!spc_names.contains(newSCTest, Qt::CaseInsensitive)) {
          new_spc = newSCTest;
          break;
@@ -810,34 +814,6 @@ void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
       new_item = 1;
    }
 
-   QStringList tmp_data = {"Simple generic S/C",
-                           "S/C",
-                           "GenScSpriteAlpha.ppm",
-                           "PROTOTYPE_FSW",
-                           "0.2",
-                           "FIXED",
-                           "CM",
-                           "0.0",
-                           "0.0",
-                           "0.0",
-                           "0.0",
-                           "0.0",
-                           "0.0",
-                           "N",
-                           "A",
-                           "N",
-                           "0.0",
-                           "0.0",
-                           "0.0",
-                           "0.0",
-                           "0.0",
-                           "0.0",
-                           "1.0",
-                           "60.0",
-                           "40.0",
-                           "20.0",
-                           "213"};
-
    QStringList all_names;
    for (int i = 0; i < ui->spc_list->count(); i++) {
       all_names.append(ui->spc_list->item(i)->text());
@@ -846,7 +822,7 @@ void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
    QString new_name;
 
    if (counter >= 0)
-      new_name = load_sc_name + QString::number(counter);
+      new_name = load_sc_name + "_" + QString::number(counter);
    else
       new_name = load_sc_name;
 
@@ -854,7 +830,7 @@ void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
       for (int i = 0; i <= 50; i++) {
          QString newNameTest = new_name;
          if (i > 0)
-            newNameTest += " " + QString::number(i);
+            newNameTest += "_" + QString::number(i);
          if (!all_names.contains(newNameTest, Qt::CaseInsensitive)) {
             new_name = newNameTest;
             break;
@@ -868,6 +844,45 @@ void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
    QList<QListWidgetItem *> cur_items =
        ui->spc_list->findItems(new_name, Qt::MatchExactly);
 
+   spc_names.append(new_name);
+   file_path = inout_path + "SC_" + new_name + ".yaml";
+   file_paths.append(file_path);
+
+   QFile::copy(":/data/__default__/SC_" + load_sc_name + ".yaml",
+               inout_path + "SC_" + new_name + ".yaml");
+
+   QString specific_path   = inout_path + "SC_" + new_name + ".yaml";
+   YAML::Node cur_spc_yaml = YAML::LoadFile(specific_path.toStdString());
+
+   QStringList tmp_data = {
+       cur_spc_yaml["Configuration"]["Description"].as<QString>(),
+       cur_spc_yaml["Configuration"]["Label"].as<QString>(),
+       cur_spc_yaml["Configuration"]["Sprite File"].as<QString>(),
+       cur_spc_yaml["Configuration"]["FSW Identifier"].as<QString>(),
+       cur_spc_yaml["Configuration"]["FSW Sample Time"].as<QString>(),
+       cur_spc_yaml["Orbit"]["Prop Type"].as<QString>(),
+       cur_spc_yaml["Orbit"]["Pos Specifier"].as<QString>(),
+       cur_spc_yaml["Orbit"]["Pos wrt F"][0].as<QString>(),
+       cur_spc_yaml["Orbit"]["Pos wrt F"][1].as<QString>(),
+       cur_spc_yaml["Orbit"]["Pos wrt F"][2].as<QString>(),
+       cur_spc_yaml["Orbit"]["Vel wrt F"][0].as<QString>(),
+       cur_spc_yaml["Orbit"]["Vel wrt F"][1].as<QString>(),
+       cur_spc_yaml["Orbit"]["Vel wrt F"][2].as<QString>(),
+       cur_spc_yaml["Attitude"]["Ang Vel Frame"].as<QString>(),
+       cur_spc_yaml["Attitude"]["Att Representation"].as<QString>(),
+       cur_spc_yaml["Attitude"]["Att Frame"].as<QString>(),
+       cur_spc_yaml["Attitude"]["Ang Vel"][0].as<QString>(),
+       cur_spc_yaml["Attitude"]["Ang Vel"][1].as<QString>(),
+       cur_spc_yaml["Attitude"]["Ang Vel"][2].as<QString>(),
+       cur_spc_yaml["Attitude"]["Quaternion"][0].as<QString>(),
+       cur_spc_yaml["Attitude"]["Quaternion"][1].as<QString>(),
+       cur_spc_yaml["Attitude"]["Quaternion"][2].as<QString>(),
+       cur_spc_yaml["Attitude"]["Quaternion"][3].as<QString>(),
+       cur_spc_yaml["Attitude"]["Euler Angles"]["Angles"][0].as<QString>(),
+       cur_spc_yaml["Attitude"]["Euler Angles"]["Angles"][1].as<QString>(),
+       cur_spc_yaml["Attitude"]["Euler Angles"]["Angles"][2].as<QString>(),
+       cur_spc_yaml["Attitude"]["Euler Angles"]["Sequence"].as<QString>()};
+
    QListWidgetItem *cur_item = cur_items[0]; // there can only be one match
 
    ui->spc_list->setCurrentItem(cur_item);
@@ -876,13 +891,6 @@ void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
 
    ui->spc_list->currentItem()->setData(257, tmp_data);
    on_spc_list_itemClicked(ui->spc_list->currentItem());
-
-   spc_names.append(new_name);
-   file_path = inout_path + "SC_" + new_name + ".yaml";
-   file_paths.append(file_path);
-
-   QFile::copy(":/data/__default__/SC_" + load_sc_name + ".yaml",
-               inout_path + "SC_" + new_name + ".yaml");
 
    ui->spc_list->sortItems();
    ui->spc_conf->setEnabled(true);
