@@ -12,8 +12,6 @@ SPC_submenu::SPC_submenu(QWidget *parent)
    ui->sections->setCurrentIndex(0);
    ui->actuator_sections->setCurrentIndex(0);
    ui->sensor_sections->setCurrentIndex(0);
-
-   come_from_bodyjoint = 0;
 }
 
 SPC_submenu::~SPC_submenu() {
@@ -391,6 +389,19 @@ void SPC_submenu::receive_data() {
       tmp_data = dsm_gui_lib::apply_data_section_end(
           index, ui->spc_cur_joint_list, tmp_data, item_name);
       index++;
+   }
+
+   if (joints != bodies - 1) {
+      ui->sections->widget(0)->setEnabled(false);
+      ui->sections->widget(2)->setEnabled(false);
+      ui->sections->widget(3)->setEnabled(false);
+
+      dsm_gui_lib::error_message(
+          "The number of joints must equal number of bodies minus one.");
+   } else {
+      ui->sections->widget(0)->setEnabled(true);
+      ui->sections->widget(2)->setEnabled(true);
+      ui->sections->widget(3)->setEnabled(true);
    }
 
    /* Wheels */
@@ -1729,7 +1740,19 @@ void SPC_submenu::apply_data() {
              ui->spc_cur_accel_list->item(index2));
    }
 
-   write_data(cur_spc_yaml);
+   if (joints != bodies - 1) {
+      ui->sections->widget(0)->setEnabled(false);
+      ui->sections->widget(2)->setEnabled(false);
+      ui->sections->widget(3)->setEnabled(false);
+
+      dsm_gui_lib::error_message(
+          "The number of joints must equal number of bodies minus one.");
+   } else {
+      ui->sections->widget(0)->setEnabled(true);
+      ui->sections->widget(2)->setEnabled(true);
+      ui->sections->widget(3)->setEnabled(true);
+      write_data(cur_spc_yaml);
+   }
 }
 
 void SPC_submenu::write_data(YAML::Node inp_spc) {
@@ -3341,17 +3364,7 @@ void SPC_submenu::on_spc_cur_accel_list_itemClicked(QListWidgetItem *item) {
 
 // Misc
 void SPC_submenu::on_sections_tabBarClicked(int index) {
-   if (come_from_bodyjoint == 1) {
-      // if (joints != bodies - 1) {
-      //    joints_valid = 0;
-      //    dsm_gui_lib::error_message(
-      //        "The number of joints must equal number of bodies minus one.");
-      //    on_sections_tabBarClicked(1);
-      // }
-   }
-
    if (index == 1) {
-      come_from_bodyjoint = 1;
       on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->item(0));
       ui->spc_cur_body_list->setCurrentRow(0);
       if (ui->spc_cur_joint_list->count() > 0) {
@@ -3360,11 +3373,9 @@ void SPC_submenu::on_sections_tabBarClicked(int index) {
       }
    }
    if (index == 2) {
-      come_from_bodyjoint = 0;
       on_actuator_sections_tabBarClicked(ui->actuator_sections->currentIndex());
    }
    if (index == 3) {
-      come_from_bodyjoint = 0;
       on_sensor_sections_tabBarClicked(ui->sensor_sections->currentIndex());
    }
 }
@@ -3567,16 +3578,6 @@ void SPC_submenu::proc_add(QListWidget *cur_list, QStringList tmp_data) {
 
 void SPC_submenu::destroy_submenu(QString command, QString junk) {
    if (QString::compare(command, "Done") == 0) {
-      // if (come_from_bodyjoint == 1) {
-      //    if (joints != bodies - 1) {
-      //       joints_valid = 0;
-      //       dsm_gui_lib::error_message(
-      //           "The number of joints must equal number of bodies minus
-      //           one.");
-      //       on_sections_tabBarClicked(1);
-      //    }
-      // } else
-      //    come_from_bodyjoint = 0;
       QDialog::close();
    }
 }
