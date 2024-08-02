@@ -118,19 +118,7 @@ void SPC_Menu::receive_spcpath(QString path) {
    else
       ui->spc_conf->setEnabled(true);
 
-   QFile target(inout_path + "__default__/yaml_comments/SC_comments.yaml");
-   QDir target_dir(inout_path + "__default__/yaml_comments");
-   QDir target_dir_up(inout_path + "__default__");
-   QString comment_path =
-       inout_path + "__default__/yaml_comments/SC_comments.yaml";
-
-   if (target.exists())
-      target.remove();
-   if (!target_dir.exists())
-      target_dir_up.mkdir("yaml_comments");
-
-   QFile::copy(":/data/__default__/yaml_comments/SC_comments.yaml",
-               comment_path);
+   QString comment_path = inout_path + "yaml_comments/SC_comments.yaml";
 
    spc_comments = YAML::LoadFile(comment_path.toStdString());
 }

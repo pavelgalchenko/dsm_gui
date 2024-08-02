@@ -41,12 +41,16 @@ void MainWindow::on_new_mission_clicked() {
          dir.removeRecursively();
          dir.mkpath(".");
          dir.mkpath("./__default__/");
+         dir.mkpath("./yaml_comments/");
+         dir.mkpath("./templateSC/");
       } else {
          return;
       }
    } else {
       dir.mkpath(".");
       dir.mkpath("./__default__/");
+      dir.mkpath("./yaml_comments/");
+      dir.mkpath("./templateSC/");
    }
 
    ui->mission_path->setText(path);
@@ -54,9 +58,30 @@ void MainWindow::on_new_mission_clicked() {
    QStringList newDefaultFiles = QDir(":/data/__default__/").entryList();
 
    for (const QString &neededFile : newDefaultFiles) {
-      QFile::copy(":/data/__default__/" + neededFile, path + neededFile);
-      QFile::copy(":/data/__default__/" + neededFile,
-                  path + "__default__/" + neededFile);
+      if (QString::compare(neededFile, "__SCDEFAULT__.yaml")) {
+         QFile::copy(":/data/__default__/" + neededFile, path + neededFile);
+         QFile::copy(":/data/__default__/" + neededFile,
+                     path + "__default__/" + neededFile);
+      } else {
+         QFile::copy(":/data/__default__/" + neededFile,
+                     path + "SC_DEFAULT.yaml");
+         QFile::copy(":/data/__default__/" + neededFile,
+                     path + "__default__/" + "SC_DEFAULT.yaml");
+      }
+   }
+
+   QStringList newCommentFiles = QDir(":/data/yaml_comments/").entryList();
+
+   for (const QString &neededFile2 : newCommentFiles) {
+      QFile::copy(":/data/yaml_comments/" + neededFile2,
+                  path + "yaml_comments/" + neededFile2);
+   }
+
+   QStringList newTemplateFiles = QDir(":/data/templateSC/").entryList();
+
+   for (const QString &neededFile2 : newTemplateFiles) {
+      QFile::copy(":/data/templateSC/" + neededFile2,
+                  path + "templateSC/" + neededFile2);
    }
 
    ui->GRH_Menu->setEnabled(true);
