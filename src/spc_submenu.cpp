@@ -2842,7 +2842,6 @@ void SPC_submenu::on_spc_cur_joint_list_itemClicked(QListWidgetItem *item) {
 // Wheels -/+/Duplicate/Item Clicked
 
 void SPC_submenu::on_spc_cur_wheel_remove_clicked() {
-   long cur_ind = 0;
    if (wheels > 0) {
       wheels -= 1;
       delete ui->spc_cur_wheel_list->currentItem();

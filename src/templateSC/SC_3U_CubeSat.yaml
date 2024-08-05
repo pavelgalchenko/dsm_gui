@@ -134,7 +134,7 @@ Wheels:
       Index: 0
       Initial Momentum: 0.0
       Axis: [1.0, 0.0, 0.0]
-      Max Torque: 0.001
+      Max Torque: 0.002
       Max Momentum: 0.0057
       Rotor Inertia: 1.76e-05
       Body: *Body_0
@@ -223,15 +223,7 @@ Magnetometers:
   #       Quantization:   [[]]    [[Tesla]]
   #       Noise:          [[]]    [[Tesla RMS]]
   #       Node:           [[Node Index]]
-  - Magnetometer:
-      Index: 0
-      Sample Time: 0.2
-      Axis: [1.0, 0.0, 0.0]
-      Saturation: 6e-05
-      Scale Factor: 0.0
-      Quantization: 1e-06
-      Noise: 1e-06
-      Node: 0
+    []
 CSSs:
   # --------------------------------------CSS--------------------------------------
   # ((Sequence, one element for each coarse sun sensor))
@@ -259,17 +251,7 @@ FSSs:
   #       Noise Equivalent Angle: [[]]    [[deg RMS]]
   #       Quantization:           [[]]    [[deg]]
   #       Node:                   [[Node Index]]
-  - FSS:
-      Index: 0
-      Sample Time: 1.0
-      Mounting Angles:
-        Angles: [70.0, 0.0, 0.0]
-        Sequence: 321
-      Boresight Axis: Z_AXIS
-      FOV Size: [166.0, 166.0]
-      Noise Equivalent Angle: 0.1
-      Quantization: 0.5
-      Node: 0
+    []
 STs:
   # --------------------------------------ST---------------------------------------
   # ((Sequence, one element for each startracker))
@@ -287,20 +269,7 @@ STs:
   #         Luna:                     [[]]    [[deg]]
   #       Noise Equivalent Angle: [[Boresight Noise, H Noise, V Noise]]   [[deg]]
   #       Node:                   [[Node Index]]
-  - ST:
-      Index: 0
-      Sample Time: 2.0
-      Mounting Angles:
-        Angles: [-90.0, 90.0, 0.0]
-        Sequence: 321
-      Boresight Axis: Z_AXIS
-      FOV Size: [42.0, 42.0]
-      Exclusion Angles:
-        Sun: 42.0
-        Earth: 42.0
-        Luna: 42.0
-      Noise Equivalent Angle: [24.0, 24.0, 72.0]
-      Node: 0
+    []
 GPSs:
   # --------------------------------------GPS--------------------------------------
   # ((Sequence, one element for each GPS))

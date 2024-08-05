@@ -394,7 +394,7 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
    QStringList tmp_data = {"Simple generic S/C",
                            "S/C",
                            "GenScSpriteAlpha.ppm",
-                           "PROTOTYPE_FSW",
+                           "DSM_FSW",
                            "0.2",
                            "FIXED",
                            "CM",
@@ -463,7 +463,6 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
    } else
       QFile::copy(":/data/__default__/__SCDEFAULT__.yaml",
                   inout_path + "SC_" + new_name + ".yaml");
-   ui->spc_list->sortItems();
    ui->spc_conf->setEnabled(true);
 
    new_item = 0;
@@ -493,7 +492,6 @@ void SPC_Menu::on_spc_remove_clicked() // Remove S/C
    QListWidgetItem *prev_item;
    if (ui->spc_list->count() > 0) {
       prev_item = ui->spc_list->currentItem();
-      ui->spc_list->sortItems();
       on_spc_list_itemClicked(prev_item);
    } else {
       ui->spc_list->setCurrentRow(-1);
@@ -552,7 +550,6 @@ void SPC_Menu::on_spc_duplicate_clicked() // Duplicate currently selected S/C
       on_spc_list_itemClicked(ui->spc_list->item(ui->spc_list->count() - 2));
       ui->spc_list->setCurrentRow(ui->spc_list->count() - 2);
    }
-   ui->spc_list->sortItems();
 
    new_item = 0;
    if (spc_submenu != nullptr)
@@ -880,7 +877,6 @@ void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
    ui->spc_list->currentItem()->setData(257, tmp_data);
    on_spc_list_itemClicked(ui->spc_list->currentItem());
 
-   ui->spc_list->sortItems();
    ui->spc_conf->setEnabled(true);
 
    new_item = 0;
