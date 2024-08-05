@@ -270,6 +270,7 @@ void SPC_submenu::receive_data() {
         ++it) {
       YAML::Node node_seq = *it;
       YAML::Node cur_node = node_seq["Body"];
+      cur_node.SetStyle(YAML::EmitterStyle::Block);
 
       QString item_name;
 
@@ -717,7 +718,7 @@ void SPC_submenu::receive_data() {
    }
 
    /* GPSs */
-   ui->spc_cur_strack_list->clear();
+   ui->spc_cur_gps_list->clear();
 
    YAML::Node gps_node = cur_spc_yaml["GPSs"];
    index               = 0;
@@ -956,6 +957,7 @@ void SPC_submenu::apply_data() {
       if (joints > 0) {
          index2   = ui->spc_cur_joint_list->currentRow();
          tmp_size = cur_spc_yaml["Joints"].size();
+         cur_spc_yaml["Joints"].SetStyle(YAML::EmitterStyle::Block);
 
          for (index = 0; index < joints; index++) {
 
@@ -1159,6 +1161,7 @@ void SPC_submenu::apply_data() {
 
       index2   = ui->spc_cur_wheel_list->currentRow();
       tmp_size = cur_spc_yaml["Wheels"].size();
+      cur_spc_yaml["Wheels"].SetStyle(YAML::EmitterStyle::Block);
 
       for (index = 0; index < wheels; index++) {
          YAML::Node top_node;
@@ -1221,6 +1224,7 @@ void SPC_submenu::apply_data() {
 
       index2   = ui->spc_cur_mtb_list->currentRow();
       tmp_size = cur_spc_yaml["MTBs"].size();
+      cur_spc_yaml["MTBs"].SetStyle(YAML::EmitterStyle::Block);
 
       for (index = 0; index < mtbs; index++) {
          YAML::Node top_node;
@@ -1264,6 +1268,7 @@ void SPC_submenu::apply_data() {
       /* Thrusters */
       index2   = ui->spc_cur_thruster_list->currentRow();
       tmp_size = cur_spc_yaml["Thrusters"].size();
+      cur_spc_yaml["Thrusters"].SetStyle(YAML::EmitterStyle::Block);
 
       for (index = 0; index < thrusters; index++) {
          YAML::Node top_node;
@@ -1316,6 +1321,7 @@ void SPC_submenu::apply_data() {
       /* Gyros */
       index2   = ui->spc_cur_gyro_list->currentRow();
       tmp_size = cur_spc_yaml["Gyros"].size();
+      cur_spc_yaml["Gyros"].SetStyle(YAML::EmitterStyle::Block);
 
       for (index = 0; index < gyros; index++) {
          YAML::Node top_node;
@@ -1379,6 +1385,7 @@ void SPC_submenu::apply_data() {
       /* Magnetometers */
       index2   = ui->spc_cur_mag_list->currentRow();
       tmp_size = cur_spc_yaml["Magnetometers"].size();
+      cur_spc_yaml["Magnetometers"].SetStyle(YAML::EmitterStyle::Block);
 
       for (index = 0; index < mags; index++) {
          YAML::Node top_node;
@@ -1431,6 +1438,8 @@ void SPC_submenu::apply_data() {
       /* CSSs */
       index2   = ui->spc_cur_css_list->currentRow();
       tmp_size = cur_spc_yaml["CSSs"].size();
+      cur_spc_yaml["CSSs"].SetStyle(YAML::EmitterStyle::Block);
+
       for (index = 0; index < css_s; index++) {
          YAML::Node top_node;
          YAML::Node cur_node;
@@ -1485,6 +1494,7 @@ void SPC_submenu::apply_data() {
       /* FSSs */
       index2   = ui->spc_cur_fss_list->currentRow();
       tmp_size = cur_spc_yaml["FSSs"].size();
+      cur_spc_yaml["FSSs"].SetStyle(YAML::EmitterStyle::Block);
 
       for (index = 0; index < fss_s; index++) {
          YAML::Node top_node;
@@ -1544,9 +1554,9 @@ void SPC_submenu::apply_data() {
       /* STs */
       index2   = ui->spc_cur_strack_list->currentRow();
       tmp_size = cur_spc_yaml["STs"].size();
+      cur_spc_yaml["STs"].SetStyle(YAML::EmitterStyle::Block);
 
       for (index = 0; index < stracks; index++) {
-
          YAML::Node top_node;
          YAML::Node cur_node;
 
@@ -1625,6 +1635,7 @@ void SPC_submenu::apply_data() {
       /* GPSs */
       index2   = ui->spc_cur_gps_list->currentRow();
       tmp_size = cur_spc_yaml["GPSs"].size();
+      cur_spc_yaml["GPSs"].SetStyle(YAML::EmitterStyle::Block);
 
       for (index = 0; index < gps_s; index++) {
          YAML::Node top_node;
@@ -1667,6 +1678,7 @@ void SPC_submenu::apply_data() {
       /* Accelerometers */
       index2   = ui->spc_cur_accel_list->currentRow();
       tmp_size = cur_spc_yaml["Accelerometers"].size();
+      cur_spc_yaml["Accelerometers"].SetStyle(YAML::EmitterStyle::Block);
 
       for (index = 0; index < accels; index++) {
          YAML::Node top_node;
@@ -1724,6 +1736,7 @@ void SPC_submenu::apply_data() {
          on_spc_cur_accel_list_itemClicked(
              ui->spc_cur_accel_list->item(index2));
    }
+   write_data(cur_spc_yaml);
 }
 
 void SPC_submenu::write_data(YAML::Node inp_spc) {

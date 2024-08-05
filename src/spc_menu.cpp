@@ -833,7 +833,7 @@ void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
    file_path = inout_path + "SC_" + new_name + ".yaml";
    file_paths.append(file_path);
 
-   QFile::copy(inout_path + "templateSC/SC_" + load_sc_name + ".yaml",
+   QFile::copy(":/data/templateSC/" + load_sc_name + ".yaml",
                inout_path + "SC_" + new_name + ".yaml");
 
    QString specific_path   = inout_path + "SC_" + new_name + ".yaml";
