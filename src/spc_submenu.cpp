@@ -389,19 +389,6 @@ void SPC_submenu::receive_data() {
       index++;
    }
 
-   if (joints != bodies - 1) {
-      ui->sections->widget(0)->setEnabled(false);
-      ui->sections->widget(2)->setEnabled(false);
-      ui->sections->widget(3)->setEnabled(false);
-
-      dsm_gui_lib::error_message(
-          "The number of joints must equal number of bodies minus one.");
-   } else {
-      ui->sections->widget(0)->setEnabled(true);
-      ui->sections->widget(2)->setEnabled(true);
-      ui->sections->widget(3)->setEnabled(true);
-   }
-
    /* Wheels */
    ui->spc_cur_wheel_list->clear();
 
@@ -1737,20 +1724,6 @@ void SPC_submenu::apply_data() {
          on_spc_cur_accel_list_itemClicked(
              ui->spc_cur_accel_list->item(index2));
    }
-
-   if (joints != bodies - 1) {
-      ui->sections->widget(0)->setEnabled(false);
-      ui->sections->widget(2)->setEnabled(false);
-      ui->sections->widget(3)->setEnabled(false);
-
-      dsm_gui_lib::error_message(
-          "The number of joints must equal number of bodies minus one.");
-   } else {
-      ui->sections->widget(0)->setEnabled(true);
-      ui->sections->widget(2)->setEnabled(true);
-      ui->sections->widget(3)->setEnabled(true);
-      write_data(cur_spc_yaml);
-   }
 }
 
 void SPC_submenu::write_data(YAML::Node inp_spc) {
@@ -1822,7 +1795,7 @@ void SPC_submenu::on_spc_cur_save_clicked() {
 }
 
 void SPC_submenu::on_spc_cur_close_clicked() {
-   if (joints_valid == 1) {
+   if (joints == bodies - 1) {
       SPC_submenu::close();
    } else {
       int response = dsm_gui_lib::warning_message(
@@ -2766,7 +2739,6 @@ void SPC_submenu::on_spc_cur_joint_remove_clicked() {
    if (joints > 0) {
       joints -= 1;
 
-      cur_spc_yaml["Joints"].remove(ui->spc_cur_wheel_list->currentRow());
       delete ui->spc_cur_wheel_list->currentItem();
    }
    apply_data();
@@ -3362,6 +3334,20 @@ void SPC_submenu::on_spc_cur_accel_list_itemClicked(QListWidgetItem *item) {
 
 // Misc
 void SPC_submenu::on_sections_tabBarClicked(int index) {
+   if ((joints != bodies - 1) && (index != 1)) {
+      ui->sections->widget(0)->setEnabled(false);
+      ui->sections->widget(2)->setEnabled(false);
+      ui->sections->widget(3)->setEnabled(false);
+
+      dsm_gui_lib::error_message(
+          "The number of joints must equal number of bodies minus one.");
+
+   } else {
+      ui->sections->widget(0)->setEnabled(true);
+      ui->sections->widget(2)->setEnabled(true);
+      ui->sections->widget(3)->setEnabled(true);
+   }
+
    if (index == 1) {
       on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->item(0));
       ui->spc_cur_body_list->setCurrentRow(0);

@@ -183,48 +183,8 @@ class SPC_submenu : public QDialog {
    int gps_s;
    int accels;
 
-   long reset_ind_body = 29;
-
-   long reset_ind_joint;
-   long reset_ind_wheel;
-   long reset_ind_mtb;
-   long reset_ind_thr;
-   long reset_ind_gyro;
-   long reset_ind_mag;
-   long reset_ind_css;
-   long reset_ind_fss;
-   long reset_ind_strack;
-   long reset_ind_gps;
-   long reset_ind_acc;
-   long reset_ind_end;
-
-   long body_headers   = 4;
-   long joint_headers  = 4;
-   long wheel_headers  = 4;
-   long mtb_headers    = 2;
-   long thr_headers    = 2;
-   long gyro_headers   = 2;
-   long mag_headers    = 2;
-   long css_headers    = 2;
-   long fss_headers    = 2;
-   long strack_headers = 2;
-   long gps_headers    = 2;
-   long accel_headers  = 2;
-
-   long body_entries   = 10;
-   long joint_entries  = 16;
-   long wheel_entries  = 8;
-   long mtb_entries    = 4;
-   long thr_entries    = 6;
-   long gyro_entries   = 11;
-   long mag_entries    = 8;
-   long css_entries    = 8;
-   long fss_entries    = 8;
-   long strack_entries = 8;
-   long gps_entries    = 6;
-   long acc_entries    = 11;
-
-   int joints_valid = 1;
+   int joints_valid    = 1;
+   int recursion_guard = 0;
 
    YAML::Node spc_comments;
 
