@@ -150,6 +150,25 @@ void MainWindow::on_load_mission_clicked() {
       }
    }
 
+   if (dir.exists()) {
+      dir.mkpath("./yaml_comments/");
+      dir.mkpath("./templateSC/");
+   }
+
+   QStringList newCommentFiles = QDir(":/data/yaml_comments/").entryList();
+
+   for (const QString &neededFile2 : newCommentFiles) {
+      QFile::copy(":/data/yaml_comments/" + neededFile2,
+                  path + "yaml_comments/" + neededFile2);
+   }
+
+   QStringList newTemplateFiles = QDir(":/data/templateSC/").entryList();
+
+   for (const QString &neededFile2 : newTemplateFiles) {
+      QFile::copy(":/data/templateSC/" + neededFile2,
+                  path + "templateSC/" + neededFile2);
+   }
+
    QStringList curFiles     = QDir(path).entryList();
    QStringList defaultFiles = QDir(defaultPath).entryList();
 
