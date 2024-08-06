@@ -81,7 +81,7 @@ Bodies:
       Pos of CM: [0.0, 0.0, 0.0]
       Constant Momentum: [0.0, 0.0, 0.0]
       Constant Dipole: [0.0, 0.0, 0.0]
-      Geometry File Name: IonCruiser.obj
+      Geometry File Name: Cubesat_12U.obj
       Node File Name: NONE
       Flex File Name: NONE
 Joints:
