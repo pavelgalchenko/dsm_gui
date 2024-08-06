@@ -1767,14 +1767,6 @@ void SPC_submenu::write_data(YAML::Node inp_spc) {
       in << "%YAML 1.2\n---\n";
       for (int i = 0; i < in_pc_lines.size(); i++) {
          in << in_pc_lines[i] + "\n";
-         if (i == 0) {
-            in << R"(# <<<<<<<<<<<<<<<<<  42: Spacecraft Description File   >>>>>>>>>>>>>>>>>>>)";
-            in << "\n";
-         }
-
-         for (int j = 0; j < sc_fields.size(); j++)
-            in << dsm_gui_lib::generate_comment(sc_fields[j], in_pc_lines[i],
-                                                spc_comments);
       }
    }
    file.close();
