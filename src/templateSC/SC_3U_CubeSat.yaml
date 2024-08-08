@@ -1,25 +1,13 @@
 %YAML 1.2
 ---
-# <<<<<<<<<<<<<<<<<  42: Spacecraft Description File   >>>>>>>>>>>>>>>>>>>
 Name: 3U_CubeSat
 Configuration:
-  # ----------------------------Spacecraft Configuration---------------------------
-  #   Description:      [[]]
-  #   Label:            [[]]
-  #   Sprite File:      [[]]
-  #   FSW Identifier:   [[PASSIVE_FSW/PROTOTYPE_FSW/AD_HOC_FSW/SPINNER_FSW/MOMBIAS_FSW/THREE_AXIS_FSW/ISS_FSW/CMG_FSW/THR_FSW/CFS_FSW/RBT_FSW/DSM_FSW]]
-  #   FSW Sample Time:  [[]]    [[sec]]
   Description: 6U Template CubSat
   Label: S/C
   Sprite File: GenScSpriteAlpha.ppm
   FSW Identifier: DSM_FSW
   FSW Sample Time: 0.2
 Orbit:
-  # -------------------------------Orbit Parameters--------------------------------
-  #   Prop Type:      [[FIXED/EULER_HILL/ENCKE/COWELL]]
-  #   Pos Specifier   [[CM/ORIGIN]]
-  #   Pos wrt F:      [[pos_X, pos_Y, pos_Z]]         [[m]]
-  #   Vel wrt F:      [[vel_X, vel_Y, vel_Z]]         [[m/s]]
   Prop Type: ENCKE
   Pos Specifier: CM
   Pos wrt F: [0.0, 0.0, 0.0]
