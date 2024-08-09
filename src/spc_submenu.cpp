@@ -733,11 +733,11 @@ void SPC_submenu::receive_data() {
       tmp_data.append(cur_node["Sample Time"].as<QString>());
       tmp_data.append(cur_node["Position Noise"].as<QString>());
       tmp_data.append(cur_node["Velocity Noise"].as<QString>());
-      tmp_data.append(cur_node["Time Noise"]["Sun"].as<QString>());
+      tmp_data.append(cur_node["Time Noise"].as<QString>());
       tmp_data.append(cur_node["Node"].as<QString>());
 
       tmp_data = dsm_gui_lib::apply_data_section_end(
-          index, ui->spc_cur_strack_list, tmp_data, item_name);
+          index, ui->spc_cur_gps_list, tmp_data, item_name);
       index++;
    }
 
@@ -777,7 +777,7 @@ void SPC_submenu::receive_data() {
       tmp_data.append(cur_node["Node"].as<QString>());
 
       tmp_data = dsm_gui_lib::apply_data_section_end(
-          index, ui->spc_cur_strack_list, tmp_data, item_name);
+          index, ui->spc_cur_accel_list, tmp_data, item_name);
       index++;
    }
 }
@@ -1800,7 +1800,7 @@ void SPC_submenu::on_spc_cur_close_clicked() {
       if (response == QMessageBox::Cancel) {
          return;
       } else if (response == QMessageBox::Ok) {
-         SPC_submenu::close();
+         return;
       }
    }
 }
