@@ -1853,306 +1853,312 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_spc_yaml["Dynamics Flags"]["Drag Coefficient"] =
           ui->spc_cur_drag->text();
    } else if (ui->sections->currentIndex() == 1) {
-      /* Bodies */
-      index = ui->spc_cur_body_list->currentRow();
+      if (joints == bodies - 1) {
+         /* Bodies */
+         index = ui->spc_cur_body_list->currentRow();
 
-      YAML::Node cur_body_node = cur_spc_yaml["Bodies"][index]["Body"];
+         YAML::Node cur_body_node = cur_spc_yaml["Bodies"][index]["Body"];
 
-      QVector<int> wheel_body_inds    = {};
-      QVector<int> thruster_body_inds = {};
-      QVector<int> css_body_inds      = {};
+         QVector<int> wheel_body_inds    = {};
+         QVector<int> thruster_body_inds = {};
+         QVector<int> css_body_inds      = {};
 
-      // Find components that referenced the previous definition of this body
-      if (wheels > 0) {
-         for (int i = 0; i < wheels; i++) {
-            YAML::Node cur_tmp_node =
-                cur_spc_yaml["Wheels"][i]["Wheel"]["Body"];
-            if (cur_tmp_node == cur_body_node) {
-               wheel_body_inds.append(i);
+         // Find components that referenced the previous definition of this body
+         if (wheels > 0) {
+            for (int i = 0; i < wheels; i++) {
+               YAML::Node cur_tmp_node =
+                   cur_spc_yaml["Wheels"][i]["Wheel"]["Body"];
+               if (cur_tmp_node == cur_body_node) {
+                  wheel_body_inds.append(i);
+               }
             }
          }
-      }
-      if (thrusters > 0) {
-         for (int i = 0; i < thrusters; i++) {
-            YAML::Node cur_tmp_node =
-                cur_spc_yaml["Thrusters"][i]["Thruster"]["Body"];
-            if (cur_tmp_node == cur_body_node) {
-               thruster_body_inds.append(i);
+         if (thrusters > 0) {
+            for (int i = 0; i < thrusters; i++) {
+               YAML::Node cur_tmp_node =
+                   cur_spc_yaml["Thrusters"][i]["Thruster"]["Body"];
+               if (cur_tmp_node == cur_body_node) {
+                  thruster_body_inds.append(i);
+               }
             }
          }
-      }
-      if (css_s > 0) {
-         for (int i = 0; i < css_s; i++) {
-            YAML::Node cur_tmp_node = cur_spc_yaml["CSSs"][i]["CSS"]["Body"];
-            if (cur_tmp_node == cur_body_node) {
-               css_body_inds.append(i);
+         if (css_s > 0) {
+            for (int i = 0; i < css_s; i++) {
+               YAML::Node cur_tmp_node = cur_spc_yaml["CSSs"][i]["CSS"]["Body"];
+               if (cur_tmp_node == cur_body_node) {
+                  css_body_inds.append(i);
+               }
             }
          }
-      }
 
-      YAML::Node top_node;
-      YAML::Node cur_node;
+         YAML::Node top_node;
+         YAML::Node cur_node;
 
-      ui->spc_cur_body_list->setCurrentRow(index);
+         ui->spc_cur_body_list->setCurrentRow(index);
 
-      cur_node["Name"]  = ui->spc_cur_body_name->text();
-      cur_node["Index"] = index;
-      cur_node["Mass"]  = ui->spc_cur_body_mass->text();
+         cur_node["Name"]  = ui->spc_cur_body_name->text();
+         cur_node["Index"] = index;
+         cur_node["Mass"]  = ui->spc_cur_body_mass->text();
 
-      cur_node["MOI"] = dsm_gui_lib::create_QVec3(
-          ui->spc_cur_body_pmoi_x->text(), ui->spc_cur_body_pmoi_y->text(),
-          ui->spc_cur_body_pmoi_z->text());
+         cur_node["MOI"] = dsm_gui_lib::create_QVec3(
+             ui->spc_cur_body_pmoi_x->text(), ui->spc_cur_body_pmoi_y->text(),
+             ui->spc_cur_body_pmoi_z->text());
 
-      cur_node["POI"] = dsm_gui_lib::create_QVec3(
-          ui->spc_cur_body_poi_x->text(), ui->spc_cur_body_poi_y->text(),
-          ui->spc_cur_body_poi_z->text());
+         cur_node["POI"] = dsm_gui_lib::create_QVec3(
+             ui->spc_cur_body_poi_x->text(), ui->spc_cur_body_poi_y->text(),
+             ui->spc_cur_body_poi_z->text());
 
-      cur_node["Pos of CM"] = dsm_gui_lib::create_QVec3(
-          ui->spc_cur_body_com_x->text(), ui->spc_cur_body_com_y->text(),
-          ui->spc_cur_body_com_z->text());
+         cur_node["Pos of CM"] = dsm_gui_lib::create_QVec3(
+             ui->spc_cur_body_com_x->text(), ui->spc_cur_body_com_y->text(),
+             ui->spc_cur_body_com_z->text());
 
-      cur_node["Constant Momentum"] = dsm_gui_lib::create_QVec3(
-          ui->spc_cur_body_cem_x->text(), ui->spc_cur_body_cem_y->text(),
-          ui->spc_cur_body_cem_z->text());
+         cur_node["Constant Momentum"] = dsm_gui_lib::create_QVec3(
+             ui->spc_cur_body_cem_x->text(), ui->spc_cur_body_cem_y->text(),
+             ui->spc_cur_body_cem_z->text());
 
-      cur_node["Constant Dipole"] = dsm_gui_lib::create_QVec3(
-          ui->spc_cur_body_cemd_x->text(), ui->spc_cur_body_cemd_y->text(),
-          ui->spc_cur_body_cemd_z->text());
+         cur_node["Constant Dipole"] = dsm_gui_lib::create_QVec3(
+             ui->spc_cur_body_cemd_x->text(), ui->spc_cur_body_cemd_y->text(),
+             ui->spc_cur_body_cemd_z->text());
 
-      cur_node["Geometry File Name"] = ui->spc_cur_body_geom->text();
-      cur_node["Node File Name"]     = ui->spc_cur_node_file->text();
-      cur_node["Flex File Name"]     = ui->spc_cur_flex_file->text();
+         cur_node["Geometry File Name"] = ui->spc_cur_body_geom->text();
+         cur_node["Node File Name"]     = ui->spc_cur_node_file->text();
+         cur_node["Flex File Name"]     = ui->spc_cur_flex_file->text();
 
-      top_node["Body"]              = cur_node;
-      cur_spc_yaml["Bodies"][index] = top_node;
+         top_node["Body"]              = cur_node;
+         cur_spc_yaml["Bodies"][index] = top_node;
 
-      tmp_data.append(ui->spc_cur_body_mass->text());
-      tmp_data.append(ui->spc_cur_body_pmoi_x->text());
-      tmp_data.append(ui->spc_cur_body_pmoi_y->text());
-      tmp_data.append(ui->spc_cur_body_pmoi_z->text());
-      tmp_data.append(ui->spc_cur_body_poi_x->text());
-      tmp_data.append(ui->spc_cur_body_poi_y->text());
-      tmp_data.append(ui->spc_cur_body_poi_z->text());
-      tmp_data.append(ui->spc_cur_body_com_x->text());
-      tmp_data.append(ui->spc_cur_body_com_y->text());
-      tmp_data.append(ui->spc_cur_body_com_z->text());
-      tmp_data.append(ui->spc_cur_body_cem_x->text());
-      tmp_data.append(ui->spc_cur_body_cem_y->text());
-      tmp_data.append(ui->spc_cur_body_cem_z->text());
-      tmp_data.append(ui->spc_cur_body_cemd_x->text());
-      tmp_data.append(ui->spc_cur_body_cemd_y->text());
-      tmp_data.append(ui->spc_cur_body_cemd_z->text());
-      tmp_data.append(ui->spc_cur_body_geom->text());
-      tmp_data.append(ui->spc_cur_node_file->text());
-      tmp_data.append(ui->spc_cur_flex_file->text());
+         tmp_data.append(ui->spc_cur_body_mass->text());
+         tmp_data.append(ui->spc_cur_body_pmoi_x->text());
+         tmp_data.append(ui->spc_cur_body_pmoi_y->text());
+         tmp_data.append(ui->spc_cur_body_pmoi_z->text());
+         tmp_data.append(ui->spc_cur_body_poi_x->text());
+         tmp_data.append(ui->spc_cur_body_poi_y->text());
+         tmp_data.append(ui->spc_cur_body_poi_z->text());
+         tmp_data.append(ui->spc_cur_body_com_x->text());
+         tmp_data.append(ui->spc_cur_body_com_y->text());
+         tmp_data.append(ui->spc_cur_body_com_z->text());
+         tmp_data.append(ui->spc_cur_body_cem_x->text());
+         tmp_data.append(ui->spc_cur_body_cem_y->text());
+         tmp_data.append(ui->spc_cur_body_cem_z->text());
+         tmp_data.append(ui->spc_cur_body_cemd_x->text());
+         tmp_data.append(ui->spc_cur_body_cemd_y->text());
+         tmp_data.append(ui->spc_cur_body_cemd_z->text());
+         tmp_data.append(ui->spc_cur_body_geom->text());
+         tmp_data.append(ui->spc_cur_node_file->text());
+         tmp_data.append(ui->spc_cur_flex_file->text());
 
-      ui->spc_cur_body_list->currentItem()->setData(
-          256, ui->spc_cur_body_name->text());
-      ui->spc_cur_body_list->currentItem()->setData(257, tmp_data);
-      tmp_data.clear();
-
-      on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
-
-      // Set old body references to new one
-      for (int i = 0; i < wheel_body_inds.length(); i++) {
-         cur_spc_yaml["Wheels"][wheel_body_inds[i]]["Wheel"]["Body"] =
-             cur_spc_yaml["Bodies"][index]["Body"];
-      }
-      for (int i = 0; i < thruster_body_inds.length(); i++) {
-         cur_spc_yaml["Thrusters"][thruster_body_inds[i]]["Thruster"]["Body"] =
-             cur_spc_yaml["Bodies"][index]["Body"];
-      }
-      for (int i = 0; i < css_body_inds.length(); i++) {
-         cur_spc_yaml["CSSs"][css_body_inds[i]]["CSS"]["Body"] =
-             cur_spc_yaml["Bodies"][index]["Body"];
-      }
-
-      on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->item(index));
-
-      /* Joints */
-      if (joints > 0) {
-         index = ui->spc_cur_joint_list->currentRow();
-
-         YAML::Node top_node2;
-         YAML::Node cur_node2;
-
-         ui->spc_cur_joint_list->setCurrentRow(index);
-
-         cur_node2["Name"]  = ui->spc_cur_joint_name->text();
-         cur_node2["Index"] = index;
-
-         cur_node2["Body Indicies"] = dsm_gui_lib::create_QVec2(
-             ui->spc_cur_joint_in->text(), ui->spc_cur_joint_out->text());
-         ;
-
-         cur_node2["Joint Type"] = ui->spc_cur_joint_type->currentText();
-         cur_node2["Rot DOF"]    = ui->spc_cur_joint_rotdof->text();
-         cur_node2["Rot Sequence"] =
-             ui->spc_cur_joint_rotdof_seq->currentText();
-         cur_node2["Rot Type"] = ui->spc_cur_joint_rottype->currentText();
-
-         cur_node2["Trn DOF"] = ui->spc_cur_joint_trndof->text();
-         cur_node2["Trn Sequence"] =
-             ui->spc_cur_joint_trndof_seq->currentText();
-
-         QString data1, data2, data3;
-
-         if (ui->spc_cur_joint_rlock1->isChecked())
-            data1 = "true";
-         else
-            data1 = "false";
-
-         if (ui->spc_cur_joint_rlock2->isChecked())
-            data2 = "true";
-         else
-            data2 = "false";
-
-         if (ui->spc_cur_joint_rlock3->isChecked())
-            data3 = "true";
-         else
-            data3 = "false";
-
-         cur_node2["Rot DOF Locked"] =
-             dsm_gui_lib::create_QVec3(data1, data2, data3);
-
-         if (ui->spc_cur_joint_tlock1->isChecked())
-            data1 = "true";
-         else
-            data1 = "false";
-
-         if (ui->spc_cur_joint_tlock2->isChecked())
-            data2 = "true";
-         else
-            data2 = "false";
-
-         if (ui->spc_cur_joint_tlock3->isChecked())
-            data3 = "true";
-         else
-            data3 = "false";
-
-         cur_node2["Trn DOF Locked"] =
-             dsm_gui_lib::create_QVec3(data1, data2, data3);
-
-         cur_node2["Init Angles"] = dsm_gui_lib::create_QVec3(
-             ui->spc_cur_joint_ang0_1->text(), ui->spc_cur_joint_ang0_2->text(),
-             ui->spc_cur_joint_ang0_3->text());
-
-         cur_node2["Init Angle Rates"] =
-             dsm_gui_lib::create_QVec3(ui->spc_cur_joint_angrate0_1->text(),
-                                       ui->spc_cur_joint_angrate0_2->text(),
-                                       ui->spc_cur_joint_angrate0_3->text());
-
-         cur_node2["Init Displacement"] =
-             dsm_gui_lib::create_QVec3(ui->spc_cur_joint_disp0_1->text(),
-                                       ui->spc_cur_joint_disp0_2->text(),
-                                       ui->spc_cur_joint_disp0_3->text());
-
-         cur_node2["Init Displacement Rates"] =
-             dsm_gui_lib::create_QVec3(ui->spc_cur_joint_dispr0_1->text(),
-                                       ui->spc_cur_joint_dispr0_2->text(),
-                                       ui->spc_cur_joint_dispr0_3->text());
-
-         cur_node2["Bi-Gi Angles"]["Angles"] = dsm_gui_lib::create_QVec3(
-             ui->spc_cur_joint_bigi_1->text(), ui->spc_cur_joint_bigi_2->text(),
-             ui->spc_cur_joint_bigi_3->text());
-
-         cur_node2["Bi-Gi Angles"]["Sequence"] =
-             ui->spc_cur_joint_bigi_seq->currentText();
-
-         cur_node2["Bo-Go Angles"]["Angles"] = dsm_gui_lib::create_QVec3(
-             ui->spc_cur_joint_bogo_1->text(), ui->spc_cur_joint_bogo_2->text(),
-             ui->spc_cur_joint_bogo_3->text());
-         cur_node2["Bo-Go Angles"]["Sequence"] =
-             ui->spc_cur_joint_bogo_seq->currentText();
-
-         cur_node2["Pos wrt Inner Body"] =
-             dsm_gui_lib::create_QVec3(ui->spc_cur_joint_poswrt_in_1->text(),
-                                       ui->spc_cur_joint_poswrt_in_2->text(),
-                                       ui->spc_cur_joint_poswrt_in_3->text());
-
-         cur_node2["Pos wrt Outer Body"] =
-             dsm_gui_lib::create_QVec3(ui->spc_cur_joint_poswrt_out_1->text(),
-                                       ui->spc_cur_joint_poswrt_out_2->text(),
-                                       ui->spc_cur_joint_poswrt_out_3->text());
-
-         cur_node2["Parm File Name"] = ui->spc_cur_joint_param_file->text();
-
-         top_node2["Joint"]            = cur_node2;
-         cur_spc_yaml["Joints"][index] = top_node2;
-
-         tmp_data.append(ui->spc_cur_joint_type->currentText());
-         tmp_data.append(ui->spc_cur_joint_in->text());
-         tmp_data.append(ui->spc_cur_joint_out->text());
-         tmp_data.append(ui->spc_cur_joint_rotdof->text());
-         tmp_data.append(ui->spc_cur_joint_rotdof_seq->currentText());
-         tmp_data.append(ui->spc_cur_joint_rottype->currentText());
-         tmp_data.append(ui->spc_cur_joint_trndof->text());
-         tmp_data.append(ui->spc_cur_joint_trndof_seq->currentText());
-
-         if (ui->spc_cur_joint_rlock1->isChecked())
-            tmp_data.append("true");
-         else
-            tmp_data.append("false");
-
-         if (ui->spc_cur_joint_rlock2->isChecked())
-            tmp_data.append("true");
-         else
-            tmp_data.append("false");
-
-         if (ui->spc_cur_joint_rlock3->isChecked())
-            tmp_data.append("true");
-         else
-            tmp_data.append("false");
-
-         if (ui->spc_cur_joint_tlock1->isChecked())
-            tmp_data.append("true");
-         else
-            tmp_data.append("false");
-
-         if (ui->spc_cur_joint_tlock2->isChecked())
-            tmp_data.append("true");
-         else
-            tmp_data.append("false");
-
-         if (ui->spc_cur_joint_tlock3->isChecked())
-            tmp_data.append("true");
-         else
-            tmp_data.append("false");
-
-         tmp_data.append(ui->spc_cur_joint_ang0_1->text());
-         tmp_data.append(ui->spc_cur_joint_ang0_2->text());
-         tmp_data.append(ui->spc_cur_joint_ang0_3->text());
-         tmp_data.append(ui->spc_cur_joint_angrate0_1->text());
-         tmp_data.append(ui->spc_cur_joint_angrate0_2->text());
-         tmp_data.append(ui->spc_cur_joint_angrate0_3->text());
-         tmp_data.append(ui->spc_cur_joint_disp0_1->text());
-         tmp_data.append(ui->spc_cur_joint_disp0_2->text());
-         tmp_data.append(ui->spc_cur_joint_disp0_3->text());
-         tmp_data.append(ui->spc_cur_joint_dispr0_1->text());
-         tmp_data.append(ui->spc_cur_joint_dispr0_2->text());
-         tmp_data.append(ui->spc_cur_joint_dispr0_3->text());
-         tmp_data.append(ui->spc_cur_joint_bigi_1->text());
-         tmp_data.append(ui->spc_cur_joint_bigi_2->text());
-         tmp_data.append(ui->spc_cur_joint_bigi_3->text());
-         tmp_data.append(ui->spc_cur_joint_bigi_seq->currentText());
-         tmp_data.append(ui->spc_cur_joint_bogo_1->text());
-         tmp_data.append(ui->spc_cur_joint_bogo_2->text());
-         tmp_data.append(ui->spc_cur_joint_bogo_3->text());
-         tmp_data.append(ui->spc_cur_joint_bogo_seq->currentText());
-         tmp_data.append(ui->spc_cur_joint_poswrt_in_1->text());
-         tmp_data.append(ui->spc_cur_joint_poswrt_in_2->text());
-         tmp_data.append(ui->spc_cur_joint_poswrt_in_3->text());
-         tmp_data.append(ui->spc_cur_joint_poswrt_out_1->text());
-         tmp_data.append(ui->spc_cur_joint_poswrt_out_2->text());
-         tmp_data.append(ui->spc_cur_joint_poswrt_out_3->text());
-         tmp_data.append(ui->spc_cur_joint_param_file->text());
-
-         ui->spc_cur_joint_list->currentItem()->setData(
-             256, ui->spc_cur_joint_name->text());
-         ui->spc_cur_joint_list->currentItem()->setData(257, tmp_data);
+         ui->spc_cur_body_list->currentItem()->setData(
+             256, ui->spc_cur_body_name->text());
+         ui->spc_cur_body_list->currentItem()->setData(257, tmp_data);
          tmp_data.clear();
 
-         on_spc_cur_joint_list_itemClicked(ui->spc_cur_joint_list->item(index));
+         on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->currentItem());
+
+         // Set old body references to new one
+         for (int i = 0; i < wheel_body_inds.length(); i++) {
+            cur_spc_yaml["Wheels"][wheel_body_inds[i]]["Wheel"]["Body"] =
+                cur_spc_yaml["Bodies"][index]["Body"];
+         }
+         for (int i = 0; i < thruster_body_inds.length(); i++) {
+            cur_spc_yaml["Thrusters"][thruster_body_inds[i]]["Thruster"]
+                        ["Body"] = cur_spc_yaml["Bodies"][index]["Body"];
+         }
+         for (int i = 0; i < css_body_inds.length(); i++) {
+            cur_spc_yaml["CSSs"][css_body_inds[i]]["CSS"]["Body"] =
+                cur_spc_yaml["Bodies"][index]["Body"];
+         }
+
+         on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->item(index));
+
+         /* Joints */
+         if (joints > 0) {
+            index = ui->spc_cur_joint_list->currentRow();
+
+            YAML::Node top_node2;
+            YAML::Node cur_node2;
+
+            ui->spc_cur_joint_list->setCurrentRow(index);
+
+            cur_node2["Name"]  = ui->spc_cur_joint_name->text();
+            cur_node2["Index"] = index;
+
+            cur_node2["Body Indicies"] = dsm_gui_lib::create_QVec2(
+                ui->spc_cur_joint_in->text(), ui->spc_cur_joint_out->text());
+            ;
+
+            cur_node2["Joint Type"] = ui->spc_cur_joint_type->currentText();
+            cur_node2["Rot DOF"]    = ui->spc_cur_joint_rotdof->text();
+            cur_node2["Rot Sequence"] =
+                ui->spc_cur_joint_rotdof_seq->currentText();
+            cur_node2["Rot Type"] = ui->spc_cur_joint_rottype->currentText();
+
+            cur_node2["Trn DOF"] = ui->spc_cur_joint_trndof->text();
+            cur_node2["Trn Sequence"] =
+                ui->spc_cur_joint_trndof_seq->currentText();
+
+            QString data1, data2, data3;
+
+            if (ui->spc_cur_joint_rlock1->isChecked())
+               data1 = "true";
+            else
+               data1 = "false";
+
+            if (ui->spc_cur_joint_rlock2->isChecked())
+               data2 = "true";
+            else
+               data2 = "false";
+
+            if (ui->spc_cur_joint_rlock3->isChecked())
+               data3 = "true";
+            else
+               data3 = "false";
+
+            cur_node2["Rot DOF Locked"] =
+                dsm_gui_lib::create_QVec3(data1, data2, data3);
+
+            if (ui->spc_cur_joint_tlock1->isChecked())
+               data1 = "true";
+            else
+               data1 = "false";
+
+            if (ui->spc_cur_joint_tlock2->isChecked())
+               data2 = "true";
+            else
+               data2 = "false";
+
+            if (ui->spc_cur_joint_tlock3->isChecked())
+               data3 = "true";
+            else
+               data3 = "false";
+
+            cur_node2["Trn DOF Locked"] =
+                dsm_gui_lib::create_QVec3(data1, data2, data3);
+
+            cur_node2["Init Angles"] =
+                dsm_gui_lib::create_QVec3(ui->spc_cur_joint_ang0_1->text(),
+                                          ui->spc_cur_joint_ang0_2->text(),
+                                          ui->spc_cur_joint_ang0_3->text());
+
+            cur_node2["Init Angle Rates"] =
+                dsm_gui_lib::create_QVec3(ui->spc_cur_joint_angrate0_1->text(),
+                                          ui->spc_cur_joint_angrate0_2->text(),
+                                          ui->spc_cur_joint_angrate0_3->text());
+
+            cur_node2["Init Displacement"] =
+                dsm_gui_lib::create_QVec3(ui->spc_cur_joint_disp0_1->text(),
+                                          ui->spc_cur_joint_disp0_2->text(),
+                                          ui->spc_cur_joint_disp0_3->text());
+
+            cur_node2["Init Displacement Rates"] =
+                dsm_gui_lib::create_QVec3(ui->spc_cur_joint_dispr0_1->text(),
+                                          ui->spc_cur_joint_dispr0_2->text(),
+                                          ui->spc_cur_joint_dispr0_3->text());
+
+            cur_node2["Bi-Gi Angles"]["Angles"] =
+                dsm_gui_lib::create_QVec3(ui->spc_cur_joint_bigi_1->text(),
+                                          ui->spc_cur_joint_bigi_2->text(),
+                                          ui->spc_cur_joint_bigi_3->text());
+
+            cur_node2["Bi-Gi Angles"]["Sequence"] =
+                ui->spc_cur_joint_bigi_seq->currentText();
+
+            cur_node2["Bo-Go Angles"]["Angles"] =
+                dsm_gui_lib::create_QVec3(ui->spc_cur_joint_bogo_1->text(),
+                                          ui->spc_cur_joint_bogo_2->text(),
+                                          ui->spc_cur_joint_bogo_3->text());
+            cur_node2["Bo-Go Angles"]["Sequence"] =
+                ui->spc_cur_joint_bogo_seq->currentText();
+
+            cur_node2["Pos wrt Inner Body"] = dsm_gui_lib::create_QVec3(
+                ui->spc_cur_joint_poswrt_in_1->text(),
+                ui->spc_cur_joint_poswrt_in_2->text(),
+                ui->spc_cur_joint_poswrt_in_3->text());
+
+            cur_node2["Pos wrt Outer Body"] = dsm_gui_lib::create_QVec3(
+                ui->spc_cur_joint_poswrt_out_1->text(),
+                ui->spc_cur_joint_poswrt_out_2->text(),
+                ui->spc_cur_joint_poswrt_out_3->text());
+
+            cur_node2["Parm File Name"] = ui->spc_cur_joint_param_file->text();
+
+            top_node2["Joint"]            = cur_node2;
+            cur_spc_yaml["Joints"][index] = top_node2;
+
+            tmp_data.append(ui->spc_cur_joint_type->currentText());
+            tmp_data.append(ui->spc_cur_joint_in->text());
+            tmp_data.append(ui->spc_cur_joint_out->text());
+            tmp_data.append(ui->spc_cur_joint_rotdof->text());
+            tmp_data.append(ui->spc_cur_joint_rotdof_seq->currentText());
+            tmp_data.append(ui->spc_cur_joint_rottype->currentText());
+            tmp_data.append(ui->spc_cur_joint_trndof->text());
+            tmp_data.append(ui->spc_cur_joint_trndof_seq->currentText());
+
+            if (ui->spc_cur_joint_rlock1->isChecked())
+               tmp_data.append("true");
+            else
+               tmp_data.append("false");
+
+            if (ui->spc_cur_joint_rlock2->isChecked())
+               tmp_data.append("true");
+            else
+               tmp_data.append("false");
+
+            if (ui->spc_cur_joint_rlock3->isChecked())
+               tmp_data.append("true");
+            else
+               tmp_data.append("false");
+
+            if (ui->spc_cur_joint_tlock1->isChecked())
+               tmp_data.append("true");
+            else
+               tmp_data.append("false");
+
+            if (ui->spc_cur_joint_tlock2->isChecked())
+               tmp_data.append("true");
+            else
+               tmp_data.append("false");
+
+            if (ui->spc_cur_joint_tlock3->isChecked())
+               tmp_data.append("true");
+            else
+               tmp_data.append("false");
+
+            tmp_data.append(ui->spc_cur_joint_ang0_1->text());
+            tmp_data.append(ui->spc_cur_joint_ang0_2->text());
+            tmp_data.append(ui->spc_cur_joint_ang0_3->text());
+            tmp_data.append(ui->spc_cur_joint_angrate0_1->text());
+            tmp_data.append(ui->spc_cur_joint_angrate0_2->text());
+            tmp_data.append(ui->spc_cur_joint_angrate0_3->text());
+            tmp_data.append(ui->spc_cur_joint_disp0_1->text());
+            tmp_data.append(ui->spc_cur_joint_disp0_2->text());
+            tmp_data.append(ui->spc_cur_joint_disp0_3->text());
+            tmp_data.append(ui->spc_cur_joint_dispr0_1->text());
+            tmp_data.append(ui->spc_cur_joint_dispr0_2->text());
+            tmp_data.append(ui->spc_cur_joint_dispr0_3->text());
+            tmp_data.append(ui->spc_cur_joint_bigi_1->text());
+            tmp_data.append(ui->spc_cur_joint_bigi_2->text());
+            tmp_data.append(ui->spc_cur_joint_bigi_3->text());
+            tmp_data.append(ui->spc_cur_joint_bigi_seq->currentText());
+            tmp_data.append(ui->spc_cur_joint_bogo_1->text());
+            tmp_data.append(ui->spc_cur_joint_bogo_2->text());
+            tmp_data.append(ui->spc_cur_joint_bogo_3->text());
+            tmp_data.append(ui->spc_cur_joint_bogo_seq->currentText());
+            tmp_data.append(ui->spc_cur_joint_poswrt_in_1->text());
+            tmp_data.append(ui->spc_cur_joint_poswrt_in_2->text());
+            tmp_data.append(ui->spc_cur_joint_poswrt_in_3->text());
+            tmp_data.append(ui->spc_cur_joint_poswrt_out_1->text());
+            tmp_data.append(ui->spc_cur_joint_poswrt_out_2->text());
+            tmp_data.append(ui->spc_cur_joint_poswrt_out_3->text());
+            tmp_data.append(ui->spc_cur_joint_param_file->text());
+
+            ui->spc_cur_joint_list->currentItem()->setData(
+                256, ui->spc_cur_joint_name->text());
+            ui->spc_cur_joint_list->currentItem()->setData(257, tmp_data);
+            tmp_data.clear();
+
+            on_spc_cur_joint_list_itemClicked(
+                ui->spc_cur_joint_list->item(index));
+         }
       }
    } else if (ui->sections->currentIndex() == 2 &&
               ui->actuator_sections->currentIndex() == 0) {
