@@ -1853,7 +1853,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       cur_spc_yaml["Dynamics Flags"]["Drag Coefficient"] =
           ui->spc_cur_drag->text();
    } else if (ui->sections->currentIndex() == 1) {
-      if (joints == bodies - 1) {
+      if (joints == bodies - 1 && bodies > 0 && joints > 0) {
          /* Bodies */
          index = ui->spc_cur_body_list->currentRow();
 
@@ -2161,7 +2161,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
          }
       }
    } else if (ui->sections->currentIndex() == 2 &&
-              ui->actuator_sections->currentIndex() == 0) {
+              ui->actuator_sections->currentIndex() == 0 && wheels > 0) {
       /* Wheels */
       QMap<QString, QString> global_wheel_params = {{"Drag", wheel_drag},
                                                     {"Jitter", wheel_jitter}};
@@ -2214,11 +2214,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       ui->spc_cur_wheel_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
 
-      if (wheels > 0)
-         on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->item(index));
+      on_spc_cur_wheel_list_itemClicked(ui->spc_cur_wheel_list->item(index));
 
    } else if (ui->sections->currentIndex() == 2 &&
-              ui->actuator_sections->currentIndex() == 1) {
+              ui->actuator_sections->currentIndex() == 1 && mtbs > 0) {
       /* MTBs */
 
       index = ui->spc_cur_mtb_list->currentRow();
@@ -2252,11 +2251,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       ui->spc_cur_mtb_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
 
-      if (mtbs > 0)
-         on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->item(index));
+      on_spc_cur_mtb_list_itemClicked(ui->spc_cur_mtb_list->item(index));
 
    } else if (ui->sections->currentIndex() == 2 &&
-              ui->actuator_sections->currentIndex() == 2) {
+              ui->actuator_sections->currentIndex() == 2 && thrusters > 0) {
       /* Thrusters */
       index = ui->spc_cur_thruster_list->currentRow();
 
@@ -2296,12 +2294,11 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       ui->spc_cur_thruster_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
 
-      if (thrusters > 0)
-         on_spc_cur_thruster_list_itemClicked(
-             ui->spc_cur_thruster_list->item(index));
+      on_spc_cur_thruster_list_itemClicked(
+          ui->spc_cur_thruster_list->item(index));
 
    } else if (ui->sections->currentIndex() == 3 &&
-              ui->sensor_sections->currentIndex() == 0) {
+              ui->sensor_sections->currentIndex() == 0 && gyros > 0) {
       /* Gyros */
       index = ui->spc_cur_gyro_list->currentRow();
 
@@ -2350,11 +2347,11 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           256, ui->spc_cur_gyro_name->text());
       ui->spc_cur_gyro_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
-      if (gyros > 0)
-         on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->item(index));
+
+      on_spc_cur_gyro_list_itemClicked(ui->spc_cur_gyro_list->item(index));
 
    } else if (ui->sections->currentIndex() == 3 &&
-              ui->sensor_sections->currentIndex() == 1) {
+              ui->sensor_sections->currentIndex() == 1 && mags > 0) {
       /* Magnetometers */
       index = ui->spc_cur_mag_list->currentRow();
 
@@ -2397,8 +2394,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       ui->spc_cur_mag_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
 
-      if (mags > 0)
-         on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->item(index));
+      on_spc_cur_mag_list_itemClicked(ui->spc_cur_mag_list->item(index));
    } else if (ui->sections->currentIndex() == 3 &&
               ui->sensor_sections->currentIndex() == 2) {
       /* CSSs */
@@ -2444,11 +2440,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       ui->spc_cur_css_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
 
-      if (css_s > 0)
-         on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->item(index));
+      on_spc_cur_css_list_itemClicked(ui->spc_cur_css_list->item(index));
 
    } else if (ui->sections->currentIndex() == 3 &&
-              ui->sensor_sections->currentIndex() == 3) {
+              ui->sensor_sections->currentIndex() == 3 && fss_s > 0) {
       /* FSSs */
       index = ui->spc_cur_fss_list->currentRow();
 
@@ -2497,11 +2492,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       ui->spc_cur_fss_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
 
-      if (fss_s > 0)
-         on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->item(index));
+      on_spc_cur_fss_list_itemClicked(ui->spc_cur_fss_list->item(index));
 
    } else if (ui->sections->currentIndex() == 3 &&
-              ui->sensor_sections->currentIndex() == 4) {
+              ui->sensor_sections->currentIndex() == 4 && stracks > 0) {
       /* STs */
       index = ui->spc_cur_strack_list->currentRow();
 
@@ -2567,12 +2561,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
           256, ui->spc_cur_strack_name->text());
       ui->spc_cur_strack_list->currentItem()->setData(257, tmp_data);
 
-      if (stracks > 0)
-         on_spc_cur_strack_list_itemClicked(
-             ui->spc_cur_strack_list->item(index));
+      on_spc_cur_strack_list_itemClicked(ui->spc_cur_strack_list->item(index));
 
    } else if (ui->sections->currentIndex() == 3 &&
-              ui->sensor_sections->currentIndex() == 5) {
+              ui->sensor_sections->currentIndex() == 5 && gps_s > 0) {
       /* GPSs */
       index = ui->spc_cur_gps_list->currentRow();
 
@@ -2604,11 +2596,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       ui->spc_cur_gps_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
 
-      if (gps_s > 0)
-         on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->item(index));
+      on_spc_cur_gps_list_itemClicked(ui->spc_cur_gps_list->item(index));
 
    } else if (ui->sections->currentIndex() == 3 &&
-              ui->sensor_sections->currentIndex() == 6) {
+              ui->sensor_sections->currentIndex() == 6 && accels > 0) {
       /* Accelerometers */
       index = ui->spc_cur_accel_list->currentRow();
 
@@ -2658,8 +2649,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       ui->spc_cur_accel_list->currentItem()->setData(257, tmp_data);
       tmp_data.clear();
 
-      if (accels > 0)
-         on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->item(index));
+      on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->item(index));
    }
 
    write_data(cur_spc_yaml);
