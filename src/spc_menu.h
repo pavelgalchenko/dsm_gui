@@ -43,8 +43,6 @@ class SPC_Menu : public QDialog {
    void write_data(YAML::Node inp_spc);
 
    void receive_spcpath(QString path);
-   void receive_apppath(QString path);
-   void receive_pythoncmd(QString cmd);
 
    void on_spc_list_itemActivated(QListWidgetItem *item);
 
@@ -113,8 +111,6 @@ class SPC_Menu : public QDialog {
 
    YAML::Node spc_comments;
    YAML::Node cur_spc_yaml;
-   QString appPath;
-   QString pythonCmd;
 };
 
 #endif // SPC_Menu_H

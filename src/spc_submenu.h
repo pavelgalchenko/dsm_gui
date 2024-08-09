@@ -124,16 +124,11 @@ class SPC_submenu : public QDialog {
    void proc_add(QListWidget *cur_list, QStringList tmp_data);
    void destroy_submenu(QString command, QString junk);
 
-   void receive_apppath(QString path, QString junk);
-   void receive_pythoncmd(QString cmd, QString junk);
-
    private:
    Ui::SPC_submenu *ui;
    QString spc_cur_name;
    QString spc_cur_file;
 
-   QString appPath;
-   QString pythonCmd;
    YAML::Node cur_spc_yaml;
    // All ComboBox options
    const QStringList orbit_type = {"FIXED", "EULER_HILL", "ENCKE", "COWELL"};

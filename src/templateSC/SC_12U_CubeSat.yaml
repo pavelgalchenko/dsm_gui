@@ -7,7 +7,7 @@ Configuration:
   Sprite File: GenScSpriteAlpha.ppm
   FSW Identifier: DSM_FSW
   FSW Sample Time: 0.2
-  Orbit:
+Orbit:
     Prop Type: ENCKE
     Pos Specifier: CM
     Pos wrt F:
@@ -18,25 +18,25 @@ Configuration:
       -  0.0
       -  0.0
       -  0.0
-  Attitude:
-    Ang Vel Frame: N
-    Att Representation: A
-    Att Frame: N
-    Ang Vel:
+Attitude:
+  Ang Vel Frame: N
+  Att Representation: A
+  Att Frame: N
+  Ang Vel:
+    -  0.0
+    -  0.0
+    -  0.0
+  Quaternion:
+    -  0.0
+    -  0.0
+    -  0.0
+    -  1.0
+  Euler Angles:
+    Angles:
       -  0.0
       -  0.0
       -  0.0
-    Quaternion:
-      -  0.0
-      -  0.0
-      -  0.0
-      -  1.0
-    Euler Angles:
-      Angles:
-        -  60.0
-        -  40.0
-        -  20.0
-      Sequence: 213
+    Sequence: 213
 Dynamics Flags:
   Method: GAUSS_ELIM
   Compute Constraints: false

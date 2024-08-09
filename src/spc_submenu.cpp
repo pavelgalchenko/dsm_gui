@@ -41,14 +41,6 @@ void SPC_submenu::receive_spc_sm_path(QString name, QString path) {
    spc_comments = YAML::LoadFile(comment_path.toStdString());
 }
 
-void SPC_submenu::receive_apppath(QString path, QString junk) {
-   appPath = path;
-}
-
-void SPC_submenu::receive_pythoncmd(QString cmd, QString junk) {
-   pythonCmd = cmd;
-}
-
 void SPC_submenu::set_validators() {
    QRegularExpression rx("[^\"]*");
    QRegularExpression rx1("[^\" ]*");

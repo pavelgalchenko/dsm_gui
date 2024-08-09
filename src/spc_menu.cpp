@@ -123,14 +123,6 @@ void SPC_Menu::receive_spcpath(QString path) {
    spc_comments = YAML::LoadFile(comment_path.toStdString());
 }
 
-void SPC_Menu::receive_apppath(QString path) {
-   appPath = path;
-}
-
-void SPC_Menu::receive_pythoncmd(QString cmd) {
-   pythonCmd = cmd;
-}
-
 void SPC_Menu::receive_data() {
    QFile file(file_path);
    if (!file.open(QIODevice::ReadOnly)) {
@@ -641,16 +633,6 @@ void SPC_Menu::on_spc_conf_clicked() {
       connect(this, SIGNAL(send_data(QString, QString)), spc_submenu,
               SLOT(receive_spc_sm_path(QString, QString)));
       emit send_data(ui->spc_name->text(), inout_path);
-      disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
-
-      connect(this, SIGNAL(send_data(QString, QString)), spc_submenu,
-              SLOT(receive_apppath(QString, QString)));
-      emit send_data(appPath, "");
-      disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
-
-      connect(this, SIGNAL(send_data(QString, QString)), spc_submenu,
-              SLOT(receive_pythoncmd(QString, QString)));
-      emit send_data(pythonCmd, "");
       disconnect(this, SIGNAL(send_data(QString, QString)), 0, 0);
 
       spc_submenu->move(SPC_Menu::geometry().x() + spc_submenu->width(),

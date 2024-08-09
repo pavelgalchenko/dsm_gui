@@ -72,10 +72,3 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources.qrc
-
-copydata.commands = $(COPY_DIR) $$PWD/__python__ $$OUT_PWD
-first.depends = $(first) copydata
-export(first.depends)
-export(copydata.commands)
-QMAKE_EXTRA_TARGETS += first copydata
-DEFINES += INSTALL_PATH=$$OUT_PWD

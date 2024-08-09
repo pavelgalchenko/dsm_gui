@@ -33,9 +33,9 @@ Attitude:
     -  1.0
   Euler Angles:
     Angles:
-      -  60.0
-      -  40.0
-      -  20.0
+      -  0.0
+      -  0.0
+      -  0.0
     Sequence: 213
 Dynamics Flags:
   Method: GAUSS_ELIM
