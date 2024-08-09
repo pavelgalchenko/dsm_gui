@@ -742,7 +742,7 @@ void SPC_Menu::proc_add_template(QString sc_template_name) {
        dsm_gui_lib::warning_message("Load " + sc_template_name + " template?");
    if (response == QMessageBox::Ok) {
       on_spc_remove_clicked();
-      load_specific_file(sc_template_name, counter);
+      load_specific_file(sc_template_name);
 
    } else
       return;
@@ -765,7 +765,7 @@ void SPC_Menu::on_sc12u_clicked() {
    proc_add_template("12U_CubeSat");
 }
 
-void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
+void SPC_Menu::load_specific_file(QString load_sc_name) {
    if (spc_submenu != nullptr) {
       new_item = 1;
    }
@@ -777,10 +777,7 @@ void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
 
    QString new_name;
 
-   if (counter > 0)
-      new_name = load_sc_name + "_" + QString::number(counter);
-   else
-      new_name = load_sc_name;
+   new_name = load_sc_name;
 
    if (ui->spc_list->count() != 0) {
       for (int i = 0; i <= 50; i++) {

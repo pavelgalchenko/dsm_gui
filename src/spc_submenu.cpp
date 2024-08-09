@@ -941,9 +941,9 @@ void SPC_submenu::apply_data() {
          for (index = bodies; index < tmp_size; index++) {
             cur_spc_yaml["Bodies"].remove(index);
          }
-
-         on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->item(index2));
       }
+      ui->spc_cur_body_list->setCurrentRow(index2);
+      on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->item(index2));
 
       /* Joints */
       if (joints > 0) {
@@ -1795,9 +1795,8 @@ void SPC_submenu::on_spc_cur_close_clicked() {
    if (joints == bodies - 1) {
       SPC_submenu::close();
    } else {
-      int response = dsm_gui_lib::warning_message(
-          "The number of joints must equal number of bodies minus one. Click "
-          "\"OK\" to disregard this warning and close.");
+      int response = dsm_gui_lib::error_message(
+          "The number of joints must equal number of bodies minus one.");
       if (response == QMessageBox::Cancel) {
          return;
       } else if (response == QMessageBox::Ok) {
@@ -2644,7 +2643,17 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->item(index));
    }
 
-   write_data(cur_spc_yaml);
+   if (joints == bodies - 1) {
+      write_data(cur_spc_yaml);
+   } else {
+      int response = dsm_gui_lib::error_message(
+          "The number of joints must equal number of bodies minus one.");
+      if (response == QMessageBox::Cancel) {
+         return;
+      } else if (response == QMessageBox::Ok) {
+         return;
+      }
+   }
 }
 
 void SPC_submenu::setQComboBox(QComboBox *comboBox, QString string) {
@@ -2654,7 +2663,7 @@ void SPC_submenu::setQComboBox(QComboBox *comboBox, QString string) {
 // Body -/+/Duplicate/Item Clicked
 
 void SPC_submenu::on_spc_cur_body_remove_clicked() {
-   if (bodies == 1) {
+   if (bodies <= 1) {
       dsm_gui_lib::error_message("Spacecraft must have at least one body!");
       return;
    }
@@ -3520,7 +3529,6 @@ void SPC_submenu::proc_duplicates(QListWidget *cur_list) {
 
    cur_list->currentItem()->setData(256, new_item);
    cur_list->currentItem()->setData(257, old_data);
-   cur_list->sortItems();
 }
 
 void SPC_submenu::proc_add(QListWidget *cur_list, QStringList tmp_data) {
@@ -3549,7 +3557,6 @@ void SPC_submenu::proc_add(QListWidget *cur_list, QStringList tmp_data) {
 
    cur_list->currentItem()->setData(256, new_name);
    cur_list->currentItem()->setData(257, tmp_data);
-   cur_list->sortItems();
 }
 
 void SPC_submenu::destroy_submenu(QString command, QString junk) {

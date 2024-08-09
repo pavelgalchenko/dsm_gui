@@ -61,7 +61,7 @@ class SPC_Menu : public QDialog {
    void on_sc12u_clicked();
 
    void proc_add_template(QString sc_template_name);
-   void load_specific_file(QString load_sc_name, long counter);
+   void load_specific_file(QString load_sc_name);
    void load_1SC_default(QString sc_string);
 
    private:
