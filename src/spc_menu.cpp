@@ -754,18 +754,18 @@ void SPC_Menu::load_1SC_default(QString sc_string) {
 }
 
 void SPC_Menu::on_sc3u_clicked() {
-   proc_add_template("3U_CubeSat", counter3u);
-   counter3u++;
+   proc_add_template("3U_CubeSat", 0);
+   // counter3u++;
 }
 
 void SPC_Menu::on_sc6u_clicked() {
-   proc_add_template("6U_CubeSat", counter3u);
-   counter6u++;
+   proc_add_template("6U_CubeSat", 0);
+   // counter6u++;
 }
 
 void SPC_Menu::on_sc12u_clicked() {
-   proc_add_template("12U_CubeSat", counter3u);
-   counter12u++;
+   proc_add_template("12U_CubeSat", 0);
+   // counter12u++;
 }
 
 void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
@@ -780,7 +780,7 @@ void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {
 
    QString new_name;
 
-   if (counter >= 0)
+   if (counter > 0)
       new_name = load_sc_name + "_" + QString::number(counter);
    else
       new_name = load_sc_name;
