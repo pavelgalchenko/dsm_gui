@@ -937,11 +937,12 @@ void SPC_submenu::apply_data() {
             cur_spc_yaml["CSSs"][css_body_inds[i]]["CSS"]["Body"] =
                 cur_spc_yaml["Bodies"][index]["Body"];
          }
-
-         for (index = bodies; index < tmp_size; index++) {
-            cur_spc_yaml["Bodies"].remove(index);
-         }
       }
+
+      for (index = bodies; index < tmp_size; index++) {
+         cur_spc_yaml["Bodies"].remove(index);
+      }
+
       ui->spc_cur_body_list->setCurrentRow(index2);
       on_spc_cur_body_list_itemClicked(ui->spc_cur_body_list->item(index2));
 

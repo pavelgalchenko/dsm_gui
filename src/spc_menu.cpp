@@ -585,9 +585,8 @@ void SPC_Menu::on_spc_load_clicked() // Load default S/C
       }
       ui->spc_list->setCurrentRow(0);
       on_spc_list_itemClicked(ui->spc_list->item(0));
-      if (new_item == 1 && spc_submenu != nullptr) {
+      if (spc_submenu != nullptr) {
          on_spc_conf_clicked();
-         new_item = 0;
       }
    } else
       return;
