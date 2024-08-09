@@ -213,8 +213,8 @@ Limits_[3]   0.004   0.004   0.004   0   0   0
 # Col: 4   ->  Delta-V in z direction [m/s]
 # Col: 5   ->  Maneuver Frame [%s]: "N", "B"
 # Col: 6   ->  Approximation Type [%s]: "CONSTANT", "SMOOTHED". Note that
-    "SMOOTHED" Cmd must start at half of burn duration before the equivalent DeltaV
-    occurs.
+#   "SMOOTHED" Cmd must start at half of burn duration before the equivalent DeltaV
+#   occurs.
 # Col: 7   ->  Delta-V burn duration [s]
 # Col: 8   ->  Set of Control Limits
 # Col: 9   ->  Actuator Mode

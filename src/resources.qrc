@@ -11,11 +11,36 @@
         <file>__default__/Inp_TDRS.txt</file>
         <file>__default__/Nodes_Simple.txt</file>
         <file>__default__/Orb_LEO.txt</file>
-        <file>__default__/SC_Simple.txt</file>
         <file>__default__/Shaker_Simple.txt</file>
         <file>__default__/TRV.txt</file>
         <file>__default__/Whl_Simple.txt</file>
         <file>dsm_gui.icns</file>
         <file>__default__/Inp_DSM.txt</file>
+        <file>__default__/Inp_DSM.yaml</file>
+        <file>__default__/Inp_FOV.yaml</file>
+        <file>__default__/Inp_Graphics.yaml</file>
+        <file>__default__/Inp_IPC.yaml</file>
+        <file>__default__/Inp_NOS3.yaml</file>
+        <file>__default__/Inp_Region.yaml</file>
+        <file>__default__/Inp_Sim.yaml</file>
+        <file>__default__/Inp_TDRS.yaml</file>
+        <file>__default__/Nodes_Simple.yaml</file>
+        <file>__default__/Orb_LEO.yaml</file>
+        <file>__default__/__SCDEFAULT__.yaml</file>
+        <file>yaml_comments/InpDSM_comments.yaml</file>
+        <file>yaml_comments/InpFOV_comments.yaml</file>
+        <file>yaml_comments/InpGraphics_comments.yaml</file>
+        <file>yaml_comments/InpIPC_comments.yaml</file>
+        <file>yaml_comments/InpNOS3_comments.yaml</file>
+        <file>yaml_comments/InpRegion_comments.yaml</file>
+        <file>yaml_comments/InpSim_comments.yaml</file>
+        <file>yaml_comments/InpTDRS_comments.yaml</file>
+        <file>yaml_comments/Nodes_comments.yaml</file>
+        <file>yaml_comments/Orb_comments.yaml</file>
+        <file>yaml_comments/SC_comments.yaml</file>
+        <file>templateSC/SC_12U_CubeSat.yaml</file>
+        <file>templateSC/SC_3U_CubeSat.yaml</file>
+        <file>templateSC/SC_6U_CubeSat.yaml</file>
     </qresource>
+    <qresource prefix="/"/>
 </RCC>

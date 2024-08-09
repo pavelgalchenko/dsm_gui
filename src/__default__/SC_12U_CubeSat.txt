@@ -1,5 +1,5 @@
 <<<<<<<<<<<<<<<<<  42: Spacecraft Description File   >>>>>>>>>>>>>>>>>>>
-Simple generic S/C            !  Description
+12U Template CubSat           !  Description
 "S/C"                         !  Label
 GenScSpriteAlpha.ppm          !  Sprite File Name
 DSM_FSW                       !  Flight Software Identifier
@@ -27,8 +27,8 @@ NONE                          !  Shaker File Name
 ************************************************************************
 1                             !  Number of Bodies
 ================================ Body 0 ================================
-100.0                         !  Mass
-100.0  200.0  300.0           !  Moments of Inertia (kg-m^2)
+24.0                          !  Mass
+.26  .26  .16                 !  Moments of Inertia (kg-m^2)
 0.0  0.0  0.0                 !  Products of Inertia (xy,xz,yz)
 0.0  0.0  0.0                 !  Location of mass center, m
 0.0  0.0  0.0                 !  Constant Embedded Momentum (Nms)
@@ -59,20 +59,44 @@ NONE                          !  Parameter File Name
 *************************** Wheel Parameters ***************************
 FALSE                         !  Wheel Drag Active
 FALSE                         !  Wheel Jitter Active
-0                             !  Number of wheels
-=============================  Wheel 0  ================================
+3                             !  Number of wheels
+=============================  Wheel 1  ================================
 0.0                           !  Initial Momentum, N-m-sec
 1.0  0.0  0.0                 !  Wheel Axis Components, [X, Y, Z]
-0.14  50.0                    !  Max Torque (N-m), Momentum (N-m-sec)
-0.012                         !  Wheel Rotor Inertia, kg-m^2
+0.007  .0162                  !  Max Torque (N-m), Momentum (N-m-sec)
+3.04e-5                       !  Wheel Rotor Inertia, kg-m^2
+0                             !  Body
+0                             !  Node
+NONE                          !  Drag/Jitter Input File Name
+=============================  Wheel 2  ================================
+0.0                           !  Initial Momentum, N-m-sec
+0.0  1.0  0.0                 !  Wheel Axis Components, [X, Y, Z]
+0.002  .0057                  !  Max Torque (N-m), Momentum (N-m-sec)
+3.04e-5                       !  Wheel Rotor Inertia, kg-m^2
+0                             !  Body
+0                             !  Node
+NONE                          !  Drag/Jitter Input File Name
+=============================  Wheel 3  ================================
+0.0                           !  Initial Momentum, N-m-sec
+0.0  0.0  1.0                 !  Wheel Axis Components, [X, Y, Z]
+0.002  .0057                  !  Max Torque (N-m), Momentum (N-m-sec)
+3.04e-5                       !  Wheel Rotor Inertia, kg-m^2
 0                             !  Body
 0                             !  Node
 NONE                          !  Drag/Jitter Input File Name
 **************************** MTB Parameters ****************************
-0                             !  Number of MTBs
-==============================  MTB 0  =================================
-180.0                         !  Saturation (A-m^2)
+3                             !  Number of MTBs
+==============================  MTB 1  =================================
+.80                           !  Saturation (A-m^2)
 1.0  0.0  0.0                 !  MTB Axis Components, [X, Y, Z]
+0                             !  Node
+==============================  MTB 2  =================================
+.80                           !  Saturation (A-m^2)
+0.0  1.0  0.0                 !  MTB Axis Components, [X, Y, Z]
+0                             !  Node
+==============================  MTB 3  =================================
+.80                           !  Saturation (A-m^2)
+0.0  0.0  1.0                 !  MTB Axis Components, [X, Y, Z]
 0                             !  Node
 ************************* Thruster Parameters **************************
 0                             !  Number of Thrusters
@@ -95,19 +119,19 @@ PULSED                        !  Mode (PULSED or PROPORTIONAL)
 0.1                           !  Angle Noise, arcsec RMS
 0.1                           !  Initial Bias (deg/hr)
 0                             !  Node
-*************************** Magnetometer *******************************
-0                             !  Number of Magnetometer Axes
-============================== Axis 0 ==================================
-0.1                           !  Sample Time,sec
+*************************** Magnetometer ********************************
+1                             !  Number of Magnetometer Axes
+==============================  Axis 0  ===================================
+0.2                           !  Sample Time,sec
 1.0  0.0  0.0                 !  Axis expressed in Body Frame
 60.0E-6                       !  Saturation, Tesla
 0.0                           !  Scale Factor Error, ppm
 1.0E-6                        !  Quantization, Tesla 
 1.0E-6                        !  Noise, Tesla RMS
 0                             !  Node
-*********************** Coarse Sun Sensor ******************************
+*********************** Coarse Sun Sensor *******************************
 0                             !  Number of Coarse Sun Sensors
-============================== CSS 0 ===================================
+============================== CSS 0 ====================================
 0.1                           !  Sample Time,sec
 1.0  0.0  0.0                 !  Axis expressed in Body Frame
 90.0                          !  Half-cone Angle, deg
@@ -115,37 +139,37 @@ PULSED                        !  Mode (PULSED or PROPORTIONAL)
 0.001                         !  Quantization
 0                             !  Body
 0                             !  Node
-************************* Fine Sun Sensor ******************************
-0                             !  Number of Fine Sun Sensors
-=============================== FSS 0 ==================================
-0.2                           !  Sample Time,sec
-70.0  0.0  0.0  231           !  Mounting Angles (deg), Seq in Body
+************************* Fine Sun Sensor *******************************
+1                             !  Number of Fine Sun Sensors
+===============================  FSS 1  ===================================
+1.0                           !  Sample Time,sec
+70.0  0.0  0.0  321           !  Mounting Angles (deg), Seq in Body
 Z_AXIS                        !  Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS
-32.0  32.0                    !  H, V FOV Size, deg
+166  166                      !  H, V FOV Size, deg
 0.1                           !  Noise Equivalent Angle, deg RMS
 0.5                           !  Quantization, deg
 0                             !  Node
-************************** Star Tracker ********************************
-0                             !  Number of Star Trackers
-=============================== ST 0 ===================================
-0.25                          !  Sample Time,sec
+************************** Star Tracker *********************************
+1                             !  Number of Star Trackers
+===============================  ST 1  ====================================
+2.0                           !  Sample Time,sec
 -90.0  90.0  00.0  321        !  Mounting Angles (deg), Seq in Body
 Z_AXIS                        !  Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS
-8.0  8.0                      !  H, V FOV Size, deg
-30.0  10.0  10.0              !  Sun, Earth, Moon Exclusion Angles, deg
-2.0  2.0  20.0                !  Noise Equivalent Angle, arcsec RMS
+42.0  42.0                    !  H, V FOV Size, deg
+42.0  42.0  42.0              !  Sun, Earth, Moon Exclusion Angles, deg
+24.0  24.0  72.0              !  Noise Equivalent Angle, arcsec RMS
 0                             !  Node
-****************************** GPS *************************************
+****************************** GPS **************************************
 0                             !  Number of GPS Receivers
-============================= GPSR 0 ===================================
+============================= GPSR 0 ====================================
 0.25                          !  Sample Time,sec
 4.0                           !  Position Noise, m RMS
 0.02                          !  Velocity Noise, m/sec RMS
 20.0E-9                       !  Time Noise, sec RMS
 0                             !  Node
-*************************** Accelerometer ******************************
+*************************** Accelerometer *******************************
 0                             !  Number of Accel Axes
-============================== Axis 0 ==================================
+============================== Axis 0 ===================================
 0.1                           !  Sample Time,sec
 1.0  0.0  0.0                 !  Axis expressed in Body Frame
 1.0                           !  Max Acceleration (m/s^2)

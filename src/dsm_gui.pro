@@ -11,6 +11,14 @@ QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+CONDA_DIR=$$system(echo $CONDA_PREFIX)
+equals(CONDA_DIR,"") {
+    message(No Conda)
+} else {
+    INCLUDEPATH += $$CONDA_DIR/include
+    LIBS += -L$$CONDA_DIR/lib -lyaml-cpp
+}
+
 SOURCES += \
     dsm_gui_lib.cpp \
     dsm_menu.cpp \
@@ -40,7 +48,8 @@ HEADERS += \
     spc_menu.h \
     spc_submenu.h \
     sim_menu.h \
-    tdr_menu.h
+    tdr_menu.h \
+    qtyaml.h
 
 FORMS += \
     dsm_menu.ui \
@@ -63,3 +72,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources.qrc
+
+

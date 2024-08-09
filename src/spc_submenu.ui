@@ -189,7 +189,7 @@
            <item row="1" column="0">
             <widget class="QLabel" name="label_7">
              <property name="text">
-              <string>Constraint Forces/Torques</string>
+              <string>Compute Constraint Forces/Torques</string>
              </property>
             </widget>
            </item>
@@ -4256,6 +4256,9 @@
       </property>
       <item>
        <widget class="QPushButton" name="spc_cur_load">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Overwrites current spacecraft with a basic spacecraft&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="text">
          <string>Load Default</string>
         </property>
@@ -4308,14 +4311,14 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="spc_cur_wheel_glob_drag"/>
+  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_con">
    <property name="exclusive">
     <bool>true</bool>
    </property>
   </buttongroup>
-  <buttongroup name="spc_cur_2flex"/>
-  <buttongroup name="spc_cur_flex"/>
   <buttongroup name="spc_cur_wheel_glob_jitter"/>
+  <buttongroup name="spc_cur_2flex"/>
+  <buttongroup name="spc_cur_wheel_glob_drag"/>
  </buttongroups>
 </ui>
