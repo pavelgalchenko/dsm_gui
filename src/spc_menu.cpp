@@ -82,6 +82,14 @@ void SPC_Menu::receive_spcpath(QString path) {
 
    QStringList spcDefaultFiles =
        QDir(inout_path + "__default__/").entryList({"SC_*.yaml"});
+
+   if (spcDefaultFiles.length() == 0) {
+      QFile::copy(":/data/__default__/__SCDEFAULT__.yaml",
+                  inout_path + "__default__/SC_DEFAULT.yaml");
+      spcDefaultFiles =
+          QDir(inout_path + "__default__/").entryList({"SC_*.yaml"});
+   }
+
    for (int i = 0; i < spcDefaultFiles.length(); i++) {
       file_paths_default.append(
           inout_path + "__default__/" +
