@@ -1131,14 +1131,15 @@ void SPC_submenu::apply_data() {
              256, ui->spc_cur_joint_name->text());
          ui->spc_cur_joint_list->currentItem()->setData(257, tmp_data);
          tmp_data.clear();
+      }
 
-         for (index = joints; index < tmp_size; index++) {
-            cur_spc_yaml["Joints"].remove(index);
-         }
+      for (index = joints; index < tmp_size; index++) {
+         cur_spc_yaml["Joints"].remove(index);
+      }
 
+      if (joints > 0)
          on_spc_cur_joint_list_itemClicked(
              ui->spc_cur_joint_list->item(index2));
-      }
    } else if (ui->sections->currentIndex() == 2 &&
               ui->actuator_sections->currentIndex() == 0) {
       /* Wheels */
@@ -2632,8 +2633,10 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       on_spc_cur_accel_list_itemClicked(ui->spc_cur_accel_list->item(index));
    }
 
-   dsm_gui_lib::error_message(
-       "The number of joints must equal number of bodies minus one.");
+   if (joints != bodies - 1)
+      dsm_gui_lib::error_message(
+          "The number of joints must equal number of bodies minus one.");
+
    write_data(cur_spc_yaml);
 }
 
