@@ -87,9 +87,9 @@ Wheels:
         -  1.0
         -  0.0
         -  0.0
-      Max Torque: 0.007
-      Max Momentum: 0.0162
-      Rotor Inertia: 3.04e-05
+      Max Torque: 0.016
+      Max Momentum: 0.05
+      Rotor Inertia: 6.84e-05
       Body: *Body_0
       Node: 0
       Drag-Jitter File Name: NONE
@@ -100,9 +100,9 @@ Wheels:
         -  0.0
         -  1.0
         -  0.0
-      Max Torque: 0.007
-      Max Momentum: 0.0162
-      Rotor Inertia: 3.04e-05
+      Max Torque: 0.016
+      Max Momentum: 0.05
+      Rotor Inertia: 6.84e-05
       Body: *Body_0
       Node: 0
       Drag-Jitter File Name: NONE
@@ -113,16 +113,16 @@ Wheels:
         -  0.0
         -  0.0
         -  1.0
-      Max Torque: 0.007
-      Max Momentum: 0.0162
-      Rotor Inertia: 3.04e-05
+      Max Torque: 0.016
+      Max Momentum: 0.05
+      Rotor Inertia: 6.84e-05
       Body: *Body_0
       Node: 0
       Drag-Jitter File Name: NONE
 MTBs:
   - MTB:
       Index: 0
-      Saturation: 0.8
+      Saturation: 2.0
       Axis:
         -  1.0
         -  0.0
@@ -130,7 +130,7 @@ MTBs:
       Node: 0
   - MTB:
       Index: 1
-      Saturation: 0.8
+      Saturation: 2.0
       Axis:
         -  0.0
         -  1.0
@@ -138,7 +138,7 @@ MTBs:
       Node: 0
   - MTB:
       Index: 2
-      Saturation: 0.8
+      Saturation: 2.0
       Axis:
         -  0.0
         -  0.0
