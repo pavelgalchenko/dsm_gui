@@ -321,11 +321,11 @@ void SPC_submenu::receive_data() {
          item_name = "Joint_" + QString::number(index);
       ui->spc_cur_joint_list->addItem(item_name);
 
+      tmp_data.append(cur_node["Joint Type"].as<QString>());
+
       data_vector = cur_node["Body Indicies"].as<QVector<QString>>();
       for (int i = 0; i < 2; i++)
          tmp_data.append(data_vector[i]);
-
-      tmp_data.append(cur_node["Joint Type"].as<QString>());
 
       tmp_data.append(cur_node["Rot DOF"].as<QString>());
       tmp_data.append(cur_node["Rot Sequence"].as<QString>());
