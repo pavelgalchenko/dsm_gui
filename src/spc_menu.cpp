@@ -737,7 +737,7 @@ void SPC_Menu::on_SPC_Menu_rejected() {
    }
 }
 
-void SPC_Menu::proc_add_template(QString sc_template_name, long counter) {
+void SPC_Menu::proc_add_template(QString sc_template_name) {
    int response =
        dsm_gui_lib::warning_message("Load " + sc_template_name + " template?");
    if (response == QMessageBox::Ok) {
@@ -754,18 +754,15 @@ void SPC_Menu::load_1SC_default(QString sc_string) {
 }
 
 void SPC_Menu::on_sc3u_clicked() {
-   proc_add_template("3U_CubeSat", 0);
-   // counter3u++;
+   proc_add_template("3U_CubeSat");
 }
 
 void SPC_Menu::on_sc6u_clicked() {
-   proc_add_template("6U_CubeSat", 0);
-   // counter6u++;
+   proc_add_template("6U_CubeSat");
 }
 
 void SPC_Menu::on_sc12u_clicked() {
-   proc_add_template("12U_CubeSat", 0);
-   // counter12u++;
+   proc_add_template("12U_CubeSat");
 }
 
 void SPC_Menu::load_specific_file(QString load_sc_name, long counter) {

@@ -8,7 +8,7 @@ Configuration:
     FSW Identifier: DSM_FSW
     FSW Sample Time: 0.2
 Orbit:
-    Prop Type: FIXED
+    Prop Type: ENCKE
     Pos Specifier: CM
     Pos wrt F:
         -   0.0
@@ -23,9 +23,9 @@ Attitude:
     Att Representation: A
     Att Frame: N
     Ang Vel:
-        -   0.3
-        -   0.4
-        -   0.5
+        -   0.0
+        -   0.0
+        -   0.0
     Quaternion:
         -   0.0
         -   0.0
@@ -33,9 +33,9 @@ Attitude:
         -   1.0
     Euler Angles:
         Angles:
-            -   60.0
-            -   40.0
-            -   20.0
+            -   0.0
+            -   0.0
+            -   0.0
         Sequence: 213
 Dynamics Flags:
     Method: GAUSS_ELIM
@@ -47,7 +47,7 @@ Dynamics Flags:
     Drag Coefficient: 2.0
 Bodies:
     -   Body:
-            Name: Body 0
+            Name: Body_0
             Index: 0
             Mass: 100.0
             MOI:
