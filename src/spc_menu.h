@@ -70,6 +70,10 @@ class SPC_Menu : public QDialog {
    int global_spc_index  = -1;
    int global_spc_ignore = 0;
 
+   // do unique ptrs so they only last as long as the SPC_Menu object
+   std::unique_ptr<QDoubleValidator> zero_pinf_valid;
+   std::unique_ptr<QDoubleValidator> ninf_pinf_valid;
+
    QString inout_path;
    QString file_path;
    QStringList file_paths;

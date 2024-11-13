@@ -7,6 +7,10 @@
 SPC_submenu::SPC_submenu(QWidget *parent)
     : QDialog(parent), ui(new Ui::SPC_submenu) {
    ui->setupUi(this);
+
+   ninf_pinf_valid = std::make_unique<QDoubleValidator>(-INFINITY, INFINITY, 5);
+   zero_pinf_valid = std::make_unique<QDoubleValidator>(0, INFINITY, 5);
+   none_one_valid  = std::make_unique<QDoubleValidator>(-1, 1, 5);
    set_validators();
 
    ui->sections->setCurrentIndex(0);
@@ -73,109 +77,85 @@ void SPC_submenu::set_validators() {
    ui->spc_cur_strack_boreaxis->addItems(dsm_gui_lib::sortStringList(axis));
 
    // Numerical Validators
+   // All validators with (-INFINITY, INFINITY)
+   QList<QLineEdit *> ninf_pinf = {ui->spc_cur_drag,
+                                   ui->spc_cur_body_pmoi_x,
+                                   ui->spc_cur_body_pmoi_y,
+                                   ui->spc_cur_body_pmoi_z,
+                                   ui->spc_cur_body_poi_x,
+                                   ui->spc_cur_body_poi_y,
+                                   ui->spc_cur_body_poi_z,
+                                   ui->spc_cur_body_com_x,
+                                   ui->spc_cur_body_com_y,
+                                   ui->spc_cur_body_com_z,
+                                   ui->spc_cur_body_cem_x,
+                                   ui->spc_cur_body_cem_y,
+                                   ui->spc_cur_body_cem_z,
+                                   ui->spc_cur_body_cemd_x,
+                                   ui->spc_cur_body_cemd_y,
+                                   ui->spc_cur_body_cemd_z,
+                                   ui->spc_cur_joint_ang0_1,
+                                   ui->spc_cur_joint_ang0_2,
+                                   ui->spc_cur_joint_ang0_3,
+                                   ui->spc_cur_joint_angrate0_1,
+                                   ui->spc_cur_joint_angrate0_2,
+                                   ui->spc_cur_joint_angrate0_3,
+                                   ui->spc_cur_joint_disp0_1,
+                                   ui->spc_cur_joint_disp0_2,
+                                   ui->spc_cur_joint_disp0_3,
+                                   ui->spc_cur_joint_dispr0_1,
+                                   ui->spc_cur_joint_dispr0_2,
+                                   ui->spc_cur_joint_dispr0_3,
+                                   ui->spc_cur_joint_bigi_1,
+                                   ui->spc_cur_joint_bigi_2,
+                                   ui->spc_cur_joint_bigi_3,
+                                   ui->spc_cur_joint_bogo_1,
+                                   ui->spc_cur_joint_bogo_2,
+                                   ui->spc_cur_joint_bogo_3,
+                                   ui->spc_cur_joint_poswrt_in_1,
+                                   ui->spc_cur_joint_poswrt_in_2,
+                                   ui->spc_cur_joint_poswrt_in_3,
+                                   ui->spc_cur_wheel_maxtrq,
+                                   ui->spc_cur_wheel_maxmom,
+                                   ui->spc_cur_gyro_initbias,
+                                   ui->spc_cur_fss_mount_1,
+                                   ui->spc_cur_fss_mount_2,
+                                   ui->spc_cur_fss_mount_3,
+                                   ui->spc_cur_strack_mount_1,
+                                   ui->spc_cur_strack_mount_2,
+                                   ui->spc_cur_strack_mount_3,
+                                   ui->spc_cur_acc_initbias};
 
-   QLineEdit *ninf_pinf[47] = {
-       ui->spc_cur_drag,
-       ui->spc_cur_body_pmoi_x,
-       ui->spc_cur_body_pmoi_y,
-       ui->spc_cur_body_pmoi_z,
-       ui->spc_cur_body_poi_x,
-       ui->spc_cur_body_poi_y,
-       ui->spc_cur_body_poi_z,
-       ui->spc_cur_body_com_x,
-       ui->spc_cur_body_com_y,
-       ui->spc_cur_body_com_z,
-       ui->spc_cur_body_cem_x,
-       ui->spc_cur_body_cem_y,
-       ui->spc_cur_body_cem_z,
-       ui->spc_cur_body_cemd_x,
-       ui->spc_cur_body_cemd_y,
-       ui->spc_cur_body_cemd_z,
-       ui->spc_cur_joint_ang0_1,
-       ui->spc_cur_joint_ang0_2,
-       ui->spc_cur_joint_ang0_3,
-       ui->spc_cur_joint_angrate0_1,
-       ui->spc_cur_joint_angrate0_2,
-       ui->spc_cur_joint_angrate0_3,
-       ui->spc_cur_joint_disp0_1,
-       ui->spc_cur_joint_disp0_2,
-       ui->spc_cur_joint_disp0_3,
-       ui->spc_cur_joint_dispr0_1,
-       ui->spc_cur_joint_dispr0_2,
-       ui->spc_cur_joint_dispr0_3,
-       ui->spc_cur_joint_bigi_1,
-       ui->spc_cur_joint_bigi_2,
-       ui->spc_cur_joint_bigi_3,
-       ui->spc_cur_joint_bogo_1,
-       ui->spc_cur_joint_bogo_2,
-       ui->spc_cur_joint_bogo_3,
-       ui->spc_cur_joint_poswrt_in_1,
-       ui->spc_cur_joint_poswrt_in_2,
-       ui->spc_cur_joint_poswrt_in_3,
-       ui->spc_cur_wheel_maxtrq,
-       ui->spc_cur_wheel_maxmom,
-       ui->spc_cur_gyro_initbias,
-       ui->spc_cur_fss_mount_1,
-       ui->spc_cur_fss_mount_2,
-       ui->spc_cur_fss_mount_3,
-       ui->spc_cur_strack_mount_1,
-       ui->spc_cur_strack_mount_2,
-       ui->spc_cur_strack_mount_3,
-       ui->spc_cur_acc_initbias}; // All validators with (-INFINITY, INFINITY)
+   // All validators with [0, INFINITY)
+   QList<QLineEdit *> zero_pinf = {
+       ui->spc_cur_body_mass,         ui->spc_cur_body_pmoi_x,
+       ui->spc_cur_body_pmoi_y,       ui->spc_cur_body_pmoi_z,
+       ui->spc_cur_wheel_inertia,     ui->spc_cur_mtb_sat,
+       ui->spc_cur_thruster_force,    ui->spc_cur_gyro_samptime,
+       ui->spc_cur_gyro_maxrate,      ui->spc_cur_gyro_scaleferror,
+       ui->spc_cur_gyro_quant,        ui->spc_cur_gyro_angrwalk,
+       ui->spc_cur_gyro_angnoise,     ui->spc_cur_gyro_bias_stab,
+       ui->spc_cur_gyro_bias_tspan,   ui->spc_cur_mag_samptime,
+       ui->spc_cur_mag_sat,           ui->spc_cur_mag_scaleferror,
+       ui->spc_cur_mag_quant,         ui->spc_cur_mag_noise,
+       ui->spc_cur_css_samptime,      ui->spc_cur_css_halfcone,
+       ui->spc_cur_css_scale,         ui->spc_cur_css_quant,
+       ui->spc_cur_fss_samptime,      ui->spc_cur_fss_hfov,
+       ui->spc_cur_fss_vfov,          ui->spc_cur_fss_noiseang,
+       ui->spc_cur_fss_quant,         ui->spc_cur_strack_samptime,
+       ui->spc_cur_strack_hfov,       ui->spc_cur_strack_vfov,
+       ui->spc_cur_strack_sun,        ui->spc_cur_strack_earth,
+       ui->spc_cur_strack_moon,       ui->spc_cur_strack_noiseang_1,
+       ui->spc_cur_strack_noiseang_2, ui->spc_cur_strack_noiseang_3,
+       ui->spc_cur_gps_samptime,      ui->spc_cur_gps_posnoise,
+       ui->spc_cur_gps_velnoise,      ui->spc_cur_gps_timenoise,
+       ui->spc_cur_acc_samptime,      ui->spc_cur_acc_maxacc,
+       ui->spc_cur_acc_scaleerror,    ui->spc_cur_acc_quant,
+       ui->spc_cur_acc_dvrandwalk,    ui->spc_cur_acc_bias_stab,
+       ui->spc_cur_acc_bias_tspan,    ui->spc_cur_acc_dvnoise};
 
-   QLineEdit *zero_pinf[50] = {
-       ui->spc_cur_body_mass,
-       ui->spc_cur_body_pmoi_x,
-       ui->spc_cur_body_pmoi_y,
-       ui->spc_cur_body_pmoi_z,
-       ui->spc_cur_wheel_inertia,
-       ui->spc_cur_mtb_sat,
-       ui->spc_cur_thruster_force,
-       ui->spc_cur_gyro_samptime,
-       ui->spc_cur_gyro_maxrate,
-       ui->spc_cur_gyro_scaleferror,
-       ui->spc_cur_gyro_quant,
-       ui->spc_cur_gyro_angrwalk,
-       ui->spc_cur_gyro_angnoise,
-       ui->spc_cur_gyro_bias_stab,
-       ui->spc_cur_gyro_bias_tspan,
-       ui->spc_cur_mag_samptime,
-       ui->spc_cur_mag_sat,
-       ui->spc_cur_mag_scaleferror,
-       ui->spc_cur_mag_quant,
-       ui->spc_cur_mag_noise,
-       ui->spc_cur_css_samptime,
-       ui->spc_cur_css_halfcone,
-       ui->spc_cur_css_scale,
-       ui->spc_cur_css_quant,
-       ui->spc_cur_fss_samptime,
-       ui->spc_cur_fss_hfov,
-       ui->spc_cur_fss_vfov,
-       ui->spc_cur_fss_noiseang,
-       ui->spc_cur_fss_quant,
-       ui->spc_cur_strack_samptime,
-       ui->spc_cur_strack_hfov,
-       ui->spc_cur_strack_vfov,
-       ui->spc_cur_strack_sun,
-       ui->spc_cur_strack_earth,
-       ui->spc_cur_strack_moon,
-       ui->spc_cur_strack_noiseang_1,
-       ui->spc_cur_strack_noiseang_2,
-       ui->spc_cur_strack_noiseang_3,
-       ui->spc_cur_gps_samptime,
-       ui->spc_cur_gps_posnoise,
-       ui->spc_cur_gps_velnoise,
-       ui->spc_cur_gps_timenoise,
-       ui->spc_cur_acc_samptime,
-       ui->spc_cur_acc_maxacc,
-       ui->spc_cur_acc_scaleerror,
-       ui->spc_cur_acc_quant,
-       ui->spc_cur_acc_dvrandwalk,
-       ui->spc_cur_acc_bias_stab,
-       ui->spc_cur_acc_bias_tspan,
-       ui->spc_cur_acc_dvnoise}; // All validators with [0, INFINITY)
-
-   QLineEdit *none_one[21] = {
+   // All validators with [-1, 1]
+   QList<QLineEdit *> none_one = {
        ui->spc_cur_wheel_axis_1,    ui->spc_cur_wheel_axis_2,
        ui->spc_cur_wheel_axis_3,    ui->spc_cur_mtb_axis_1,
        ui->spc_cur_mtb_axis_2,      ui->spc_cur_mtb_axis_3,
@@ -186,11 +166,11 @@ void SPC_submenu::set_validators() {
        ui->spc_cur_mag_axis_3,      ui->spc_cur_css_axis_1,
        ui->spc_cur_css_axis_2,      ui->spc_cur_css_axis_3,
        ui->spc_cur_acc_axis_1,      ui->spc_cur_acc_axis_2,
-       ui->spc_cur_acc_axis_3}; // All validators with [-1, 1]
+       ui->spc_cur_acc_axis_3};
 
-   dsm_gui_lib::set_mult_validators(ninf_pinf, 47, -INFINITY, INFINITY, 5);
-   dsm_gui_lib::set_mult_validators(zero_pinf, 50, 0, INFINITY, 5);
-   dsm_gui_lib::set_mult_validators(none_one, 21, -1, 1, 5);
+   dsm_gui_lib::set_mult_validators(ninf_pinf, ninf_pinf_valid.get());
+   dsm_gui_lib::set_mult_validators(zero_pinf, zero_pinf_valid.get());
+   dsm_gui_lib::set_mult_validators(none_one, none_one_valid.get());
 
    // Name Validators
 

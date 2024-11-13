@@ -1,6 +1,19 @@
 #include "dsm_menu.h"
 #include "ui_dsm_menu.h"
 
+QString tgtConfig::asString() const {
+   QStringList txtList;
+   const QString tName = typeStrings[type];
+   txtList << tName;
+   if (tName == "VEC") {
+      txtList << frame;
+      for (int i = 0; i < 3; i++)
+         txtList << QString::number(axis[i]);
+   } else
+      txtList << target;
+   return txtList.join(DSM_Menu::cmdDataSpacer);
+}
+
 DSM_Menu::DSM_Menu(QWidget *parent) : QDialog(parent), ui(new Ui::DSM_Menu) {
    ui->setupUi(this);
 
@@ -8,18 +21,85 @@ DSM_Menu::DSM_Menu(QWidget *parent) : QDialog(parent), ui(new Ui::DSM_Menu) {
    badTextPalette = okTextPalette;
    badTextPalette.setColor(QPalette::Text, Qt::red);
 
-   set_validators();
-
    okTextBrush  = entryCmdParents[cmdTypes::cmdTrn]->background(0);
    badTextBrush = okTextBrush;
    badTextBrush.setColor(Qt::red);
    badTextBrush.setStyle(Qt::SolidPattern);
+
+   z_pinf_valid    = std::make_unique<QDoubleValidator>(0, INFINITY, 5);
+   ninf_pinf_valid = std::make_unique<QDoubleValidator>(-INFINITY, INFINITY, 5);
+
+   set_connections();
+   set_validators();
 }
 
 DSM_Menu::~DSM_Menu() {
    delete ui;
 }
 
+void DSM_Menu::set_connections() {
+   // Connect to cmd_data_changed
+   const QList<QLineEdit *> line_cmd_data_changed = {
+       ui->cmdTrnX,       ui->cmdTrnY,   ui->cmdTrnZ,   ui->cmdPvX,
+       ui->cmdPvY,        ui->cmdPvZ,    ui->cmdPvTgtX, ui->cmdPvTgtY,
+       ui->cmdPvTgtZ,     ui->cmdSvX,    ui->cmdSvY,    ui->cmdSvZ,
+       ui->cmdSvTgtX,     ui->cmdSvTgtY, ui->cmdSvTgtZ, ui->cmdQv1,
+       ui->cmdQv2,        ui->cmdQv3,    ui->cmdQs,     ui->cmdHManageMax,
+       ui->cmdHManageMin, ui->cmdManX,   ui->cmdManY,   ui->cmdManZ,
+       ui->cmdManTime};
+   for (auto i : line_cmd_data_changed)
+      connect(i, &QLineEdit::textEdited, this, &DSM_Menu::cmd_data_changed);
+
+   const QList<QComboBox *> combo_cmd_data_changed = {
+       ui->cmdTrnOri,   ui->cmdTrnFrm,       ui->cmdPvTgtType, ui->cmdPvTgtSc,
+       ui->cmdPvTgtWld, ui->cmdPvTgtAxisFrm, ui->cmdSvTgtType, ui->cmdSvTgtSc,
+       ui->cmdSvTgtWld, ui->cmdSvTgtAxisFrm, ui->cmdMirrorTgt, ui->cmdActType,
+       ui->cmdManFrm,   ui->cmdManType,      ui->cmdManLimits, ui->cmdQuatFrm};
+   for (auto i : combo_cmd_data_changed)
+      connect(i, &QComboBox::textActivated, this, &DSM_Menu::cmd_data_changed);
+
+   const QList<QSpinBox *> spin_cmd_data_changed = {
+       ui->cmdTrnOriScBdyNum, ui->cmdTrnFrmScBdyNum,  ui->cmdPvTgtScBdyNum,
+       ui->cmdSvTgtScBdyNum,  ui->cmdMirrorTgtBdyNum, ui->cmdActNum};
+   for (auto i : spin_cmd_data_changed)
+      connect(i, &QSpinBox::textChanged, this, &DSM_Menu::cmd_data_changed);
+
+   connect(ui->cmdHManageEnabled, &QCheckBox::stateChanged, this,
+           &DSM_Menu::cmd_data_changed);
+   connect(ui->cmdActDutyCycle, &QDoubleSpinBox::textChanged, this,
+           &DSM_Menu::cmd_act_data_changed);
+
+   // Connect to timeline_data_changed
+   const QList<QComboBox *> combo_timeline_data_changed = {
+       ui->cmdSC,        ui->cmdTrnLabel,   ui->cmdAttLabel,
+       ui->cmdHManLabel, ui->cmdAttSVLabel, ui->cmdActLabel};
+   for (auto i : combo_timeline_data_changed)
+      connect(i, &QComboBox::textActivated, this,
+              &DSM_Menu::timeline_data_changed);
+
+   connect(ui->cmdTime, &QDoubleSpinBox::textChanged, this,
+           &DSM_Menu::timeline_data_changed);
+
+   // Connect to gain_data_changed
+   const QList<QLineEdit *> line_gain_data_changed = {
+       ui->gainKpX,        ui->gainKpY,          ui->gainKpZ,
+       ui->gainKrX,        ui->gainKrY,          ui->gainKrZ,
+       ui->gainKiX,        ui->gainKiY,          ui->gainKiZ,
+       ui->gainKiLimX,     ui->gainKiLimY,       ui->gainKiLimZ,
+       ui->gainBandwidth,  ui->gainDampingRatio, ui->gainAlpha,
+       ui->gainILim,       ui->gainMomDumpKpX,   ui->gainMomDumpKpY,
+       ui->gainMomDumpKpZ, ui->gainLyaGain,      ui->gainLyaGain_2,
+       ui->gainCustomGains};
+   for (auto i : line_gain_data_changed)
+      connect(i, &QLineEdit::textEdited, this, &DSM_Menu::gain_data_changed);
+
+   // Connect to lim_data_changed
+   const QList<QLineEdit *> line_lim_data_changed = {
+       ui->limFrcX,  ui->limFrcY,  ui->limFrcZ,
+       ui->limRateX, ui->limRateY, ui->limRateZ};
+   for (auto i : line_lim_data_changed)
+      connect(i, &QLineEdit::textEdited, this, &DSM_Menu::lim_data_changed);
+}
 void DSM_Menu::set_validators() {
    QRegularExpression noCmdSpacerRx(
        "[^" + QRegularExpression::escape(cmdDelimiter) + "]*");
@@ -32,66 +112,33 @@ void DSM_Menu::set_validators() {
    ui->cmdTime->setDecimals(3);
 
    ui->cmdLabel->setValidator(noCmdSpacer);
-   ui->gainKpX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKpY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKpZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKrX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKrY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKrZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKiX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKiY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKiZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKiLimX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKiLimY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKiLimZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
 
-   ui->gainBandwidth->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainDampingRatio->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainAlpha->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainILim->setValidator(new QDoubleValidator(0, INFINITY, 5));
+   // set QLineEdit validators for range [0,inf)
+   QList<QLineEdit *> z_pinf = {
+       ui->gainKpX,        ui->gainKpY,          ui->gainKpZ,
+       ui->gainKrX,        ui->gainKrY,          ui->gainKrZ,
+       ui->gainKiX,        ui->gainKiY,          ui->gainKiZ,
+       ui->gainKiLimX,     ui->gainKiLimY,       ui->gainKiLimZ,
+       ui->gainBandwidth,  ui->gainDampingRatio, ui->gainAlpha,
+       ui->gainILim,       ui->gainMomDumpKpX,   ui->gainMomDumpKpY,
+       ui->gainMomDumpKpZ, ui->gainLyaGain,      ui->gainLyaGain_2,
+       ui->limFrcX,        ui->limFrcY,          ui->limFrcZ,
+       ui->limRateX,       ui->limRateY,         ui->limRateZ,
+       ui->cmdManTime,     ui->cmdHManageMax,    ui->cmdHManageMin};
+   dsm_gui_lib::set_mult_validators(z_pinf, z_pinf_valid.get());
 
-   ui->gainMomDumpKpX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainMomDumpKpY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainMomDumpKpZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
+   // set QLineEdit validators for range (-inf,inf)
+   QList<QLineEdit *> ninf_pinf = {
+       ui->cmdTrnX, ui->cmdTrnY,   ui->cmdTrnZ,   ui->cmdPvX,    ui->cmdPvY,
+       ui->cmdPvZ,  ui->cmdPvTgtX, ui->cmdPvTgtY, ui->cmdPvTgtZ, ui->cmdSvX,
+       ui->cmdSvY,  ui->cmdSvZ,    ui->cmdSvTgtX, ui->cmdSvTgtY, ui->cmdSvTgtZ,
+       ui->cmdQv1,  ui->cmdQv2,    ui->cmdQv3,    ui->cmdQs,     ui->cmdManX,
+       ui->cmdManY, ui->cmdManZ};
+   dsm_gui_lib::set_mult_validators(ninf_pinf, ninf_pinf_valid.get());
 
-   ui->gainLyaGain->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainLyaGain_2->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-   ui->limFrcX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->limFrcY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->limFrcZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->limRateX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->limRateY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->limRateZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-   ui->cmdTrnX->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdTrnY->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdTrnZ->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdPvX->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdPvY->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdPvZ->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdPvTgtX->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdPvTgtY->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdPvTgtZ->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdSvX->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdSvY->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdSvZ->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdSvTgtX->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdSvTgtY->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdSvTgtZ->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdQv1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdQv2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdQv3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdQs->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdHManageMax->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->cmdHManageMin->setValidator(new QDoubleValidator(0, INFINITY, 5));
    ui->cmdActDutyCycle->setMaximum(100.0);
    ui->cmdActDutyCycle->setMinimum(0.0);
    ui->cmdActDutyCycle->setDecimals(2);
-   ui->cmdManX->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdManY->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdManZ->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdManTime->setValidator(new QDoubleValidator(0, INFINITY, 5));
 
    ui->cmdPvTgtType->clear();
    ui->cmdPvTgtType->addItems(
@@ -163,187 +210,6 @@ void DSM_Menu::set_validators() {
    cmdActActuators.sort();
    ui->cmdActType->addItems(cmdActActuators);
 
-   connect(ui->cmdTrnX, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdTrnY, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdTrnZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdTrnOri, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdTrnFrm, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdTrnOriScBdyNum, &QSpinBox::textChanged, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdTrnFrmScBdyNum, &QSpinBox::textChanged, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdPvTgtType, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtSc, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtWld, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtScBdyNum, &QSpinBox::textChanged, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvX, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvY, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtAxisFrm, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtX, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtY, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdSvTgtType, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtSc, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtWld, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtScBdyNum, &QSpinBox::textChanged, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvX, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvY, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtAxisFrm, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtX, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtY, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdQv1, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdQv2, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdQv3, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdQs, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdQuatFrm, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdHManageEnabled, &QCheckBox::stateChanged, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdHManageMax, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdHManageMin, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdMirrorTgt, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdMirrorTgtBdyNum, &QSpinBox::textChanged, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdActType, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_act_data_changed);
-   connect(ui->cmdActNum, &QSpinBox::textChanged, this,
-           &DSM_Menu::cmd_act_data_changed);
-   connect(ui->cmdActDutyCycle, &QDoubleSpinBox::textChanged, this,
-           &DSM_Menu::cmd_act_data_changed);
-
-   connect(ui->cmdManX, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdManY, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdManZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdManFrm, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdManType, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdManLimits, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdManTime, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdSC, &QComboBox::textActivated, this,
-           &DSM_Menu::timeline_data_changed);
-   connect(ui->cmdTime, &QDoubleSpinBox::textChanged, this,
-           &DSM_Menu::timeline_data_changed);
-   connect(ui->cmdTrnLabel, &QComboBox::textActivated, this,
-           &DSM_Menu::timeline_data_changed);
-   connect(ui->cmdAttLabel, &QComboBox::textActivated, this,
-           &DSM_Menu::timeline_data_changed);
-   connect(ui->cmdHManLabel, &QComboBox::textActivated, this,
-           &DSM_Menu::timeline_data_changed);
-   connect(ui->cmdAttSVLabel, &QComboBox::textActivated, this,
-           &DSM_Menu::timeline_data_changed);
-   connect(ui->cmdActLabel, &QComboBox::textActivated, this,
-           &DSM_Menu::timeline_data_changed);
-
-   connect(ui->gainKpX, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKpY, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKpZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKrX, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKrY, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKrZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKiX, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKiY, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKiZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKiLimX, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKiLimY, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKiLimZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-
-   connect(ui->gainBandwidth, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainDampingRatio, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainAlpha, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainILim, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainMomDumpKpX, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainMomDumpKpY, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainMomDumpKpZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainLyaGain, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainLyaGain_2, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-
-   connect(ui->gainCustomGains, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-
-   connect(ui->limFrcX, &QLineEdit::textEdited, this,
-           &DSM_Menu::lim_data_changed);
-   connect(ui->limFrcY, &QLineEdit::textEdited, this,
-           &DSM_Menu::lim_data_changed);
-   connect(ui->limFrcZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::lim_data_changed);
-   connect(ui->limRateX, &QLineEdit::textEdited, this,
-           &DSM_Menu::lim_data_changed);
-   connect(ui->limRateY, &QLineEdit::textEdited, this,
-           &DSM_Menu::lim_data_changed);
-   connect(ui->limRateZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::lim_data_changed);
-
    ui->cmdActList->setSortingEnabled(true);
    ui->cmdActList->sortItems(Qt::AscendingOrder);
    ui->gainList->setSortingEnabled(true);
@@ -356,13 +222,13 @@ void DSM_Menu::set_validators() {
 
 void DSM_Menu::receive_dsmpath(QString path) {
    inoutPath = path;
-   filePath  = inoutPath + "Inp_DSM.txt";
+   filePath  = inoutPath + "Inp_DSM.yaml";
 
    receive_data();
 }
 
 void DSM_Menu::receive_data() {
-   const static QRegularExpression rxSC("SC_(.*).txt");
+   const static QRegularExpression rxSC("SC_(.*).yaml");
 
    ui->cmdTimelineTree->clear();
    dsmUpdate.clear();
@@ -404,85 +270,59 @@ void DSM_Menu::receive_data() {
    for (const QString &ctrlType : ctrlValidGains.keys())
       ctrlValidGains[ctrlType].clear();
 
-   QFile simFile(inoutPath + "Inp_Sim.txt");
-   if (!simFile.open(QIODevice::ReadOnly))
-      QMessageBox::information(0, "error", simFile.errorString());
-   QTextStream simIn(&simFile);
-
-   while (!simIn.atEnd()) {
-      QString line = simIn.readLine();
-      if (line.contains("Spacecraft", Qt::CaseInsensitive)) {
-         line = simIn.readLine();
-         QStringList line_items =
-             line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
-         int nSC = line_items[0].toInt();
-         for (int i = 0; i < nSC; i++) {
-            line         = simIn.readLine();
-            QString name = rxSC.match(line).captured(1);
-            if (badScNames.contains(name)) {
-               QString errMsg =
-                   "Spacecraft name \"" + name + "\" is invalid.\n";
-               errMsg.append("Spacecraft cannot be named:\n");
-               for (const QString &badScName : badScNames)
-                  errMsg.append("\t\"" + badScName + "\"\n");
-               errMsg.append("Please rename your spacecraft.");
-               dsm_gui_lib::error_message(errMsg);
-               dsm_gui_lib::inexplicable_error_message();
-               DSM_Menu::close();
-            }
-            scNames.append(name);
-
-            nBdys.insert(
-                name, dsm_gui_lib::get_sc_nitems(
-                          inoutPath, name, dsm_gui_lib::scSectionType::BODY));
-            nWhls.insert(
-                name, dsm_gui_lib::get_sc_nitems(
-                          inoutPath, name, dsm_gui_lib::scSectionType::WHEEL));
-            nMtbs.insert(name,
-                         dsm_gui_lib::get_sc_nitems(
-                             inoutPath, name, dsm_gui_lib::scSectionType::MTB));
-            nThrs.insert(name, dsm_gui_lib::get_sc_nitems(
-                                   inoutPath, name,
-                                   dsm_gui_lib::scSectionType::THRUSTER));
-         }
-         break;
+   /* Load Inp_Sim */
+   YAML::Node inp_sim =
+       YAML::LoadFile((inoutPath + "Inp_Sim.yaml").toStdString());
+   YAML::Node scs = inp_sim["SCs"];
+   for (auto it = scs.begin(); it != scs.end(); ++it) {
+      QString name = (*it)["Name"].as<QString>();
+      if (badScNames.contains(name)) {
+         QString errMsg = "Spacecraft name \"" + name + "\" is invalid.\n";
+         errMsg.append("Spacecraft cannot be named:\n");
+         for (const QString &badScName : badScNames)
+            errMsg.append("\t\"" + badScName + "\"\n");
+         errMsg.append("Please rename your spacecraft.");
+         dsm_gui_lib::error_message(errMsg);
+         dsm_gui_lib::inexplicable_error_message();
+         DSM_Menu::close();
       }
+      scNames.append(name);
+      QString scFile     = inoutPath + name + ".yaml";
+      YAML::Node sc_yaml = YAML::LoadFile(scFile.toStdString());
+
+      QHash<const QString, QHash<QString, int>> nItems = {{"Bodies", nBdys},
+                                                          {"Wheels", nWhls},
+                                                          {"MTBs", nMtbs},
+                                                          {"Thrusters", nThrs}};
+
+      for (auto it = nItems.begin(); it != nItems.end(); ++it)
+         it.value().insert(name, sc_yaml[it.key().toStdString()].size());
    }
-   simFile.close();
 
-   ui->cmdSC->addItems(dsm_gui_lib::sortStringList(scNames));
-   ui->cmdTrnOri->addItems(dsm_gui_lib::sortStringList(scNames));
-   ui->cmdTrnFrm->addItems(dsm_gui_lib::sortStringList(scNames));
-   ui->cmdPvTgtSc->addItems(dsm_gui_lib::sortStringList(scNames));
-   ui->cmdSvTgtSc->addItems(dsm_gui_lib::sortStringList(scNames));
-   ui->cmdMirrorTgt->addItems(dsm_gui_lib::sortStringList(scNames));
+   const QList<QComboBox *> scBoxes = {ui->cmdSC,      ui->cmdTrnOri,
+                                       ui->cmdTrnFrm,  ui->cmdPvTgtSc,
+                                       ui->cmdSvTgtSc, ui->cmdMirrorTgt};
+   for (QComboBox *box : scBoxes)
+      box->addItems(dsm_gui_lib::sortStringList(scNames));
 
-   QFile dsmFile(filePath);
-   if (!dsmFile.open(QIODevice::ReadOnly))
-      QMessageBox::information(0, "error", dsmFile.errorString());
-   QTextStream in(&dsmFile);
+   /* Load Inp_DSM */
+   inp_dsm = YAML::LoadFile(filePath.toStdString());
 
-   for (const int key : cmdValidCtrls.keys())
+   for (auto key : cmdValidCtrls.keys())
       cmdValidCtrls[key].clear();
-   for (const int key : cmdValidActs.keys())
+   for (auto key : cmdValidActs.keys())
       cmdValidActs[key].clear();
 
-   for (dsmSectionTypes type : searchOrd)
-      if (type != dsmSectionTypes::COMMANDS)
-         metaHash[type]->clear();
+   tree_node_map.clear();
+   list_node_map.clear();
 
    for (dsmSectionTypes type : searchOrd) {
-      in.seek(0);
-      while (!in.atEnd()) {
-         QString line                  = in.readLine();
-         QRegularExpressionMatch match = entryItemRegEx(type).match(line);
-         if (!match.captured(1).isEmpty()) {
-            new_entry_item(type, match.captured(3), match.captured(1).toInt(),
-                           match.captured(2));
-         }
+      const QString sectionName = yamlSectionHeaders[type];
+      const YAML::Node section  = inp_dsm[sectionName.toStdString()];
+      for (auto it = section.begin(); it != section.end(); ++it) {
+         new_entry_item(type, *it);
       }
    }
-   dsmFile.close();
 
    for (int col = 0; col < ui->cmdTimelineTree->columnCount(); col++)
       ui->cmdTimelineTree->resizeColumnToContents(col);
@@ -535,252 +375,8 @@ void DSM_Menu::write_data() {
    file.close();
 }
 
-/* Edit this function to change the headers in Inp_DSM.txt */
-QStringList DSM_Menu::secDescription(const dsmSectionTypes type) {
-   QStringList descrip;
-   descrip.clear();
-
-   switch (type) {
-      case dsmSectionTypes::COMMANDS:
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append("#                              Spacecraft Commands");
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append("# Col: 1   ->  Command Interp ID Flag (hard coded in "
-                        "interpreter)");
-         descrip.append("# Col: 2   ->  Spacecraft ID Number: \"SC[#]\"");
-         descrip.append("# Col: 3   ->  Command Sequence Flag: \"FswMode\" or "
-                        "\"CmdTime\"");
-         descrip.append("# Col: 4   ->  Command Sequence Parameter: FSW Mode "
-                        "ID or Command Execution Time");
-         descrip.append("# If Col: 3 -> CmdTime, then Col: 5 is \"NUM_CMD[#]\" "
-                        "(\"#\" is the number of commands)");
-         descrip.append("#                       Command Types:");
-         descrip.append("#                       Translation Command "
-                        "Method_Mode (\"PASSIVE_TRN\" for none)");
-         descrip.append("#                       Attitude Command Method_Mode "
-                        "(\"PASSIVE_ATT\" for none)");
-         descrip.append(
-             "#                       Optional Actuator Command_Mode");
-         break;
-      case dsmSectionTypes::TRANSLATION:
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append("#                             Translation Command");
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append(
-             "# Col: 1   ->  Command Interp ID Flag: \"TranslationCmd_[#]\"");
-         descrip.append("# Col: 2   ->  Position 1: X (meters)");
-         descrip.append("# Col: 3   ->  Position 2: Y (meters)");
-         descrip.append("# Col: 4   ->  Position 3: Z (meters)");
-         descrip.append("# Col: 5   ->  Ref Origin (ctrl wrt): Orbit Point "
-                        "\"OP\" or SC ID Number (\"SC[#].B[#]\")");
-         descrip.append("# Col: 6   ->  Ref Frame Directions: \"N\", \"F\", "
-                        "\"L\", or SC ID Number (\"SC[#].B[#]\")");
-         descrip.append("# Col: 7   ->  Controller Mode");
-         descrip.append("# Col: 8   ->  Actuator Mode");
-         break;
-      case dsmSectionTypes::PRIMARY_VEC:
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append("#                              Attitude Command");
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append("#------------------------------Primary Axis "
-                        "Cmd---------------------------------");
-         descrip.append(
-             "# Col: 1   ->  Command Interp ID Flag: \"AttitudeCmd_PV[#]\"");
-         descrip.append("# Col: 2   ->  Primary Target Type: BODY, SC, VEC");
-         descrip.append("# Col: 3   ->  Primary Axis Direction 1");
-         descrip.append("# Col: 4   ->  Primary Axis Direction 2");
-         descrip.append("# Col: 5   ->  Primary Axis Direction 3");
-         descrip.append(
-             "# Col: 6   ->  Primary Target: Specify Body, SC[#].B[#] or Vec");
-         descrip.append("# Col: 7   ->  Controller Mode");
-         descrip.append("# Col: 8   ->  Actuator Mode");
-         descrip.append("# If Col: 2 -> VEC, then Col: 6 is the Ref. Frame of "
-                        "the pointing vector: \"N\", \"F\", \"L\"");
-         descrip.append("#                        Col: 7-9 are the pointing "
-                        "vec for Primary axis");
-         descrip.append("#                        Col: 10-11 are Controller "
-                        "and Actuator Sets");
-         break;
-      case dsmSectionTypes::SECONDARY_VEC:
-         descrip.append("#------------------------------Secondary Axis "
-                        "Cmd-------------------------------");
-         descrip.append(
-             "# Col: 1   ->  Command Interp ID Flag: \"AttitudeCmd_SV[0]\"");
-         descrip.append("# Col: 2   ->  Secondary Target Type: BODY, SC, VEC");
-         descrip.append("# Col: 3   ->  Secondary Axis Direction 1");
-         descrip.append("# Col: 4   ->  Secondary Axis Direction 2");
-         descrip.append("# Col: 5   ->  Secondary Axis Direction 3");
-         descrip.append("# Col: 6   ->  Secondary Target: Specify Body, "
-                        "SC[#].B[#] or Vec");
-         descrip.append("# If Col: 2 -> VEC, then Col: 6 is the Ref. Frame of "
-                        "the pointing vector: \"N\", \"F\", \"L\"");
-         descrip.append("#                        Col: 7-9 are the pointing "
-                        "vec for Secondary axis");
-         break;
-      case dsmSectionTypes::QUATERION:
-         descrip.append("#------------------------Quaternion Attitude "
-                        "Cmd--------------------------------");
-         descrip.append(
-             "# Col: 1   ->  Command Interp ID Flag: \"QuaternionCmd_[#]\"");
-         descrip.append("# Col: 2   ->  Quaternion Component, q0");
-         descrip.append("# Col: 3   ->  Quaternion Component, q1");
-         descrip.append("# Col: 4   ->  Quaternion Component, q2");
-         descrip.append("# Col: 5   ->  Quaternion Component, q3");
-         descrip.append("# Col: 6   ->  Reference Frame of Quaternion");
-         descrip.append("# Col: 7   ->  Controller Mode");
-         descrip.append("# Col: 8   ->  Actuator Mode");
-         break;
-      case dsmSectionTypes::MIRROR:
-         descrip.append("#----------------------------Mirror Attitude "
-                        "Cmd--------------------------------");
-         descrip.append(
-             "# Col: 1   ->  Command Interp ID Flag: \"MirrorCmd_[#]\"");
-         descrip.append(
-             "# Col: 2   ->  Spacecraft to mirror the attitude of: \"SC[#]\"");
-         descrip.append("# Col: 3   ->  Controller Mode");
-         descrip.append("# Col: 4   ->  Actuator Mode");
-         break;
-      case dsmSectionTypes::DETUMBLE:
-         descrip.append("#---------------------------Detumble Attitude "
-                        "Cmd-------------------------------");
-         descrip.append(
-             "# Col: 1   ->  Command Interp ID Flag: \"DetumbleCmd_[#]\"");
-         descrip.append("# Col: 2   ->  Controller Mode");
-         descrip.append("# Col: 3   ->  Actuator Mode");
-         break;
-      case dsmSectionTypes::WHLHMANAGEMENT:
-         descrip.append("#---------------------------Wheel Momentum Management "
-                        "Cmd-------------------------------");
-         descrip.append(
-             "# Col: 1   ->  Command Interp ID Flag: \"WhlHManageCmd_[#]\"");
-         descrip.append("# Col: 2   ->  Momentum Dumping [ON/OFF]");
-         descrip.append("# Col: 3   ->  Minimum H_norm [Nms] (0 to always "
-                        "dump, *large* to never dump)");
-         descrip.append("# Col: 4   ->  Maximum H_norm [Nms] (0 to always "
-                        "dump, *large* to never dump)");
-         descrip.append("# Col: 5   ->  Controller Mode");
-         descrip.append("# Col: 6   ->  Actuator Mode");
-         break;
-      case dsmSectionTypes::ACTUATOR_CMD:
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append("#                             Actuator Command");
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append(
-             "# Col: 1   ->  Command Interp ID Flag: \"ActuatorCmd[#]\"");
-         descrip.append("# Col: 2   ->  Number of Commands Declared");
-         descrip.append(
-             "# Col: 3-N ->  Actuator[Number]_[Duty Cycle], e.g. WHL[0]_[100]");
-         break;
-      case dsmSectionTypes::CONTROLLERS:
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append("#                              Controllers");
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append(
-             "# Col: 1   ->  Command Interp ID Flag: \"Controller_[#]\"");
-         descrip.append("# Col: 2   ->  Controller Type: \"PID_CNTRL\", "
-                        "\"LYA_ATT_CNTRL\", \"LYA_2BODY_CNTRL\", "
-                        "\"H_DUMP_CNTRL\", \"CUSTOM_CNTRL\"");
-         descrip.append("# Col: 3   ->  Set of Control Gains");
-         descrip.append("# Col: 4   ->  Set of Control Limits");
-         break;
-      case dsmSectionTypes::ACTUATORS:
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append("#                             Control Actuators");
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append("# Col: 1   ->  Cmd Interp ID Flag: \"Actuators_[#]\"");
-         descrip.append("# Col: 2   ->  Actuators: \"WHL_[#]\", \"MTB\", "
-                        "\"THR\", \"Ideal\"");
-         break;
-      case dsmSectionTypes::GAINS:
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append(
-             "#                   Translational / Attitude Control Parameters");
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append("# Col: 1   ->  Cmd Interp ID Flag: \"Gains_[#]\"");
-         descrip.append("# Col: 2   ->  Gain Mode: \"PID\", \"PID_WN\", "
-                        "\"MomentumDump\", \"FC_LYA\", \"CUSTOM\"");
-         descrip.append("# Col: 3   ->  Proportional Gain Direction 1, Kp");
-         descrip.append("# Col: 4   ->  Proportional Gain Direction 2, Kp");
-         descrip.append("# Col: 5   ->  Proportional Gain Direction 3, Kp");
-         descrip.append("# Col: 6   ->  Rate Gain Direction 1, Kr");
-         descrip.append("# Col: 7   ->  Rate Gain Direction 2, Kr");
-         descrip.append("# Col: 8   ->  Rate Gain Direction 3, Kr");
-         descrip.append("# Col: 9   ->  Integral Gain Direction 1, Ki");
-         descrip.append("# Col: 10  ->  Integral Gain Direction 2, Ki");
-         descrip.append("# Col: 11  ->  Integral Gain Direction 3, Ki");
-         break;
-      case dsmSectionTypes::LIMITS:
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append(
-             "#                   Translational / Attitude Control Limits");
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append("# Col: 1   ->  Cmd Interp ID Flag: \"Limits_[#]\"");
-         descrip.append("# Col: 2   ->  Max. Acceleration Direction 1, "
-                        "frc_max/trq_max [N, Nm]");
-         descrip.append("# Col: 3   ->  Max. Acceleration Direction 2, "
-                        "frc_max/trq_max [N, Nm]");
-         descrip.append("# Col: 4   ->  Max. Acceleration Direction 3, "
-                        "frc_max/trq_max [N, Nm]");
-         descrip.append("# Col: 5   ->  Max. Velocity Direction 1, "
-                        "vel_max/w_max [m/s, deg/s]");
-         descrip.append("# Col: 6   ->  Max. Velocity Direction 2, "
-                        "vel_max/w_max [m/s, deg/s]");
-         descrip.append("# Col: 7   ->  Max. Velocity Direction 3, "
-                        "vel_max/w_max [m/s, deg/s]");
-         break;
-      case dsmSectionTypes::MANEUVER:
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append("#                              Maneuver Command");
-         descrip.append("#-----------------------------------------------------"
-                        "--------------------------");
-         descrip.append(
-             "# Col: 1   ->  Cmd Interp ID Flag: \"ManeuverCmd_[#]\"");
-         descrip.append("# Col: 2   ->  Delta-V in x direction [m/s]");
-         descrip.append("# Col: 3   ->  Delta-V in y direction [m/s]");
-         descrip.append("# Col: 4   ->  Delta-V in z direction [m/s]");
-         descrip.append("# Col: 5   ->  Maneuver Frame [%s]: \"N\", \"B\"");
-         descrip.append("# Col: 6   ->  Approximation Type [%s]: \"CONSTANT\", "
-                        "\"SMOOTHED\". Note that");
-         descrip.append("#    \"SMOOTHED\" Cmd must start at half of burn "
-                        "duration before the equivalent DeltaV");
-         descrip.append("#    occurs.");
-         descrip.append("# Col: 7   ->  Delta-V burn duration [s]");
-         descrip.append("# Col: 8   ->  Set of Control Limits");
-         descrip.append("# Col: 9   ->  Actuator Mode");
-         break;
-   }
-   return descrip;
-}
-
-void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label,
-                              const int itemNum, const QString itemData) {
-   QStringList dataSplit = itemData.split(QRegExp("\\s"), Qt::SkipEmptyParts);
-   const static QRegularExpression rxGains("Gains_\\[([0-9]+)]");
-   const static QRegularExpression rxLims("Limits_\\[([0-9]+)]");
-   const static QRegularExpression rxActs("Actuators_\\[([0-9]+)]");
-   const static QRegularExpression rxCmdParse(
-       "\\s*CmdTime\\s*([0-9.]+)\\s*NUM_CMD\\[[0-9]+]\\s*(.*)");
-   QRegularExpressionMatch match;
-
-   if (label.isEmpty())
-      label = entryItemFormat(type).arg(itemNum);
+void DSM_Menu::new_entry_item(const dsmSectionTypes type,
+                              const YAML::Node item) {
 
    QTreeWidgetItem *newTreeItem;
    QListWidgetItem *newListItem;
@@ -789,295 +385,232 @@ void DSM_Menu::new_entry_item(const dsmSectionTypes type, QString label,
    QTreeWidgetItem *treeItem, *treeParentItem;
    int searchNum;
 
-   if (type != dsmSectionTypes::COMMANDS)
-      metaHash[type]->insert(label, entryItemFormat(type).arg(itemNum));
+   if (type == dsmSectionTypes::COMMANDS) {
+      newTreeItem = new QTreeWidgetItem(ui->cmdTimelineTree);
+      match       = rxCmdParse.match(itemData);
+      dataSplit   = match.captured(2).split(QRegExp("\\s"), Qt::SkipEmptyParts);
+      if (itemNum >= scNames.length()) {
+         dsm_gui_lib::error_message("More Spacecraft in \"Inp_DSM.txt\" than in
+                \"Inp_Sim.txt\".");
+         dsm_gui_lib::inexplicable_error_message();
+         DSM_Menu::close();
+         return; // won't get here, realistically
+      }
 
-   switch (type) {
-      case dsmSectionTypes::COMMANDS:
+      newTreeItem->setText(tlCols::tlColSC, scNames[itemNum]);
+      newTreeItem->setData(tlCols::tlColTime, Qt::DisplayRole,
+                           match.captured(1).toDouble());
+      newTreeItem->setTextAlignment(tlCols::tlColTime, Qt::AlignRight);
+      for (const QString &cmd : qAsConst(dataSplit)) {
+         int writeCol = -1;
+         QString label;
+         int cmdType = getCmdType(cmd);
 
-         newTreeItem = new QTreeWidgetItem(ui->cmdTimelineTree);
-         match       = rxCmdParse.match(itemData);
-         dataSplit =
-             match.captured(2).split(QRegExp("\\s"), Qt::SkipEmptyParts);
-         if (itemNum >= scNames.length()) {
-            dsm_gui_lib::error_message(
-                "More Spacecraft in \"Inp_DSM.txt\" than in \"Inp_Sim.txt\".");
-            dsm_gui_lib::inexplicable_error_message();
-            DSM_Menu::close();
-            return; // won't get here, realistically
-         }
+         if (trnCmds.contains(cmdType))
+            writeCol = tlColTrn;
+         else if (attCmds.contains(cmdType))
+            writeCol = tlColAtt;
+         else if (cmdType == cmdWhlHManage)
+            writeCol = tlColHMan;
+         else if (cmdType == cmdAct)
+            writeCol = tlColAct;
 
-         newTreeItem->setText(tlCols::tlColSC, scNames[itemNum]);
-         newTreeItem->setData(tlCols::tlColTime, Qt::DisplayRole,
-                              match.captured(1).toDouble());
-         newTreeItem->setTextAlignment(tlCols::tlColTime, Qt::AlignRight);
-         for (const QString &cmd : qAsConst(dataSplit)) {
-            int writeCol = -1;
-            QString label;
-            int cmdType = getCmdType(cmd);
+         if (cmdType != DSM_Menu::cmdPsvTrn && cmdType != DSM_Menu::cmdPsvAtt) {
+            label.clear();
+            QRegularExpressionMatch match = cmdRegEx(cmdType).match(cmd);
 
-            if (trnCmds.contains(cmdType))
-               writeCol = tlColTrn;
-            else if (attCmds.contains(cmdType))
-               writeCol = tlColAtt;
-            else if (cmdType == cmdWhlHManage)
-               writeCol = tlColHMan;
-            else if (cmdType == cmdAct)
-               writeCol = tlColAct;
+            if (cmdType != cmdTypes::cmdAtt) {
+               treeParentItem = entryCmdParents[cmdType];
+               searchNum      = match.captured(1).toInt();
+               for (int i = 0; i < treeParentItem->childCount(); i++) {
+                  treeItem = treeParentItem->child(i);
+                  if (treeItem->data(cmdCols::cmdColInd, cmdData::cmdNum) ==
+                      searchNum) {
+                     label = treeItem->text(cmdCols::cmdColLabel);
+                     break;
+                  }
+               }
+            } else {
+               for (int subCmd : {cmdPV, cmdSV}) {
+                  treeParentItem = entryCmdParents[subCmd];
+                  if (subCmd == cmdPV)
+                     searchNum = match.captured(1).toInt();
+                  else
+                     searchNum = match.captured(2).toInt();
 
-            if (cmdType != DSM_Menu::cmdPsvTrn &&
-                cmdType != DSM_Menu::cmdPsvAtt) {
-               label.clear();
-               QRegularExpressionMatch match = cmdRegEx(cmdType).match(cmd);
-
-               if (cmdType != cmdTypes::cmdAtt) {
-                  treeParentItem = entryCmdParents[cmdType];
-                  searchNum      = match.captured(1).toInt();
                   for (int i = 0; i < treeParentItem->childCount(); i++) {
                      treeItem = treeParentItem->child(i);
                      if (treeItem->data(cmdCols::cmdColInd, cmdData::cmdNum) ==
                          searchNum) {
-                        label = treeItem->text(cmdCols::cmdColLabel);
+                        label.append(treeItem->text(cmdCols::cmdColLabel));
                         break;
                      }
                   }
-               } else {
-                  for (int subCmd : {cmdPV, cmdSV}) {
-                     treeParentItem = entryCmdParents[subCmd];
-                     if (subCmd == cmdPV)
-                        searchNum = match.captured(1).toInt();
-                     else
-                        searchNum = match.captured(2).toInt();
-
-                     for (int i = 0; i < treeParentItem->childCount(); i++) {
-                        treeItem = treeParentItem->child(i);
-                        if (treeItem->data(cmdCols::cmdColInd,
-                                           cmdData::cmdNum) == searchNum) {
-                           label.append(treeItem->text(cmdCols::cmdColLabel));
-                           break;
-                        }
-                     }
-                     if (subCmd == cmdPV)
-                        label.append(cmdDelimiter + cmdDataSpacer);
-                  }
+                  if (subCmd == cmdPV)
+                     label.append(cmdDelimiter + cmdDataSpacer);
                }
-            } else
-               label = "Passive";
-            newTreeItem->setText(writeCol, label);
-         }
-         ui->cmdTimelineTree->addTopLevelItem(newTreeItem);
-         break;
-      case dsmSectionTypes::TRANSLATION:
-         newTreeItem =
-             new QTreeWidgetItem(entryCmdParents[section2Cmd[type]], {label});
-         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
-         newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
-         //        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
-         newTreeItem->setText(cmdCols::cmdColData,
-                              dataSplit.join(cmdDataSpacer));
-
-         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
-         break;
-      case dsmSectionTypes::PRIMARY_VEC:
-         newTreeItem =
-             new QTreeWidgetItem(entryCmdParents[section2Cmd[type]], {label});
-         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
-         newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
-         //        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
-         newTreeItem->setText(cmdCols::cmdColData,
-                              dataSplit.join(cmdDataSpacer));
-
-         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
-         break;
-      case dsmSectionTypes::SECONDARY_VEC:
-         newTreeItem =
-             new QTreeWidgetItem(entryCmdParents[section2Cmd[type]], {label});
-         newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
-         //        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
-         newTreeItem->setText(cmdCols::cmdColData,
-                              dataSplit.join(cmdDataSpacer));
-
-         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
-         break;
-      case dsmSectionTypes::QUATERION:
-         newTreeItem =
-             new QTreeWidgetItem(entryCmdParents[section2Cmd[type]], {label});
-         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
-         newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
-         //        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
-         newTreeItem->setText(cmdCols::cmdColData,
-                              dataSplit.join(cmdDataSpacer));
-
-         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
-         break;
-      case dsmSectionTypes::MIRROR:
-         newTreeItem =
-             new QTreeWidgetItem(entryCmdParents[section2Cmd[type]], {label});
-         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
-         newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
-         //        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
-         newTreeItem->setText(cmdCols::cmdColData,
-                              dataSplit.join(cmdDataSpacer));
-
-         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
-         break;
-      case dsmSectionTypes::DETUMBLE:
-         newTreeItem =
-             new QTreeWidgetItem(entryCmdParents[section2Cmd[type]], {label});
-         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
-         newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
-         //        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
-
-         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
-         break;
-      case dsmSectionTypes::WHLHMANAGEMENT:
-         newTreeItem =
-             new QTreeWidgetItem(entryCmdParents[section2Cmd[type]], {label});
-         set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
-         newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
-         //        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
-         newTreeItem->setText(cmdCols::cmdColData,
-                              dataSplit.join(cmdDataSpacer));
-
-         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
-         break;
-      case dsmSectionTypes::ACTUATOR_CMD:
-         newTreeItem =
-             new QTreeWidgetItem(entryCmdParents[section2Cmd[type]], {label});
-         //        newTreeItem->setData(0,cmdData::cmdType,section2Cmd[type]);
-         newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
-         //        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
-         newTreeItem->setText(cmdCols::cmdColData,
-                              dataSplit.join(cmdDataSpacer));
-
-         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
-         break;
-      case dsmSectionTypes::CONTROLLERS:
-         newTreeItem = new QTreeWidgetItem(ui->ctrlConfigTree, {label});
-         newTreeItem->setData(ctrlCols::ctrlColInd, ctrlData::ctrlNum, itemNum);
-         //        newTreeItem->setData(ctrlCols::ctrlColLabel,ctrlData::ctrlType,dataSplit[0]);
-         newTreeItem->setText(ctrlCols::ctrlColType, ctrlTypes[dataSplit[0]]);
-
-         for (int cmdType : ctrlValidCmds[dataSplit[0]])
-            cmdValidCtrls[cmdType].append(label);
-
-         searchNum = rxGains.match(itemData).captured(1).toInt();
-         listItems = ui->gainList->findItems("*", Qt::MatchWildcard);
-         for (QListWidgetItem *item : qAsConst(listItems)) {
-            if (item->data(gainsData::gainsNum).toInt() == searchNum) {
-               newTreeItem->setText(ctrlCols::ctrlColGains, item->text());
-               break;
             }
-         }
+         } else
+            label = "Passive";
+         newTreeItem->setText(writeCol, label);
+      }
+      ui->cmdTimelineTree->addTopLevelItem(newTreeItem);
+   } else {
+      QString label             = "";
+      const QString itemName    = entryItemName(type);
+      const YAML::Node itemData = item[itemName];
+      if (!itemData["Description"])
+         label = itemData["Description"].as<QString>();
 
-         searchNum = rxLims.match(itemData).captured(1).toInt();
-         listItems = ui->limList->findItems("*", Qt::MatchWildcard);
-         for (QListWidgetItem *item : qAsConst(listItems)) {
-            if (item->data(limData::limNum).toInt() == searchNum) {
-               newTreeItem->setText(ctrlCols::ctrlColLims, item->text());
-               break;
+      metaHash[type]->insert(label, item);
+      switch (type) {
+         case dsmSectionTypes::POSITION:
+         case dsmSectionTypes::PRIMARY_VEC:
+         case dsmSectionTypes::QUATERION:
+         case dsmSectionTypes::MIRROR:
+         case dsmSectionTypes::WHLHMANAGEMENT: {
+            newTreeItem = new QTreeWidgetItem(
+                entryCmdParents[section2Cmd[type]], {label});
+            set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
+            newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
+            // newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+            newTreeItem->setText(cmdCols::cmdColData,
+                                 dataSplit.join(cmdDataSpacer));
+
+            entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
+         } break;
+         case dsmSectionTypes::DETUMBLE: {
+            newTreeItem = new QTreeWidgetItem(
+                entryCmdParents[section2Cmd[type]], {label});
+            set_command_ctrl_act(newTreeItem, itemData, &dataSplit);
+            newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
+            // newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+
+            entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
+         } break;
+         case dsmSectionTypes::ACTUATOR_CMD: {
+            newTreeItem = new QTreeWidgetItem(
+                entryCmdParents[section2Cmd[type]], {label});
+            // newTreeItem->setData(0,cmdData::cmdType,section2Cmd[type]);
+            newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
+            // newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+            newTreeItem->setText(cmdCols::cmdColData,
+                                 dataSplit.join(cmdDataSpacer));
+
+            entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
+         } break;
+         case dsmSectionTypes::SECONDARY_VEC: {
+            newTreeItem = new QTreeWidgetItem(
+                entryCmdParents[section2Cmd[type]], {label});
+            newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
+            // newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+            newTreeItem->setText(cmdCols::cmdColData,
+                                 dataSplit.join(cmdDataSpacer));
+
+            entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
+         } break;
+         case dsmSectionTypes::CONTROLLERS: {
+            newTreeItem = new QTreeWidgetItem(ui->ctrlConfigTree, {label});
+            newTreeItem->setData(ctrlCols::ctrlColInd, ctrlData::ctrlNum,
+                                 itemNum);
+            //
+            newTreeItem->setData(ctrlCols::ctrlColLabel, ctrlData::ctrlType,
+                                 dataSplit[0]);
+            newTreeItem->setText(ctrlCols::ctrlColType,
+                                 ctrlTypes[dataSplit[0]]);
+
+            for (int cmdType : ctrlValidCmds[dataSplit[0]])
+               cmdValidCtrls[cmdType].append(label);
+
+            searchNum = rxGains.match(itemData).captured(1).toInt();
+            listItems = ui->gainList->findItems("*", Qt::MatchWildcard);
+            for (QListWidgetItem *item : qAsConst(listItems)) {
+               if (item->data(gainsData::gainsNum).toInt() == searchNum) {
+                  newTreeItem->setText(ctrlCols::ctrlColGains, item->text());
+                  break;
+               }
             }
-         }
-         ui->ctrlConfigTree->addTopLevelItem(newTreeItem);
-         break;
-      case dsmSectionTypes::ACTUATORS:
-         newListItem = new QListWidgetItem(label);
-         newListItem->setData(actData::actType, dataSplit[0]);
-         newListItem->setData(actData::actNum, itemNum);
 
-         for (int cmdType : actValidCmds[dataSplit[0]])
-            cmdValidActs[cmdType].append(label);
-
-         ui->actList->addItem(newListItem);
-         break;
-      case dsmSectionTypes::GAINS:
-         for (const QString &ctrl : allowableCtrl[dataSplit[0]])
-            ctrlValidGains[ctrl].append(label);
-
-         newListItem = new QListWidgetItem(label);
-         newListItem->setData(gainsData::gainsType, dataSplit[0]);
-         newListItem->setData(gainsData::gainsNum, itemNum);
-         newListItem->setData(gainsData::gainsData,
-                              dataSplit.mid(1).join(cmdDataSpacer));
-         ui->gainList->addItem(newListItem);
-         break;
-      case dsmSectionTypes::LIMITS:
-         ui->ctrlLims->addItem(label);
-         ui->cmdManLimits->addItem(label);
-         newListItem = new QListWidgetItem(label);
-         newListItem->setData(limData::limNum, itemNum);
-         newListItem->setData(limData::limData, itemData);
-         ui->limList->addItem(newListItem);
-         break;
-      case dsmSectionTypes::MANEUVER:
-         ui->cmdTrnLabel->addItem(label);
-         newTreeItem =
-             new QTreeWidgetItem(entryCmdParents[section2Cmd[type]], {label});
-         match     = rxActs.match(itemData);
-         searchNum = match.captured(1).toInt();
-         listItems = ui->actList->findItems("*", Qt::MatchWildcard);
-         for (QListWidgetItem *listItem : qAsConst(listItems)) {
-            if (listItem->data(actData::actNum).toInt() == searchNum) {
-               dataSplit.takeAt(dataSplit.indexOf(match.captured(0)));
-               newTreeItem->setText(cmdCols::cmdColAct, listItem->text());
-               break;
+            searchNum = rxLims.match(itemData).captured(1).toInt();
+            listItems = ui->limList->findItems("*", Qt::MatchWildcard);
+            for (QListWidgetItem *item : qAsConst(listItems)) {
+               if (item->data(limData::limNum).toInt() == searchNum) {
+                  newTreeItem->setText(ctrlCols::ctrlColLims, item->text());
+                  break;
+               }
             }
-         }
-         newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
-         //        newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
-         newTreeItem->setText(cmdCols::cmdColData,
-                              dataSplit.join(cmdDataSpacer));
+            ui->ctrlConfigTree->addTopLevelItem(newTreeItem);
+         } break;
+         case dsmSectionTypes::ACTUATORS: {
+            newListItem = new QListWidgetItem(label);
+            newListItem->setData(actData::actType, dataSplit[0]);
+            newListItem->setData(actData::actNum, itemNum);
 
-         entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
-         break;
-      default:
-         dsm_gui_lib::inexplicable_error_message();
-         return;
-         break;
+            for (int cmdType : actValidCmds[dataSplit[0]])
+               cmdValidActs[cmdType].append(label);
+
+            ui->actList->addItem(newListItem);
+         } break;
+         case dsmSectionTypes::GAINS: {
+            for (const QString &ctrl : allowableCtrl[dataSplit[0]])
+               ctrlValidGains[ctrl].append(label);
+
+            newListItem = new QListWidgetItem(label);
+            newListItem->setData(gainsData::gainsType, dataSplit[0]);
+            newListItem->setData(gainsData::gainsNum, itemNum);
+            newListItem->setData(gainsData::gainsData,
+                                 dataSplit.mid(1).join(cmdDataSpacer));
+            ui->gainList->addItem(newListItem);
+         } break;
+         case dsmSectionTypes::LIMITS: {
+            ui->ctrlLims->addItem(label);
+            ui->cmdManLimits->addItem(label);
+            newListItem = new QListWidgetItem(label);
+            newListItem->setData(limData::limNum, itemNum);
+            newListItem->setData(limData::limData, itemData);
+            ui->limList->addItem(newListItem);
+         } break;
+         case dsmSectionTypes::MANEUVER: {
+            ui->cmdTrnLabel->addItem(label);
+            newTreeItem = new QTreeWidgetItem(
+                entryCmdParents[section2Cmd[type]], {label});
+            match     = rxActs.match(itemData);
+            searchNum = match.captured(1).toInt();
+            listItems = ui->actList->findItems("*", Qt::MatchWildcard);
+            for (QListWidgetItem *listItem : qAsConst(listItems)) {
+               if (listItem->data(actData::actNum).toInt() == searchNum) {
+                  dataSplit.takeAt(dataSplit.indexOf(match.captured(0)));
+                  newTreeItem->setText(cmdCols::cmdColAct, listItem->text());
+                  break;
+               }
+            }
+            newTreeItem->setData(cmdCols::cmdColInd, cmdData::cmdNum, itemNum);
+            // newTreeItem->setData(cmdCols::cmdColInd,Qt::DisplayRole,itemNum);
+            newTreeItem->setText(cmdCols::cmdColData,
+                                 dataSplit.join(cmdDataSpacer));
+
+            entryCmdParents[section2Cmd[type]]->addChild(newTreeItem);
+         } break;
+         default:
+            dsm_gui_lib::inexplicable_error_message();
+            return;
+            break;
+      }
    }
 }
 
 void DSM_Menu::set_command_ctrl_act(QTreeWidgetItem *item,
-                                    const QString dataString,
-                                    QStringList *dataList) {
-   const static QRegularExpression rxCtrls("Controller_\\[([0-9]+)]");
-   const static QRegularExpression rxActs("Actuators_\\[([0-9]+)]");
-   QRegularExpressionMatch match;
-   int searchNum;
+                                    const YAML::Node node) {
 
-   match = rxCtrls.match(dataString);
-   if (match.captured(1).isEmpty()) {
-      dsm_gui_lib::error_message(item->text(cmdCols::cmdColLabel) +
-                                 R"( is missing "Controller_[#]".)");
-      return;
-   }
-   searchNum = match.captured(1).toInt();
-   QList<QTreeWidgetItem *> treeItems =
-       ui->ctrlConfigTree->findItems("*", Qt::MatchWildcard);
-   foreach (QTreeWidgetItem *treeItem, treeItems) {
-      if (treeItem->data(ctrlCols::ctrlColInd, ctrlData::ctrlNum) ==
-          searchNum) {
-         dataList->takeAt(dataList->indexOf(match.captured(0)));
-         item->setText(cmdCols::cmdColCtl, treeItem->text(0));
-         break;
+   const QHash<QString, cmdCols> hash = {{"Controller", cmdCols::cmdColCtl},
+                                         {"Actuator", cmdCols::cmdColAct}};
+   for (QString str : hash.keys()) {
+      if (!node[str]) {
+         dsm_gui_lib::error_message(node["Description"].as<QString>() +
+                                    "( is missing " + str + ":\".)");
+         return;
       }
-   }
-
-   match = rxActs.match(dataString);
-   if (match.captured(1).isEmpty()) {
-      dsm_gui_lib::error_message(item->text(cmdCols::cmdColLabel) +
-                                 R"( is missing "Actuator_[#]".)");
-      return;
-   }
-   searchNum = match.captured(1).toInt();
-   QList<QListWidgetItem *> listItems =
-       ui->actList->findItems("*", Qt::MatchWildcard);
-   foreach (QListWidgetItem *listItem, listItems) {
-      if (listItem->data(actData::actNum).toInt() == searchNum) {
-         dataList->takeAt(dataList->indexOf(match.captured(0)));
-         item->setText(cmdCols::cmdColAct, listItem->text());
-         break;
-      }
+      item->setText(hash[str], node[str]["Description"].as<QString>());
    }
 }
 
@@ -1085,7 +618,7 @@ QString DSM_Menu::entryItemName(const dsmSectionTypes type) {
    switch (type) {
       case dsmSectionTypes::COMMANDS:
          return "DSM_Cmd  SC";
-      case dsmSectionTypes::TRANSLATION:
+      case dsmSectionTypes::POSITION:
          return "TranslationCmd_";
       case dsmSectionTypes::PRIMARY_VEC:
          return "AttitudeCmd_PV";
@@ -1160,7 +693,7 @@ QRegularExpression DSM_Menu::entryItemRegEx(const dsmSectionTypes type) {
                       .split(QRegExp("\\s"), Qt::SkipEmptyParts)
                       .join("\\s*")));
    const static QRegularExpression rxTrn(
-       format.arg(entryItemName(dsmSectionTypes::TRANSLATION)));
+       format.arg(entryItemName(dsmSectionTypes::POSITION)));
    const static QRegularExpression rxPV(
        format.arg(entryItemName(dsmSectionTypes::PRIMARY_VEC)));
    const static QRegularExpression rxSV(
@@ -1189,7 +722,7 @@ QRegularExpression DSM_Menu::entryItemRegEx(const dsmSectionTypes type) {
    switch (type) {
       case dsmSectionTypes::COMMANDS:
          return rxCmd;
-      case dsmSectionTypes::TRANSLATION:
+      case dsmSectionTypes::POSITION:
          return rxTrn;
       case dsmSectionTypes::PRIMARY_VEC:
          return rxPV;
@@ -1224,7 +757,7 @@ QRegularExpression DSM_Menu::cmdRegEx(const int cmdType) {
    const static QString format = "%1\\[([0-9]+)]";
 
    const static QRegularExpression rxTrn(
-       format.arg(entryItemName(dsmSectionTypes::TRANSLATION)));
+       format.arg(entryItemName(dsmSectionTypes::POSITION)));
    const static QRegularExpression rxAtt(
        format.arg(entryItemName(dsmSectionTypes::PRIMARY_VEC)) +
        format.arg("_SV"));
@@ -1975,7 +1508,7 @@ void DSM_Menu::on_cmdAdd_clicked() {
 
    QString newCmdData;
    switch (type) {
-      case dsmSectionTypes::TRANSLATION:
+      case dsmSectionTypes::POSITION:
          newCmdData = "0.0  0.0  0.0  OP  F";
          newCmdData.append(cmdDataSpacer);
          newCmdData.append(ctrlName);
@@ -3480,305 +3013,315 @@ void DSM_Menu::on_limDuplicate_clicked() {
 }
 
 void DSM_Menu::on_applyButton_clicked() {
-   const static QRegularExpression rxPV(
-       "^((?(?=.*" + QRegularExpression::escape(cmdDelimiter + cmdDataSpacer) +
-       ".*).*(?=" + QRegularExpression::escape(cmdDelimiter + cmdDataSpacer) +
-       ")|.*))");
-   const static QRegularExpression rxSV(
-       QRegularExpression::escape(cmdDelimiter + cmdDataSpacer) + "(.*)$");
+   // const static QRegularExpression rxPV(
+   //     "^((?(?=.*" + QRegularExpression::escape(cmdDelimiter + cmdDataSpacer)
+   //     +
+   //     ".*).*(?=" + QRegularExpression::escape(cmdDelimiter + cmdDataSpacer)
+   //     +
+   //     ")|.*))");
+   // const static QRegularExpression rxSV(
+   //     QRegularExpression::escape(cmdDelimiter + cmdDataSpacer) + "(.*)$");
 
-   dsmUpdate.append("<<<<<<<<<<<<<<<<<<<<<<<<  42:  DSM Command Script File  "
-                    ">>>>>>>>>>>>>>>>>>>>>>>>");
+   // dsmUpdate.append("<<<<<<<<<<<<<<<<<<<<<<<<  42:  DSM Command Script File "
+   //                  ">>>>>>>>>>>>>>>>>>>>>>>>");
 
-   ui->cmdConfigTree->sortByColumn(cmdCols::cmdColLabel, Qt::AscendingOrder);
-   ui->cmdConfigTree->sortByColumn(cmdCols::cmdColInd, Qt::AscendingOrder);
-   // write to file in reverse search order
-   for (auto i = searchOrd.crbegin(); i != searchOrd.crend(); i++) {
-      dsmSectionTypes type = *i;
-      dsmUpdate.append(secDescription(type));
-      dsmUpdate.append("");
+   // ui->cmdConfigTree->sortByColumn(cmdCols::cmdColLabel, Qt::AscendingOrder);
+   // ui->cmdConfigTree->sortByColumn(cmdCols::cmdColInd, Qt::AscendingOrder);
+   // // write to file in reverse search order
+   // for (auto i = searchOrd.crbegin(); i != searchOrd.crend(); i++) {
+   //    dsmSectionTypes type = *i;
+   //    dsmUpdate.append(secDescription(type));
+   //    dsmUpdate.append("");
 
-      QRegularExpressionMatch match;
-      QList<QTreeWidgetItem *> treeItems, checkItems;
-      QTreeWidgetItem *treeItem, *parent;
-      QList<QListWidgetItem *> listItems;
-      QListWidgetItem *listItem;
-      QString format = entryItemFormat(type);
-      QStringList dataList, tmpList;
-      QString data, tmp, label;
-      int num, cmdType;
-      double time, lastTime = 0;
-      QHash<QString, QString> *hash;
+   //    QRegularExpressionMatch match;
+   //    QList<QTreeWidgetItem *> treeItems, checkItems;
+   //    QTreeWidgetItem *treeItem, *parent;
+   //    QList<QListWidgetItem *> listItems;
+   //    QListWidgetItem *listItem;
+   //    QString format = entryItemFormat(type);
+   //    QStringList dataList, tmpList;
+   //    QString data, tmp, label;
+   //    int num, cmdType;
+   //    double time, lastTime = 0;
+   //    QHash<QString, QString> *hash;
 
-      switch (type) {
-         case dsmSectionTypes::COMMANDS:
-            ui->cmdTimelineTree->sortByColumn(tlCols::tlColSC,
-                                              Qt::AscendingOrder);
-            ui->cmdTimelineTree->sortByColumn(tlCols::tlColTime,
-                                              Qt::AscendingOrder);
-            treeItems = ui->cmdTimelineTree->findItems("*", Qt::MatchWildcard,
-                                                       tlCols::tlColSC);
-            label = format + cmdDataSpacer + "CmdTime" + cmdDataSpacer + "%2";
+   //    switch (type) {
+   //       case dsmSectionTypes::COMMANDS:
+   //          ui->cmdTimelineTree->sortByColumn(tlCols::tlColSC,
+   //                                            Qt::AscendingOrder);
+   //          ui->cmdTimelineTree->sortByColumn(tlCols::tlColTime,
+   //                                            Qt::AscendingOrder);
+   //          treeItems = ui->cmdTimelineTree->findItems("*",
+   //          Qt::MatchWildcard,
+   //                                                     tlCols::tlColSC);
+   //          label = format + cmdDataSpacer + "CmdTime" + cmdDataSpacer +
+   //          "%2";
 
-            for (QTreeWidgetItem *cmdItem : qAsConst(treeItems)) {
-               dataList.clear();
+   //          for (QTreeWidgetItem *cmdItem : qAsConst(treeItems)) {
+   //             dataList.clear();
 
-               time =
-                   cmdItem->data(tlCols::tlColTime, Qt::DisplayRole).toDouble();
-               dataList.append(
-                   label.arg(scNames.indexOf(cmdItem->text(tlCols::tlColSC)))
-                       .arg(time, 15, 'f', 3));
+   //             time =
+   //                 cmdItem->data(tlCols::tlColTime,
+   //                 Qt::DisplayRole).toDouble();
+   //             dataList.append(
+   //                 label.arg(scNames.indexOf(cmdItem->text(tlCols::tlColSC)))
+   //                     .arg(time, 15, 'f', 3));
 
-               num = 0;
-               tmpList.clear();
-               if (!cmdItem->text(tlCols::tlColTrn).isEmpty()) {
-                  num++;
-                  data = cmdItem->text(tlCols::tlColTrn);
-                  tmpList.append(trnCmdsHash[data]);
-               }
-               if (!cmdItem->text(tlCols::tlColAtt).isEmpty()) {
-                  num++;
-                  tmp.clear();
-                  data =
-                      rxPV.match(cmdItem->text(tlCols::tlColAtt)).captured(1);
-                  tmp.append(attCmdsHash[data]);
-                  data =
-                      rxSV.match(cmdItem->text(tlCols::tlColAtt)).captured(1);
-                  if (!data.isEmpty()) {
-                     checkItems = ui->cmdConfigTree->findItems(
-                         data, Qt::MatchExactly | Qt::MatchRecursive,
-                         cmdCols::cmdColLabel);
-                     for (QTreeWidgetItem *checkItem : qAsConst(checkItems)) {
-                        cmdType =
-                            checkItem->parent()
-                                ->data(cmdCols::cmdColLabel, cmdData::cmdType)
-                                .toInt();
-                        if (cmdType == cmdTypes::cmdSV) {
-                           tmp.append(
-                               "_SV[" +
-                               checkItem
-                                   ->data(cmdCols::cmdColInd, cmdData::cmdNum)
-                                   .toString() +
-                               "]");
-                           break;
-                        }
-                     }
-                  }
-                  tmpList.append(tmp);
-               }
-               if (!cmdItem->text(tlCols::tlColHMan).isEmpty()) {
-                  num++;
-                  data = cmdItem->text(tlCols::tlColHMan);
-                  tmpList.append(hManCmdsHash[data]);
-               }
-               if (!cmdItem->text(tlCols::tlColAct).isEmpty()) {
-                  num++;
-                  data = cmdItem->text(tlCols::tlColAct);
-                  tmpList.append(actCmdsHash[data]);
-               }
-               dataList.append("NUM_CMD[" + QString::number(num) + "]");
-               dataList.append(tmpList);
-               if (num > 0) {
-                  if (time > lastTime)
-                     dsmUpdate.append("");
-                  dsmUpdate.append(dataList.join(cmdDataSpacer));
-                  lastTime = time;
-               }
-            }
-            dsmUpdate.append("");
-            dsmUpdate.append("End_Of_File");
-            break;
-         case dsmSectionTypes::CONTROLLERS:
-            ui->ctrlConfigTree->sortByColumn(ctrlCols::ctrlColInd,
-                                             Qt::AscendingOrder);
-            treeItems = ui->ctrlConfigTree->findItems("*", Qt::MatchWildcard,
-                                                      ctrlCols::ctrlColLabel);
+   //             num = 0;
+   //             tmpList.clear();
+   //             if (!cmdItem->text(tlCols::tlColTrn).isEmpty()) {
+   //                num++;
+   //                data = cmdItem->text(tlCols::tlColTrn);
+   //                tmpList.append(trnCmdsHash[data]);
+   //             }
+   //             if (!cmdItem->text(tlCols::tlColAtt).isEmpty()) {
+   //                num++;
+   //                tmp.clear();
+   //                data =
+   //                    rxPV.match(cmdItem->text(tlCols::tlColAtt)).captured(1);
+   //                tmp.append(attCmdsHash[data]);
+   //                data =
+   //                    rxSV.match(cmdItem->text(tlCols::tlColAtt)).captured(1);
+   //                if (!data.isEmpty()) {
+   //                   checkItems = ui->cmdConfigTree->findItems(
+   //                       data, Qt::MatchExactly | Qt::MatchRecursive,
+   //                       cmdCols::cmdColLabel);
+   //                   for (QTreeWidgetItem *checkItem : qAsConst(checkItems))
+   //                   {
+   //                      cmdType =
+   //                          checkItem->parent()
+   //                              ->data(cmdCols::cmdColLabel,
+   //                              cmdData::cmdType) .toInt();
+   //                      if (cmdType == cmdTypes::cmdSV) {
+   //                         tmp.append(
+   //                             "_SV[" +
+   //                             checkItem
+   //                                 ->data(cmdCols::cmdColInd,
+   //                                 cmdData::cmdNum) .toString() +
+   //                             "]");
+   //                         break;
+   //                      }
+   //                   }
+   //                }
+   //                tmpList.append(tmp);
+   //             }
+   //             if (!cmdItem->text(tlCols::tlColHMan).isEmpty()) {
+   //                num++;
+   //                data = cmdItem->text(tlCols::tlColHMan);
+   //                tmpList.append(hManCmdsHash[data]);
+   //             }
+   //             if (!cmdItem->text(tlCols::tlColAct).isEmpty()) {
+   //                num++;
+   //                data = cmdItem->text(tlCols::tlColAct);
+   //                tmpList.append(actCmdsHash[data]);
+   //             }
+   //             dataList.append("NUM_CMD[" + QString::number(num) + "]");
+   //             dataList.append(tmpList);
+   //             if (num > 0) {
+   //                if (time > lastTime)
+   //                   dsmUpdate.append("");
+   //                dsmUpdate.append(dataList.join(cmdDataSpacer));
+   //                lastTime = time;
+   //             }
+   //          }
+   //          dsmUpdate.append("");
+   //          dsmUpdate.append("End_Of_File");
+   //          break;
+   //       case dsmSectionTypes::CONTROLLERS:
+   //          ui->ctrlConfigTree->sortByColumn(ctrlCols::ctrlColInd,
+   //                                           Qt::AscendingOrder);
+   //          treeItems = ui->ctrlConfigTree->findItems("*", Qt::MatchWildcard,
+   //                                                    ctrlCols::ctrlColLabel);
 
-            for (QTreeWidgetItem *ctrlItem : qAsConst(treeItems)) {
-               dataList.clear();
+   //          for (QTreeWidgetItem *ctrlItem : qAsConst(treeItems)) {
+   //             dataList.clear();
 
-               label = ctrlItem->text(ctrlCols::ctrlColLabel);
-               dataList.append(ctlsHash[label]);
-               dataList.append(
-                   ctrlTypes.key(ctrlItem->text(ctrlCols::ctrlColType)));
+   //             label = ctrlItem->text(ctrlCols::ctrlColLabel);
+   //             dataList.append(ctlsHash[label]);
+   //             dataList.append(
+   //                 ctrlTypes.key(ctrlItem->text(ctrlCols::ctrlColType)));
 
-               data = ctrlItem->text(ctrlCols::ctrlColGains);
-               if (data.isEmpty()) {
-                  dsm_gui_lib::error_message(
-                      "Gains are missing for Controller: " + label);
-                  dsmUpdate.clear();
-                  return;
-               }
-               if (ctrlItem->background(ctrlCols::ctrlColGains) ==
-                   badTextBrush) {
-                  dsm_gui_lib::error_message("Controller \"" + label +
-                                             "\" has invalid gains: \"" + data +
-                                             "\"");
-                  dsmUpdate.clear();
-                  return;
-               }
+   //             data = ctrlItem->text(ctrlCols::ctrlColGains);
+   //             if (data.isEmpty()) {
+   //                dsm_gui_lib::error_message(
+   //                    "Gains are missing for Controller: " + label);
+   //                dsmUpdate.clear();
+   //                return;
+   //             }
+   //             if (ctrlItem->background(ctrlCols::ctrlColGains) ==
+   //                 badTextBrush) {
+   //                dsm_gui_lib::error_message("Controller \"" + label +
+   //                                           "\" has invalid gains: \"" +
+   //                                           data +
+   //                                           "\"");
+   //                dsmUpdate.clear();
+   //                return;
+   //             }
 
-               listItem = ui->gainList->findItems(data, Qt::MatchExactly).at(0);
-               dataList.append(
-                   entryItemFormat(dsmSectionTypes::GAINS)
-                       .arg(listItem->data(gainsData::gainsNum).toInt()));
+   //             listItem = ui->gainList->findItems(data,
+   //             Qt::MatchExactly).at(0); dataList.append(
+   //                 entryItemFormat(dsmSectionTypes::GAINS)
+   //                     .arg(listItem->data(gainsData::gainsNum).toInt()));
 
-               data = ctrlItem->text(ctrlCols::ctrlColLims);
-               if (data.isEmpty()) {
-                  dsm_gui_lib::error_message(
-                      "Limits are missing for Controller: " + label);
-                  dsmUpdate.clear();
-                  return;
-               }
-               if (ctrlItem->background(ctrlCols::ctrlColLims) ==
-                   badTextBrush) {
-                  dsm_gui_lib::error_message("Controller \"" + label +
-                                             "\" has invalid Limits: \"" +
-                                             data + "\"");
-                  dsmUpdate.clear();
-                  // This really shouldn't happen except in the case of missing
-                  // text
-                  dsm_gui_lib::inexplicable_error_message();
-                  return;
-               }
+   //             data = ctrlItem->text(ctrlCols::ctrlColLims);
+   //             if (data.isEmpty()) {
+   //                dsm_gui_lib::error_message(
+   //                    "Limits are missing for Controller: " + label);
+   //                dsmUpdate.clear();
+   //                return;
+   //             }
+   //             if (ctrlItem->background(ctrlCols::ctrlColLims) ==
+   //                 badTextBrush) {
+   //                dsm_gui_lib::error_message("Controller \"" + label +
+   //                                           "\" has invalid Limits: \"" +
+   //                                           data + "\"");
+   //                dsmUpdate.clear();
+   //                // This really shouldn't happen except in the case of
+   //                missing
+   //                // text
+   //                dsm_gui_lib::inexplicable_error_message();
+   //                return;
+   //             }
 
-               listItem = ui->limList->findItems(data, Qt::MatchExactly).at(0);
-               dataList.append(
-                   entryItemFormat(dsmSectionTypes::LIMITS)
-                       .arg(listItem->data(limData::limNum).toInt()));
+   //             listItem = ui->limList->findItems(data,
+   //             Qt::MatchExactly).at(0); dataList.append(
+   //                 entryItemFormat(dsmSectionTypes::LIMITS)
+   //                     .arg(listItem->data(limData::limNum).toInt()));
 
-               dataList.append(labelMkr);
-               dataList.append(label);
+   //             dataList.append(labelMkr);
+   //             dataList.append(label);
 
-               dsmUpdate.append(dataList.join(cmdDataSpacer));
-            }
+   //             dsmUpdate.append(dataList.join(cmdDataSpacer));
+   //          }
 
-            ui->ctrlConfigTree->sortByColumn(ctrlCols::ctrlColLabel,
-                                             Qt::AscendingOrder);
+   //          ui->ctrlConfigTree->sortByColumn(ctrlCols::ctrlColLabel,
+   //                                           Qt::AscendingOrder);
 
-            break;
-         case dsmSectionTypes::ACTUATORS:
-            listItems = ui->actList->findItems("*", Qt::MatchWildcard);
-            for (QListWidgetItem *item : qAsConst(listItems)) {
-               dataList.clear();
-               label = item->text();
-               dataList.append(actsHash[label]);
-               dataList.append(item->data(actData::actType).toString());
+   //          break;
+   //       case dsmSectionTypes::ACTUATORS:
+   //          listItems = ui->actList->findItems("*", Qt::MatchWildcard);
+   //          for (QListWidgetItem *item : qAsConst(listItems)) {
+   //             dataList.clear();
+   //             label = item->text();
+   //             dataList.append(actsHash[label]);
+   //             dataList.append(item->data(actData::actType).toString());
 
-               dataList.append(labelMkr);
-               dataList.append(label);
+   //             dataList.append(labelMkr);
+   //             dataList.append(label);
 
-               dsmUpdate.append(dataList.join(cmdDataSpacer));
-            }
+   //             dsmUpdate.append(dataList.join(cmdDataSpacer));
+   //          }
 
-            break;
-         case dsmSectionTypes::GAINS:
-            listItems = ui->gainList->findItems("*", Qt::MatchWildcard);
-            for (QListWidgetItem *item : qAsConst(listItems)) {
-               dataList.clear();
-               label = item->text();
-               dataList.append(gainsHash[label]);
-               dataList.append(item->data(gainsData::gainsType).toString());
-               dataList.append(item->data(gainsData::gainsData).toString());
+   //          break;
+   //       case dsmSectionTypes::GAINS:
+   //          listItems = ui->gainList->findItems("*", Qt::MatchWildcard);
+   //          for (QListWidgetItem *item : qAsConst(listItems)) {
+   //             dataList.clear();
+   //             label = item->text();
+   //             dataList.append(gainsHash[label]);
+   //             dataList.append(item->data(gainsData::gainsType).toString());
+   //             dataList.append(item->data(gainsData::gainsData).toString());
 
-               dataList.append(labelMkr);
-               dataList.append(label);
+   //             dataList.append(labelMkr);
+   //             dataList.append(label);
 
-               dsmUpdate.append(dataList.join(cmdDataSpacer));
-            }
-            break;
-         case dsmSectionTypes::LIMITS:
-            listItems = ui->limList->findItems("*", Qt::MatchWildcard);
-            for (QListWidgetItem *item : qAsConst(listItems)) {
-               dataList.clear();
-               label = item->text();
-               dataList.append(limsHash[label]);
-               dataList.append(item->data(limData::limData).toString());
+   //             dsmUpdate.append(dataList.join(cmdDataSpacer));
+   //          }
+   //          break;
+   //       case dsmSectionTypes::LIMITS:
+   //          listItems = ui->limList->findItems("*", Qt::MatchWildcard);
+   //          for (QListWidgetItem *item : qAsConst(listItems)) {
+   //             dataList.clear();
+   //             label = item->text();
+   //             dataList.append(limsHash[label]);
+   //             dataList.append(item->data(limData::limData).toString());
 
-               dataList.append(labelMkr);
-               dataList.append(label);
+   //             dataList.append(labelMkr);
+   //             dataList.append(label);
 
-               dsmUpdate.append(dataList.join(cmdDataSpacer));
-            }
-            break;
-         default: // handle commands
-            cmdType = section2Cmd[type];
-            parent  = entryCmdParents[cmdType];
-            hash    = metaHash[type];
-            switch (cmdType) {
-               case cmdTrn:
-                  tmp = "Translation ";
-                  break;
-               case cmdPV:
-                  tmp = "Primary Vector ";
-                  break;
-               case cmdSV:
-                  tmp = "Secondary Vector ";
-                  break;
-               case cmdQuat:
-                  tmp = "Quaternion ";
-                  break;
-               case cmdMirror:
-                  tmp = "Mirror ";
-                  break;
-               case cmdDetumble:
-                  tmp = "Detumble ";
-                  break;
-               case cmdWhlHManage:
-                  tmp = "Momentum Management ";
-                  break;
-               case cmdAct:
-                  tmp = "Actuator ";
-                  break;
-               case cmdManeuver:
-                  tmp = "Maneuver ";
-                  break;
-               default:
-                  tmp = "";
-                  break;
-            }
+   //             dsmUpdate.append(dataList.join(cmdDataSpacer));
+   //          }
+   //          break;
+   //       default: // handle commands
+   //          cmdType = section2Cmd[type];
+   //          parent  = entryCmdParents[cmdType];
+   //          hash    = metaHash[type];
+   //          switch (cmdType) {
+   //             case cmdTrn:
+   //                tmp = "Translation ";
+   //                break;
+   //             case cmdPV:
+   //                tmp = "Primary Vector ";
+   //                break;
+   //             case cmdSV:
+   //                tmp = "Secondary Vector ";
+   //                break;
+   //             case cmdQuat:
+   //                tmp = "Quaternion ";
+   //                break;
+   //             case cmdMirror:
+   //                tmp = "Mirror ";
+   //                break;
+   //             case cmdDetumble:
+   //                tmp = "Detumble ";
+   //                break;
+   //             case cmdWhlHManage:
+   //                tmp = "Momentum Management ";
+   //                break;
+   //             case cmdAct:
+   //                tmp = "Actuator ";
+   //                break;
+   //             case cmdManeuver:
+   //                tmp = "Maneuver ";
+   //                break;
+   //             default:
+   //                tmp = "";
+   //                break;
+   //          }
 
-            for (int i = 0; i < parent->childCount(); i++) {
-               treeItem = parent->child(i);
-               dataList.clear();
+   //          for (int i = 0; i < parent->childCount(); i++) {
+   //             treeItem = parent->child(i);
+   //             dataList.clear();
 
-               label = treeItem->text(cmdCols::cmdColLabel);
-               dataList.append(hash->value(label));
-               dataList.append(treeItem->text(cmdCols::cmdColData));
+   //             label = treeItem->text(cmdCols::cmdColLabel);
+   //             dataList.append(hash->value(label));
+   //             dataList.append(treeItem->text(cmdCols::cmdColData));
 
-               data = treeItem->text(cmdCols::cmdColCtl);
-               if (treeItem->background(cmdCols::cmdColCtl) == badTextBrush) {
-                  dsm_gui_lib::error_message(tmp + "Command \"" + label +
-                                             "\" has invalid Controller: \"" +
-                                             data + "\"");
-                  dsmUpdate.clear();
-                  return;
-               }
-               if (!data.isEmpty())
-                  dataList.append(
-                      metaHash[dsmSectionTypes::CONTROLLERS]->value(data));
+   //             data = treeItem->text(cmdCols::cmdColCtl);
+   //             if (treeItem->background(cmdCols::cmdColCtl) == badTextBrush)
+   //             {
+   //                dsm_gui_lib::error_message(tmp + "Command \"" + label +
+   //                                           "\" has invalid Controller: \""
+   //                                           + data + "\"");
+   //                dsmUpdate.clear();
+   //                return;
+   //             }
+   //             if (!data.isEmpty())
+   //                dataList.append(
+   //                    metaHash[dsmSectionTypes::CONTROLLERS]->value(data));
 
-               data = treeItem->text(cmdCols::cmdColAct);
-               if (treeItem->background(cmdCols::cmdColAct) == badTextBrush) {
-                  dsm_gui_lib::error_message("Command \"" + label +
-                                             "\" has invalid Actuator: \"" +
-                                             data + "\"");
-                  dsmUpdate.clear();
-                  return;
-               }
-               if (!data.isEmpty())
-                  dataList.append(
-                      metaHash[dsmSectionTypes::ACTUATORS]->value(data));
+   //             data = treeItem->text(cmdCols::cmdColAct);
+   //             if (treeItem->background(cmdCols::cmdColAct) == badTextBrush)
+   //             {
+   //                dsm_gui_lib::error_message("Command \"" + label +
+   //                                           "\" has invalid Actuator: \"" +
+   //                                           data + "\"");
+   //                dsmUpdate.clear();
+   //                return;
+   //             }
+   //             if (!data.isEmpty())
+   //                dataList.append(
+   //                    metaHash[dsmSectionTypes::ACTUATORS]->value(data));
 
-               dataList.append(labelMkr);
-               dataList.append(label);
+   //             dataList.append(labelMkr);
+   //             dataList.append(label);
 
-               dsmUpdate.append(dataList.join(cmdDataSpacer));
-            }
-            break;
-      }
-      dsmUpdate.append("");
-   }
+   //             dsmUpdate.append(dataList.join(cmdDataSpacer));
+   //          }
+   //          break;
+   //    }
+   //    dsmUpdate.append("");
+   // }
 
    dsmUpdate.append("");
    dsmUpdate.append("EOF");
@@ -3815,7 +3358,7 @@ bool DSM_Menu::check_actuator_cmds(const QString scName,
                                    const QTreeWidgetItem *actCmd) {
    const static QRegularExpression actCmdRx(
        "[a-zA-Z]{3}_\\[([0-9]+)]_\\[[0-9.]+]");
-   const static QString tmpStr = "\n%1  requires %2; \"%3\" has %4";
+   const static QString tmpStr = "\n%1 requires %2; \"%3\" has %4";
 
    QString label = ui->cmdActLabel->currentText();
 
@@ -3885,4 +3428,17 @@ bool DSM_Menu::check_actuator_cmds(const QString scName,
    }
 
    return check_actuator_cmds(scName, item);
+}
+
+QString DSM_Menu::yaml2DataString(const YAML::Node node) {
+   YAML::Node testNode = nullptr;
+   for (auto it = searchOrd.begin(); it != searchOrd.end(), ++it) {
+      testNode = node[yamlSectionNames(*it)];
+      if (testNode) {
+         return yaml2DataString(node, *it);
+      }
+   }
+}
+QString DSM_Menu::yaml2DataString(const YAML::Node node, dsmSectionTypes type) {
+
 }

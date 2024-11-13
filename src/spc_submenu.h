@@ -129,6 +129,11 @@ class SPC_submenu : public QDialog {
    QString spc_cur_name;
    QString spc_cur_file;
 
+   // do unique ptrs so they only last as long as the SPC_submenu object
+   std::unique_ptr<QDoubleValidator> zero_pinf_valid;
+   std::unique_ptr<QDoubleValidator> ninf_pinf_valid;
+   std::unique_ptr<QDoubleValidator> none_one_valid;
+
    YAML::Node cur_spc_yaml;
    // All ComboBox options
    const QStringList orbit_type = {"FIXED", "EULER_HILL", "ENCKE", "COWELL"};

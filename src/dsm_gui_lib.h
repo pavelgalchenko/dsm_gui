@@ -30,9 +30,11 @@ class dsm_gui_lib {
          output += " ";
       return output;
    }
-
-   static void set_mult_validators(QLineEdit *ui_elem[], int array_length,
-                                   double lower, double upper, int decimals);
+   template <class T, class U>
+   static void set_mult_validators(const QList<T *> ui_elem, U *u) {
+      for (T *elem : ui_elem)
+         elem->setValidator(u);
+   }
    static void set_mult_name_validators(QLineEdit *ui_elem[], int array_length,
                                         QValidator *validator);
    static void set_mult_cbox_validators(QComboBox *ui_elem[], int array_length,
@@ -55,9 +57,8 @@ class dsm_gui_lib {
    static QVector<QString> create_QVec4(QString arg1, QString arg2,
                                         QString arg3, QString arg4);
 
-   static QString generate_comment(QString str_search,
-                                                QString cur_line,
-                                                YAML::Node comments);
+   static QString generate_comment(QString str_search, QString cur_line,
+                                   YAML::Node comments);
 
    inline static const QStringList eulerInputs = {"121", "123", "131", "132",
                                                   "212", "213", "231", "232",
