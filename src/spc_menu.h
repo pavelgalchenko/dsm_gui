@@ -25,7 +25,6 @@ class SPC_Menu : public QDialog {
    void name_changed();
 
    private slots:
-
    void on_spc_add_clicked();
    void on_spc_remove_clicked();
    void on_spc_duplicate_clicked();
@@ -70,6 +69,10 @@ class SPC_Menu : public QDialog {
    int global_spc_index  = -1;
    int global_spc_ignore = 0;
 
+   // do unique ptrs so they only last as long as the SPC_Menu object
+   std::unique_ptr<QDoubleValidator> zero_pinf_valid;
+   std::unique_ptr<QDoubleValidator> ninf_pinf_valid;
+
    QString inout_path;
    QString file_path;
    QStringList file_paths;
@@ -83,9 +86,6 @@ class SPC_Menu : public QDialog {
    QStringList spc_update;
    int spc_name_index;
    int new_item;
-   long counter3u;
-   long counter6u;
-   long counter12u;
 
    QStringList spc_file_headers; // section headers in the file
    QStringList spc_file_descrip; // data descriptors in the file

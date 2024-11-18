@@ -4,6 +4,7 @@
 
 SIM_Menu::SIM_Menu(QWidget *parent) : QDialog(parent), ui(new Ui::SIM_Menu) {
    ui->setupUi(this);
+   double_valid = std::make_unique<QDoubleValidator>();
    set_validators();
 }
 
@@ -15,17 +16,23 @@ void SIM_Menu::set_validators() {
    QRegularExpression rx("[^\"]*");
    QValidator *noQuotes = new QRegularExpressionValidator(rx);
 
-   ui->simOrbitEn->setEnabled(false);
-   ui->simSCEn->setEnabled(false);
-   ui->simSCOrbit->setEnabled(false);
-   ui->simSCOrbitLabel->setEnabled(false);
+   QList<QWidget *> init_disabled_items = {ui->simOrbitEn, ui->simSCEn,
+                                           ui->simSCOrbit, ui->simSCOrbitLabel};
+   for (auto item : init_disabled_items) {
+      item->setEnabled(false);
+   }
+
+   // Numerical Validators
+   // All validators that can be any double
+   QList<QLineEdit *> double_line_edit = {
+       ui->simSimDur,  ui->simSimStep, ui->simFileInterval,
+       ui->simRNGSeed, ui->simLeapSec, ui->simF107,
+       ui->simAp,      ui->simGSLong,  ui->simGSLat};
+
+   dsm_gui_lib::set_mult_validators(double_line_edit, double_valid.get());
 
    ui->simTimeMode->addItems(
        dsm_gui_lib::sortStringList(timeModeInputs.values()));
-   ui->simSimDur->setValidator(new QDoubleValidator);
-   ui->simSimStep->setValidator(new QDoubleValidator);
-   ui->simFileInterval->setValidator(new QDoubleValidator);
-   ui->simRNGSeed->setValidator(new QIntValidator);
 
    ui->simOrbList->setSortingEnabled(true);
    ui->simOrbList->sortItems(Qt::AscendingOrder);
@@ -41,18 +48,13 @@ void SIM_Menu::set_validators() {
    ui->simDate->setDisplayFormat("MM/dd/yyyy");
    ui->simTime->setTimeSpec(Qt::UTC);
    ui->simTime->setDisplayFormat("hh:mm:ss.zzz");
-   ui->simLeapSec->setValidator(new QDoubleValidator);
    ui->simF107Ap->addItems(dsm_gui_lib::sortStringList(f107Inputs.values()));
-   ui->simF107->setValidator(new QDoubleValidator);
-   ui->simAp->setValidator(new QDoubleValidator);
    ui->simMagfieldType->addItems(
        dsm_gui_lib::sortStringList(magfieldInputs.values()));
 
    ui->simEphem->addItems(dsm_gui_lib::sortStringList(ephemInputs.values()));
 
    ui->simGSWorld->addItems(dsm_gui_lib::worldInputs);
-   ui->simGSLong->setValidator(new QDoubleValidator);
-   ui->simGSLat->setValidator(new QDoubleValidator);
    ui->simGSLabel->setValidator(noQuotes);
 
    celestialBodies = {ui->simMercuryEn,  ui->simVenusEn,   ui->simEarthEn,

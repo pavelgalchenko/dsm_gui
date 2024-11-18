@@ -8,16 +8,84 @@ DSM_Menu::DSM_Menu(QWidget *parent) : QDialog(parent), ui(new Ui::DSM_Menu) {
    badTextPalette = okTextPalette;
    badTextPalette.setColor(QPalette::Text, Qt::red);
 
-   set_validators();
-
    okTextBrush  = entryCmdParents[cmdTypes::cmdTrn]->background(0);
    badTextBrush = okTextBrush;
    badTextBrush.setColor(Qt::red);
    badTextBrush.setStyle(Qt::SolidPattern);
+
+   zero_pinf_valid = std::make_unique<QDoubleValidator>(0, INFINITY, 5);
+   ninf_pinf_valid = std::make_unique<QDoubleValidator>(-INFINITY, INFINITY, 5);
+
+   set_connections();
+   set_validators();
 }
 
 DSM_Menu::~DSM_Menu() {
    delete ui;
+}
+
+void DSM_Menu::set_connections() {
+   // Connect to cmd_data_changed
+   const QList<QLineEdit *> line_cmd_data_changed = {
+       ui->cmdTrnX,       ui->cmdTrnY,   ui->cmdTrnZ,   ui->cmdPvX,
+       ui->cmdPvY,        ui->cmdPvZ,    ui->cmdPvTgtX, ui->cmdPvTgtY,
+       ui->cmdPvTgtZ,     ui->cmdSvX,    ui->cmdSvY,    ui->cmdSvZ,
+       ui->cmdSvTgtX,     ui->cmdSvTgtY, ui->cmdSvTgtZ, ui->cmdQv1,
+       ui->cmdQv2,        ui->cmdQv3,    ui->cmdQs,     ui->cmdHManageMax,
+       ui->cmdHManageMin, ui->cmdManX,   ui->cmdManY,   ui->cmdManZ,
+       ui->cmdManTime};
+   for (auto i : line_cmd_data_changed)
+      connect(i, &QLineEdit::textEdited, this, &DSM_Menu::cmd_data_changed);
+
+   const QList<QComboBox *> combo_cmd_data_changed = {
+       ui->cmdTrnOri,   ui->cmdTrnFrm,       ui->cmdPvTgtType, ui->cmdPvTgtSc,
+       ui->cmdPvTgtWld, ui->cmdPvTgtAxisFrm, ui->cmdSvTgtType, ui->cmdSvTgtSc,
+       ui->cmdSvTgtWld, ui->cmdSvTgtAxisFrm, ui->cmdMirrorTgt, ui->cmdActType,
+       ui->cmdManFrm,   ui->cmdManType,      ui->cmdManLimits, ui->cmdQuatFrm};
+   for (auto i : combo_cmd_data_changed)
+      connect(i, &QComboBox::textActivated, this, &DSM_Menu::cmd_data_changed);
+
+   const QList<QSpinBox *> spin_cmd_data_changed = {
+       ui->cmdTrnOriScBdyNum, ui->cmdTrnFrmScBdyNum,  ui->cmdPvTgtScBdyNum,
+       ui->cmdSvTgtScBdyNum,  ui->cmdMirrorTgtBdyNum, ui->cmdActNum};
+   for (auto i : spin_cmd_data_changed)
+      connect(i, &QSpinBox::textChanged, this, &DSM_Menu::cmd_data_changed);
+
+   connect(ui->cmdHManageEnabled, &QCheckBox::stateChanged, this,
+           &DSM_Menu::cmd_data_changed);
+   connect(ui->cmdActDutyCycle, &QDoubleSpinBox::textChanged, this,
+           &DSM_Menu::cmd_act_data_changed);
+
+   // Connect to timeline_data_changed
+   const QList<QComboBox *> combo_timeline_data_changed = {
+       ui->cmdSC,        ui->cmdTrnLabel,   ui->cmdAttLabel,
+       ui->cmdHManLabel, ui->cmdAttSVLabel, ui->cmdActLabel};
+   for (auto i : combo_timeline_data_changed)
+      connect(i, &QComboBox::textActivated, this,
+              &DSM_Menu::timeline_data_changed);
+
+   connect(ui->cmdTime, &QDoubleSpinBox::textChanged, this,
+           &DSM_Menu::timeline_data_changed);
+
+   // Connect to gain_data_changed
+   const QList<QLineEdit *> line_gain_data_changed = {
+       ui->gainKpX,        ui->gainKpY,          ui->gainKpZ,
+       ui->gainKrX,        ui->gainKrY,          ui->gainKrZ,
+       ui->gainKiX,        ui->gainKiY,          ui->gainKiZ,
+       ui->gainKiLimX,     ui->gainKiLimY,       ui->gainKiLimZ,
+       ui->gainBandwidth,  ui->gainDampingRatio, ui->gainAlpha,
+       ui->gainILim,       ui->gainMomDumpKpX,   ui->gainMomDumpKpY,
+       ui->gainMomDumpKpZ, ui->gainLyaGain,      ui->gainLyaGain_2,
+       ui->gainCustomGains};
+   for (auto i : line_gain_data_changed)
+      connect(i, &QLineEdit::textEdited, this, &DSM_Menu::gain_data_changed);
+
+   // Connect to lim_data_changed
+   const QList<QLineEdit *> line_lim_data_changed = {
+       ui->limFrcX,  ui->limFrcY,  ui->limFrcZ,
+       ui->limRateX, ui->limRateY, ui->limRateZ};
+   for (auto i : line_lim_data_changed)
+      connect(i, &QLineEdit::textEdited, this, &DSM_Menu::lim_data_changed);
 }
 
 void DSM_Menu::set_validators() {
@@ -32,66 +100,33 @@ void DSM_Menu::set_validators() {
    ui->cmdTime->setDecimals(3);
 
    ui->cmdLabel->setValidator(noCmdSpacer);
-   ui->gainKpX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKpY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKpZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKrX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKrY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKrZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKiX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKiY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKiZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKiLimX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKiLimY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainKiLimZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
 
-   ui->gainBandwidth->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainDampingRatio->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainAlpha->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainILim->setValidator(new QDoubleValidator(0, INFINITY, 5));
+   // set QLineEdit validators for range [0,inf)
+   QList<QLineEdit *> z_pinf = {
+       ui->gainKpX,        ui->gainKpY,          ui->gainKpZ,
+       ui->gainKrX,        ui->gainKrY,          ui->gainKrZ,
+       ui->gainKiX,        ui->gainKiY,          ui->gainKiZ,
+       ui->gainKiLimX,     ui->gainKiLimY,       ui->gainKiLimZ,
+       ui->gainBandwidth,  ui->gainDampingRatio, ui->gainAlpha,
+       ui->gainILim,       ui->gainMomDumpKpX,   ui->gainMomDumpKpY,
+       ui->gainMomDumpKpZ, ui->gainLyaGain,      ui->gainLyaGain_2,
+       ui->limFrcX,        ui->limFrcY,          ui->limFrcZ,
+       ui->limRateX,       ui->limRateY,         ui->limRateZ,
+       ui->cmdManTime,     ui->cmdHManageMax,    ui->cmdHManageMin};
+   dsm_gui_lib::set_mult_validators(z_pinf, zero_pinf_valid.get());
 
-   ui->gainMomDumpKpX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainMomDumpKpY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainMomDumpKpZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
+   // set QLineEdit validators for range (-inf,inf)
+   QList<QLineEdit *> ninf_pinf = {
+       ui->cmdTrnX, ui->cmdTrnY,   ui->cmdTrnZ,   ui->cmdPvX,    ui->cmdPvY,
+       ui->cmdPvZ,  ui->cmdPvTgtX, ui->cmdPvTgtY, ui->cmdPvTgtZ, ui->cmdSvX,
+       ui->cmdSvY,  ui->cmdSvZ,    ui->cmdSvTgtX, ui->cmdSvTgtY, ui->cmdSvTgtZ,
+       ui->cmdQv1,  ui->cmdQv2,    ui->cmdQv3,    ui->cmdQs,     ui->cmdManX,
+       ui->cmdManY, ui->cmdManZ};
+   dsm_gui_lib::set_mult_validators(ninf_pinf, ninf_pinf_valid.get());
 
-   ui->gainLyaGain->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->gainLyaGain_2->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-   ui->limFrcX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->limFrcY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->limFrcZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->limRateX->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->limRateY->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->limRateZ->setValidator(new QDoubleValidator(0, INFINITY, 5));
-
-   ui->cmdTrnX->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdTrnY->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdTrnZ->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdPvX->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdPvY->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdPvZ->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdPvTgtX->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdPvTgtY->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdPvTgtZ->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdSvX->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdSvY->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdSvZ->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdSvTgtX->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdSvTgtY->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdSvTgtZ->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdQv1->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdQv2->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdQv3->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdQs->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdHManageMax->setValidator(new QDoubleValidator(0, INFINITY, 5));
-   ui->cmdHManageMin->setValidator(new QDoubleValidator(0, INFINITY, 5));
    ui->cmdActDutyCycle->setMaximum(100.0);
    ui->cmdActDutyCycle->setMinimum(0.0);
    ui->cmdActDutyCycle->setDecimals(2);
-   ui->cmdManX->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdManY->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdManZ->setValidator(new QDoubleValidator(-INFINITY, INFINITY, 5));
-   ui->cmdManTime->setValidator(new QDoubleValidator(0, INFINITY, 5));
 
    ui->cmdPvTgtType->clear();
    ui->cmdPvTgtType->addItems(
@@ -162,187 +197,6 @@ void DSM_Menu::set_validators() {
    QStringList cmdActActuators = {actTypes["WHL"], actTypes["MTB"], "Thruster"};
    cmdActActuators.sort();
    ui->cmdActType->addItems(cmdActActuators);
-
-   connect(ui->cmdTrnX, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdTrnY, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdTrnZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdTrnOri, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdTrnFrm, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdTrnOriScBdyNum, &QSpinBox::textChanged, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdTrnFrmScBdyNum, &QSpinBox::textChanged, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdPvTgtType, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtSc, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtWld, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtScBdyNum, &QSpinBox::textChanged, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvX, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvY, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtAxisFrm, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtX, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtY, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdPvTgtZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdSvTgtType, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtSc, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtWld, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtScBdyNum, &QSpinBox::textChanged, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvX, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvY, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtAxisFrm, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtX, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtY, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdSvTgtZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdQv1, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdQv2, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdQv3, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdQs, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdQuatFrm, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdHManageEnabled, &QCheckBox::stateChanged, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdHManageMax, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdHManageMin, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdMirrorTgt, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdMirrorTgtBdyNum, &QSpinBox::textChanged, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdActType, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_act_data_changed);
-   connect(ui->cmdActNum, &QSpinBox::textChanged, this,
-           &DSM_Menu::cmd_act_data_changed);
-   connect(ui->cmdActDutyCycle, &QDoubleSpinBox::textChanged, this,
-           &DSM_Menu::cmd_act_data_changed);
-
-   connect(ui->cmdManX, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdManY, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdManZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdManFrm, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdManType, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdManLimits, &QComboBox::textActivated, this,
-           &DSM_Menu::cmd_data_changed);
-   connect(ui->cmdManTime, &QLineEdit::textEdited, this,
-           &DSM_Menu::cmd_data_changed);
-
-   connect(ui->cmdSC, &QComboBox::textActivated, this,
-           &DSM_Menu::timeline_data_changed);
-   connect(ui->cmdTime, &QDoubleSpinBox::textChanged, this,
-           &DSM_Menu::timeline_data_changed);
-   connect(ui->cmdTrnLabel, &QComboBox::textActivated, this,
-           &DSM_Menu::timeline_data_changed);
-   connect(ui->cmdAttLabel, &QComboBox::textActivated, this,
-           &DSM_Menu::timeline_data_changed);
-   connect(ui->cmdHManLabel, &QComboBox::textActivated, this,
-           &DSM_Menu::timeline_data_changed);
-   connect(ui->cmdAttSVLabel, &QComboBox::textActivated, this,
-           &DSM_Menu::timeline_data_changed);
-   connect(ui->cmdActLabel, &QComboBox::textActivated, this,
-           &DSM_Menu::timeline_data_changed);
-
-   connect(ui->gainKpX, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKpY, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKpZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKrX, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKrY, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKrZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKiX, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKiY, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKiZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKiLimX, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKiLimY, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainKiLimZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-
-   connect(ui->gainBandwidth, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainDampingRatio, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainAlpha, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainILim, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainMomDumpKpX, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainMomDumpKpY, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainMomDumpKpZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainLyaGain, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-   connect(ui->gainLyaGain_2, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-
-   connect(ui->gainCustomGains, &QLineEdit::textEdited, this,
-           &DSM_Menu::gain_data_changed);
-
-   connect(ui->limFrcX, &QLineEdit::textEdited, this,
-           &DSM_Menu::lim_data_changed);
-   connect(ui->limFrcY, &QLineEdit::textEdited, this,
-           &DSM_Menu::lim_data_changed);
-   connect(ui->limFrcZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::lim_data_changed);
-   connect(ui->limRateX, &QLineEdit::textEdited, this,
-           &DSM_Menu::lim_data_changed);
-   connect(ui->limRateY, &QLineEdit::textEdited, this,
-           &DSM_Menu::lim_data_changed);
-   connect(ui->limRateZ, &QLineEdit::textEdited, this,
-           &DSM_Menu::lim_data_changed);
 
    ui->cmdActList->setSortingEnabled(true);
    ui->cmdActList->sortItems(Qt::AscendingOrder);

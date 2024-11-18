@@ -83,27 +83,10 @@ int dsm_gui_lib::get_sc_nitems(const QString inout_path, const QString sc_name,
    return std::max(nItems, 0);
 }
 
-void dsm_gui_lib::set_mult_validators(QLineEdit *ui_elem[], int array_length,
-                                      double lower, double upper,
-                                      int decimals) {
-   for (int i = 0; i < array_length; i++) {
-      ui_elem[i]->setValidator(new QDoubleValidator(lower, upper, decimals));
-   }
-}
-
-void dsm_gui_lib::set_mult_name_validators(QLineEdit *ui_elem[],
-                                           int array_length,
-                                           QValidator *validator) {
-   for (int i = 0; i < array_length; i++) {
-      ui_elem[i]->setValidator(validator);
-   }
-}
-
-void dsm_gui_lib::set_mult_cbox_validators(QComboBox *ui_elem[],
-                                           int array_length,
+void dsm_gui_lib::set_mult_cbox_validators(QList<QComboBox *> ui_elem,
                                            const QStringList string_list) {
-   for (int i = 0; i < array_length; i++) {
-      ui_elem[i]->addItems(string_list);
+   for (auto elem : ui_elem) {
+      elem->addItems(string_list);
    }
 }
 

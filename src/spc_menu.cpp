@@ -13,12 +13,12 @@
 SPC_Menu::SPC_Menu(QWidget *parent) : QDialog(parent), ui(new Ui::SPC_Menu) {
    ui->setupUi(this);
    ui->quick_tabs->setCurrentIndex(0);
+
+   ninf_pinf_valid = std::make_unique<QDoubleValidator>(-INFINITY, INFINITY, 5);
+   zero_pinf_valid = std::make_unique<QDoubleValidator>(0, INFINITY, 5);
    set_validators();
 
-   new_item   = 0;
-   counter3u  = 0;
-   counter6u  = 0;
-   counter12u = 0;
+   new_item = 0;
 }
 
 SPC_Menu::~SPC_Menu() {
@@ -52,15 +52,14 @@ void SPC_Menu::set_validators() {
 
    ui->spc_fswsamp->setValidator(new QDoubleValidator(0, INFINITY, 5));
 
-   QLineEdit *ninf_pinf[16] = {
+   QList<QLineEdit *> ninf_pinf = {
        ui->spc_cur_xpos_form, ui->spc_cur_ypos_form, ui->spc_cur_zpos_form,
        ui->spc_cur_xvel_form, ui->spc_cur_yvel_form, ui->spc_cur_zvel_form,
        ui->spc_cur_angvel_1,  ui->spc_cur_angvel_2,  ui->spc_cur_angvel_3,
        ui->spc_cur_q1,        ui->spc_cur_q2,        ui->spc_cur_q3,
        ui->spc_cur_q4,        ui->spc_cur_initeul_1, ui->spc_cur_initeul_2,
        ui->spc_cur_initeul_3};
-
-   dsm_gui_lib::set_mult_validators(ninf_pinf, 16, -INFINITY, INFINITY, 5);
+   dsm_gui_lib::set_mult_validators(ninf_pinf, ninf_pinf_valid.get());
 
    connect(ui->spc_add, SIGNAL(clicked(bool)), this->parent(),
            SLOT(disable_sub_menus()));

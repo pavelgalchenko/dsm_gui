@@ -166,7 +166,7 @@ class SIM_Menu : public QDialog {
    explicit SIM_Menu(QWidget *parent = nullptr);
    ~SIM_Menu();
 
-   private slots:
+   private: // TODO: slots:
    void set_validators();
    void receive_simpath(QString path);
    void receive_apppath(QString path);
@@ -228,6 +228,9 @@ class SIM_Menu : public QDialog {
 
    private:
    Ui::SIM_Menu *ui;
+
+   // do unique ptrs so they only last as long as the SIM_Menu object
+   std::unique_ptr<QDoubleValidator> double_valid;
 
    QString inoutPath;
    QString filePath;
