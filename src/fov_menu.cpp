@@ -80,65 +80,34 @@ void FOV_Menu::receive_fovpath(QString path) {
 }
 
 void FOV_Menu::receive_data() {
-   fov_data.clear();
-   fov_string.clear();
-   fov_update.clear();
-   static QRegularExpression rx1("(.*?)!");
-   static QRegularExpression rx2("\"(.*?)\"");
-   static QRegularExpression rx3("SC_(.*).txt");
 
-   QFile file(file_path);
-   if (!file.open(QIODevice::ReadOnly)) {
-      QMessageBox::information(0, "error", file.errorString());
-   }
+   fov_file_yaml = YAML::LoadFile(file_path.toStdString());
 
-   QTextStream in(&file);
-   while (!in.atEnd()) {
-      QString line                   = in.readLine();
-      QRegularExpressionMatch match1 = rx1.match(line);
-      fov_data.append(match1.captured(1));
-
-      QRegularExpressionMatch match2 = rx2.match(line);
-      fov_string.append(match2.captured(1));
-   }
-   file.close();
-
-   QStringList scFiles = QDir(inout_path).entryList({"SC_*"});
+   QStringList scFiles = QDir(inout_path).entryList({"SC_*.yaml"});
    QStringList scNames;
    for (int i = 0; i < scFiles.length(); i++)
-      scNames.append(scFiles[i].chopped(4).mid(3));
+      scNames.append(scFiles[i].chopped(5).mid(3));
    QSet<QString> scNamesSet(scNames.begin(), scNames.end());
 
-   QFile simFile(inout_path + "Inp_Sim.txt");
-   if (!simFile.open(QIODevice::ReadOnly))
-      QMessageBox::information(0, "error", simFile.errorString());
-   QTextStream simIn(&simFile);
+   YAML::Node sim_yaml =
+       YAML::LoadFile((inout_path + "Inp_Sim.yaml").toStdString());
+   YAML::Node scs = sim_yaml["SCs"];
 
    QStringList simSCNames;
    QHash<QString, int> simSCNum;
-   while (!simIn.atEnd()) {
-      QString line = simIn.readLine();
-      if (line.contains("Spacecraft", Qt::CaseInsensitive)) {
-         line = simIn.readLine();
-         QStringList line_items =
-             line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
-         int nSC = line_items[0].toInt();
-         for (int i = 0; i < nSC; i++) {
-            line         = simIn.readLine();
-            QString name = rx3.match(line).captured(1);
-            simSCNames.append(name);
-            simSCNum.insert(name, i);
-         }
-         break;
-      }
+   for (YAML::iterator it = scs.begin(); it != scs.end(); ++it) {
+      QMap<QString, QString> scConf = it->as<QMap<QString, QString>>();
+      QString label                 = scConf["Name"].mid(3);
+      simSCNames.append(label);
+      simSCNum.insert(label, std::distance(scs.begin(), it));
    }
-   simFile.close();
+
    QSet<QString> simSCNamesSet(simSCNames.begin(), simSCNames.end());
 
    scNums.clear();
-   QStringList spaceCrafts = scNamesSet.intersect(simSCNamesSet).values();
-   for (int i = 0; i < spaceCrafts.count(); i++)
-      scNums.insert(spaceCrafts[i], simSCNum[spaceCrafts[i]]);
+   QStringList spacecrafts = scNamesSet.intersect(simSCNamesSet).values();
+   for (int i = 0; i < spacecrafts.count(); i++)
+      scNums.insert(spacecrafts[i], simSCNum[spacecrafts[i]]);
 
    ui->sc_name->clear();
    ui->sc_name->addItems(dsm_gui_lib::sortStringList(scNums.keys()));
@@ -160,82 +129,18 @@ void FOV_Menu::write_data() {
 }
 
 void FOV_Menu::apply_data() {
+   fov_list_hash.clear();
    QStringList line_items;
-   QListWidgetItem *newFOV;
    int num_fov = 0;
 
    QStringList tmpData;
 
-   line_items = fov_data[1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-   num_fov    = line_items[0].toInt();
+   YAML::Node fovs = fov_file_yaml["FOVs"];
 
-   ui->fovlist->clear();
-   clear_fields();
-   for (int i = 0; i < num_fov; i++) {
-      newFOV = new QListWidgetItem();
-      for (int j = 0; j < fovNLines - 1; j++) {
-         int k      = i * fovNLines + 3 + j;
-         line_items = fov_data[k].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-         switch (j) {
-            case 0:
-               tmpData.append(fov_string[k]);
-               newFOV->setData(FOV_Menu::Label, tmpData);
-               break;
-            case 1:
-               tmpData.append(line_items[0]);
-               tmpData.append(line_items[1]);
-               newFOV->setData(FOV_Menu::Sides, tmpData);
-               break;
-            case 2:
-               tmpData.append(line_items[0]);
-               tmpData.append(line_items[1]);
-               newFOV->setData(FOV_Menu::Dims, tmpData);
-               break;
-            case 3:
-               for (int i = 0; i < 4; i++) {
-                  int colorChannel = line_items[i].toDouble() * 255.0;
-                  tmpData.append(QString::number(colorChannel));
-               }
-               newFOV->setData(FOV_Menu::Color, tmpData);
-               break;
-            case 4:
-               tmpData.append(line_items[0]);
-               newFOV->setData(FOV_Menu::Type, tmpData);
-               break;
-            case 5:
-               tmpData.append(line_items[0]);
-               tmpData.append(line_items[1]);
-               newFOV->setData(FOV_Menu::DrawField, tmpData);
-               break;
-            case 6:
-               tmpData.append(line_items[0]);
-               tmpData.append(line_items[1]);
-               newFOV->setData(FOV_Menu::SCBody, tmpData);
-               break;
-            case 7:
-               tmpData.append(line_items[0]);
-               tmpData.append(line_items[1]);
-               tmpData.append(line_items[2]);
-               newFOV->setData(FOV_Menu::BodyPos, tmpData);
-               break;
-            case 8:
-               tmpData.append(line_items[0]);
-               tmpData.append(line_items[1]);
-               tmpData.append(line_items[2]);
-               tmpData.append(line_items[3]);
-               newFOV->setData(FOV_Menu::Euler, tmpData);
-               break;
-            case 9:
-               tmpData.append(line_items[0]);
-               newFOV->setData(FOV_Menu::Boresight, tmpData);
-               break;
-            default:
-               break;
-         }
-
-         tmpData.clear();
-      }
-      ui->fovlist->addItem(newFOV);
+   for (YAML::iterator it = fovs.begin(); it != fovs.end(); ++it) {
+      QListWidgetItem *newFOV =
+          new QListWidgetItem((*it)["Label"].as<QString>(), ui->fovlist);
+      fov_list_hash.insert(newFOV, *it);
    }
 }
 
@@ -269,12 +174,6 @@ void FOV_Menu::on_fov_remove_clicked() {
 }
 
 void FOV_Menu::on_fov_add_clicked() {
-   QListWidgetItem *newFOV = new QListWidgetItem();
-   QStringList line_items;
-
-   QStringList newData;
-   QStringList tmpData;
-
    QString newName      = "NEW FOV";
    QStringList curNames = dsm_gui_lib::getTextFromList(ui->fovlist);
    if (ui->fovlist->count() != 0) {
@@ -290,148 +189,52 @@ void FOV_Menu::on_fov_add_clicked() {
             return; // Nothing happens if too many
       }
    }
+   QListWidgetItem *newFOV = new QListWidgetItem(newName, ui->fovlist);
+   FOV new_fov             = FOV(newName);
 
-   newData.append("");
-   newData.append("4  4.0                            ");
-   newData.append("8.0  4.0                          ");
-   newData.append("0.0  1.0  0.0  0.5                ");
-   newData.append("SOLID                             ");
-   newData.append("TRUE   TRUE                       ");
-   newData.append("0  0                              ");
-   newData.append("0.0  0.0  1.0                     ");
-   newData.append("0.0  0.0  0.0  321                ");
-   newData.append("Z_AXIS                            ");
-   newData.append("");
-
-   for (int j = 0; j < fovNLines - 1; j++) {
-      line_items = newData[j].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-      switch (j) {
-         case 0:
-            tmpData.append(newName);
-            newFOV->setData(FOV_Menu::Label, tmpData);
-            break;
-         case 1:
-            tmpData.append(line_items[0]);
-            tmpData.append(line_items[1]);
-            newFOV->setData(FOV_Menu::Sides, tmpData);
-            break;
-         case 2:
-            tmpData.append(line_items[0]);
-            tmpData.append(line_items[1]);
-            newFOV->setData(FOV_Menu::Dims, tmpData);
-            break;
-         case 3:
-            for (int i = 0; i < 4; i++) {
-               int colorChannel = line_items[i].toDouble() * 255.0;
-               tmpData.append(QString::number(colorChannel));
-            }
-            newFOV->setData(FOV_Menu::Color, tmpData);
-            break;
-         case 4:
-            tmpData.append(line_items[0]);
-            newFOV->setData(FOV_Menu::Type, tmpData);
-            break;
-         case 5:
-            tmpData.append(line_items[0]);
-            tmpData.append(line_items[1]);
-            newFOV->setData(FOV_Menu::DrawField, tmpData);
-            break;
-         case 6:
-            tmpData.append(line_items[0]);
-            tmpData.append(line_items[1]);
-            newFOV->setData(FOV_Menu::SCBody, tmpData);
-            break;
-         case 7:
-            tmpData.append(line_items[0]);
-            tmpData.append(line_items[1]);
-            tmpData.append(line_items[2]);
-            newFOV->setData(FOV_Menu::BodyPos, tmpData);
-            break;
-         case 8:
-            tmpData.append(line_items[1]);
-            tmpData.append(line_items[2]);
-            tmpData.append(line_items[3]);
-            tmpData.append(line_items[3]);
-            newFOV->setData(FOV_Menu::Euler, tmpData);
-            break;
-         case 9:
-            tmpData.append(line_items[0]);
-            newFOV->setData(FOV_Menu::Boresight, tmpData);
-            break;
-         default:
-            break;
-      }
-      tmpData.clear();
-   }
-
-   ui->fovlist->addItem(newFOV);
+   size_t n_fovs = fov_file_yaml["FOVs"].size();
+   fov_file_yaml["FOVs"].push_back(new_fov);
+   fov_list_hash.insert(newFOV, fov_file_yaml["FOVs"][n_fovs]);
 
    ui->fovlist->setCurrentRow(-1);
    clear_fields();
 }
 
 void FOV_Menu::on_fovlist_itemClicked(QListWidgetItem *item) {
-   QStringList tmpData = {};
+   const FOV fov           = fov_list_hash[item].as<FOV>();
+   const Sides sides       = fov.sides();
+   const Color color       = fov.color();
+   const EulerAngles euler = fov.euler_angles();
 
-   for (int i = 0; i < fovNLines; i++) {
-      switch (i) {
-         case 0:
-            tmpData = item->data(FOV_Menu::Label).toStringList();
-            ui->fov_name->setText(tmpData[0]);
-            break;
-         case 1:
-            tmpData = item->data(FOV_Menu::Sides).toStringList();
-            ui->num_sides->setText(tmpData[0]);
-            ui->length_sides->setText(tmpData[1]);
-            break;
-         case 2:
-            tmpData = item->data(FOV_Menu::Dims).toStringList();
-            ui->horizontal_width->setText(tmpData[0]);
-            ui->vertical_height->setText(tmpData[1]);
-            break;
-         case 3:
-            tmpData = item->data(FOV_Menu::Color).toStringList();
-            ui->redvalue->setValue(tmpData[0].toInt());
-            ui->greenvalue->setValue(tmpData[1].toInt());
-            ui->bluevalue->setValue(tmpData[2].toInt());
-            ui->alphavalue->setValue(tmpData[3].toInt());
-            break;
-         case 4:
-            tmpData = item->data(FOV_Menu::Type).toStringList();
-            ui->fov_type->setCurrentText(fovtype_inputs[tmpData[0]]);
-            break;
-         case 5:
-            tmpData = item->data(FOV_Menu::DrawField).toStringList();
-            ui->nearfield->setChecked(QVariant(tmpData[0]).toBool());
-            ui->farfield->setChecked(QVariant(tmpData[1]).toBool());
-            break;
-         case 6:
-            tmpData = item->data(FOV_Menu::SCBody).toStringList();
-            ui->sc_name->setCurrentText(scNums.key(tmpData[0].toInt()));
-            ui->bdy_num->setValue(tmpData[1].toInt());
-            break;
-         case 7:
-            tmpData = item->data(FOV_Menu::BodyPos).toStringList();
-            ui->pos_x->setText(tmpData[0]);
-            ui->pos_y->setText(tmpData[1]);
-            ui->pos_z->setText(tmpData[2]);
-            break;
-         case 8:
-            tmpData = item->data(FOV_Menu::Euler).toStringList();
-            ui->rot1->setText(tmpData[0]);
-            ui->rot2->setText(tmpData[1]);
-            ui->rot3->setText(tmpData[2]);
-            ui->euler_seq->setCurrentText(tmpData[3]);
-            break;
-         case 9:
-            tmpData = item->data(FOV_Menu::Boresight).toStringList();
-            ui->boresightaxis->setCurrentText(axis_inputs[tmpData[0]]);
-            break;
-         default:
-            break;
-      }
-      tmpData.clear();
+   const QList<QLineEdit *> ui_pos = {ui->pos_x, ui->pos_y, ui->pos_z};
+   const QList<QLineEdit *> ui_ang = {ui->rot1, ui->rot2, ui->rot3};
+
+   ui->fov_name->setText(fov.label());
+   ui->horizontal_width->setText(QString::number(fov.width()));
+   ui->vertical_height->setText(QString::number(fov.height()));
+   dsm_gui_lib::setQComboBox(ui->fov_type, fov.type());
+   ui->nearfield->setChecked(fov.near_field());
+   ui->farfield->setChecked(fov.far_field());
+   dsm_gui_lib::setQComboBox(ui->sc_name, scNums.key(fov.sc()));
+   ui->bdy_num->setValue(fov.body());
+   dsm_gui_lib::setQComboBox(ui->boresightaxis, fov.boresight());
+
+   QVector3D pos = fov.position();
+   QVector3D ang = euler.getAngles();
+   for (int i = 0; i < 3; i++) {
+      ui_pos[i]->setText(QString::number(pos[i]));
+      ui_ang[i]->setText(QString::number(ang[i]));
    }
+   dsm_gui_lib::setQComboBox(ui->euler_seq,
+                             QString::number(euler.getSequence()));
+
+   ui->num_sides->setText(QString::number(sides.n()));
+   ui->length_sides->setText(QString::number(sides.length()));
+
+   ui->redvalue->setValue(color.red());
+   ui->greenvalue->setValue(color.green());
+   ui->bluevalue->setValue(color.blue());
+   ui->alphavalue->setValue(color.alpha());
 }
 
 void FOV_Menu::on_loaddefaultButton_clicked() {
@@ -559,90 +362,102 @@ void FOV_Menu::on_applyButton_clicked() {
 void FOV_Menu::sides_changed() {
    if (ui->fovlist->currentRow() == -1)
       return;
-   QStringList tmpData;
-   tmpData.append(ui->num_sides->text());
-   tmpData.append(ui->length_sides->text());
-   ui->fovlist->currentItem()->setData(FOV_Menu::Sides, tmpData);
+   Sides sides(ui->num_sides->text().toInt(),
+               ui->length_sides->text().toDouble());
+   YAML::Node fov = fov_list_hash[ui->fovlist->currentItem()];
+   fov["Sides"]   = sides;
 }
 
 void FOV_Menu::dims_changed() {
    if (ui->fovlist->currentRow() == -1)
       return;
-   QStringList tmpData;
-   tmpData.append(ui->horizontal_width->text());
-   tmpData.append(ui->vertical_height->text());
-   ui->fovlist->currentItem()->setData(FOV_Menu::Dims, tmpData);
+
+   YAML::Node fov = fov_list_hash[ui->fovlist->currentItem()];
+   fov["Width"]   = ui->horizontal_width->text().toDouble();
+   fov["Height"]  = ui->vertical_height->text().toDouble();
 }
 
 void FOV_Menu::color_changed() {
    if (ui->fovlist->currentRow() == -1)
       return;
-   QStringList tmpData;
-   tmpData.append(ui->redvalue->text());
-   tmpData.append(ui->greenvalue->text());
-   tmpData.append(ui->bluevalue->text());
-   tmpData.append(ui->alphavalue->text());
-   ui->fovlist->currentItem()->setData(FOV_Menu::Color, tmpData);
+
+   QList<QSpinBox *> ui_rgb = {ui->redvalue, ui->greenvalue, ui->bluevalue};
+   QVector3D rgb;
+   for (int i = 0; i < 3; i++)
+      rgb[i] = ui_rgb[i]->value() / 255.0;
+   Color color(rgb, ui->alphavalue->value() / 255.0);
+
+   YAML::Node fov = fov_list_hash[ui->fovlist->currentItem()];
+   fov["Color"]   = color;
 }
 
 void FOV_Menu::on_fov_name_textChanged(const QString &arg1) {
    if (ui->fovlist->currentRow() == -1)
       return;
-   ui->fovlist->currentItem()->setData(FOV_Menu::Label, arg1);
+   YAML::Node fov = fov_list_hash[ui->fovlist->currentItem()];
+   fov["Label"]   = arg1;
 }
 
 void FOV_Menu::field_changed() {
    if (ui->fovlist->currentRow() == -1)
       return;
    QStringList tmpData;
-   tmpData.append(dsm_gui_lib::toString(ui->nearfield));
-   tmpData.append(dsm_gui_lib::toString(ui->farfield));
-   ui->fovlist->currentItem()->setData(FOV_Menu::DrawField, tmpData);
+
+   YAML::Node fov    = fov_list_hash[ui->fovlist->currentItem()];
+   fov["Far Field"]  = ui->farfield->isChecked();
+   fov["Near Field"] = ui->nearfield->isChecked();
 }
 
 void FOV_Menu::scbody_changed() {
    if (ui->fovlist->currentRow() == -1)
       return;
-   QStringList tmpData;
-   int scNum = scNums[ui->sc_name->currentText()];
-   tmpData.append(QString::number(scNum));
-   tmpData.append(ui->bdy_num->text());
-   ui->fovlist->currentItem()->setData(FOV_Menu::SCBody, tmpData);
+
+   YAML::Node fov = fov_list_hash[ui->fovlist->currentItem()];
+   int scNum      = scNums[ui->sc_name->currentText()];
+   fov["SC"]      = scNum;
+   fov["Body"]    = ui->bdy_num->value();
 }
 
 void FOV_Menu::pos_changed() {
    if (ui->fovlist->currentRow() == -1)
       return;
-   QStringList tmpData;
-   tmpData.append(ui->pos_x->text());
-   tmpData.append(ui->pos_y->text());
-   tmpData.append(ui->pos_z->text());
-   ui->fovlist->currentItem()->setData(FOV_Menu::BodyPos, tmpData);
+
+   const QList<QLineEdit *> ui_pos = {ui->pos_x, ui->pos_y, ui->pos_z};
+   YAML::Node fov                  = fov_list_hash[ui->fovlist->currentItem()];
+   QVector3D pos;
+   for (int i = 0; i < 3; i++)
+      pos[i] = ui_pos[i]->text().toDouble();
+   fov["Position"] = pos;
 }
 
 void FOV_Menu::euler_changed() {
    if (ui->fovlist->currentRow() == -1)
       return;
-   QStringList tmpData;
-   tmpData.append(ui->rot1->text());
-   tmpData.append(ui->rot2->text());
-   tmpData.append(ui->rot3->text());
-   tmpData.append(ui->euler_seq->currentText());
-   ui->fovlist->currentItem()->setData(FOV_Menu::Euler, tmpData);
+
+   YAML::Node fov                  = fov_list_hash[ui->fovlist->currentItem()];
+   const QList<QLineEdit *> ui_ang = {ui->rot1, ui->rot2, ui->rot3};
+   QVector3D ang;
+   for (int i = 0; i < 3; i++)
+      ang[i] = ui_ang[i]->text().toDouble();
+
+   EulerAngles euler(ang, ui->euler_seq->currentText().toInt());
+   fov["Euler Angles"] = euler;
 }
 
 void FOV_Menu::on_boresightaxis_currentTextChanged(const QString &arg1) {
    if (ui->fovlist->currentRow() == -1)
       return;
-   ui->fovlist->currentItem()->setData(FOV_Menu::Boresight,
-                                       axis_inputs.key(arg1));
+
+   YAML::Node fov   = fov_list_hash[ui->fovlist->currentItem()];
+   fov["Boresight"] = axis_inputs.key(arg1);
 }
 
 void FOV_Menu::on_fov_type_currentTextChanged(const QString &arg1) {
    if (ui->fovlist->currentRow() == -1)
       return;
-   ui->fovlist->currentItem()->setData(FOV_Menu::Type,
-                                       fovtype_inputs.key(arg1));
+
+   YAML::Node fov = fov_list_hash[ui->fovlist->currentItem()];
+   fov["Type"]    = fovtype_inputs.key(arg1);
 }
 
 void FOV_Menu::clear_fields() {

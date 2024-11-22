@@ -530,7 +530,7 @@ void ORB_Menu::on_applyButton_clicked() {
    config_yaml["Description"]     = ui->orbDescription->text().remove("\"");
 
    YAML::Node orb_yaml(YAML::NodeType::Map);
-   orb_file_yaml["Orbit"]     = orb_file_yaml;
+   orb_file_yaml["Orbit"]     = orb_yaml;
    const QString orb_type_str = orbTypeInputs.key(ui->orbType->currentText());
    orb_yaml["Type"]           = orb_type_str;
    const enum orb_types orb_type = orbTypeHash[orb_type_str];

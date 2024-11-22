@@ -1,12 +1,12 @@
 #ifndef DSM_GUI_LIB_H
 #define DSM_GUI_LIB_H
 
-#include "qlistwidget.h"
 #include "qtyaml.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDialog>
 #include <QFile>
+#include <QListWidget>
 #include <QProcess>
 #include <QRandomGenerator>
 #include <QTextStream>
@@ -14,6 +14,54 @@
 
 #define STR2(x) #x
 #define STR(X)  STR2(X)
+
+class EulerAngles {
+   private:
+   inline const static QList<int> valid_sequences = {
+       121, 123, 131, 132, 212, 213, 231, 232, 312, 313, 321, 323};
+
+   protected:
+   QVector3D angles = {0, 0, 0};
+   int sequence     = 123;
+
+   public:
+   EulerAngles(const QVector3D ang = {0, 0, 0}, const int seq = 123) {
+      setAngles(ang);
+      setSequence(seq);
+   }
+   void setAngles(const QVector3D ang) {
+      angles = ang;
+   }
+   void setSequence(const int seq) {
+      if (valid_sequences.contains(seq))
+         sequence = seq;
+      else {
+         sequence = valid_sequences[0];
+         QString warn_msg =
+             QString(
+                 "Invalid Sequence, %1, detected. Valid Euler Sequences are: ")
+                 .arg(seq);
+
+         for (auto it : valid_sequences) {
+            warn_msg.append(QString(" %1,").arg(it));
+         }
+         warn_msg.chop(1);
+         warn_msg.append(".");
+         dsm_gui_lib::warning_message(warn_msg);
+      }
+   }
+   QVector3D getAngles() const {
+      return angles;
+   }
+   double getAngles(int i) const {
+      if (i < 0 || i >= 3)
+         return 0;
+      return angles[i];
+   }
+   int getSequence() const {
+      return sequence;
+   }
+};
 
 class dsm_gui_lib {
    public:
@@ -35,6 +83,12 @@ class dsm_gui_lib {
    static void set_mult_validators(const QList<T *> ui_elem, U *u) {
       for (T *elem : ui_elem)
          elem->setValidator(u);
+   }
+   template <class T> static T limit(T x, T min, T max) {
+      return (x >= max ? max : (x <= min ? min : x));
+   }
+   template <class T, class U, class V> static T limit(T x, U min, V max) {
+      return limit(x, (T)min, (T)max);
    }
    static void set_mult_cbox_validators(QList<QComboBox *> ui_elem,
                                         const QStringList string_list);
@@ -242,5 +296,26 @@ class dsm_gui_lib {
       }
    }
 };
+
+// Configure YAML conversions
+namespace YAML {
+// Euler Angles
+template <> struct convert<EulerAngles> {
+   static Node encode(const EulerAngles &rhs) {
+      Node node(NodeType::Map);
+      node["Angles"]   = rhs.getAngles();
+      node["Sequence"] = rhs.getSequence();
+      return node;
+   }
+   static bool decode(const Node &node, EulerAngles &rhs) {
+      if (!node.IsMap())
+         return false;
+
+      rhs.setAngles(node["Angles"].as<QVector3D>());
+      rhs.setSequence(node["Sequence"].as<int>());
+      return true;
+   }
+};
+} // namespace YAML
 
 #endif // DSM_GUI_LIB_H

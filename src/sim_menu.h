@@ -1,7 +1,7 @@
 #ifndef SIM_MENU_H
 #define SIM_MENU_H
 
-#include <dsm_gui_lib.h>
+#include "dsm_gui_lib.h"
 
 #include <QCheckBox>
 #include <QComboBox>
