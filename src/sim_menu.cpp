@@ -645,12 +645,12 @@ void SIM_Menu::on_simGSList_itemClicked(QListWidgetItem *item) {
    ui->simGSEn->setChecked(item->data(gsEnabledRole).toBool());
    QString gsWorld = item->data(gsWorldRole).toString();
    if (gsWorld.contains("MINORBODY")) {
-      ui->simGSWorld->setCurrentText("MINORBODY");
+      dsm_gui_lib::setQComboBox(ui->simGSWorld, "MINORBODY");
       QStringList split = gsWorld.split(QRegExp("_"), Qt::SkipEmptyParts);
       ui->simGSMinorBodyNum->setValue(split[1].toInt());
    } else {
+      dsm_gui_lib::setQComboBox(ui->simGSWorld, gsWorld);
       ui->simGSMinorBodyNum->setValue(0);
-      ui->simGSWorld->setCurrentText(gsWorld);
    }
    ui->simGSLat->setText(item->data(gsLatRole).toString());
    ui->simGSLong->setText(item->data(gsLongRole).toString());

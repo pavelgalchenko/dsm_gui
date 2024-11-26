@@ -56,29 +56,13 @@ QStringList dsm_gui_lib::getTextFromList(QListWidget *list) {
 
 int dsm_gui_lib::get_sc_nitems(const QString inout_path, const QString sc_name,
                                const scSectionType type) {
-   QString scFileName = "SC_" + sc_name + ".txt";
+   const QString scFileName = inout_path + "SC_" + sc_name + ".yaml";
+   const YAML::Node sc_yaml = YAML::LoadFile(scFileName.toStdString());
 
-   QFile scFile(inout_path + scFileName);
-   if (!scFile.open(QIODevice::ReadOnly))
-      QMessageBox::information(0, "error", scFile.errorString());
-   QTextStream in(&scFile);
+   const QString searchStr = scSectionIdentifier(type);
 
-   QString searchStr = scSectionIdentifier(type);
-   int skipLines     = scSectionLineToNum(type);
-   int nItems        = 0;
-
-   while (!in.atEnd()) {
-      QString line = in.readLine();
-      if (line.contains(searchStr, Qt::CaseSensitive)) {
-         for (int i = 0; i < skipLines; i++)
-            line = in.readLine();
-         QStringList line_items =
-             line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
-         nItems = line_items[0].toInt();
-         break;
-      }
-   }
-   scFile.close();
+   const YAML::Node query_node = sc_yaml[searchStr];
+   const int nItems            = query_node.size();
 
    return std::max(nItems, 0);
 }

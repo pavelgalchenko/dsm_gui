@@ -34,14 +34,14 @@ void FOV_Menu::set_validators() {
    ui->boresightaxis->addItems(
        dsm_gui_lib::sortStringList(axis_inputs.values()));
 
-   connect(ui->num_sides, &QLineEdit::textChanged, this,
+   connect(ui->num_sides, &QLineEdit::textEdited, this,
            &FOV_Menu::sides_changed);
-   connect(ui->length_sides, &QLineEdit::textChanged, this,
+   connect(ui->length_sides, &QLineEdit::textEdited, this,
            &FOV_Menu::sides_changed);
 
-   connect(ui->horizontal_width, &QLineEdit::textChanged, this,
+   connect(ui->horizontal_width, &QLineEdit::textEdited, this,
            &FOV_Menu::dims_changed);
-   connect(ui->vertical_height, &QLineEdit::textChanged, this,
+   connect(ui->vertical_height, &QLineEdit::textEdited, this,
            &FOV_Menu::dims_changed);
 
    connect(ui->redvalue, &QSpinBox::textChanged, this,
@@ -56,19 +56,19 @@ void FOV_Menu::set_validators() {
    connect(ui->nearfield, &QCheckBox::toggled, this, &FOV_Menu::field_changed);
    connect(ui->farfield, &QCheckBox::toggled, this, &FOV_Menu::field_changed);
 
-   connect(ui->sc_name, &QComboBox::currentTextChanged, this,
+   connect(ui->sc_name, &QComboBox::textActivated, this,
            &FOV_Menu::scbody_changed);
    connect(ui->bdy_num, &QSpinBox::textChanged, this,
            &FOV_Menu::scbody_changed);
 
-   connect(ui->pos_x, &QLineEdit::textChanged, this, &FOV_Menu::pos_changed);
-   connect(ui->pos_y, &QLineEdit::textChanged, this, &FOV_Menu::pos_changed);
-   connect(ui->pos_z, &QLineEdit::textChanged, this, &FOV_Menu::pos_changed);
+   connect(ui->pos_x, &QLineEdit::textEdited, this, &FOV_Menu::pos_changed);
+   connect(ui->pos_y, &QLineEdit::textEdited, this, &FOV_Menu::pos_changed);
+   connect(ui->pos_z, &QLineEdit::textEdited, this, &FOV_Menu::pos_changed);
 
-   connect(ui->rot1, &QLineEdit::textChanged, this, &FOV_Menu::euler_changed);
-   connect(ui->rot2, &QLineEdit::textChanged, this, &FOV_Menu::euler_changed);
-   connect(ui->rot3, &QLineEdit::textChanged, this, &FOV_Menu::euler_changed);
-   connect(ui->euler_seq, &QComboBox::currentTextChanged, this,
+   connect(ui->rot1, &QLineEdit::textEdited, this, &FOV_Menu::euler_changed);
+   connect(ui->rot2, &QLineEdit::textEdited, this, &FOV_Menu::euler_changed);
+   connect(ui->rot3, &QLineEdit::textEdited, this, &FOV_Menu::euler_changed);
+   connect(ui->euler_seq, &QComboBox::textActivated, this,
            &FOV_Menu::euler_changed);
 }
 
@@ -146,14 +146,12 @@ void FOV_Menu::write_data(YAML::Node yaml) {
 
 void FOV_Menu::apply_data() {
    fov_list_hash.clear();
-   QStringList line_items;
-   QStringList tmpData;
 
    YAML::Node fov_file_yaml = YAML::LoadFile(file_path.toStdString());
    YAML::Node fovs          = fov_file_yaml["FOVs"];
 
    for (YAML::iterator it = fovs.begin(); it != fovs.end(); ++it) {
-      FOV new_fov = FOV((*it).as<FOV>());
+      FOV new_fov = (*it).as<FOV>();
       QListWidgetItem *newFOV =
           new QListWidgetItem(new_fov.label(), ui->fovlist);
       fov_list_hash.insert(newFOV, new_fov);
@@ -183,6 +181,8 @@ void FOV_Menu::on_fov_remove_clicked() {
    if (removeitem == -1) {
       return;
    } else {
+      QListWidgetItem *cur_item = ui->fovlist->currentItem();
+      fov_list_hash.remove(cur_item);
       ui->fovlist->takeItem(removeitem);
       ui->fovlist->setCurrentRow(-1);
       clear_fields();
@@ -432,9 +432,14 @@ void FOV_Menu::on_fov_duplicate_clicked() {
          break;
       }
    }
+
    QListWidgetItem *newItem = curItem->clone();
    newItem->setText(newName);
    ui->fovlist->addItem(newItem);
+
+   FOV new_fov = fov_list_hash[curItem];
+   new_fov.setLabel(newName);
+   fov_list_hash.insert(newItem, new_fov);
 }
 
 void FOV_Menu::on_sc_name_currentTextChanged(const QString &arg1) {

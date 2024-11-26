@@ -114,7 +114,7 @@ void ORB_Menu::set_validators() {
            &ORB_Menu::checkKepPA);
    connect(ui->orbCentKepApoAlt, &QLineEdit::textChanged, this,
            &ORB_Menu::checkKepPA);
-   connect(ui->orbCentICParam, &QComboBox::currentTextChanged, this,
+   connect(ui->orbCentICParam, &QComboBox::textActivated, this,
            &ORB_Menu::checkKepPA);
    connect(ui->orbCentPA, &QButtonGroup::idToggled, this,
            &ORB_Menu::checkKepPA);
@@ -167,13 +167,11 @@ void ORB_Menu::receive_data(QString file_path) {
       case ORB_ZERO: {
          const QString world = orb_yaml["World"].as<QString>();
          if (world.contains("MINORBODY")) {
-            ui->orbZeroWorld->setCurrentIndex(
-                dsm_gui_lib::worldInputs.indexOf("MINORBODY"));
+            dsm_gui_lib::setQComboBox(ui->orbZeroWorld, "MINORBODY");
             ui->orbZeroMinorBodyNum->setValue(world.rightRef(1).toInt());
          } else {
+            dsm_gui_lib::setQComboBox(ui->orbZeroWorld, world);
             ui->orbZeroMinorBodyNum->setValue(0);
-            ui->orbZeroWorld->setCurrentIndex(
-                dsm_gui_lib::worldInputs.indexOf(world));
          }
          const bool poly_grav = orb_yaml["Polyhedron Grav"].as<bool>();
          ui->orbZeroPolyGrav->button(poly_grav)->setChecked(true);
@@ -186,13 +184,11 @@ void ORB_Menu::receive_data(QString file_path) {
       case ORB_CENTRAL: {
          const QString world = orb_yaml["World"].as<QString>();
          if (world.contains("MINORBODY")) {
-            ui->orbCentWorld->setCurrentIndex(
-                dsm_gui_lib::worldInputs.indexOf("MINORBODY"));
+            dsm_gui_lib::setQComboBox(ui->orbCentWorld, "MINORBODY");
             ui->orbCentMinorBodyNum->setValue(world.rightRef(1).toInt());
          } else {
+            dsm_gui_lib::setQComboBox(ui->orbCentWorld, world);
             ui->orbCentMinorBodyNum->setValue(0);
-            ui->orbCentWorld->setCurrentIndex(
-                dsm_gui_lib::worldInputs.indexOf(world));
          }
          const bool j2_enabled = orb_yaml["J2 Secular Drift"].as<bool>();
          ui->orbZeroPolyGrav->button(j2_enabled)->setChecked(true);

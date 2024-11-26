@@ -60,10 +60,10 @@ class Sides {
       setLength(len);
    }
    void setN(const int n) {
-      _n = dsm_gui_lib::limit(n, 0, INT32_MAX);
+      _n = std::max(n, 0);
    }
-   void setLength(const int len) {
-      _length = dsm_gui_lib::limit(len, 0, __DBL_MAX__);
+   void setLength(const double len) {
+      _length = std::max(len, 0.0);
    }
    int n() const {
       return _n;

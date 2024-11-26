@@ -38,8 +38,8 @@ class HostTarget {
       _type = type_strs.value(type, SC);
    }
    void setSC(const long sc, const long body) {
-      _sc   = dsm_gui_lib::limit(sc, 0, INTMAX_MAX);
-      _body = dsm_gui_lib::limit(body, 0, INTMAX_MAX);
+      _sc   = std::max(sc, 0l);
+      _body = std::max(body, 0l);
    }
    void setFrame(const QString frame) {
       _frame = frame_strs.value(frame, N);

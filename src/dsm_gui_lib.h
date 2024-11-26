@@ -197,54 +197,27 @@ class dsm_gui_lib {
    inline static QString scSectionIdentifier(scSectionType type) {
       switch (type) {
          case scSectionType::BODY:
-            return "Body Parameters";
+            return "Bodies";
          case scSectionType::WHEEL:
-            return "Wheel Parameters";
+            return "Wheels";
          case scSectionType::MTB:
-            return "MTB Parameters";
+            return "MTBs";
          case scSectionType::THRUSTER:
-            return "Thruster Parameters";
+            return "Thrusters";
          case scSectionType::GYRO:
-            return "Gyro";
+            return "Gyros";
          case scSectionType::MAGNETOMETER:
-            return "Magnetometer";
+            return "Magnetometers";
          case scSectionType::CSS:
-            return "Coarse Sun Sensor";
+            return "CSSs";
          case scSectionType::FSS:
-            return "Fine Sun Sensor";
+            return "FSSs";
          case scSectionType::STARTRACKER:
-            return "Star Tracker";
+            return "STs";
          case scSectionType::GPS:
-            return "GPS";
+            return "GPSs";
          case scSectionType::ACCEL:
-            return "Accelerometer";
-      }
-   }
-
-   inline static int scSectionLineToNum(scSectionType type) {
-      switch (type) {
-         case scSectionType::BODY:
-            return 2;
-         case scSectionType::WHEEL:
-            return 3;
-         case scSectionType::MTB:
-            return 1;
-         case scSectionType::THRUSTER:
-            return 1;
-         case scSectionType::GYRO:
-            return 1;
-         case scSectionType::MAGNETOMETER:
-            return 1;
-         case scSectionType::CSS:
-            return 1;
-         case scSectionType::FSS:
-            return 1;
-         case scSectionType::STARTRACKER:
-            return 1;
-         case scSectionType::GPS:
-            return 1;
-         case scSectionType::ACCEL:
-            return 1;
+            return "Accelerometers";
       }
    }
 };
