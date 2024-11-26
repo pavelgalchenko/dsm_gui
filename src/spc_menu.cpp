@@ -83,7 +83,7 @@ void SPC_Menu::receive_spcpath(QString path) {
        QDir(inout_path + "__default__/").entryList({"SC_*.yaml"});
 
    if (spcDefaultFiles.length() == 0) {
-      QFile::copy(":/data/__default__/__SCDEFAULT__.yaml",
+      QFile::copy(":/data/__default__/SC_DEFAULT.yaml",
                   inout_path + "__default__/SC_DEFAULT.yaml");
       spcDefaultFiles =
           QDir(inout_path + "__default__/").entryList({"SC_*.yaml"});
@@ -447,12 +447,12 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
    file_path = inout_path + "SC_" + new_name + ".yaml";
    file_paths.append(file_path);
 
-   if (dsm_gui_lib::fileExists(inout_path + "__default__/__SCDEFAULT__.yaml")) {
-      QFile::copy(inout_path + "__default__/__SCDEFAULT__.yaml",
+   if (dsm_gui_lib::fileExists(inout_path + "__default__/SC_DEFAULT.yaml")) {
+      QFile::copy(inout_path + "__default__/SC_DEFAULT.yaml",
                   inout_path + "SC_" + new_name + ".yaml");
 
    } else
-      QFile::copy(":/data/__default__/__SCDEFAULT__.yaml",
+      QFile::copy(":/data/__default__/SC_DEFAULT.yaml",
                   inout_path + "SC_" + new_name + ".yaml");
    ui->spc_conf->setEnabled(true);
 
@@ -691,7 +691,7 @@ void SPC_Menu::on_spc_list_itemClicked(QListWidgetItem *item) {
    setQComboBox(ui->spc_cur_initeul_seq, current_data[26]);
 }
 
-void SPC_Menu::on_spc_list_itemActivated(QListWidgetItem *item) {
+void SPC_Menu::on_spc_list_itemActivated(QListWidgetItem *) {
    ui->spc_conf->setEnabled(true);
 }
 
@@ -699,7 +699,7 @@ void SPC_Menu::setQComboBox(QComboBox *comboBox, QString string) {
    comboBox->setCurrentIndex(comboBox->findText(string));
 }
 
-void SPC_Menu::on_spc_cur_att_param_currentTextChanged(const QString &arg1) {
+void SPC_Menu::on_spc_cur_att_param_currentTextChanged(const QString &) {
    if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q")) {
       ui->spc_cur_initeul_1->setEnabled(false);
       ui->spc_cur_initeul_2->setEnabled(false);
@@ -754,7 +754,7 @@ void SPC_Menu::proc_add_template(QString sc_template_name) {
       return;
 }
 
-void SPC_Menu::load_1SC_default(QString sc_string) {
+void SPC_Menu::load_1SC_default(QString ) {
    on_spc_remove_clicked();
    on_spc_add_clicked();
 }

@@ -49,7 +49,7 @@ SCs:
   #   - Name:
   #     Orbit:
   #     Enabled: [[true/false]]
-  - Name: __SCDEFAULT__
+  - Name: SC_Default
     Orbit: Orb_LEO
     Enabled: true
 Perturbation Models:

@@ -16,8 +16,7 @@
 #ifndef QTYAML_H
 #define QTYAML_H
 
-// TODO: #include <yaml-cpp/yaml.h>
-#include </opt/anaconda3/envs/dsm_gui/include/yaml-cpp/yaml.h>
+#include <yaml-cpp/yaml.h>
 
 #include <QDate>
 #include <QTime>

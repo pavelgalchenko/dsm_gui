@@ -2,7 +2,6 @@
 #define FOV_MENU_H
 
 #include "dsm_gui_lib.h"
-#include "qcheckbox.h"
 
 #include <QColorDialog>
 #include <QDebug>
@@ -15,6 +14,7 @@
 #include <QTextStream>
 
 class Color {
+
    private:
    QVector3D _rgb = {0, 0, 0};
    double _alpha  = 1;
@@ -49,6 +49,7 @@ class Color {
 };
 
 class Sides {
+
    private:
    int _n         = 0;
    double _length = 1.0;
@@ -74,20 +75,16 @@ class Sides {
 
 class FOV {
    public:
-   enum types {
-      WIREFRAME = 0,
-      SOLID,
-      VECTOR,
-      PLANE,
-   };
+   enum types { WIREFRAME = 0, SOLID, VECTOR, PLANE };
    enum boresights { X_AXIS = 0, Y_AXIS, Z_AXIS };
 
    protected:
-   const QMap<QString, enum types> type_strs = {{"WIREFRAME", WIREFRAME},
-                                                {"SOLID", SOLID},
-                                                {"VECTOR", VECTOR},
-                                                {"PLANE", PLANE}};
-   const QMap<QString, enum boresights> boresight_strs = {
+   inline static const QMap<QString, enum types> type_strs = {
+       {"WIREFRAME", WIREFRAME},
+       {"SOLID", SOLID},
+       {"VECTOR", VECTOR},
+       {"PLANE", PLANE}};
+   inline static const QMap<QString, enum boresights> boresight_strs = {
        {"X_AXIS", X_AXIS}, {"Y_AXIS", Y_AXIS}, {"Z_AXIS", Z_AXIS}};
 
    private:
@@ -108,10 +105,11 @@ class FOV {
    public:
    FOV(const QString label = "", const Sides sides = Sides(),
        const double width = 0, const double height = 0,
-       const Color color = Color(), const QString type, const bool near = true,
-       const bool far = true, const int sc = 0, const int body = 0,
-       const QVector3D pos = {0, 0, 0}, const EulerAngles euler = EulerAngles(),
-       const QString boresight) {
+       const Color color = Color(), const QString type = "WIREFRAME",
+       const bool near = true, const bool far = true, const int sc = 0,
+       const int body = 0, const QVector3D pos = {0, 0, 0},
+       const EulerAngles euler = EulerAngles(),
+       const QString boresight = "X_AXIS") {
       setLabel(label);
       setSides(sides);
       setWidth(width);
@@ -225,9 +223,11 @@ class FOV_Menu : public QDialog {
    private slots:
    void set_validators();
    void receive_fovpath(QString);
+   void receive_apppath(QString path);
+   void receive_pythoncmd(QString cmd);
    void receive_data();
    void apply_data();
-   void write_data();
+   void write_data(YAML::Node);
 
    void on_fov_remove_clicked();
    void on_fov_add_clicked();
@@ -260,15 +260,16 @@ class FOV_Menu : public QDialog {
    private:
    Ui::FOV_Menu *ui;
 
-   QHash<QListWidgetItem *, YAML::Node> fov_list_hash = {};
+   QString appPath;
+   QString pythonCmd;
+
+   QHash<QListWidgetItem *, FOV> fov_list_hash = {};
 
    const int fovNLines = 11;
    QHash<QString, int> scNums;
 
    QString inout_path;
    QString file_path;
-
-   YAML::Node fov_file_yaml;
 
    const QHash<QString, QString> axis_inputs = {
        {"X_AXIS", "x-Axis"}, {"Y_AXIS", "y-Axis"}, {"Z_AXIS", "z-Axis"}};
@@ -317,6 +318,7 @@ template <> struct convert<Sides> {
 // FOV
 template <> struct convert<FOV> {
    static Node encode(const FOV &rhs) {
+      Node out_node(NodeType::Map);
       Node node(NodeType::Map);
       node["Label"]        = rhs.label();
       node["Sides"]        = rhs.sides();
@@ -331,11 +333,17 @@ template <> struct convert<FOV> {
       node["Position"]     = rhs.position();
       node["Euler Angles"] = rhs.euler_angles();
       node["Boresight"]    = rhs.boresight();
-      return node;
+      out_node["FOV"]      = node;
+      return out_node;
    }
-   static bool decode(const Node &node, FOV &rhs) {
+   static bool decode(const Node &in_node, FOV &rhs) {
+      if (!in_node.IsMap())
+         return false;
+
+      const Node node = in_node["FOV"];
       if (!node.IsMap())
          return false;
+
       rhs.setLabel(node["Label"].as<QString>());
       rhs.setSides(node["Sides"].as<Sides>());
       rhs.setWidth(node["Width"].as<double>());

@@ -15,54 +15,6 @@
 #define STR2(x) #x
 #define STR(X)  STR2(X)
 
-class EulerAngles {
-   private:
-   inline const static QList<int> valid_sequences = {
-       121, 123, 131, 132, 212, 213, 231, 232, 312, 313, 321, 323};
-
-   protected:
-   QVector3D angles = {0, 0, 0};
-   int sequence     = 123;
-
-   public:
-   EulerAngles(const QVector3D ang = {0, 0, 0}, const int seq = 123) {
-      setAngles(ang);
-      setSequence(seq);
-   }
-   void setAngles(const QVector3D ang) {
-      angles = ang;
-   }
-   void setSequence(const int seq) {
-      if (valid_sequences.contains(seq))
-         sequence = seq;
-      else {
-         sequence = valid_sequences[0];
-         QString warn_msg =
-             QString(
-                 "Invalid Sequence, %1, detected. Valid Euler Sequences are: ")
-                 .arg(seq);
-
-         for (auto it : valid_sequences) {
-            warn_msg.append(QString(" %1,").arg(it));
-         }
-         warn_msg.chop(1);
-         warn_msg.append(".");
-         dsm_gui_lib::warning_message(warn_msg);
-      }
-   }
-   QVector3D getAngles() const {
-      return angles;
-   }
-   double getAngles(int i) const {
-      if (i < 0 || i >= 3)
-         return 0;
-      return angles[i];
-   }
-   int getSequence() const {
-      return sequence;
-   }
-};
-
 class dsm_gui_lib {
    public:
    dsm_gui_lib();
@@ -294,6 +246,54 @@ class dsm_gui_lib {
          case scSectionType::ACCEL:
             return 1;
       }
+   }
+};
+
+class EulerAngles {
+   private:
+   inline const static QList<int> valid_sequences = {
+       121, 123, 131, 132, 212, 213, 231, 232, 312, 313, 321, 323};
+
+   protected:
+   QVector3D angles = {0, 0, 0};
+   int sequence     = 123;
+
+   public:
+   EulerAngles(const QVector3D ang = {0, 0, 0}, const int seq = 123) {
+      setAngles(ang);
+      setSequence(seq);
+   }
+   void setAngles(const QVector3D ang) {
+      angles = ang;
+   }
+   void setSequence(const int seq) {
+      if (valid_sequences.contains(seq))
+         sequence = seq;
+      else {
+         sequence = valid_sequences[0];
+         QString warn_msg =
+             QString(
+                 "Invalid Sequence, %1, detected. Valid Euler Sequences are: ")
+                 .arg(seq);
+
+         for (auto it : valid_sequences) {
+            warn_msg.append(QString(" %1,").arg(it));
+         }
+         warn_msg.chop(1);
+         warn_msg.append(".");
+         dsm_gui_lib::warning_message(warn_msg);
+      }
+   }
+   QVector3D getAngles() const {
+      return angles;
+   }
+   double getAngles(int i) const {
+      if (i < 0 || i >= 3)
+         return 0;
+      return angles[i];
+   }
+   int getSequence() const {
+      return sequence;
    }
 };
 

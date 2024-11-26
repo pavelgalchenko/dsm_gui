@@ -51,7 +51,7 @@ void MainWindow::on_new_mission_clicked() {
    QStringList newDefaultFiles = QDir(":/data/__default__/").entryList();
 
    for (const QString &neededFile : newDefaultFiles) {
-      if (QString::compare(neededFile, "__SCDEFAULT__.yaml")) {
+      if (QString::compare(neededFile, "SC_DEFAULT.yaml")) {
          QFile::copy(":/data/__default__/" + neededFile, path + neededFile);
          QFile::copy(":/data/__default__/" + neededFile,
                      path + "__default__/" + neededFile);

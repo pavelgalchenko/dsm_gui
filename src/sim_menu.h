@@ -166,7 +166,7 @@ class SIM_Menu : public QDialog {
    explicit SIM_Menu(QWidget *parent = nullptr);
    ~SIM_Menu();
 
-   private: // TODO: slots:
+   private slots:
    void set_validators();
    void receive_simpath(QString path);
    void receive_apppath(QString path);

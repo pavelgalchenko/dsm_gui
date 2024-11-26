@@ -74,14 +74,22 @@ void FOV_Menu::set_validators() {
 
 void FOV_Menu::receive_fovpath(QString path) {
    inout_path = path;
-   file_path  = path + "Inp_FOV.txt";
+   file_path  = path + "Inp_FOV.yaml";
    receive_data();
    apply_data();
 }
 
+void FOV_Menu::receive_apppath(QString path) {
+   appPath = path;
+}
+
+void FOV_Menu::receive_pythoncmd(QString cmd) {
+   pythonCmd = cmd;
+}
+
 void FOV_Menu::receive_data() {
 
-   fov_file_yaml = YAML::LoadFile(file_path.toStdString());
+   YAML::Node fov_file_yaml = YAML::LoadFile(file_path.toStdString());
 
    QStringList scFiles = QDir(inout_path).entryList({"SC_*.yaml"});
    QStringList scNames;
@@ -113,34 +121,42 @@ void FOV_Menu::receive_data() {
    ui->sc_name->addItems(dsm_gui_lib::sortStringList(scNums.keys()));
 }
 
-void FOV_Menu::write_data() {
+void FOV_Menu::write_data(YAML::Node yaml) {
+   QStringList params;
+   QProcess p;
+
    QFile::remove(file_path);
    QFile file(file_path);
    if (!file.open(QFile::WriteOnly)) {
       QMessageBox::information(0, "error", file.errorString());
    } else {
       QTextStream in(&file);
-      for (int i = 0; i < fov_update.size(); i++) {
-         in << fov_update.at(i);
-      }
+      YAML::Emitter out;
+      out.SetIndent(2);
+      out.SetMapFormat(YAML::EMITTER_MANIP::Block);
+      out << yaml;
+      in << out.c_str();
    }
-   fov_update.clear();
    file.close();
+   params << appPath + "/__python__/AddYAMLComments.py" << appPath << inout_path
+          << "Inp_FOV.yaml";
+   p.start(pythonCmd, params);
+   p.waitForFinished(-1);
 }
 
 void FOV_Menu::apply_data() {
    fov_list_hash.clear();
    QStringList line_items;
-   int num_fov = 0;
-
    QStringList tmpData;
 
-   YAML::Node fovs = fov_file_yaml["FOVs"];
+   YAML::Node fov_file_yaml = YAML::LoadFile(file_path.toStdString());
+   YAML::Node fovs          = fov_file_yaml["FOVs"];
 
    for (YAML::iterator it = fovs.begin(); it != fovs.end(); ++it) {
+      FOV new_fov = FOV((*it).as<FOV>());
       QListWidgetItem *newFOV =
-          new QListWidgetItem((*it)["Label"].as<QString>(), ui->fovlist);
-      fov_list_hash.insert(newFOV, *it);
+          new QListWidgetItem(new_fov.label(), ui->fovlist);
+      fov_list_hash.insert(newFOV, new_fov);
    }
 }
 
@@ -192,34 +208,32 @@ void FOV_Menu::on_fov_add_clicked() {
    QListWidgetItem *newFOV = new QListWidgetItem(newName, ui->fovlist);
    FOV new_fov             = FOV(newName);
 
-   size_t n_fovs = fov_file_yaml["FOVs"].size();
-   fov_file_yaml["FOVs"].push_back(new_fov);
-   fov_list_hash.insert(newFOV, fov_file_yaml["FOVs"][n_fovs]);
+   fov_list_hash.insert(newFOV, new_fov);
 
    ui->fovlist->setCurrentRow(-1);
    clear_fields();
 }
 
 void FOV_Menu::on_fovlist_itemClicked(QListWidgetItem *item) {
-   const FOV fov           = fov_list_hash[item].as<FOV>();
-   const Sides sides       = fov.sides();
-   const Color color       = fov.color();
-   const EulerAngles euler = fov.euler_angles();
+   const FOV *fov          = &fov_list_hash[item];
+   const Sides sides       = fov->sides();
+   const Color color       = fov->color();
+   const EulerAngles euler = fov->euler_angles();
 
    const QList<QLineEdit *> ui_pos = {ui->pos_x, ui->pos_y, ui->pos_z};
    const QList<QLineEdit *> ui_ang = {ui->rot1, ui->rot2, ui->rot3};
 
-   ui->fov_name->setText(fov.label());
-   ui->horizontal_width->setText(QString::number(fov.width()));
-   ui->vertical_height->setText(QString::number(fov.height()));
-   dsm_gui_lib::setQComboBox(ui->fov_type, fov.type());
-   ui->nearfield->setChecked(fov.near_field());
-   ui->farfield->setChecked(fov.far_field());
-   dsm_gui_lib::setQComboBox(ui->sc_name, scNums.key(fov.sc()));
-   ui->bdy_num->setValue(fov.body());
-   dsm_gui_lib::setQComboBox(ui->boresightaxis, fov.boresight());
+   ui->fov_name->setText(fov->label());
+   ui->horizontal_width->setText(QString::number(fov->width()));
+   ui->vertical_height->setText(QString::number(fov->height()));
+   dsm_gui_lib::setQComboBox(ui->fov_type, fovtype_inputs[fov->type()]);
+   ui->nearfield->setChecked(fov->near_field());
+   ui->farfield->setChecked(fov->far_field());
+   dsm_gui_lib::setQComboBox(ui->sc_name, scNums.key(fov->sc()));
+   ui->bdy_num->setValue(fov->body());
+   dsm_gui_lib::setQComboBox(ui->boresightaxis, axis_inputs[fov->boresight()]);
 
-   QVector3D pos = fov.position();
+   QVector3D pos = fov->position();
    QVector3D ang = euler.getAngles();
    for (int i = 0; i < 3; i++) {
       ui_pos[i]->setText(QString::number(pos[i]));
@@ -231,18 +245,18 @@ void FOV_Menu::on_fovlist_itemClicked(QListWidgetItem *item) {
    ui->num_sides->setText(QString::number(sides.n()));
    ui->length_sides->setText(QString::number(sides.length()));
 
-   ui->redvalue->setValue(color.red());
-   ui->greenvalue->setValue(color.green());
-   ui->bluevalue->setValue(color.blue());
-   ui->alphavalue->setValue(color.alpha());
+   ui->redvalue->setValue(color.red() * 255);
+   ui->greenvalue->setValue(color.green() * 255);
+   ui->bluevalue->setValue(color.blue() * 255);
+   ui->alphavalue->setValue(color.alpha() * 255);
 }
 
 void FOV_Menu::on_loaddefaultButton_clicked() {
    int response = dsm_gui_lib::warning_message("Overwrite FOV file?");
    if (response == QMessageBox::Ok) {
-      QFile::remove(inout_path + "Inp_FOV.txt");
-      QFile::copy(inout_path + "__default__/Inp_FOV.txt",
-                  inout_path + "Inp_FOV.txt");
+      QFile::remove(inout_path + "Inp_FOV.yaml");
+      QFile::copy(inout_path + "__default__/Inp_FOV.yaml",
+                  inout_path + "Inp_FOV.yaml");
       receive_data();
       apply_data();
    } else {
@@ -253,9 +267,9 @@ void FOV_Menu::on_loaddefaultButton_clicked() {
 void FOV_Menu::on_savedefaultButton_clicked() {
    int response = dsm_gui_lib::warning_message("Overwrite Default FOV file?");
    if (response == QMessageBox::Ok) {
-      QFile::remove(inout_path + "__default__/Inp_FOV.txt");
-      QFile::copy(inout_path + "Inp_FOV.txt",
-                  inout_path + "__default__/Inp_FOV.txt");
+      QFile::remove(inout_path + "__default__/Inp_FOV.yaml");
+      QFile::copy(inout_path + "Inp_FOV.yaml",
+                  inout_path + "__default__/Inp_FOV.yaml");
       receive_data();
       apply_data();
    } else {
@@ -268,95 +282,10 @@ void FOV_Menu::on_closeButton_clicked() {
 }
 
 void FOV_Menu::on_applyButton_clicked() {
-   QString data_inp;
-   QStringList tmpData = {};
-   QListWidgetItem *item;
+   YAML::Node fov_file_yaml(YAML::NodeType::Map);
+   fov_file_yaml["FOVs"] = fov_list_hash.values();
 
-   int fov_num = ui->fovlist->count();
-
-   fov_update.append("**************************** Fields of View "
-                     "****************************\n");
-
-   data_inp = QString::number(fov_num);
-   fov_update.append(dsm_gui_lib::whitespace(data_inp) +
-                     " !  Number of FOVs\n");
-
-   for (int i = 0; i < fov_num; i++) {
-      item = ui->fovlist->item(i);
-      for (int j = 0; j < fovNLines; j++) {
-         switch (j) {
-            case 0:
-               data_inp = "----------------------------------------------------"
-                          "--------------------\n";
-               break;
-            case 1:
-               tmpData  = item->data(FOV_Menu::Label).toStringList();
-               data_inp = "\"" + tmpData[0] + "\"";
-               data_inp = dsm_gui_lib::whitespace(data_inp) + " !  Label\n";
-               break;
-            case 2:
-               tmpData  = item->data(FOV_Menu::Sides).toStringList();
-               data_inp = tmpData.join("  ");
-               data_inp = dsm_gui_lib::whitespace(data_inp) +
-                          " !  Number of Sides, Length [m]\n";
-               break;
-            case 3:
-               tmpData  = item->data(FOV_Menu::Dims).toStringList();
-               data_inp = tmpData.join("  ");
-               data_inp = dsm_gui_lib::whitespace(data_inp) +
-                          " !  H Width, V Height [deg]\n";
-               break;
-            case 4:
-               tmpData = item->data(FOV_Menu::Color).toStringList();
-               for (int k = 0; k < 4; k++) {
-                  double colorChannel = tmpData[k].toDouble() / 255.0;
-                  data_inp += QString::number(colorChannel, 'g', 3) + "  ";
-               }
-               data_inp =
-                   dsm_gui_lib::whitespace(data_inp) + " !  Color RGB+Alpha\n";
-               break;
-            case 5:
-               tmpData  = item->data(FOV_Menu::Type).toStringList();
-               data_inp = tmpData[0];
-               data_inp = dsm_gui_lib::whitespace(data_inp) +
-                          " !  WIREFRAME, SOLID, VECTOR, or PLANE\n";
-               break;
-            case 6:
-               tmpData  = item->data(FOV_Menu::DrawField).toStringList();
-               data_inp = tmpData.join("  ");
-               data_inp = dsm_gui_lib::whitespace(data_inp) +
-                          " !  Draw Near Field, Draw Far Field\n";
-               break;
-            case 7:
-               tmpData  = item->data(FOV_Menu::SCBody).toStringList();
-               data_inp = tmpData.join("  ");
-               data_inp = dsm_gui_lib::whitespace(data_inp) + " !  SC, Body\n";
-               break;
-            case 8:
-               tmpData  = item->data(FOV_Menu::BodyPos).toStringList();
-               data_inp = tmpData.join("  ");
-               data_inp = dsm_gui_lib::whitespace(data_inp) +
-                          " !  Position in Body [m]\n";
-               break;
-            case 9:
-               tmpData  = item->data(FOV_Menu::Euler).toStringList();
-               data_inp = tmpData.join("  ");
-               data_inp = dsm_gui_lib::whitespace(data_inp) +
-                          " !  Euler Angles [deg], Sequence\n";
-               break;
-            case 10:
-               tmpData  = item->data(FOV_Menu::Boresight).toStringList();
-               data_inp = tmpData[0];
-               data_inp = dsm_gui_lib::whitespace(data_inp) +
-                          " !  Boresight Axis X_AXIS, Y_AXIS, or Z_AXIS\n";
-               break;
-         }
-         fov_update.append(data_inp);
-         data_inp.clear();
-      }
-   }
-
-   write_data();
+   write_data(fov_file_yaml);
 }
 
 void FOV_Menu::sides_changed() {
@@ -364,17 +293,17 @@ void FOV_Menu::sides_changed() {
       return;
    Sides sides(ui->num_sides->text().toInt(),
                ui->length_sides->text().toDouble());
-   YAML::Node fov = fov_list_hash[ui->fovlist->currentItem()];
-   fov["Sides"]   = sides;
+   FOV *fov = &fov_list_hash[ui->fovlist->currentItem()];
+   fov->setSides(sides);
 }
 
 void FOV_Menu::dims_changed() {
    if (ui->fovlist->currentRow() == -1)
       return;
 
-   YAML::Node fov = fov_list_hash[ui->fovlist->currentItem()];
-   fov["Width"]   = ui->horizontal_width->text().toDouble();
-   fov["Height"]  = ui->vertical_height->text().toDouble();
+   FOV *fov = &fov_list_hash[ui->fovlist->currentItem()];
+   fov->setHeight(ui->horizontal_width->text().toDouble());
+   fov->setWidth(ui->vertical_height->text().toDouble());
 }
 
 void FOV_Menu::color_changed() {
@@ -387,15 +316,15 @@ void FOV_Menu::color_changed() {
       rgb[i] = ui_rgb[i]->value() / 255.0;
    Color color(rgb, ui->alphavalue->value() / 255.0);
 
-   YAML::Node fov = fov_list_hash[ui->fovlist->currentItem()];
-   fov["Color"]   = color;
+   FOV *fov = &fov_list_hash[ui->fovlist->currentItem()];
+   fov->setColor(color);
 }
 
 void FOV_Menu::on_fov_name_textChanged(const QString &arg1) {
    if (ui->fovlist->currentRow() == -1)
       return;
-   YAML::Node fov = fov_list_hash[ui->fovlist->currentItem()];
-   fov["Label"]   = arg1;
+   FOV *fov = &fov_list_hash[ui->fovlist->currentItem()];
+   fov->setLabel(arg1);
 }
 
 void FOV_Menu::field_changed() {
@@ -403,19 +332,19 @@ void FOV_Menu::field_changed() {
       return;
    QStringList tmpData;
 
-   YAML::Node fov    = fov_list_hash[ui->fovlist->currentItem()];
-   fov["Far Field"]  = ui->farfield->isChecked();
-   fov["Near Field"] = ui->nearfield->isChecked();
+   FOV *fov = &fov_list_hash[ui->fovlist->currentItem()];
+   fov->setFarField(ui->farfield->isChecked());
+   fov->setNearField(ui->nearfield->isChecked());
 }
 
 void FOV_Menu::scbody_changed() {
    if (ui->fovlist->currentRow() == -1)
       return;
 
-   YAML::Node fov = fov_list_hash[ui->fovlist->currentItem()];
-   int scNum      = scNums[ui->sc_name->currentText()];
-   fov["SC"]      = scNum;
-   fov["Body"]    = ui->bdy_num->value();
+   FOV *fov  = &fov_list_hash[ui->fovlist->currentItem()];
+   int scNum = scNums[ui->sc_name->currentText()];
+   fov->setSC(scNum);
+   fov->setBody(ui->bdy_num->value());
 }
 
 void FOV_Menu::pos_changed() {
@@ -423,41 +352,41 @@ void FOV_Menu::pos_changed() {
       return;
 
    const QList<QLineEdit *> ui_pos = {ui->pos_x, ui->pos_y, ui->pos_z};
-   YAML::Node fov                  = fov_list_hash[ui->fovlist->currentItem()];
+   FOV *fov                        = &fov_list_hash[ui->fovlist->currentItem()];
    QVector3D pos;
    for (int i = 0; i < 3; i++)
       pos[i] = ui_pos[i]->text().toDouble();
-   fov["Position"] = pos;
+   fov->setPosition(pos);
 }
 
 void FOV_Menu::euler_changed() {
    if (ui->fovlist->currentRow() == -1)
       return;
 
-   YAML::Node fov                  = fov_list_hash[ui->fovlist->currentItem()];
+   FOV *fov                        = &fov_list_hash[ui->fovlist->currentItem()];
    const QList<QLineEdit *> ui_ang = {ui->rot1, ui->rot2, ui->rot3};
    QVector3D ang;
    for (int i = 0; i < 3; i++)
       ang[i] = ui_ang[i]->text().toDouble();
 
    EulerAngles euler(ang, ui->euler_seq->currentText().toInt());
-   fov["Euler Angles"] = euler;
+   fov->setEulerAngles(euler);
 }
 
 void FOV_Menu::on_boresightaxis_currentTextChanged(const QString &arg1) {
    if (ui->fovlist->currentRow() == -1)
       return;
 
-   YAML::Node fov   = fov_list_hash[ui->fovlist->currentItem()];
-   fov["Boresight"] = axis_inputs.key(arg1);
+   FOV *fov = &fov_list_hash[ui->fovlist->currentItem()];
+   fov->setBoresight(axis_inputs.key(arg1));
 }
 
 void FOV_Menu::on_fov_type_currentTextChanged(const QString &arg1) {
    if (ui->fovlist->currentRow() == -1)
       return;
 
-   YAML::Node fov = fov_list_hash[ui->fovlist->currentItem()];
-   fov["Type"]    = fovtype_inputs.key(arg1);
+   FOV *fov = &fov_list_hash[ui->fovlist->currentItem()];
+   fov->setType(fovtype_inputs.key(arg1));
 }
 
 void FOV_Menu::clear_fields() {
@@ -510,7 +439,7 @@ void FOV_Menu::on_fov_duplicate_clicked() {
 
 void FOV_Menu::on_sc_name_currentTextChanged(const QString &arg1) {
    QStringList scFileNames =
-       QDir(inout_path).entryList({"SC_" + arg1 + ".txt"});
+       QDir(inout_path).entryList({"SC_" + arg1 + ".yaml"});
    if (scFileNames.isEmpty())
       return;
 

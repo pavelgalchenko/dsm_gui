@@ -1761,8 +1761,8 @@ void SPC_submenu::on_spc_cur_save_clicked() {
    file_path    = spc_cur_file;
    int response = dsm_gui_lib::warning_message("Overwrite Default SC file?");
    if (response == QMessageBox::Ok) {
-      QFile::remove(inout_path + "__default__/__SCDEFAULT__.yaml");
-      QFile::copy(file_path, inout_path + "__default__/__SCDEFAULT__.yaml");
+      QFile::remove(inout_path + "__default__/SC_DEFAULT.yaml");
+      QFile::copy(file_path, inout_path + "__default__/SC_DEFAULT.yaml");
       receive_data();
    }
 }
