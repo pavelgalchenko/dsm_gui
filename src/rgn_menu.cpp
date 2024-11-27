@@ -97,6 +97,7 @@ void RGN_Menu::write_data(YAML::Node yaml) {
 
 void RGN_Menu::apply_data() {
    rgn_list_hash.clear();
+   ui->rgnlist->clear();
    YAML::Node rgn_file_yaml = YAML::LoadFile(file_path.toStdString());
    YAML::Node rgns          = rgn_file_yaml["Regions"];
 

@@ -146,6 +146,7 @@ void FOV_Menu::write_data(YAML::Node yaml) {
 
 void FOV_Menu::apply_data() {
    fov_list_hash.clear();
+   ui->fovlist->clear();
 
    YAML::Node fov_file_yaml = YAML::LoadFile(file_path.toStdString());
    YAML::Node fovs          = fov_file_yaml["FOVs"];
