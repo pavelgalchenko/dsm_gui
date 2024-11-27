@@ -20,6 +20,7 @@
 
 #include <QDate>
 #include <QTime>
+#include <QVector2D>
 #include <QVector3D>
 #include <QVector4D>
 #include <QtCore/QList>
@@ -277,6 +278,29 @@ template <> struct convert<QVector4D> {
 
       const_iterator it = node.begin();
       for (int i = 0; i < 4; i++) {
+         rhs[i] = it->as<double>();
+         ++it;
+      }
+      return true;
+   }
+};
+
+// QVector2D
+template <> struct convert<QVector2D> {
+   static Node encode(const QVector2D &rhs) {
+      Node node(NodeType::Sequence);
+      for (int i = 0; i < 2; i++) {
+         node.push_back(rhs[i]);
+      }
+      node.SetStyle(EmitterStyle::Flow);
+      return node;
+   }
+   static bool decode(const Node &node, QVector4D &rhs) {
+      if (!node.IsSequence() || node.size() != 2)
+         return false;
+
+      const_iterator it = node.begin();
+      for (int i = 0; i < 2; i++) {
          rhs[i] = it->as<double>();
          ++it;
       }

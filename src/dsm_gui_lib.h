@@ -57,11 +57,10 @@ class dsm_gui_lib {
 
    static bool fileExists(QString path);
 
-   static QVector<QString> create_QVec2(QString arg1, QString arg2);
-   static QVector<QString> create_QVec3(QString arg1, QString arg2,
-                                        QString arg3);
-   static QVector<QString> create_QVec4(QString arg1, QString arg2,
-                                        QString arg3, QString arg4);
+   static QVector2D create_QVec2(QString arg1, QString arg2);
+   static QVector3D create_QVec3(QString arg1, QString arg2, QString arg3);
+   static QVector4D create_QVec4(QString arg1, QString arg2, QString arg3,
+                                 QString arg4);
 
    static QString generate_comment(QString str_search, QString cur_line,
                                    YAML::Node comments);

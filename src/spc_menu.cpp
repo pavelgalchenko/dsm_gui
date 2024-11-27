@@ -338,7 +338,7 @@ void SPC_Menu::on_spc_apply_clicked() {
    spc_name_index   = index;
    ui->spc_list->setCurrentRow(index);
 
-   write_data(cur_spc_yaml);
+   dsm_gui_lib::write_data(file_path, cur_spc_yaml);
    on_spc_list_currentTextChanged(ui->spc_list->currentItem()->text());
 }
 
@@ -754,7 +754,7 @@ void SPC_Menu::proc_add_template(QString sc_template_name) {
       return;
 }
 
-void SPC_Menu::load_1SC_default(QString ) {
+void SPC_Menu::load_1SC_default(QString) {
    on_spc_remove_clicked();
    on_spc_add_clicked();
 }

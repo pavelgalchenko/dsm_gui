@@ -115,20 +115,20 @@ bool dsm_gui_lib::fileExists(QString path) {
    }
 }
 
-QVector<QString> dsm_gui_lib::create_QVec2(QString arg1, QString arg2) {
-   QVector<QString> tmp_data_vector = {arg1, arg2};
+QVector2D dsm_gui_lib::create_QVec2(QString arg1, QString arg2) {
+   QVector2D tmp_data_vector(arg1.toDouble(), arg2.toDouble());
    return tmp_data_vector;
 }
 
-QVector<QString> dsm_gui_lib::create_QVec3(QString arg1, QString arg2,
-                                           QString arg3) {
-   QVector<QString> tmp_data_vector = {arg1, arg2, arg3};
+QVector3D dsm_gui_lib::create_QVec3(QString arg1, QString arg2, QString arg3) {
+   QVector3D tmp_data_vector(arg1.toDouble(), arg2.toDouble(), arg3.toDouble());
    return tmp_data_vector;
 }
 
-QVector<QString> dsm_gui_lib::create_QVec4(QString arg1, QString arg2,
-                                           QString arg3, QString arg4) {
-   QVector<QString> tmp_data_vector = {arg1, arg2, arg3, arg4};
+QVector4D dsm_gui_lib::create_QVec4(QString arg1, QString arg2, QString arg3,
+                                    QString arg4) {
+   QVector4D tmp_data_vector(arg1.toDouble(), arg2.toDouble(), arg3.toDouble(),
+                             arg4.toDouble());
    return tmp_data_vector;
 }
 
@@ -143,6 +143,7 @@ void dsm_gui_lib::write_data(const QString file_path, YAML::Node yaml) {
       out.SetIndent(2);
       out.SetMapFormat(YAML::EMITTER_MANIP::Block);
       out << yaml;
+      in << "%YAML 1.2\n---\n";
       in << out.c_str();
    }
 

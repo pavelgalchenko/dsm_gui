@@ -1704,7 +1704,7 @@ void SPC_submenu::apply_data() {
          on_spc_cur_accel_list_itemClicked(
              ui->spc_cur_accel_list->item(index2));
    }
-   write_data(cur_spc_yaml);
+   dsm_gui_lib::write_data(file_path, cur_spc_yaml);
 }
 
 void SPC_submenu::write_data(YAML::Node inp_spc) {
@@ -2617,7 +2617,7 @@ void SPC_submenu::on_spc_cur_apply_clicked() {
       dsm_gui_lib::error_message(
           "The number of joints must equal number of bodies minus one.");
 
-   write_data(cur_spc_yaml);
+   dsm_gui_lib::write_data(file_path, cur_spc_yaml);
 }
 
 void SPC_submenu::setQComboBox(QComboBox *comboBox, QString string) {
