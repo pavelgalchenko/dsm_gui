@@ -355,7 +355,6 @@ void SIM_Menu::receive_data() {
 }
 
 void SIM_Menu::write_data(YAML::Node inp_sim) {
-   QStringList params;
    QFile::remove(filePath);
    QFile file(filePath);
    if (!file.open(QFile::WriteOnly)) {

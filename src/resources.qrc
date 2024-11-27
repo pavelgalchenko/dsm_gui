@@ -2,15 +2,9 @@
     <qresource prefix="/data">
         <file>__default__/Flex_Simple.txt</file>
         <file>__default__/Inp_Cmd.txt</file>
-        <file>__default__/Inp_FOV.txt</file>
-        <file>__default__/Inp_Graphics.txt</file>
         <file>__default__/Inp_IPC.txt</file>
-        <file>__default__/Inp_NOS3.txt</file>
-        <file>__default__/Inp_Region.txt</file>
-        <file>__default__/Inp_Sim.txt</file>
         <file>__default__/Inp_TDRS.txt</file>
         <file>__default__/Nodes_Simple.txt</file>
-        <file>__default__/Orb_LEO.txt</file>
         <file>__default__/Shaker_Simple.txt</file>
         <file>__default__/TRV.txt</file>
         <file>__default__/Whl_Simple.txt</file>

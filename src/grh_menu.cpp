@@ -174,8 +174,6 @@ void GRH_Menu::receive_data() {
 }
 
 void GRH_Menu::write_data(YAML::Node yaml) {
-   QStringList params;
-
    QFile::remove(graphics_path);
    QFile file(graphics_path);
    if (!file.open(QFile::WriteOnly)) {

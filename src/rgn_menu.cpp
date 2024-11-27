@@ -73,8 +73,6 @@ void RGN_Menu::receive_rgnpath(QString path) {
 }
 
 void RGN_Menu::write_data(YAML::Node yaml) {
-   QStringList params;
-
    QFile::remove(file_path);
    QFile file(file_path);
    if (!file.open(QFile::WriteOnly)) {

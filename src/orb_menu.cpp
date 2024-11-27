@@ -337,7 +337,6 @@ void ORB_Menu::receive_data(QString file_path) {
 }
 
 void ORB_Menu::write_data(YAML::Node orb_file_yaml) {
-   QStringList params;
    const QString label = orb_file_yaml["Configuration"]["Name"].as<QString>();
    const QString file_path = orbFileHash[label];
    QFile::remove(file_path);
