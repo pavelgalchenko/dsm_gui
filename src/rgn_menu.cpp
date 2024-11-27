@@ -74,7 +74,6 @@ void RGN_Menu::receive_rgnpath(QString path) {
 
 void RGN_Menu::write_data(YAML::Node yaml) {
    QStringList params;
-   QProcess p;
 
    QFile::remove(file_path);
    QFile file(file_path);
@@ -89,10 +88,6 @@ void RGN_Menu::write_data(YAML::Node yaml) {
       in << out.c_str();
    }
    file.close();
-   params << appPath + "/__python__/AddYAMLComments.py" << appPath << inout_path
-          << "Inp_FOV.yaml";
-   p.start(pythonCmd, params);
-   p.waitForFinished(-1);
 }
 
 void RGN_Menu::apply_data() {

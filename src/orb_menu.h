@@ -83,8 +83,6 @@ class ORB_Menu : public QDialog {
    private slots:
    void set_validators();
    void receive_orbpath(QString);
-   void receive_apppath(QString path);
-   void receive_pythoncmd(QString cmd);
    void receive_data(QString file_path);
    void clear_data();
    void write_data(YAML::Node orb_file_yaml);
@@ -140,9 +138,6 @@ class ORB_Menu : public QDialog {
 
    QString oldPeriAlt = "";
    QString oldApoAlt  = "";
-
-   QString appPath;
-   QString pythonCmd;
 
    QString inout_path;
    QStringList orb_data;

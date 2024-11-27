@@ -223,8 +223,6 @@ class FOV_Menu : public QDialog {
    private slots:
    void set_validators();
    void receive_fovpath(QString);
-   void receive_apppath(QString path);
-   void receive_pythoncmd(QString cmd);
    void receive_data();
    void apply_data();
    void write_data(YAML::Node);
@@ -260,8 +258,6 @@ class FOV_Menu : public QDialog {
    private:
    Ui::FOV_Menu *ui;
 
-   QString appPath;
-   QString pythonCmd;
 
    QHash<QListWidgetItem *, FOV> fov_list_hash = {};
 

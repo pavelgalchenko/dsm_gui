@@ -145,15 +145,8 @@ void ORB_Menu::receive_orbpath(QString path) {
    ui->orbList->addItems(orbFileHash.keys());
 }
 
-void ORB_Menu::receive_apppath(QString path) {
-   appPath = path;
-}
-
-void ORB_Menu::receive_pythoncmd(QString cmd) {
-   pythonCmd = cmd;
-}
-
 void ORB_Menu::receive_data(QString file_path) {
+   clear_data();
    ui->orbLabel->setText(ui->orbList->currentItem()->text());
 
    YAML::Node orb_file_yaml = YAML::LoadFile(file_path.toStdString());
@@ -162,6 +155,8 @@ void ORB_Menu::receive_data(QString file_path) {
    const QString orb_type_str    = orb_yaml["Type"].as<QString>();
    const enum orb_types orb_type = orbTypeHash[orb_type_str];
    setQComboBox(ui->orbType, orbTypeInputs.value(orb_type_str));
+   ui->orbDescription->setText(
+       orb_file_yaml["Configuration"]["Description"].as<QString>());
 
    switch (orb_type) {
       case ORB_ZERO: {
@@ -191,7 +186,7 @@ void ORB_Menu::receive_data(QString file_path) {
             ui->orbCentMinorBodyNum->setValue(0);
          }
          const bool j2_enabled = orb_yaml["J2 Secular Drift"].as<bool>();
-         ui->orbZeroPolyGrav->button(j2_enabled)->setChecked(true);
+         ui->orbCentJ2->button(j2_enabled)->setChecked(true);
          YAML::Node init_yaml   = orb_yaml["Init"];
          const QString init_str = init_yaml["Method"].as<QString>();
          setQComboBox(ui->orbCentICParam, orbCentICTypeInputs.value(init_str));
@@ -343,7 +338,6 @@ void ORB_Menu::receive_data(QString file_path) {
 
 void ORB_Menu::write_data(YAML::Node orb_file_yaml) {
    QStringList params;
-   QProcess p;
    const QString label = orb_file_yaml["Configuration"]["Name"].as<QString>();
    const QString file_path = orbFileHash[label];
    QFile::remove(file_path);
@@ -360,10 +354,6 @@ void ORB_Menu::write_data(YAML::Node orb_file_yaml) {
    }
 
    file.close();
-   params << appPath + "/__python__/AddYAMLComments.py" << appPath << inout_path
-          << "Inp_Sim.yaml";
-   p.start(pythonCmd, params);
-   p.waitForFinished(-1);
 }
 
 void ORB_Menu::on_orbListRemove_clicked() {
@@ -447,15 +437,15 @@ void ORB_Menu::on_loadDefaultButton_clicked() {
       ui->orbList->clear();
 
       QStringList orbFiles =
-          QDir(inout_path + "__default__/").entryList({"Orb_*"});
+          QDir(inout_path + "__default__/").entryList({"Orb_*.yaml"});
 
       for (int i = 0; i < orbFiles.length(); i++) {
-         QString orb_name = orbFiles[i].chopped(4).mid(4);
+         QString orb_name = orbFiles[i].chopped(5).mid(4);
          orbFileHash.insert(orb_name,
                             inout_path +
                                 orbFiles[i]); // Full file path of Orbit file
-         ui->orbList->addItem(orbFiles[i].chopped(4).mid(
-             4)); // Everything between "Orb_" and ".txt"
+         ui->orbList->addItem(
+             orb_name); // Everything between "Orb_" and ".yaml"
          QFile::copy(inout_path + "__default__/" + orbFiles[i],
                      orbFileHash[orb_name]);
       }
@@ -476,7 +466,7 @@ void ORB_Menu::on_saveDefaultButton_clicked() {
       for (auto i = orbFileHash.cbegin(), end = orbFileHash.cend(); i != end;
            ++i)
          QFile::copy(i.value(),
-                     inout_path + "__default__/" + "Orb_" + i.key() + ".txt");
+                     inout_path + "__default__/" + "Orb_" + i.key() + ".yaml");
    } else
       return;
 }
@@ -669,10 +659,6 @@ void ORB_Menu::on_applyButton_clicked() {
 }
 
 void ORB_Menu::clear_data() {
-   // If ui->orbList->currentRow()==1, set all fields to blank
-   if (ui->orbList->currentRow() != -1)
-      return;
-
    ui->orbLabel->clear();
 
    ui->orbDescription->clear();
@@ -690,20 +676,20 @@ void ORB_Menu::clear_data() {
    ui->orbCentJ2->button(0)->setChecked(true);
    ui->orbCentICParam->setCurrentIndex(0);
    ui->orbCentPA->button(0)->setChecked(true);
-   ui->orbCentKepPeriAlt->clear();
-   ui->orbCentKepApoAlt->clear();
-   ui->orbCentKepMinAlt->clear();
+   ui->orbCentKepPeriAlt->setText("0");
+   ui->orbCentKepApoAlt->setText("0");
+   ui->orbCentKepMinAlt->setText("0");
    ui->orbCentKepEcc->setValue(0);
-   ui->orbCentKepInc->clear();
-   ui->orbCentKepRAAN->clear();
-   ui->orbCentKepArgPeri->clear();
-   ui->orbCentKepTA->clear();
-   ui->orbCentPVPos_1->clear();
-   ui->orbCentPVPos_2->clear();
-   ui->orbCentPVPos_3->clear();
-   ui->orbCentPVVel_1->clear();
-   ui->orbCentPVVel_2->clear();
-   ui->orbCentPVVel_3->clear();
+   ui->orbCentKepInc->setText("0");
+   ui->orbCentKepRAAN->setText("0");
+   ui->orbCentKepArgPeri->setText("0");
+   ui->orbCentKepTA->setText("0");
+   ui->orbCentPVPos_1->setText("0");
+   ui->orbCentPVPos_2->setText("0");
+   ui->orbCentPVPos_3->setText("0");
+   ui->orbCentPVVel_1->setText("0");
+   ui->orbCentPVVel_2->setText("0");
+   ui->orbCentPVVel_3->setText("0");
    ui->orbCentFileType->setCurrentIndex(0);
    ui->orbCentFileName->clear();
    ui->orbCentFileLabel->clear();
@@ -713,33 +699,33 @@ void ORB_Menu::clear_data() {
    ui->orbTBodyICParam->setCurrentIndex(0);
    ui->orbTBodyLPoint->setCurrentIndex(0);
 
-   ui->orbTBodyModeXYSMA->clear();
-   ui->orbTBodyModeXYPhase->clear();
+   ui->orbTBodyModeXYSMA->setText("0");
+   ui->orbTBodyModeXYPhase->setText("0");
    ui->orbTBodyModeSense->button(0)->setChecked(true);
-   ui->orbTBodyModeXYSMA_2->clear();
-   ui->orbTBodyModeXYPhase_2->clear();
+   ui->orbTBodyModeXYSMA_2->setText("0");
+   ui->orbTBodyModeXYPhase_2->setText("0");
    ui->orbTBodyModeSense_2->button(0)->setChecked(true);
-   ui->orbTBodyModeZSMA->clear();
-   ui->orbTBodyModeZPhase->clear();
-   ui->orbTBodyCowellPos_1->clear();
-   ui->orbTBodyCowellPos_2->clear();
-   ui->orbTBodyCowellPos_3->clear();
-   ui->orbTBodyCowellVel_1->clear();
-   ui->orbTBodyCowellVel_2->clear();
-   ui->orbTBodyCowellVel_3->clear();
+   ui->orbTBodyModeZSMA->setText("0");
+   ui->orbTBodyModeZPhase->setText("0");
+   ui->orbTBodyCowellPos_1->setText("0");
+   ui->orbTBodyCowellPos_2->setText("0");
+   ui->orbTBodyCowellPos_3->setText("0");
+   ui->orbTBodyCowellVel_1->setText("0");
+   ui->orbTBodyCowellVel_2->setText("0");
+   ui->orbTBodyCowellVel_3->setText("0");
    ui->orbTBodyFileType->setCurrentIndex(0);
    ui->orbTBodyFileLabel->clear();
    ui->orbTBodyFileName->clear();
 
    ui->orbFormFrame->setCurrentIndex(0);
    ui->orbFormFrameEulerSeq->setCurrentIndex(0);
-   ui->orbFormFrameEuler_1->clear();
-   ui->orbFormFrameEuler_2->clear();
-   ui->orbFormFrameEuler_3->clear();
+   ui->orbFormFrameEuler_1->setText("0");
+   ui->orbFormFrameEuler_2->setText("0");
+   ui->orbFormFrameEuler_3->setText("0");
    ui->orbFormOrigin->setCurrentIndex(0);
-   ui->orbFormOriginPos_1->clear();
-   ui->orbFormOriginPos_2->clear();
-   ui->orbFormOriginPos_3->clear();
+   ui->orbFormOriginPos_1->setText("0");
+   ui->orbFormOriginPos_2->setText("0");
+   ui->orbFormOriginPos_3->setText("0");
 }
 
 void ORB_Menu::string2radiobool(QString boolString, QButtonGroup *buttonGroup) {
@@ -826,7 +812,7 @@ void ORB_Menu::on_orbListDuplicate_clicked() {
          break;
       }
    }
-   orbFileHash.insert(newOrb, inout_path + "Orb_" + newOrb + ".txt");
+   orbFileHash.insert(newOrb, inout_path + "Orb_" + newOrb + ".yaml");
    QFile::copy(orbFileHash[oldOrb], orbFileHash[newOrb]);
 
    ui->orbList->addItem(newOrb);

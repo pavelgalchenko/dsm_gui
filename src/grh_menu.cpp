@@ -132,14 +132,6 @@ void GRH_Menu::receive_grhpath(QString path) {
    apply_data();
 }
 
-void GRH_Menu::receive_apppath(QString path) {
-   appPath = path;
-}
-
-void GRH_Menu::receive_pythoncmd(QString cmd) {
-   pythonCmd = cmd;
-}
-
 void GRH_Menu::receive_data() {
 
    grh_file_yaml = YAML::LoadFile(graphics_path.toStdString());
@@ -183,7 +175,6 @@ void GRH_Menu::receive_data() {
 
 void GRH_Menu::write_data(YAML::Node yaml) {
    QStringList params;
-   QProcess p;
 
    QFile::remove(graphics_path);
    QFile file(graphics_path);
@@ -198,10 +189,6 @@ void GRH_Menu::write_data(YAML::Node yaml) {
       in << out.c_str();
    }
    file.close();
-   params << appPath + "/__python__/AddYAMLComments.py" << appPath << inout_path
-          << "Inp_Graphics.yaml";
-   p.start(pythonCmd, params);
-   p.waitForFinished(-1);
 }
 
 void GRH_Menu::apply_data() {

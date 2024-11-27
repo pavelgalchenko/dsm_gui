@@ -76,9 +76,6 @@ class GRH_Menu : public QDialog {
    void apply_data();
    void write_data(YAML::Node);
 
-   void receive_apppath(QString path);
-   void receive_pythoncmd(QString cmd);
-
    void on_loaddefaultButton_clicked();
    void on_savedefaultButton_clicked();
    void on_closeButton_clicked();
@@ -94,10 +91,6 @@ class GRH_Menu : public QDialog {
    Ui::GRH_Menu *ui;
 
    YAML::Node grh_file_yaml;
-
-   QString appPath;
-   QString pythonCmd;
-
    QHash<QString, int> scNums;
    QString inout_path;
    QString graphics_path;

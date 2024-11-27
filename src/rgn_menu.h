@@ -196,8 +196,6 @@ class RGN_Menu : public QDialog {
    QString inout_path;
    QString file_path;
 
-   QString appPath;
-   QString pythonCmd;
 
    QHash<QListWidgetItem *, Region> rgn_list_hash = {};
 

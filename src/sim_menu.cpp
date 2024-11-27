@@ -161,14 +161,6 @@ void SIM_Menu::receive_simpath(QString path) {
 
    receive_data();
 }
-void SIM_Menu::receive_apppath(QString path) {
-   appPath = path;
-}
-
-void SIM_Menu::receive_pythoncmd(QString cmd) {
-   pythonCmd = cmd;
-}
-
 void SIM_Menu::receive_data() {
    QString newKey;
    QStringList orbFiles = QDir(inoutPath).entryList({"Orb_*.yaml"});
@@ -364,7 +356,6 @@ void SIM_Menu::receive_data() {
 
 void SIM_Menu::write_data(YAML::Node inp_sim) {
    QStringList params;
-   QProcess p;
    QFile::remove(filePath);
    QFile file(filePath);
    if (!file.open(QFile::WriteOnly)) {
@@ -378,10 +369,6 @@ void SIM_Menu::write_data(YAML::Node inp_sim) {
       in << out.c_str();
    }
    file.close();
-   params << appPath + "/__python__/AddYAMLComments.py" << appPath << inoutPath
-          << "Inp_Sim.yaml";
-   p.start(pythonCmd, params);
-   p.waitForFinished(-1);
 }
 
 void SIM_Menu::clear_data() {

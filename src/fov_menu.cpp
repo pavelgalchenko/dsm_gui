@@ -79,14 +79,6 @@ void FOV_Menu::receive_fovpath(QString path) {
    apply_data();
 }
 
-void FOV_Menu::receive_apppath(QString path) {
-   appPath = path;
-}
-
-void FOV_Menu::receive_pythoncmd(QString cmd) {
-   pythonCmd = cmd;
-}
-
 void FOV_Menu::receive_data() {
 
    YAML::Node fov_file_yaml = YAML::LoadFile(file_path.toStdString());
@@ -123,7 +115,6 @@ void FOV_Menu::receive_data() {
 
 void FOV_Menu::write_data(YAML::Node yaml) {
    QStringList params;
-   QProcess p;
 
    QFile::remove(file_path);
    QFile file(file_path);
@@ -138,10 +129,6 @@ void FOV_Menu::write_data(YAML::Node yaml) {
       in << out.c_str();
    }
    file.close();
-   params << appPath + "/__python__/AddYAMLComments.py" << appPath << inout_path
-          << "Inp_FOV.yaml";
-   p.start(pythonCmd, params);
-   p.waitForFinished(-1);
 }
 
 void FOV_Menu::apply_data() {
