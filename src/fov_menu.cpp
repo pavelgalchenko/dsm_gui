@@ -80,7 +80,6 @@ void FOV_Menu::receive_fovpath(QString path) {
 }
 
 void FOV_Menu::receive_data() {
-
    YAML::Node fov_file_yaml = YAML::LoadFile(file_path.toStdString());
 
    QStringList scFiles = QDir(inout_path).entryList({"SC_*.yaml"});
@@ -111,24 +110,6 @@ void FOV_Menu::receive_data() {
 
    ui->sc_name->clear();
    ui->sc_name->addItems(dsm_gui_lib::sortStringList(scNums.keys()));
-}
-
-void FOV_Menu::write_data(YAML::Node yaml) {
-   QStringList params;
-
-   QFile::remove(file_path);
-   QFile file(file_path);
-   if (!file.open(QFile::WriteOnly)) {
-      QMessageBox::information(0, "error", file.errorString());
-   } else {
-      QTextStream in(&file);
-      YAML::Emitter out;
-      out.SetIndent(2);
-      out.SetMapFormat(YAML::EMITTER_MANIP::Block);
-      out << yaml;
-      in << out.c_str();
-   }
-   file.close();
 }
 
 void FOV_Menu::apply_data() {
@@ -273,7 +254,7 @@ void FOV_Menu::on_applyButton_clicked() {
    YAML::Node fov_file_yaml(YAML::NodeType::Map);
    fov_file_yaml["FOVs"] = fov_list_hash.values();
 
-   write_data(fov_file_yaml);
+   dsm_gui_lib::write_data(file_path, fov_file_yaml);
 }
 
 void FOV_Menu::sides_changed() {

@@ -20,22 +20,6 @@ void NOS_Menu::receive_nospath(QString path) {
    apply_data();
 }
 
-void NOS_Menu::write_data(YAML::Node yaml) {
-   QFile::remove(file_path);
-   QFile file(file_path);
-   if (!file.open(QFile::WriteOnly)) {
-      QMessageBox::information(0, "error", file.errorString());
-   } else {
-      QTextStream in(&file);
-      YAML::Emitter out;
-      out.SetIndent(2);
-      out.SetMapFormat(YAML::EMITTER_MANIP::Block);
-      out << yaml;
-      in << out.c_str();
-   }
-   file.close();
-}
-
 void NOS_Menu::apply_data() {
    nos3_yaml = YAML::LoadFile(file_path.toStdString());
 
@@ -77,5 +61,5 @@ void NOS_Menu::on_applyButton_clicked() {
    YAML::Node config_node           = nos3_yaml["Configuration"];
    config_node["Bus"]               = ui->time_bus->text();
    config_node["Connection String"] = ui->time_string->text();
-   write_data(nos3_yaml);
+   dsm_gui_lib::write_data(file_path, nos3_yaml);
 }

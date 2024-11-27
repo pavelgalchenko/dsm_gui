@@ -354,22 +354,6 @@ void SIM_Menu::receive_data() {
    }
 }
 
-void SIM_Menu::write_data(YAML::Node inp_sim) {
-   QFile::remove(filePath);
-   QFile file(filePath);
-   if (!file.open(QFile::WriteOnly)) {
-      QMessageBox::information(0, "error", file.errorString());
-   } else {
-      QTextStream in(&file);
-      YAML::Emitter out;
-      out.SetIndent(4);
-      out.SetMapFormat(YAML::EMITTER_MANIP::Block);
-      out << inp_sim;
-      in << out.c_str();
-   }
-   file.close();
-}
-
 void SIM_Menu::clear_data() {
    ui->simTimeMode->setCurrentIndex(0);
    ui->simSimDur->clear();
@@ -593,7 +577,7 @@ void SIM_Menu::on_applyButton_clicked() {
       gs_list.push_back(it);
    }
 
-   write_data(inp_sim);
+   dsm_gui_lib::write_data(filePath, inp_sim);
 }
 
 void SIM_Menu::setQComboBox(QComboBox *comboBox, QString string) {

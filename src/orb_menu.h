@@ -85,7 +85,6 @@ class ORB_Menu : public QDialog {
    void receive_orbpath(QString);
    void receive_data(QString file_path);
    void clear_data();
-   void write_data(YAML::Node orb_file_yaml);
 
    void string2radiobool(QString boolString, QButtonGroup *buttonGroup);
    void setQComboBox(QComboBox *comboBox, QString string);

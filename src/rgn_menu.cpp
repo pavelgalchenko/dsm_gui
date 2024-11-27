@@ -72,22 +72,6 @@ void RGN_Menu::receive_rgnpath(QString path) {
    apply_data();
 }
 
-void RGN_Menu::write_data(YAML::Node yaml) {
-   QFile::remove(file_path);
-   QFile file(file_path);
-   if (!file.open(QFile::WriteOnly)) {
-      QMessageBox::information(0, "error", file.errorString());
-   } else {
-      QTextStream in(&file);
-      YAML::Emitter out;
-      out.SetIndent(2);
-      out.SetMapFormat(YAML::EMITTER_MANIP::Block);
-      out << yaml;
-      in << out.c_str();
-   }
-   file.close();
-}
-
 void RGN_Menu::apply_data() {
    rgn_list_hash.clear();
    ui->rgnlist->clear();
@@ -219,7 +203,7 @@ void RGN_Menu::on_applyButton_clicked() {
       item["Region"] = (*pair).second;
       rgn_list_yaml.push_back(item);
    }
-   write_data(rgn_file_yaml);
+   dsm_gui_lib::write_data(file_path, rgn_file_yaml);
 }
 
 void RGN_Menu::world_changed() {

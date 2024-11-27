@@ -132,6 +132,23 @@ QVector<QString> dsm_gui_lib::create_QVec4(QString arg1, QString arg2,
    return tmp_data_vector;
 }
 
+void dsm_gui_lib::write_data(const QString file_path, YAML::Node yaml) {
+   QFile::remove(file_path);
+   QFile file(file_path);
+   if (!file.open(QFile::WriteOnly)) {
+      QMessageBox::information(0, "error", file.errorString());
+   } else {
+      QTextStream in(&file);
+      YAML::Emitter out;
+      out.SetIndent(2);
+      out.SetMapFormat(YAML::EMITTER_MANIP::Block);
+      out << yaml;
+      in << out.c_str();
+   }
+
+   file.close();
+}
+
 QString dsm_gui_lib::generate_comment(QString str_search, QString cur_line,
                                       YAML::Node comments) {
    QString string_to_append = "";

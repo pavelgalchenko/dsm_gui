@@ -336,25 +336,6 @@ void ORB_Menu::receive_data(QString file_path) {
    }
 }
 
-void ORB_Menu::write_data(YAML::Node orb_file_yaml) {
-   const QString label = orb_file_yaml["Configuration"]["Name"].as<QString>();
-   const QString file_path = orbFileHash[label];
-   QFile::remove(file_path);
-   QFile file(file_path);
-   if (!file.open(QFile::WriteOnly)) {
-      QMessageBox::information(0, "error", file.errorString());
-   } else {
-      QTextStream in(&file);
-      YAML::Emitter out;
-      out.SetIndent(4);
-      out.SetMapFormat(YAML::EMITTER_MANIP::Block);
-      out << orb_file_yaml;
-      in << out.c_str();
-   }
-
-   file.close();
-}
-
 void ORB_Menu::on_orbListRemove_clicked() {
    int removeItem = ui->orbList->currentRow();
    QString removeOrb;
@@ -654,7 +635,7 @@ void ORB_Menu::on_applyButton_clicked() {
    Formation form(f_frame, ang, seq, e_frame, pos);
    orb_file_yaml["Formation"] = form;
 
-   write_data(orb_file_yaml);
+   dsm_gui_lib::write_data(file_path, orb_file_yaml);
 }
 
 void ORB_Menu::clear_data() {

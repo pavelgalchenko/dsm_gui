@@ -66,6 +66,8 @@ class dsm_gui_lib {
    static QString generate_comment(QString str_search, QString cur_line,
                                    YAML::Node comments);
 
+   static void write_data(const QString, const YAML::Node);
+
    inline static const QStringList eulerInputs = {"121", "123", "131", "132",
                                                   "212", "213", "231", "232",
                                                   "312", "313", "321", "323"};

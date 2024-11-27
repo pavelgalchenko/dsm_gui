@@ -159,7 +159,6 @@ class RGN_Menu : public QDialog {
    void set_validators();
    void receive_rgnpath(QString);
    void apply_data();
-   void write_data(YAML::Node);
 
    void on_rgn_remove_clicked();
    void on_rgn_add_clicked();

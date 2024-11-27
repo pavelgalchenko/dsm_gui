@@ -173,22 +173,6 @@ void GRH_Menu::receive_data() {
    ui->targetSC->addItems(dsm_gui_lib::sortStringList(scNums.keys()));
 }
 
-void GRH_Menu::write_data(YAML::Node yaml) {
-   QFile::remove(graphics_path);
-   QFile file(graphics_path);
-   if (!file.open(QFile::WriteOnly)) {
-      QMessageBox::information(0, "error", file.errorString());
-   } else {
-      QTextStream in(&file);
-      YAML::Emitter out;
-      out.SetIndent(2);
-      out.SetMapFormat(YAML::EMITTER_MANIP::Block);
-      out << yaml;
-      in << out.c_str();
-   }
-   file.close();
-}
-
 void GRH_Menu::apply_data() {
 
    const YAML::Node config_yaml = grh_file_yaml["Configuration"];
@@ -396,7 +380,7 @@ void GRH_Menu::on_applyButton_clicked() {
       node["Show"]    = const_show_checkboxes[field]->isChecked();
    }
 
-   write_data(grh_file_yaml);
+   dsm_gui_lib::write_data(graphics_path, grh_file_yaml);
 }
 
 void GRH_Menu::on_hostSC_currentTextChanged(const QString &arg1) {

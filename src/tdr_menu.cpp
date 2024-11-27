@@ -29,22 +29,6 @@ void TDR_Menu::receive_tdrpath(QString path) {
    apply_data();
 }
 
-void TDR_Menu::write_data(YAML::Node yaml) {
-   QFile::remove(file_path);
-   QFile file(file_path);
-   if (!file.open(QFile::WriteOnly)) {
-      QMessageBox::information(0, "error", file.errorString());
-   } else {
-      QTextStream in(&file);
-      YAML::Emitter out;
-      out.SetIndent(2);
-      out.SetMapFormat(YAML::EMITTER_MANIP::Block);
-      out << yaml;
-      in << out.c_str();
-   }
-   file.close();
-}
-
 void TDR_Menu::apply_data() {
    YAML::Node tdrs_yaml  = YAML::LoadFile(file_path.toStdString());
    QList<TDRS> tdrs_list = tdrs_yaml["TDRSs"].as<QList<TDRS>>();
@@ -92,8 +76,8 @@ void TDR_Menu::on_applyButton_clicked() {
       tdrs_list.append(tdrs_data);
    }
 
-   YAML::Node tdrs_yaml(YAML::NodeType::Sequence);
+   YAML::Node tdrs_yaml(YAML::NodeType::Map);
    tdrs_yaml["TDRSs"] = tdrs_list;
 
-   write_data(tdrs_yaml);
+   dsm_gui_lib::write_data(file_path, tdrs_yaml);
 }

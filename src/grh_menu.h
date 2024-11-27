@@ -74,7 +74,6 @@ class GRH_Menu : public QDialog {
    void receive_grhpath(QString);
    void receive_data();
    void apply_data();
-   void write_data(YAML::Node);
 
    void on_loaddefaultButton_clicked();
    void on_savedefaultButton_clicked();

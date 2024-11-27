@@ -77,6 +77,11 @@ template <typename T> struct convert<QVector<T>> {
       foreach (T value, rhs) {
          node.push_back(value);
       }
+      if constexpr (std::is_integral_v<T> || std::is_floating_point_v<T>) {
+         node.SetStyle(EmitterStyle::Flow);
+      } else {
+         node.SetStyle(EmitterStyle::Block);
+      }
       return node;
    }
 
@@ -100,6 +105,11 @@ template <typename T> struct convert<QList<T>> {
       Node node(NodeType::Sequence);
       foreach (T value, rhs) {
          node.push_back(value);
+      }
+      if constexpr (std::is_integral_v<T> || std::is_floating_point_v<T>) {
+         node.SetStyle(EmitterStyle::Flow);
+      } else {
+         node.SetStyle(EmitterStyle::Block);
       }
       return node;
    }
@@ -214,6 +224,7 @@ template <> struct convert<QVector3D> {
       for (int i = 0; i < 3; i++) {
          node.push_back(rhs[i]);
       }
+      node.SetStyle(EmitterStyle::Flow);
       return node;
    }
    static bool decode(const Node &node, QVector3D &rhs) {
@@ -257,6 +268,7 @@ template <> struct convert<QVector4D> {
       for (int i = 0; i < 4; i++) {
          node.push_back(rhs[i]);
       }
+      node.SetStyle(EmitterStyle::Flow);
       return node;
    }
    static bool decode(const Node &node, QVector4D &rhs) {

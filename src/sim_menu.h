@@ -171,7 +171,6 @@ class SIM_Menu : public QDialog {
    void receive_simpath(QString path);
    void receive_data();
    void clear_data();
-   void write_data(YAML::Node inp_sim);
 
    void on_loadDefaultButton_clicked();
    void on_saveDefaultButton_clicked();

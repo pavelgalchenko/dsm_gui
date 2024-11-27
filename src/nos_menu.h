@@ -19,8 +19,6 @@ class NOS_Menu : public QDialog {
    private slots:
    void receive_nospath(QString);
    void apply_data();
-   void write_data(YAML::Node);
-
    void on_loaddefaultButton_clicked();
    void on_savedefaultButton_clicked();
    void on_closeButton_clicked();

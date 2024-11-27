@@ -225,7 +225,6 @@ class FOV_Menu : public QDialog {
    void receive_fovpath(QString);
    void receive_data();
    void apply_data();
-   void write_data(YAML::Node);
 
    void on_fov_remove_clicked();
    void on_fov_add_clicked();
@@ -257,7 +256,6 @@ class FOV_Menu : public QDialog {
 
    private:
    Ui::FOV_Menu *ui;
-
 
    QHash<QListWidgetItem *, FOV> fov_list_hash = {};
 

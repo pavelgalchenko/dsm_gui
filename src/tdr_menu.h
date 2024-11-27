@@ -60,7 +60,6 @@ class TDR_Menu : public QDialog {
    void set_validators();
    void receive_tdrpath(QString);
    void apply_data();
-   void write_data(YAML::Node);
 
    void on_loaddefaultButton_clicked();
    void on_savedefaultButton_clicked();
