@@ -2,12 +2,10 @@
     <qresource prefix="/data">
         <file>__default__/Flex_Simple.txt</file>
         <file>__default__/Inp_Cmd.txt</file>
-        <file>__default__/Nodes_Simple.txt</file>
         <file>__default__/Shaker_Simple.txt</file>
         <file>__default__/TRV.txt</file>
         <file>__default__/Whl_Simple.txt</file>
         <file>dsm_gui.icns</file>
-        <file>__default__/Inp_DSM.txt</file>
         <file>__default__/Inp_DSM.yaml</file>
         <file>__default__/Inp_FOV.yaml</file>
         <file>__default__/Inp_Graphics.yaml</file>

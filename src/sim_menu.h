@@ -250,8 +250,10 @@ class SIM_Menu : public QDialog {
    const QHash<QString, QString> magfieldInputs = {
        {"NONE", "None"}, {"DIPOLE", "Dipole"}, {"IGRF", "IGRF"}};
 
-   const QHash<QString, QString> ephemInputs = {
-       {"MEAN", "Mean"}, {"DE430", "DE430"}, {"DE440", "DE440"}};
+   const QHash<QString, QString> ephemInputs = {{"MEAN", "Mean"},
+                                                {"DE430", "DE430"},
+                                                {"DE440", "DE440"},
+                                                {"SPICE", "Spice"}};
 
    enum class headerLineNames { // Doing this as a class so the values can be
                                 // used as variables elsewhere
