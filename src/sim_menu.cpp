@@ -75,84 +75,91 @@ void SIM_Menu::set_validators() {
         it != dsm_gui_lib::worldInputs.constEnd(); ++it) {
       dsm_gui_lib::WorldID Iw = dsm_gui_lib::World2ID(*it);
 
-      QString worldName = dsm_gui_lib::ID2World(Iw);
+      QString worldName  = dsm_gui_lib::ID2World(Iw);
+      worldConfig *world = new worldConfig(Iw);
       switch (Iw) {
          case dsm_gui_lib::WorldID::SOL:
-            worldConfigHash.insert(
-                worldName,
-                worldConfig(nullptr, nullptr, nullptr, nullptr, Iw, true));
+            world->setHasChildren(true);
             break;
          case dsm_gui_lib::WorldID::MERCURY:
-            worldConfigHash.insert(worldName,
-                                   worldConfig(nullptr, nullptr, nullptr,
-                                               ui->simMercuryEn, Iw, false));
+            world->setEnable(ui->simMercuryEn);
             break;
          case dsm_gui_lib::WorldID::VENUS:
-            worldConfigHash.insert(worldName,
-                                   worldConfig(nullptr, nullptr, nullptr,
-                                               ui->simVenusEn, Iw, false));
+            world->setEnable(ui->simVenusEn);
             break;
-         case dsm_gui_lib::WorldID::EARTH:
-            worldConfigHash.insert(
-                worldName,
-                worldConfig(
-                    new atmoConfig(ui->simF107, ui->simAp, ui->simF107Ap),
-                    new gravConfig(ui->simEarthHarmN, ui->simEarthHarmM),
-                    new magConfig(ui->simIGRFDegree, ui->simIGRFOrder,
-                                  ui->simMagfieldType),
-                    ui->simEarthEn, Iw, true));
-            break;
-         case dsm_gui_lib::WorldID::MARS:
-            worldConfigHash.insert(
-                worldName,
-                worldConfig(nullptr,
-                            new gravConfig(ui->simMarsHarmN, ui->simMarsHarmM),
-                            nullptr, ui->simMarsEn, Iw, true));
-            break;
-         case dsm_gui_lib::WorldID::LUNA:
-            worldConfigHash.insert(
-                worldName,
-                worldConfig(nullptr,
-                            new gravConfig(ui->simLunaHarmN, ui->simLunaHarmM),
-                            nullptr, nullptr, Iw, false));
-            break;
+         case dsm_gui_lib::WorldID::EARTH: {
+            const atmoConfig atmo =
+                atmoConfig(worldName, ui->simF107, ui->simAp, ui->simF107Ap);
+            const gravConfig grav =
+                gravConfig(worldName, ui->simEarthHarmN, ui->simEarthHarmM);
+            const magConfig mag =
+                magConfig(worldName, ui->simIGRFDegree, ui->simIGRFOrder,
+                          ui->simMagfieldType);
+            world->setEnable(ui->simEarthEn);
+            world->set(atmo);
+            world->set(grav);
+            world->set(mag);
+         } break;
+         case dsm_gui_lib::WorldID::MARS: {
+            const gravConfig grav =
+                gravConfig(worldName, ui->simMarsHarmN, ui->simMarsHarmM);
+            world->setEnable(ui->simMarsEn);
+            world->set(grav);
+         } break;
+         case dsm_gui_lib::WorldID::LUNA: {
+            const gravConfig grav =
+                gravConfig(worldName, ui->simLunaHarmN, ui->simLunaHarmM);
+            world->setEnable(ui->simEarthEn);
+            world->set(grav);
+         } break;
          case dsm_gui_lib::WorldID::JUPITER:
-            worldConfigHash.insert(worldName,
-                                   worldConfig(nullptr, nullptr, nullptr,
-                                               ui->simJupiterEn, Iw, true));
+            world->setEnable(ui->simJupiterEn);
             break;
          case dsm_gui_lib::WorldID::SATURN:
-            worldConfigHash.insert(worldName,
-                                   worldConfig(nullptr, nullptr, nullptr,
-                                               ui->simSaturnEn, Iw, true));
+            world->setEnable(ui->simSaturnEn);
             break;
          case dsm_gui_lib::WorldID::URANUS:
-            worldConfigHash.insert(worldName,
-                                   worldConfig(nullptr, nullptr, nullptr,
-                                               ui->simUranusEn, Iw, true));
+            world->setEnable(ui->simUranusEn);
             break;
          case dsm_gui_lib::WorldID::NEPTUNE:
-            worldConfigHash.insert(worldName,
-                                   worldConfig(nullptr, nullptr, nullptr,
-                                               ui->simNeptuneEn, Iw, true));
+            world->setEnable(ui->simNeptuneEn);
             break;
          case dsm_gui_lib::WorldID::PLUTO:
-            worldConfigHash.insert(worldName,
-                                   worldConfig(nullptr, nullptr, nullptr,
-                                               ui->simPlutoEn, Iw, true));
+            world->setEnable(ui->simPlutoEn);
             break;
          case dsm_gui_lib::WorldID::MINORBODY:
-            worldConfigHash.insert(worldName,
-                                   worldConfig(nullptr, nullptr, nullptr,
-                                               ui->simAsteroidsEn, Iw, false));
+            world->setEnable(ui->simAsteroidsEn);
             break;
          default:
-            worldConfigHash.insert(
-                worldName,
-                worldConfig(nullptr, nullptr, nullptr, nullptr, Iw, false));
             break;
       }
+      worldConfigHash.insert(worldName, world);
    }
+   connect(ui->simF107, SIGNAL(textChanged(QString)), this,
+           SLOT(UpdateModels()));
+   connect(ui->simAp, SIGNAL(textChanged(QString)), this, SLOT(UpdateModels()));
+   connect(ui->simF107Ap, SIGNAL(textActivated(QString)), this,
+           SLOT(UpdateModels()));
+   connect(ui->simEarthHarmN, SIGNAL(valueChanged(int)), this,
+           SLOT(UpdateModels()));
+   connect(ui->simEarthHarmM, SIGNAL(valueChanged(int)), this,
+           SLOT(UpdateModels()));
+   connect(ui->simIGRFDegree, SIGNAL(valueChanged(int)), this,
+           SLOT(UpdateModels()));
+   connect(ui->simIGRFOrder, SIGNAL(valueChanged(int)), this,
+           SLOT(UpdateModels()));
+   connect(ui->simMagfieldType, SIGNAL(textActivated(QString)), this,
+           SLOT(UpdateModels()));
+
+   connect(ui->simMarsHarmN, SIGNAL(valueChanged(int)), this,
+           SLOT(UpdateModels()));
+   connect(ui->simMarsHarmM, SIGNAL(valueChanged(int)), this,
+           SLOT(UpdateModels()));
+
+   connect(ui->simLunaHarmN, SIGNAL(valueChanged(int)), this,
+           SLOT(UpdateModels()));
+   connect(ui->simLunaHarmM, SIGNAL(valueChanged(int)), this,
+           SLOT(UpdateModels()));
 }
 
 void SIM_Menu::receive_simpath(QString path) {
@@ -162,6 +169,8 @@ void SIM_Menu::receive_simpath(QString path) {
    receive_data();
 }
 void SIM_Menu::receive_data() {
+   orbitHash.clear();
+   scHash.clear();
    QString newKey;
    QStringList orbFiles = QDir(inoutPath).entryList({"Orb_*.yaml"});
 
@@ -170,12 +179,11 @@ void SIM_Menu::receive_data() {
    ui->simSCOrbit->clear();
 
    for (int i = 0; i < orbFiles.length(); i++) {
-      newKey = orbFiles[i].chopped(5).mid(4);
+      newKey               = orbFiles[i].chopped(5).mid(4);
+      orbitConfig *new_orb = new orbitConfig(newKey, false);
       orbFileHash.insert(newKey, orbFiles[i].remove("\""));
-      QListWidgetItem *newOrb = new QListWidgetItem(newKey);
-      newOrb->setData(orbEnabledRole, false);
-      newOrb->setData(orbNumberRole, -1);
-      ui->simOrbList->addItem(newOrb);
+      QListWidgetItem *newOrb = new QListWidgetItem(newKey, ui->simOrbList);
+      orbitHash.insert(newOrb, new_orb);
    }
    ui->simSCOrbit->addItems(dsm_gui_lib::sortStringList(orbFileHash.keys()));
 
@@ -183,14 +191,14 @@ void SIM_Menu::receive_data() {
 
    scFileHash.clear();
    ui->simSCList->clear();
+   orbitConfig *const first_orbit = orbitHash.value(ui->simOrbList->item(0));
 
    for (int i = 0; i < scFiles.length(); i++) {
-      newKey = scFiles[i].chopped(5).mid(3);
+      newKey           = scFiles[i].chopped(5).mid(3);
+      scConfig *new_sc = new scConfig(newKey, false, first_orbit);
       scFileHash.insert(newKey, scFiles[i].remove("\""));
-      QListWidgetItem *newSC = new QListWidgetItem(newKey);
-      newSC->setData(scEnabledRole, false);
-      newSC->setData(scOrbNameRole, "");
-      ui->simSCList->addItem(newSC);
+      QListWidgetItem *newSC = new QListWidgetItem(newKey, ui->simSCList);
+      scHash.insert(newSC, new_sc);
    }
 
    /* Load Yaml file */
@@ -200,7 +208,8 @@ void SIM_Menu::receive_data() {
    QMap<QString, QString> sim_config =
        inp_sim["Simulation Control"].as<QMap<QString, QString>>();
 
-   setQComboBox(ui->simTimeMode, timeModeInputs.value(sim_config["Mode"]));
+   dsm_gui_lib::setQComboBox(ui->simTimeMode,
+                             timeModeInputs.value(sim_config["Mode"]));
    ui->simSimDur->setText(sim_config["Duration"]);
    ui->simSimStep->setText(sim_config["Step Size"]);
    ui->simFileInterval->setText(sim_config["File Interval"]);
@@ -210,36 +219,22 @@ void SIM_Menu::receive_data() {
    // ui->simCmdFile->setText(sim_config["Command File"]);
 
    /* Configure Orbits */
-   QStringList refs  = orbFileHash.keys();
-   YAML::Node orbits = inp_sim["Orbits"];
-   for (YAML::const_iterator it = orbits.begin(); it != orbits.end(); ++it) {
-      QMap<QString, QString> orbConf = it->as<QMap<QString, QString>>();
-      QString label                  = orbConf["Name"].mid(4);
-      if (refs.contains(label)) {
-         QListWidgetItem *item =
-             ui->simOrbList->findItems(label, Qt::MatchExactly).at(0);
-         item->setData(orbEnabledRole, QVariant(orbConf["Enabled"]).toBool());
+   QList<orbitConfig> orbits = inp_sim["Orbits"].as<QList<orbitConfig>>();
+   foreach (auto orbit_data, orbits) {
+      orbitConfig *orbit =
+          dsm_gui_lib::getObjectFromItemName(orbit_data.name(), orbitHash);
+      if (orbit != nullptr) {
+         orbit->setEnabled(orbit_data.enabled());
       }
    }
 
    /* Configure Spacecraft */
-   refs           = scFileHash.keys();
-   YAML::Node scs = inp_sim["SCs"];
-   for (YAML::const_iterator it = scs.begin(); it != scs.end(); ++it) {
-      QMap<QString, QString> scConf = it->as<QMap<QString, QString>>();
-      QString label                 = scConf["Name"].mid(3);
-      if (refs.contains(label)) {
-         QListWidgetItem *item =
-             ui->simSCList->findItems(label, Qt::MatchExactly).at(0);
-         item->setData(scEnabledRole, QVariant(scConf["Enabled"]).toBool());
-         item->setData(scOrbNameRole, scConf["Orbit"].mid(4));
-      }
-   }
-   QString defaultOrbName = ui->simSCOrbit->currentText();
-   foreach (QListWidgetItem *item,
-            ui->simSCList->findItems("*", Qt::MatchWildcard)) {
-      if (item->data(scOrbNameRole).toString().isEmpty()) {
-         item->setData(scOrbNameRole, defaultOrbName);
+   QList<scConfig> scs = inp_sim["SCs"].as<QList<scConfig>>();
+   foreach (auto sc_data, scs) {
+      scConfig *sc = dsm_gui_lib::getObjectFromItemName(sc_data.name(), scHash);
+      if (sc != nullptr) {
+         sc->setEnabled(sc_data.enabled());
+         sc->setOrbit(sc_data.orbit());
       }
    }
 
@@ -255,53 +250,45 @@ void SIM_Menu::receive_data() {
    YAML::Node atmo_conf = pert_conf["Atmosphere"];
    ui->simAeroPertEn->setChecked(atmo_conf["Enabled"].as<bool>());
    ui->simAeroPertShadow->setChecked(atmo_conf["Shadows"].as<bool>());
-   YAML::Node atmo_model_conf = atmo_conf["Models"];
-   for (YAML::const_iterator it = atmo_model_conf.begin();
-        it != atmo_model_conf.end(); it++) {
-      QString World = (*it)["World"].as<QString>().toUpper();
-      if (worldConfigHash.find(World) != worldConfigHash.end() &&
-          worldConfigHash[World].hasAtmo()) {
-         worldConfigHash[World].setAtmo(
-             f107Inputs.value((*it)["Method"].as<QString>()),
-             (*it)["F10.7"].as<QString>(), (*it)["Ap"].as<QString>());
+   QList<atmoConfig> atmo_models = atmo_conf["Models"].as<QList<atmoConfig>>();
+   foreach (atmoConfig atmo, atmo_models) {
+      const QString world = atmo.getWorld().toUpper();
+      if (worldConfigHash.find(world) != worldConfigHash.end() &&
+          worldConfigHash[world]->hasAtmo()) {
+         worldConfigHash[world]->set(atmo);
       } else {
          dsm_gui_lib::warning_message(
-             World + " does not have a configurable atmospheric model.");
+             world + " does not have a configurable atmospheric model.");
       }
    }
+
    /* Magnetic */
    YAML::Node mag_conf = pert_conf["Magnetic"];
    ui->simResidualMagEn->setChecked(mag_conf["Residual Mag Moment"].as<bool>());
-   YAML::Node mag_model_conf = mag_conf["Models"];
-   for (YAML::const_iterator it = mag_model_conf.begin();
-        it != mag_model_conf.end(); ++it) {
-      QString World = (*it)["World"].as<QString>().toUpper();
-      if (worldConfigHash.find(World) != worldConfigHash.end() &&
-          worldConfigHash[World].hasMag()) {
-         worldConfigHash[World].setMag(
-             magfieldInputs.value((*it)["Method"].as<QString>()),
-             (*it)["Degree"].as<int>(), (*it)["Order"].as<int>());
+   QList<magConfig> mag_models = mag_conf["Models"].as<QList<magConfig>>();
+   foreach (magConfig mag, mag_models) {
+      const QString world = mag.getWorld().toUpper();
+      if (worldConfigHash.find(world) != worldConfigHash.end() &&
+          worldConfigHash[world]->hasMag()) {
+         worldConfigHash[world]->set(mag);
       } else {
          dsm_gui_lib::warning_message(
-             World + " does not have a configurable magnetic field model.");
+             world + " does not have a configurable magnetic field model.");
       }
    }
    /* Gravitation */
    YAML::Node grav_conf = pert_conf["Gravitation"];
    ui->simGravPertEn->setChecked(grav_conf["Enabled"].as<bool>());
    ui->simGravGradientEn->setChecked(grav_conf["Gravity Gradient"].as<bool>());
-   YAML::Node grav_model_conf = grav_conf["Models"];
-   for (YAML::const_iterator it = grav_model_conf.begin();
-        it != grav_model_conf.end(); ++it) {
-      YAML::Node grav_model_node = it->as<YAML::Node>();
-      QString World              = grav_model_node["World"].as<QString>();
-      if (worldConfigHash.find(World) != worldConfigHash.end() &&
-          worldConfigHash[World].hasGrav()) {
-         worldConfigHash[World].setGrav(grav_model_node["Degree"].as<int>(),
-                                        grav_model_node["Order"].as<int>());
+   QList<gravConfig> grav_models = grav_conf["Models"].as<QList<gravConfig>>();
+   foreach (gravConfig grav, grav_models) {
+      const QString world = grav.getWorld().toUpper();
+      if (worldConfigHash.find(world) != worldConfigHash.end() &&
+          worldConfigHash[world]->hasGrav()) {
+         worldConfigHash[world]->set(grav);
       } else {
          dsm_gui_lib::warning_message(
-             World +
+             world +
              " does not have a configurable gravitational field model.");
       }
    }
@@ -322,14 +309,14 @@ void SIM_Menu::receive_data() {
        pert_conf["Output Env Torques to File"].as<bool>());
 
    /* Configure Ephemeris */
-   setQComboBox(ui->simEphem,
-                ephemInputs.value(inp_sim["Ephem Type"].as<QString>()));
+   dsm_gui_lib::setQComboBox(
+       ui->simEphem, ephemInputs.value(inp_sim["Ephem Type"].as<QString>()));
    /* Celestial Bodies */
    YAML::Node celest_conf = inp_sim["Celestial Bodies"];
    for (QHash<QString, QString>::const_iterator it =
             worldConfNames.constBegin();
         it != worldConfNames.constEnd(); ++it) {
-      worldConfigHash[it.key()].setEnabled(celest_conf[it.value()].as<bool>());
+      worldConfigHash[it.key()]->setEnabled(celest_conf[it.value()].as<bool>());
    }
 
    /* Lagrange Systems */
@@ -340,17 +327,12 @@ void SIM_Menu::receive_data() {
 
    /* Ground Stations */
    ui->simGSList->clear();
-   YAML::Node gs_list = inp_sim["Ground Stations"];
-   for (YAML::const_iterator it = gs_list.begin(); it != gs_list.end(); ++it) {
-      YAML::Node gs_node = (*it)["Ground Station"];
-      QString label      = gs_node["Label"].as<QString>();
-      ui->simGSList->addItem(label);
-      QListWidgetItem *item =
-          ui->simGSList->findItems(label, Qt::MatchExactly).at(0);
-      item->setData(gsEnabledRole, gs_node["Enabled"].as<bool>());
-      item->setData(gsWorldRole, gs_node["World"].as<QString>());
-      item->setData(gsLongRole, gs_node["Longitude"].as<double>());
-      item->setData(gsLatRole, gs_node["Latitude"].as<double>());
+   QList<GroundStation> ground_stations =
+       inp_sim["Ground Stations"].as<QList<GroundStation>>();
+
+   foreach (GroundStation gs, ground_stations) {
+      QListWidgetItem *const item = new QListWidgetItem(ui->simGSList);
+      setGSData(gs, item);
    }
 }
 
@@ -472,43 +454,32 @@ void SIM_Menu::on_applyButton_clicked() {
    time_conf["Time"]         = ui->simTime->time();
    time_conf["Leap Seconds"] = ui->simLeapSec->text();
 
-   YAML::Node orbits = inp_sim["Orbits"];
-   orbits.reset();
+   QList<orbitConfig> orbits = {};
    for (int i = 0; i < ui->simOrbList->count(); i++) {
-      QListWidgetItem *item = ui->simOrbList->item(i);
-      YAML::Node it(YAML::NodeType::Map);
-      it["Name"]    = "Orb_" + item->text();
-      it["Enabled"] = item->data(orbEnabledRole).toBool();
-      orbits.push_back(it);
+      QListWidgetItem *const item  = ui->simOrbList->item(i);
+      orbitConfig *const orbit_ptr = orbitHash.value(item);
+      orbits.push_back(*orbit_ptr);
    }
+   inp_sim["Orbits"] = orbits;
 
-   YAML::Node scs = inp_sim["SCs"];
-   scs.reset();
+   QList<scConfig> scs = {};
    for (int i = 0; i < ui->simSCList->count(); i++) {
-      QListWidgetItem *item = ui->simSCList->item(i);
-      YAML::Node it(YAML::NodeType::Map);
-      it["Name"]    = "SC_" + item->text();
-      it["Enabled"] = item->data(scEnabledRole).toBool();
-      it["Orbit"]   = "Orb_" + item->data(scOrbNameRole).toString();
-      scs.push_back(it);
+      QListWidgetItem *const item = ui->simSCList->item(i);
+      scConfig *const sc_ptr      = scHash.value(item);
+      scs.push_back(*sc_ptr);
    }
+   inp_sim["SCs"] = scs;
 
    YAML::Node pert_conf               = inp_sim["Perturbation Models"];
    pert_conf["Atmosphere"]["Enabled"] = ui->simAeroPertEn->isChecked();
    pert_conf["Atmosphere"]["Shadows"] = ui->simAeroPertShadow->isChecked();
-   YAML::Node atmo_models             = pert_conf["Atmosphere"]["Models"];
-   atmo_models.reset();
 
    pert_conf["Magnetic"]["Residual Mag Moment"] =
        ui->simResidualMagEn->isChecked();
-   YAML::Node mag_models = pert_conf["Magnetic"]["Models"];
-   mag_models.reset();
 
    pert_conf["Gravitation"]["Enabled"] = ui->simGravPertEn->isChecked();
    pert_conf["Gravitation"]["Gravity Gradient"] =
        ui->simGravGradientEn->isChecked();
-   YAML::Node grav_models = pert_conf["Gravitation"]["Models"];
-   grav_models.reset();
 
    pert_conf["SRP"]["Enabled"] = ui->simSRPPertEn->isChecked();
    pert_conf["SRP"]["Shadows"] = ui->simSRPPertShadow->isChecked();
@@ -519,39 +490,29 @@ void SIM_Menu::on_applyButton_clicked() {
    pert_conf["Albedo on CSS"]  = ui->simAlbedoEn->isChecked();
    pert_conf["Output Env Torques to File"] = ui->simOutputTorqueEn->isChecked();
 
-   for (QHash<QString, worldConfig>::iterator it = worldConfigHash.begin();
-        it != worldConfigHash.end(); ++it) {
-      if (it->hasAtmo()) {
-         YAML::Node atmoNode(YAML::NodeType::Map);
-         atmoNode["World"]  = dsm_gui_lib::ID2World(it->getID());
-         atmoNode["Method"] = f107Inputs.key(it->getAtmoMethod());
-         atmoNode["F10.7"]  = it->getAtmoF107();
-         atmoNode["Ap"]     = it->getAtmoAp();
-         atmo_models.push_back(atmoNode);
-      }
-      if (it->hasMag()) {
-         YAML::Node magNode(YAML::NodeType::Map);
-         magNode["World"]  = dsm_gui_lib::ID2World(it->getID());
-         magNode["Method"] = magfieldInputs.key(it->getMagMethod());
-         magNode["Degree"] = it->getMagDegree();
-         magNode["Order"]  = it->getMagOrder();
-         mag_models.push_back(magNode);
-      }
-      if (it->hasGrav()) {
-         YAML::Node gravNode(YAML::NodeType::Map);
-         gravNode["World"]  = dsm_gui_lib::ID2World(it->getID());
-         gravNode["Degree"] = it->getGravDegree();
-         gravNode["Order"]  = it->getGravOrder();
-         grav_models.push_back(gravNode);
-      }
+   QList<atmoConfig> atmo_models = {};
+   QList<gravConfig> grav_models = {};
+   QList<magConfig> mag_models   = {};
+
+   for (auto it = worldConfigHash.begin(); it != worldConfigHash.end(); ++it) {
+      if ((*it)->hasAtmo())
+         atmo_models.push_back((*it)->getAtmo());
+
+      if ((*it)->hasMag())
+         mag_models.push_back((*it)->getMag());
+
+      if ((*it)->hasGrav())
+         grav_models.push_back((*it)->getGrav());
    }
+   pert_conf["Atmosphere"]["Models"]  = atmo_models;
+   pert_conf["Magnetic"]["Models"]    = mag_models;
+   pert_conf["Gravitation"]["Models"] = grav_models;
 
    inp_sim["Ephem Type"]  = ephemInputs.key(ui->simEphem->currentText());
    YAML::Node celest_conf = inp_sim["Celestial Bodies"];
-   for (QHash<QString, QString>::const_iterator it =
-            worldConfNames.constBegin();
-        it != worldConfNames.constEnd(); ++it) {
-      celest_conf[it.value()] = worldConfigHash[it.key()].getEnabled();
+   for (auto it = worldConfNames.constBegin(); it != worldConfNames.constEnd();
+        ++it) {
+      celest_conf[it.value()] = worldConfigHash[it.key()]->getEnabled();
    }
 
    YAML::Node lag_sys     = inp_sim["Lagrange Systems"];
@@ -559,56 +520,49 @@ void SIM_Menu::on_applyButton_clicked() {
    lag_sys["Sun-Earth"]   = ui->simSunEarthEn->isChecked();
    lag_sys["Sun-Jupiter"] = ui->simSunJupiterEn->isChecked();
 
-   YAML::Node gs_list = inp_sim["Ground Stations"];
-   gs_list.reset();
+   QList<GroundStation> ground_stations;
 
    for (int i = 0; i < ui->simGSList->count(); i++) {
-      YAML::Node it(YAML::NodeType::Map);
-      YAML::Node gs_node(YAML::NodeType::Map);
-      it["Ground Station"] = gs_node;
-
-      QListWidgetItem *item = ui->simGSList->item(i);
-      gs_node["Index"]      = i;
-      gs_node["Enabled"]    = item->data(gsEnabledRole).toBool();
-      gs_node["World"]      = item->data(gsWorldRole).toString();
-      gs_node["Longitude"]  = item->data(gsLongRole).toString();
-      gs_node["Lattiude"]   = item->data(gsLatRole).toString();
-      gs_node["Label"]      = item->text();
-      gs_list.push_back(it);
+      const QListWidgetItem *const item = ui->simGSList->item(i);
+      ground_stations.push_back(getGSData(i, item));
    }
+   inp_sim["Ground Stations"] = ground_stations;
 
    dsm_gui_lib::write_data(filePath, inp_sim);
 }
 
-void SIM_Menu::setQComboBox(QComboBox *comboBox, QString string) {
-   comboBox->setCurrentIndex(comboBox->findText(string));
-}
-
 void SIM_Menu::on_simOrbList_itemClicked(QListWidgetItem *item) {
-   ui->simOrbitEn->setChecked(item->data(orbEnabledRole).toBool());
+   const bool enabled = orbitHash.value(item)->enabled();
+   ui->simOrbitEn->setChecked(enabled);
 }
 
 void SIM_Menu::on_simOrbitEn_toggled(bool checked) {
-   if (ui->simOrbList->currentRow() == -1)
+   QListWidgetItem *const cur_item = ui->simOrbList->currentItem();
+   if (cur_item == nullptr)
       return;
-   ui->simOrbList->currentItem()->setData(orbEnabledRole, checked);
+   orbitHash.value(cur_item)->setEnabled(checked);
 }
 
 void SIM_Menu::on_simSCList_itemClicked(QListWidgetItem *item) {
-   ui->simSCEn->setChecked(item->data(scEnabledRole).toBool());
-   ui->simSCOrbit->setCurrentText(item->data(scOrbNameRole).toString());
+   scConfig *sc = scHash.value(item);
+   ui->simSCEn->setChecked(sc->enabled());
+   ui->simSCOrbit->setCurrentText(sc->orbit()->name());
 }
 
 void SIM_Menu::on_simSCEn_toggled(bool checked) {
-   if (ui->simSCList->currentRow() == -1)
+   QListWidgetItem *const cur_item = ui->simSCList->currentItem();
+   if (cur_item == nullptr)
       return;
-   ui->simSCList->currentItem()->setData(scEnabledRole, checked);
+   scConfig *sc = scHash.value(cur_item);
+   sc->setEnabled(checked);
 }
 
 void SIM_Menu::on_simSCOrbit_currentTextChanged(const QString &arg1) {
-   if (ui->simSCList->currentRow() == -1)
+   QListWidgetItem *const cur_item = ui->simSCList->currentItem();
+   if (cur_item == nullptr)
       return;
-   ui->simSCList->currentItem()->setData(scOrbNameRole, arg1);
+   scConfig *sc = scHash.value(cur_item);
+   sc->setOrbit(dsm_gui_lib::getObjectFromItemName(arg1, orbitHash));
 }
 
 void SIM_Menu::on_simGSList_itemClicked(QListWidgetItem *item) {
@@ -695,12 +649,10 @@ void SIM_Menu::on_simGSListAdd_clicked() {
       }
    }
 
-   QListWidgetItem *newGSItem = new QListWidgetItem(newGS);
-   newGSItem->setData(gsEnabledRole, true);
-   newGSItem->setData(gsWorldRole, "EARTH");
-   newGSItem->setData(gsLongRole, -76.852);
-   newGSItem->setData(gsLatRole, 38.995);
-   ui->simGSList->addItem(newGSItem);
+   QListWidgetItem *newGSItem = new QListWidgetItem(ui->simGSList);
+   GroundStation new_gs;
+   new_gs.setLabel(newGS);
+   setGSData(new_gs, newGSItem);
 }
 
 void SIM_Menu::on_simGSListDuplicate_clicked() {
@@ -769,4 +721,28 @@ void SIM_Menu::on_simSCList_currentItemChanged(QListWidgetItem *current,
    ui->simSCEn->setEnabled(!isNull);
    ui->simSCOrbit->setEnabled(!isNull);
    ui->simSCOrbitLabel->setEnabled(!isNull);
+}
+
+GroundStation SIM_Menu::getGSData(const long i,
+                                  const QListWidgetItem *const item) {
+   const bool en       = item->data(gsEnabledRole).toBool();
+   const QString world = item->data(gsWorldRole).toString();
+   const double lng    = item->data(gsLongRole).toDouble();
+   const double lat    = item->data(gsLatRole).toDouble();
+   const QString lab   = item->text();
+   GroundStation gs(i, en, world, lng, lat, lab);
+   return gs;
+}
+
+void SIM_Menu::setGSData(const GroundStation &gs, QListWidgetItem *const item) {
+   item->setText(gs.label());
+   item->setData(gsEnabledRole, gs.enabled());
+   item->setData(gsWorldRole, gs.world());
+   item->setData(gsLongRole, gs.longitude());
+   item->setData(gsLatRole, gs.latitude());
+}
+
+void SIM_Menu::UpdateModels() {
+   for (auto it = worldConfigHash.begin(); it != worldConfigHash.end(); ++it)
+      (*it)->UpdateAll();
 }

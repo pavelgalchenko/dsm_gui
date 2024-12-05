@@ -104,8 +104,8 @@ template <typename T> struct convert<QVector<T>> {
 template <typename T> struct convert<QList<T>> {
    static Node encode(const QList<T> &rhs) {
       Node node(NodeType::Sequence);
-      foreach (T value, rhs) {
-         node.push_back(value);
+      for (auto it = rhs.begin(); it != rhs.end(); ++it) {
+         node.push_back(*it);
       }
       if constexpr (std::is_integral_v<T> || std::is_floating_point_v<T>) {
          node.SetStyle(EmitterStyle::Flow);

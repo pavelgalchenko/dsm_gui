@@ -31,6 +31,18 @@ class dsm_gui_lib {
       return output;
    }
 
+   template <class T>
+   static T *getObjectFromItemName(const QString name,
+                                   QHash<QListWidgetItem *, T *> hash) {
+      QList<QListWidgetItem *> items = hash.keys();
+      for (auto it = items.begin(); it != items.end(); ++it) {
+         if (!(*it)->text().compare(name)) {
+            return hash.value((*it));
+         }
+      }
+      return nullptr;
+   }
+
    template <class T, class U>
    static void set_mult_validators(const QList<T *> ui_elem, U *u) {
       for (T *elem : ui_elem)
@@ -142,6 +154,10 @@ class dsm_gui_lib {
        "PANDORA",   "PAN",      "ARIEL",    "UMBRIEL",  "TITANIA",
        "OBERON",    "MIRANDA",  "TRITON",   "NERIED",   "CHARON",
        "MINORBODY"};
+   static QString getWorldName(const WorldID IDw) {
+      const long Iw = (long)IDw;
+      return worldInputs[Iw];
+   }
 
    static int inexplicable_error_message() {
       const QStringList inexplicableErrorMsg = {
@@ -177,6 +193,7 @@ class dsm_gui_lib {
 
    inline static void setQComboBox(QComboBox *box, const QString text,
                                    bool remove = false) {
+      box->setCurrentText(text);
       int ind = box->findText(text);
       if (remove && ind != -1) {
          if (box->currentIndex() == ind) {
