@@ -179,10 +179,8 @@ void IPC_Menu::on_closeButton_clicked() {
 }
 
 void IPC_Menu::on_applyButton_clicked() {
-   QList<IPC> ipc_list;
-   foreach (auto ipc, ipc_list_hash) {
-      ipc_list.append(ipc);
-   }
+   QList<IPC> ipc_list =
+       dsm_gui_lib::getOrderedListFromHash(ui->ipclist, ipc_list_hash);
    YAML::Node ipc_yaml(YAML::NodeType::Map);
    ipc_yaml["IPCs"] = ipc_list;
    dsm_gui_lib::write_data(file_path, ipc_yaml);

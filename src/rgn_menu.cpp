@@ -76,13 +76,11 @@ void RGN_Menu::apply_data() {
    rgn_list_hash.clear();
    ui->rgnlist->clear();
    YAML::Node rgn_file_yaml = YAML::LoadFile(file_path.toStdString());
-   YAML::Node rgns          = rgn_file_yaml["Regions"];
+   QList<Region> regions    = rgn_file_yaml["Regions"].as<QList<Region>>();
 
-   for (YAML::iterator it = rgns.begin(); it != rgns.end(); ++it) {
-      Region new_rgn = (*it)["Region"].as<Region>();
-      QListWidgetItem *newRGN =
-          new QListWidgetItem(new_rgn.name(), ui->rgnlist);
-      rgn_list_hash.insert(newRGN, new_rgn);
+   foreach (auto region, regions) {
+      QListWidgetItem *newRGN = new QListWidgetItem(region.name(), ui->rgnlist);
+      rgn_list_hash.insert(newRGN, region);
    }
 }
 
@@ -194,15 +192,9 @@ void RGN_Menu::on_closeButton_clicked() {
 
 void RGN_Menu::on_applyButton_clicked() {
    YAML::Node rgn_file_yaml(YAML::NodeType::Map);
-   YAML::Node rgn_list_yaml(YAML::NodeType::Sequence);
-   rgn_file_yaml["Regions"] = rgn_list_yaml;
-
-   for (auto pair = rgn_list_hash.constKeyValueBegin();
-        pair != rgn_list_hash.constKeyValueEnd(); ++pair) {
-      YAML::Node item(YAML::NodeType::Map);
-      item["Region"] = (*pair).second;
-      rgn_list_yaml.push_back(item);
-   }
+   QList<Region> regions =
+       dsm_gui_lib::getOrderedListFromHash(ui->rgnlist, rgn_list_hash);
+   rgn_file_yaml["Regions"] = regions;
    dsm_gui_lib::write_data(file_path, rgn_file_yaml);
 }
 

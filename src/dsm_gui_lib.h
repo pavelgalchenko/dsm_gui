@@ -42,6 +42,26 @@ class dsm_gui_lib {
       }
       return nullptr;
    }
+   template <class T>
+   static QList<T> getOrderedListFromHash(QListWidget *list,
+                                          QHash<QListWidgetItem *, T> hash) {
+      QList<T> out = {};
+      for (int i = 0; i < list->count(); i++) {
+         QListWidgetItem *cur_item = list->item(i);
+         out.push_back(hash.value(cur_item));
+      }
+      return out;
+   }
+   template <class T>
+   static QList<T> getOrderedListFromHash(QListWidget *list,
+                                          QHash<QListWidgetItem *, T *> hash) {
+      QList<T> out = {};
+      for (int i = 0; i < list->count(); i++) {
+         QListWidgetItem *cur_item = list->item(i);
+         out.push_back(*hash.value(cur_item));
+      }
+      return out;
+   }
 
    template <class T, class U>
    static void set_mult_validators(const QList<T *> ui_elem, U *u) {

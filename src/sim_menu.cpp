@@ -454,20 +454,12 @@ void SIM_Menu::on_applyButton_clicked() {
    time_conf["Time"]         = ui->simTime->time();
    time_conf["Leap Seconds"] = ui->simLeapSec->text();
 
-   QList<orbitConfig> orbits = {};
-   for (int i = 0; i < ui->simOrbList->count(); i++) {
-      QListWidgetItem *const item  = ui->simOrbList->item(i);
-      orbitConfig *const orbit_ptr = orbitHash.value(item);
-      orbits.push_back(*orbit_ptr);
-   }
+   QList<orbitConfig> orbits =
+       dsm_gui_lib::getOrderedListFromHash(ui->simOrbList, orbitHash);
    inp_sim["Orbits"] = orbits;
 
-   QList<scConfig> scs = {};
-   for (int i = 0; i < ui->simSCList->count(); i++) {
-      QListWidgetItem *const item = ui->simSCList->item(i);
-      scConfig *const sc_ptr      = scHash.value(item);
-      scs.push_back(*sc_ptr);
-   }
+   QList<scConfig> scs =
+       dsm_gui_lib::getOrderedListFromHash(ui->simSCList, scHash);
    inp_sim["SCs"] = scs;
 
    YAML::Node pert_conf               = inp_sim["Perturbation Models"];

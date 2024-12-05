@@ -195,7 +195,6 @@ class RGN_Menu : public QDialog {
    QString inout_path;
    QString file_path;
 
-
    QHash<QListWidgetItem *, Region> rgn_list_hash = {};
 
    const QHash<QString, QString> location_inputs = {
@@ -244,23 +243,27 @@ template <> struct convert<Coefficients> {
 template <> struct convert<Region> {
    static Node encode(const Region &rhs) {
       Node node(NodeType::Map);
-      node["Exists"]             = rhs.exists();
-      node["Name"]               = rhs.name();
-      node["World"]              = rhs.world();
-      node["Location"]           = rhs.location();
-      node["Coefficients"]       = rhs.coefficients();
-      node["Geometry File Name"] = rhs.file_name();
+      Node dat_node(NodeType::Map);
+
+      node["Region"]                 = dat_node;
+      dat_node["Exists"]             = rhs.exists();
+      dat_node["Name"]               = rhs.name();
+      dat_node["World"]              = rhs.world();
+      dat_node["Location"]           = rhs.location();
+      dat_node["Coefficients"]       = rhs.coefficients();
+      dat_node["Geometry File Name"] = rhs.file_name();
       return node;
    }
    static bool decode(const Node &node, Region &rhs) {
       if (!node.IsMap())
          return false;
-      rhs.setExists(node["Exists"].as<bool>());
-      rhs.setName(node["Name"].as<QString>());
-      rhs.setWorld(node["World"].as<QString>());
-      rhs.setLocation(node["Location"].as<Location>());
-      rhs.setCoefficients(node["Coefficients"].as<Coefficients>());
-      rhs.setFileName(node["Geometry File Name"].as<QString>());
+      const Node &dat_node = node["Region"];
+      rhs.setExists(dat_node["Exists"].as<bool>());
+      rhs.setName(dat_node["Name"].as<QString>());
+      rhs.setWorld(dat_node["World"].as<QString>());
+      rhs.setLocation(dat_node["Location"].as<Location>());
+      rhs.setCoefficients(dat_node["Coefficients"].as<Coefficients>());
+      rhs.setFileName(dat_node["Geometry File Name"].as<QString>());
       return true;
    }
 };

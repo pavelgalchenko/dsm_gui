@@ -252,7 +252,9 @@ void FOV_Menu::on_closeButton_clicked() {
 
 void FOV_Menu::on_applyButton_clicked() {
    YAML::Node fov_file_yaml(YAML::NodeType::Map);
-   fov_file_yaml["FOVs"] = fov_list_hash.values();
+   QList<FOV> FOVs =
+       dsm_gui_lib::getOrderedListFromHash(ui->fovlist, fov_list_hash);
+   fov_file_yaml["FOVs"] = FOVs;
 
    dsm_gui_lib::write_data(file_path, fov_file_yaml);
 }
