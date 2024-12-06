@@ -99,30 +99,37 @@ void SIM_Menu::set_validators() {
             world->set(atmo);
             world->set(grav);
             world->set(mag);
+            world->setHasChildren(true);
          } break;
          case dsm_gui_lib::WorldID::MARS: {
             const gravConfig grav =
                 gravConfig(worldName, ui->simMarsHarmN, ui->simMarsHarmM);
             world->setEnable(ui->simMarsEn);
             world->set(grav);
+            world->setHasChildren(true);
          } break;
          case dsm_gui_lib::WorldID::LUNA: {
             const gravConfig grav =
                 gravConfig(worldName, ui->simLunaHarmN, ui->simLunaHarmM);
             world->setEnable(ui->simEarthEn);
             world->set(grav);
+            world->setHasChildren(true);
          } break;
          case dsm_gui_lib::WorldID::JUPITER:
             world->setEnable(ui->simJupiterEn);
+            world->setHasChildren(true);
             break;
          case dsm_gui_lib::WorldID::SATURN:
             world->setEnable(ui->simSaturnEn);
+            world->setHasChildren(true);
             break;
          case dsm_gui_lib::WorldID::URANUS:
             world->setEnable(ui->simUranusEn);
+            world->setHasChildren(true);
             break;
          case dsm_gui_lib::WorldID::NEPTUNE:
             world->setEnable(ui->simNeptuneEn);
+            world->setHasChildren(true);
             break;
          case dsm_gui_lib::WorldID::PLUTO:
             world->setEnable(ui->simPlutoEn);
@@ -482,23 +489,59 @@ void SIM_Menu::on_applyButton_clicked() {
    pert_conf["Albedo on CSS"]  = ui->simAlbedoEn->isChecked();
    pert_conf["Output Env Torques to File"] = ui->simOutputTorqueEn->isChecked();
 
-   QList<atmoConfig> atmo_models = {};
-   QList<gravConfig> grav_models = {};
-   QList<magConfig> mag_models   = {};
+   QList<atmoConfig> atmo_models =
+       pert_conf["Atmosphere"]["Models"].as<QList<atmoConfig>>();
+   QList<gravConfig> grav_models =
+       pert_conf["Gravitation"]["Models"].as<QList<gravConfig>>();
+   QList<magConfig> mag_models =
+       pert_conf["Magnetic"]["Models"].as<QList<magConfig>>();
 
    for (auto it = worldConfigHash.begin(); it != worldConfigHash.end(); ++it) {
-      if ((*it)->hasAtmo())
-         atmo_models.push_back((*it)->getAtmo());
+      const QString world = (*it)->getName();
 
-      if ((*it)->hasMag())
-         mag_models.push_back((*it)->getMag());
-
-      if ((*it)->hasGrav())
-         grav_models.push_back((*it)->getGrav());
+      if ((*it)->hasAtmo()) {
+         const atmoConfig atmo = (*it)->getAtmo();
+         bool found            = false;
+         for (int i = 0; i < atmo_models.count(); i++) {
+            if (!world.compare(atmo_models[i].getWorld())) {
+               found          = true;
+               atmo_models[i] = atmo;
+               break;
+            }
+         }
+         if (!found)
+            atmo_models.append(atmo);
+      }
+      if ((*it)->hasGrav()) {
+         const gravConfig grav = (*it)->getGrav();
+         bool found            = false;
+         for (int i = 0; i < grav_models.count(); i++) {
+            if (!world.compare(grav_models[i].getWorld())) {
+               found          = true;
+               grav_models[i] = grav;
+               break;
+            }
+         }
+         if (!found)
+            grav_models.append(grav);
+      }
+      if ((*it)->hasMag()) {
+         const magConfig mag = (*it)->getMag();
+         bool found          = false;
+         for (int i = 0; i < mag_models.count(); i++) {
+            if (!world.compare(mag_models[i].getWorld())) {
+               found         = true;
+               mag_models[i] = mag;
+               break;
+            }
+         }
+         if (!found)
+            mag_models.append(mag);
+      }
    }
    pert_conf["Atmosphere"]["Models"]  = atmo_models;
-   pert_conf["Magnetic"]["Models"]    = mag_models;
    pert_conf["Gravitation"]["Models"] = grav_models;
+   pert_conf["Magnetic"]["Models"]    = mag_models;
 
    inp_sim["Ephem Type"]  = ephemInputs.key(ui->simEphem->currentText());
    YAML::Node celest_conf = inp_sim["Celestial Bodies"];

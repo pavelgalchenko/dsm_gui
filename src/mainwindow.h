@@ -74,6 +74,6 @@ class MainWindow : public QMainWindow {
    const QStringList neededFiles = {
        "Inp_Cmd.txt",  "Inp_FOV.yaml",  "Inp_Graphics.yaml",
        "Inp_IPC.yaml", "Inp_NOS3.yaml", "Inp_Region.yaml",
-       "Inp_Sim.yaml", "Inp_TDRS.yaml", "Inp_DSM.txt"};
+       "Inp_Sim.yaml", "Inp_TDRS.yaml", "Inp_DSM.yaml"};
 };
 #endif // MAINWINDOW_H

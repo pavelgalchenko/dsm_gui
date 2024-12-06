@@ -213,6 +213,7 @@ class atmoConfig {
    }
 
    public:
+   YAML::Node other_data = YAML::Node(YAML::NodeType::Null);
    atmoConfig(const QString world        = "DEFAULT",
               QLineEdit *const f107_it   = nullptr,
               QLineEdit *const ap_it     = nullptr,
@@ -240,6 +241,8 @@ class atmoConfig {
       _world = other._world;
       setMethod(other._method);
       setF107AP(other._f107, other._ap);
+      if (!other.other_data.IsNull())
+         other_data = other.other_data;
       return *this;
    }
    atmoConfig(const atmoConfig &other) {
@@ -309,6 +312,7 @@ class gravConfig {
    }
 
    public:
+   YAML::Node other_data = YAML::Node(YAML::NodeType::Null);
    gravConfig(const QString world = "DEFAULT", QSpinBox *const deg_it = nullptr,
               QSpinBox *const ord_it = nullptr) {
       _world    = world;
@@ -329,6 +333,8 @@ class gravConfig {
       }
       _world = other._world;
       setDegreeOrder(other._degree, other._order);
+      if (!other.other_data.IsNull())
+         other_data = other.other_data;
       return *this;
    }
    gravConfig(const gravConfig &other) {
@@ -375,6 +381,7 @@ class magConfig : public gravConfig {
    }
 
    public:
+   YAML::Node other_data = YAML::Node(YAML::NodeType::Null);
    magConfig(const QString world = "DEFAULT", QSpinBox *const deg = nullptr,
              QSpinBox *const ord        = nullptr,
              QComboBox *const method_it = nullptr)
@@ -393,6 +400,8 @@ class magConfig : public gravConfig {
          }
       }
       setMethod(other._method);
+      if (!other.other_data.IsNull())
+         other_data = other.other_data;
       return *this;
    }
    magConfig(const magConfig &other) {
@@ -428,7 +437,7 @@ class worldConfig {
                const atmoConfig &atmo = atmoConfig(),
                const magConfig &mag   = magConfig()) {
       id                       = i;
-      const QString world_name = dsm_gui_lib::getWorldName(i);
+      const QString world_name = dsm_gui_lib::ID2World(i);
       if (!grav.getWorld().compare("DEFAULT")) {
          gravConf = gravConfig(world_name);
       } else {
@@ -511,6 +520,9 @@ class worldConfig {
    }
    QString getMagMethod() const {
       return magConf.getMethod();
+   }
+   QString getName() const {
+      return dsm_gui_lib::ID2World(id);
    }
    int getMagDegree() const {
       return magConf.getDegree();
@@ -663,14 +675,15 @@ namespace YAML {
 template <> struct convert<atmoConfig> {
    static Node encode(const atmoConfig &rhs) {
       Node node(NodeType::Map);
-      if (rhs.isEnabled()) {
-         const QString method = rhs.getMethod();
-         node["World"]        = rhs.getWorld();
-         node["Method"]       = method;
-         if (!method.compare("USER")) {
-            node["F10.7"] = rhs.getF107();
-            node["Ap"]    = rhs.getAp();
-         }
+      const QString method = rhs.getMethod();
+      node["World"]        = rhs.getWorld();
+      node["Method"]       = method;
+      if (!method.compare("USER")) {
+         node["F10.7"] = rhs.getF107();
+         node["Ap"]    = rhs.getAp();
+      }
+      for (auto it = rhs.other_data.begin(); it != rhs.other_data.end(); ++it) {
+         node[it->first] = it->second;
       }
       return node;
    }
@@ -680,9 +693,19 @@ template <> struct convert<atmoConfig> {
       rhs.setWorld(node["World"].as<QString>());
       const QString method = node["Method"].as<QString>();
       rhs.setMethod(method);
-      if (!method.compare("USER")) {
+      if (!method.compare("USER"))
          rhs.setF107AP(node["F10.7"].as<double>(), node["Ap"].as<double>());
+
+      Node other_data(NodeType::Map);
+      const QStringList not_other_data = {"World", "Method", "USER", "F10.7",
+                                          "Ap"};
+      for (auto it = node.begin(); it != node.end(); ++it) {
+         const QString node_name = it->first.as<QString>();
+         if (!not_other_data.contains(node_name)) {
+            other_data[node_name] = it->second;
+         }
       }
+      rhs.other_data = other_data;
       return true;
    }
 };
@@ -691,10 +714,11 @@ template <> struct convert<atmoConfig> {
 template <> struct convert<gravConfig> {
    static Node encode(const gravConfig &rhs) {
       Node node(NodeType::Map);
-      if (rhs.isEnabled()) {
-         node["World"]  = rhs.getWorld();
-         node["Degree"] = rhs.getDegree();
-         node["Order"]  = rhs.getOrder();
+      node["World"]  = rhs.getWorld();
+      node["Degree"] = rhs.getDegree();
+      node["Order"]  = rhs.getOrder();
+      for (auto it = rhs.other_data.begin(); it != rhs.other_data.end(); ++it) {
+         node[it->first] = it->second;
       }
       return node;
    }
@@ -703,6 +727,16 @@ template <> struct convert<gravConfig> {
          return false;
       rhs.setWorld(node["World"].as<QString>());
       rhs.setDegreeOrder(node["Degree"].as<int>(), node["Order"].as<int>());
+
+      Node other_data(NodeType::Map);
+      const QStringList not_other_data = {"World", "Degree", "Order"};
+      for (auto it = node.begin(); it != node.end(); ++it) {
+         const QString node_name = it->first.as<QString>();
+         if (!not_other_data.contains(node_name)) {
+            other_data[node_name] = it->second;
+         }
+      }
+      rhs.other_data = other_data;
       return true;
    }
 };
@@ -711,14 +745,15 @@ template <> struct convert<gravConfig> {
 template <> struct convert<magConfig> {
    static Node encode(const magConfig &rhs) {
       Node node(NodeType::Map);
-      if (rhs.isEnabled()) {
-         node["World"]        = rhs.getWorld();
-         const QString method = rhs.getMethod();
-         node["Method"]       = method;
-         if (!method.compare("IGRF")) {
-            node["Degree"] = rhs.getDegree();
-            node["Order"]  = rhs.getOrder();
-         }
+      node["World"]        = rhs.getWorld();
+      const QString method = rhs.getMethod();
+      node["Method"]       = method;
+      if (!method.compare("IGRF")) {
+         node["Degree"] = rhs.getDegree();
+         node["Order"]  = rhs.getOrder();
+      }
+      for (auto it = rhs.other_data.begin(); it != rhs.other_data.end(); ++it) {
+         node[it->first] = it->second;
       }
       return node;
    }
@@ -730,6 +765,16 @@ template <> struct convert<magConfig> {
       rhs.setMethod(method);
       if (!method.compare("IGRF"))
          rhs.setDegreeOrder(node["Degree"].as<int>(), node["Order"].as<int>());
+
+      Node other_data(NodeType::Map);
+      const QStringList not_other_data = {"World", "Degree", "Order", "Method"};
+      for (auto it = node.begin(); it != node.end(); ++it) {
+         const QString node_name = it->first.as<QString>();
+         if (!not_other_data.contains(node_name)) {
+            other_data[node_name] = it->second;
+         }
+      }
+      rhs.other_data = other_data;
       return true;
    }
 };
@@ -787,7 +832,7 @@ template <> struct convert<scConfig> {
    static Node encode(const scConfig &rhs) {
       Node node(NodeType::Map);
       node["Name"]    = "SC_" + rhs.name();
-      node["Orbit"]   = rhs.orbit()->name();
+      node["Orbit"]   = "Orb_" + rhs.orbit()->name();
       node["Enabled"] = rhs.enabled();
       return node;
    }

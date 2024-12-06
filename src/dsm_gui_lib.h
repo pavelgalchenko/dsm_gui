@@ -174,10 +174,6 @@ class dsm_gui_lib {
        "PANDORA",   "PAN",      "ARIEL",    "UMBRIEL",  "TITANIA",
        "OBERON",    "MIRANDA",  "TRITON",   "NERIED",   "CHARON",
        "MINORBODY"};
-   static QString getWorldName(const WorldID IDw) {
-      const long Iw = (long)IDw;
-      return worldInputs[Iw];
-   }
 
    static int inexplicable_error_message() {
       const QStringList inexplicableErrorMsg = {
