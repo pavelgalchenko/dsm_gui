@@ -61,23 +61,3 @@ FOVs:
         Angles: [135.0, 0.0, 0.0]
         Sequence: 213
       Boresight: Z_AXIS
-  - FOV:
-      Label: WIRE
-      Sides:
-        Number: 24
-        Length: 4.0
-      Width: 10.0
-      Height: 5.0
-      Color:
-        RGB: [0.698, 0.698, 0.0]
-        Alpha: 1.0
-      Type: WIREFRAME
-      Near Field: true
-      Far Field: true
-      SC: 0
-      Body: 0
-      Position: [1.0, 0.0, 0.0]
-      Euler Angles:
-        Angles: [0.0, 0.0, 0.0]
-        Sequence: 213
-      Boresight: X_AXIS
