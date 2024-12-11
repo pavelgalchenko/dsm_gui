@@ -456,9 +456,8 @@ void ORB_Menu::on_closeButton_clicked() {
 }
 
 void ORB_Menu::on_applyButton_clicked() {
-
-   int index = ui->orbList->currentRow();
-   if (index == -1) {
+   const QListWidgetItem *item = ui->orbList->currentItem();
+   if (item == NULL) {
       return;
    }
 

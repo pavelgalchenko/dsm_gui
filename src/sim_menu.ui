@@ -199,14 +199,14 @@
         <item>
          <widget class="QSpinBox" name="simIGRFDegree">
           <property name="maximum">
-           <number>10</number>
+           <number>13</number>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QSpinBox" name="simIGRFOrder">
           <property name="maximum">
-           <number>10</number>
+           <number>13</number>
           </property>
          </widget>
         </item>
@@ -237,14 +237,14 @@
         <item>
          <widget class="QSpinBox" name="simEarthHarmN">
           <property name="maximum">
-           <number>18</number>
+           <number>150</number>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QSpinBox" name="simEarthHarmM">
           <property name="maximum">
-           <number>18</number>
+           <number>150</number>
           </property>
          </widget>
         </item>
@@ -275,14 +275,14 @@
         <item>
          <widget class="QSpinBox" name="simMarsHarmN">
           <property name="maximum">
-           <number>18</number>
+           <number>150</number>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QSpinBox" name="simMarsHarmM">
           <property name="maximum">
-           <number>18</number>
+           <number>150</number>
           </property>
          </widget>
         </item>
@@ -313,14 +313,14 @@
         <item>
          <widget class="QSpinBox" name="simLunaHarmN">
           <property name="maximum">
-           <number>18</number>
+           <number>150</number>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QSpinBox" name="simLunaHarmM">
           <property name="maximum">
-           <number>18</number>
+           <number>150</number>
           </property>
          </widget>
         </item>
@@ -1590,7 +1590,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>241</width>
+     <width>254</width>
      <height>641</height>
     </rect>
    </property>
