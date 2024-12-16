@@ -1,10 +1,12 @@
 Dependencies:
-    Qt5
-    yaml-cpp
-    pkgconfig (if not using Conda)
+```
+Qt5
+yaml-cpp
+pkgconfig (if not using Conda)
+```
 This GUI is NOT compatible with Qt6
 
-Instructions:
+Instructions: <br>
 From top level directory
 ```
 mkdir qt_build
