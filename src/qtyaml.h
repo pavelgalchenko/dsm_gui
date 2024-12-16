@@ -20,6 +20,9 @@
 
 #include <QDate>
 #include <QTime>
+#include <QVector2D>
+#include <QVector3D>
+#include <QVector4D>
 #include <QtCore/QList>
 #include <QtCore/QMap>
 #include <QtCore/QPair>
@@ -75,6 +78,11 @@ template <typename T> struct convert<QVector<T>> {
       foreach (T value, rhs) {
          node.push_back(value);
       }
+      if constexpr (std::is_integral_v<T> || std::is_floating_point_v<T>) {
+         node.SetStyle(EmitterStyle::Flow);
+      } else {
+         node.SetStyle(EmitterStyle::Block);
+      }
       return node;
    }
 
@@ -96,8 +104,13 @@ template <typename T> struct convert<QVector<T>> {
 template <typename T> struct convert<QList<T>> {
    static Node encode(const QList<T> &rhs) {
       Node node(NodeType::Sequence);
-      foreach (T value, rhs) {
-         node.push_back(value);
+      for (auto it = rhs.begin(); it != rhs.end(); ++it) {
+         node.push_back(*it);
+      }
+      if constexpr (std::is_integral_v<T> || std::is_floating_point_v<T>) {
+         node.SetStyle(EmitterStyle::Flow);
+      } else {
+         node.SetStyle(EmitterStyle::Block);
       }
       return node;
    }
@@ -203,6 +216,97 @@ template <> struct convert<QTime> {
 // TODO: Add the rest of the container classes
 // QLinkedList, QStack, QQueue, QSet, QMultiMap, QHash, QMultiHash,
 // ...
+
+// Added by Daniel Newberry, NASA WFF Intern, summer '24
+//  QVector3D
+template <> struct convert<QVector3D> {
+   static Node encode(const QVector3D &rhs) {
+      Node node(NodeType::Sequence);
+      for (int i = 0; i < 3; i++) {
+         node.push_back(rhs[i]);
+      }
+      node.SetStyle(EmitterStyle::Flow);
+      return node;
+   }
+   static bool decode(const Node &node, QVector3D &rhs) {
+      if (!node.IsSequence() || node.size() != 3)
+         return false;
+
+      const_iterator it = node.begin();
+      for (int i = 0; i < 3; i++) {
+         rhs[i] = it->as<double>();
+         ++it;
+      }
+      return true;
+   }
+};
+
+// QHash
+template <class Key, class Value> struct convert<QHash<Key, Value>> {
+   static Node encode(const QHash<Key, Value> &rhs) {
+      Node node(NodeType::Map);
+      for (auto it = rhs.constBegin(); it != rhs.constEnd(); ++it) {
+         node.force_insert(it.key(), it.value());
+      }
+      return node;
+   }
+   static bool decode(const Node &node, QHash<Key, Value> &rhs) {
+      if (!node.IsMap())
+         return false;
+
+      rhs.clear();
+      for (const_iterator it = node.begin(); it != node.end(); ++it) {
+         rhs[it->first.as<Key>()] = it->second.as<Value>();
+      }
+      return true;
+   }
+};
+
+// QVector4D
+template <> struct convert<QVector4D> {
+   static Node encode(const QVector4D &rhs) {
+      Node node(NodeType::Sequence);
+      for (int i = 0; i < 4; i++) {
+         node.push_back(rhs[i]);
+      }
+      node.SetStyle(EmitterStyle::Flow);
+      return node;
+   }
+   static bool decode(const Node &node, QVector4D &rhs) {
+      if (!node.IsSequence() || node.size() != 4)
+         return false;
+
+      const_iterator it = node.begin();
+      for (int i = 0; i < 4; i++) {
+         rhs[i] = it->as<double>();
+         ++it;
+      }
+      return true;
+   }
+};
+
+// QVector2D
+template <> struct convert<QVector2D> {
+   static Node encode(const QVector2D &rhs) {
+      Node node(NodeType::Sequence);
+      for (int i = 0; i < 2; i++) {
+         node.push_back(rhs[i]);
+      }
+      node.SetStyle(EmitterStyle::Flow);
+      return node;
+   }
+   static bool decode(const Node &node, QVector4D &rhs) {
+      if (!node.IsSequence() || node.size() != 2)
+         return false;
+
+      const_iterator it = node.begin();
+      for (int i = 0; i < 2; i++) {
+         rhs[i] = it->as<double>();
+         ++it;
+      }
+      return true;
+   }
+};
 
 } // end namespace YAML
 

@@ -13,12 +13,12 @@
 SPC_Menu::SPC_Menu(QWidget *parent) : QDialog(parent), ui(new Ui::SPC_Menu) {
    ui->setupUi(this);
    ui->quick_tabs->setCurrentIndex(0);
+
+   ninf_pinf_valid = std::make_unique<QDoubleValidator>(-INFINITY, INFINITY, 5);
+   zero_pinf_valid = std::make_unique<QDoubleValidator>(0, INFINITY, 5);
    set_validators();
 
-   new_item   = 0;
-   counter3u  = 0;
-   counter6u  = 0;
-   counter12u = 0;
+   new_item = 0;
 }
 
 SPC_Menu::~SPC_Menu() {
@@ -52,15 +52,14 @@ void SPC_Menu::set_validators() {
 
    ui->spc_fswsamp->setValidator(new QDoubleValidator(0, INFINITY, 5));
 
-   QLineEdit *ninf_pinf[16] = {
+   QList<QLineEdit *> ninf_pinf = {
        ui->spc_cur_xpos_form, ui->spc_cur_ypos_form, ui->spc_cur_zpos_form,
        ui->spc_cur_xvel_form, ui->spc_cur_yvel_form, ui->spc_cur_zvel_form,
        ui->spc_cur_angvel_1,  ui->spc_cur_angvel_2,  ui->spc_cur_angvel_3,
        ui->spc_cur_q1,        ui->spc_cur_q2,        ui->spc_cur_q3,
        ui->spc_cur_q4,        ui->spc_cur_initeul_1, ui->spc_cur_initeul_2,
        ui->spc_cur_initeul_3};
-
-   dsm_gui_lib::set_mult_validators(ninf_pinf, 16, -INFINITY, INFINITY, 5);
+   dsm_gui_lib::set_mult_validators(ninf_pinf, ninf_pinf_valid.get());
 
    connect(ui->spc_add, SIGNAL(clicked(bool)), this->parent(),
            SLOT(disable_sub_menus()));
@@ -84,7 +83,7 @@ void SPC_Menu::receive_spcpath(QString path) {
        QDir(inout_path + "__default__/").entryList({"SC_*.yaml"});
 
    if (spcDefaultFiles.length() == 0) {
-      QFile::copy(":/data/__default__/__SCDEFAULT__.yaml",
+      QFile::copy(":/data/__default__/SC_DEFAULT.yaml",
                   inout_path + "__default__/SC_DEFAULT.yaml");
       spcDefaultFiles =
           QDir(inout_path + "__default__/").entryList({"SC_*.yaml"});
@@ -339,7 +338,7 @@ void SPC_Menu::on_spc_apply_clicked() {
    spc_name_index   = index;
    ui->spc_list->setCurrentRow(index);
 
-   write_data(cur_spc_yaml);
+   dsm_gui_lib::write_data(file_path, cur_spc_yaml);
    on_spc_list_currentTextChanged(ui->spc_list->currentItem()->text());
 }
 
@@ -448,12 +447,12 @@ void SPC_Menu::on_spc_add_clicked() // Add S/C
    file_path = inout_path + "SC_" + new_name + ".yaml";
    file_paths.append(file_path);
 
-   if (dsm_gui_lib::fileExists(inout_path + "__default__/__SCDEFAULT__.yaml")) {
-      QFile::copy(inout_path + "__default__/__SCDEFAULT__.yaml",
+   if (dsm_gui_lib::fileExists(inout_path + "__default__/SC_DEFAULT.yaml")) {
+      QFile::copy(inout_path + "__default__/SC_DEFAULT.yaml",
                   inout_path + "SC_" + new_name + ".yaml");
 
    } else
-      QFile::copy(":/data/__default__/__SCDEFAULT__.yaml",
+      QFile::copy(":/data/__default__/SC_DEFAULT.yaml",
                   inout_path + "SC_" + new_name + ".yaml");
    ui->spc_conf->setEnabled(true);
 
@@ -692,7 +691,7 @@ void SPC_Menu::on_spc_list_itemClicked(QListWidgetItem *item) {
    setQComboBox(ui->spc_cur_initeul_seq, current_data[26]);
 }
 
-void SPC_Menu::on_spc_list_itemActivated(QListWidgetItem *item) {
+void SPC_Menu::on_spc_list_itemActivated(QListWidgetItem *) {
    ui->spc_conf->setEnabled(true);
 }
 
@@ -700,7 +699,7 @@ void SPC_Menu::setQComboBox(QComboBox *comboBox, QString string) {
    comboBox->setCurrentIndex(comboBox->findText(string));
 }
 
-void SPC_Menu::on_spc_cur_att_param_currentTextChanged(const QString &arg1) {
+void SPC_Menu::on_spc_cur_att_param_currentTextChanged(const QString &) {
    if (!QString::compare(ui->spc_cur_att_param->currentText(), "Q")) {
       ui->spc_cur_initeul_1->setEnabled(false);
       ui->spc_cur_initeul_2->setEnabled(false);
@@ -755,7 +754,7 @@ void SPC_Menu::proc_add_template(QString sc_template_name) {
       return;
 }
 
-void SPC_Menu::load_1SC_default(QString sc_string) {
+void SPC_Menu::load_1SC_default(QString) {
    on_spc_remove_clicked();
    on_spc_add_clicked();
 }

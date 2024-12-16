@@ -72,37 +72,74 @@ void GRH_Menu::set_validators() {
    ui->mousescale->setValidator(new QDoubleValidator);
    ui->mapwidth->setValidator(new QIntValidator);
    ui->mapheight->setValidator(new QIntValidator);
+
+   ui_pov              = {ui->povinhost_x, ui->povinhost_y, ui->povinhost_z};
+   cam_show_fields     = {"N Axes",         "L Axes",       "F Axes",
+                          "B Axes",         "N Grid",       "L Grid",
+                          "F Grid",         "B Grid",       "G Grid",
+                          "Fields of View", "Prox Ops",     "TDRS Satellites",
+                          "Shadows",        "Astro Labels", "Truth Vectors",
+                          "FSW Vectors",    "Milky Way",    "Fermi Sky"};
+   cam_show_checkboxes = {
+       {"N Axes", ui->showNAxis},        {"L Axes", ui->showLAxis},
+       {"F Axes", ui->showFAxis},        {"B Axes", ui->showBAxis},
+       {"N Grid", ui->showNGrid},        {"L Grid", ui->showLGrid},
+       {"F Grid", ui->showFGrid},        {"B Grid", ui->showBGrid},
+       {"G Grid", ui->showGalGrid},      {"Fields of View", ui->showFOV},
+       {"Prox Ops", ui->showProxOps},    {"TDRS Satellites", ui->showTDRS},
+       {"Shadows", ui->showShadows},     {"Astro Labels", ui->showAstro},
+       {"Truth Vectors", ui->showTruth}, {"FSW Vectors", ui->showFSW},
+       {"Milky Way", ui->showMilky},     {"Fermi Sky", ui->showFermi}};
+   cam_show_names = {{"N Axes", ui->show_naxis_name},
+                     {"L Axes", ui->show_laxis_name},
+                     {"F Axes", ui->show_faxis_name},
+                     {"B Axes", ui->show_baxis_name},
+                     {"N Grid", ui->show_ngrid_name},
+                     {"L Grid", ui->show_lgrid_name},
+                     {"F Grid", ui->show_fgrid_name},
+                     {"B Grid", ui->show_bgrid_name},
+                     {"G Grid", ui->show_galgrid_name},
+                     {"Fields of View", ui->show_fov_name},
+                     {"Prox Ops", ui->show_proxops_name},
+                     {"TDRS Satellites", ui->show_tdrs_name},
+                     {"Shadows", ui->show_shdws_name},
+                     {"Astro Labels", ui->show_astro_name},
+                     {"Truth Vectors", ui->show_truth_name},
+                     {"FSW Vectors", ui->show_fsw_name},
+                     {"Milky Way", ui->show_milky_name},
+                     {"Fermi Sky", ui->show_fermi_name}};
+
+   map_show_fields     = {"Clock", "Tlm Clock", "Credits", "Night"};
+   map_show_checkboxes = {{"Clock", ui->showClock},
+                          {"Tlm Clock", ui->showTlmClock},
+                          {"Credits", ui->showCredits},
+                          {"Night", ui->showNight}};
+   map_show_names      = {{"Clock", ui->showclock_name},
+                          {"Tlm Clock", ui->showtlmclock_name},
+                          {"Credits", ui->showcredits_name},
+                          {"Night", ui->shownight_name}};
+
+   const_show_fields     = {"Major", "Zodiac", "Minor"};
+   const_show_checkboxes = {{"Major", ui->showMajorConst},
+                            {"Zodiac", ui->showZodiac},
+                            {"Minor", ui->showMinorConst}};
 }
 
 void GRH_Menu::receive_grhpath(QString path) {
    inout_path    = path;
-   graphics_path = path + "Inp_Graphics.txt";
+   graphics_path = path + "Inp_Graphics.yaml";
    receive_data();
    apply_data();
 }
 
 void GRH_Menu::receive_data() {
-   grh_data.clear();
-   grh_string.clear();
-   static QRegularExpression rx1("(.*?)!");
-   static QRegularExpression rx2("\"(.*?)\"");
-   static QRegularExpression rx3("SC_(.*).txt");
+
+   grh_file_yaml = YAML::LoadFile(graphics_path.toStdString());
 
    QFile file(graphics_path);
    if (!file.open(QIODevice::ReadOnly)) {
       QMessageBox::information(0, "error", file.errorString());
    }
-
-   QTextStream in(&file);
-   while (!in.atEnd()) {
-      QString line                   = in.readLine();
-      QRegularExpressionMatch match1 = rx1.match(line);
-      grh_data.append(match1.captured(1));
-
-      QRegularExpressionMatch match2 = rx2.match(line);
-      grh_string.append(match2.captured(1));
-   }
-   file.close();
 
    QStringList scFiles = QDir(inout_path).entryList({"SC_*"});
    QStringList scNames;
@@ -110,36 +147,24 @@ void GRH_Menu::receive_data() {
       scNames.append(scFiles[i].chopped(4).mid(3));
    QSet<QString> scNamesSet(scNames.begin(), scNames.end());
 
-   QFile simFile(inout_path + "Inp_Sim.txt");
-   if (!simFile.open(QIODevice::ReadOnly))
-      QMessageBox::information(0, "error", simFile.errorString());
-   QTextStream simIn(&simFile);
+   const YAML::Node sim_yaml =
+       YAML::LoadFile((inout_path + "Inp_Sim.yaml").toStdString());
+   const YAML::Node scs = sim_yaml["SCs"];
 
    QStringList simSCNames;
    QHash<QString, int> simSCNum;
-   while (!simIn.atEnd()) {
-      QString line = simIn.readLine();
-      if (line.contains("Spacecraft", Qt::CaseInsensitive)) {
-         line = simIn.readLine();
-         QStringList line_items =
-             line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
-         int nSC = line_items[0].toInt();
-         for (int i = 0; i < nSC; i++) {
-            line         = simIn.readLine();
-            QString name = rx3.match(line).captured(1);
-            simSCNames.append(name);
-            simSCNum.insert(name, i);
-         }
-         break;
-      }
+   for (YAML::const_iterator it = scs.begin(); it != scs.end(); ++it) {
+      QMap<QString, QString> scConf = it->as<QMap<QString, QString>>();
+      QString label                 = scConf["Name"].mid(3);
+      simSCNames.append(label);
+      simSCNum.insert(label, std::distance(scs.begin(), it));
    }
-   simFile.close();
    QSet<QString> simSCNamesSet(simSCNames.begin(), simSCNames.end());
 
    scNums.clear();
-   QStringList spaceCrafts = scNamesSet.intersect(simSCNamesSet).values();
-   for (int i = 0; i < spaceCrafts.count(); i++)
-      scNums.insert(spaceCrafts[i], simSCNum[spaceCrafts[i]]);
+   QStringList spacecrafts = scNamesSet.intersect(simSCNamesSet).values();
+   for (int i = 0; i < spacecrafts.count(); i++)
+      scNums.insert(spacecrafts[i], simSCNum[spacecrafts[i]]);
 
    ui->hostSC->clear();
    ui->hostSC->addItems(dsm_gui_lib::sortStringList(scNums.keys()));
@@ -148,221 +173,94 @@ void GRH_Menu::receive_data() {
    ui->targetSC->addItems(dsm_gui_lib::sortStringList(scNums.keys()));
 }
 
-void GRH_Menu::write_data() {
-   QFile::remove(graphics_path);
-   QFile file(graphics_path);
-   if (!file.open(QFile::WriteOnly)) {
-      QMessageBox::information(0, "error", file.errorString());
-   } else {
-      QTextStream in(&file);
-      for (int i = 0; i < grh_update.size(); i++) {
-         in << grh_update.at(i);
-      }
-   }
-   grh_update.clear();
-   file.close();
-}
-
 void GRH_Menu::apply_data() {
-   QStringList line_items;
-   QString line_string;
 
-   for (int line_num = 1; line_num < grh_data.length(); line_num++) {
-      line_string = grh_string[line_num - 1];
-      line_items  = grh_data[line_num - 1].remove("\"").split(
-          QRegExp("\\s"), Qt::SkipEmptyParts);
-      switch (line_num) {
-         case 1: // File header
-            break;
-         case 2:
-            ui->gl_output->setText(line_items[0]);
-            break;
-         case 3:
-            ui->star_catalog->setText(line_items[0]);
-            break;
-         case 4:
-            ui->mapWindow->setChecked(QVariant(line_items[0]).toBool());
-            break;
-         case 5:
-            ui->orreyWindow->setChecked(QVariant(line_items[0]).toBool());
-            break;
-         case 6:
-            ui->sphereWindow->setChecked(QVariant(line_items[0]).toBool());
-            break;
-         case 7: // POV Header
-            break;
-         case 8:
-            ui->pause->setChecked(QVariant(line_items[0]).toBool());
-            break;
-         case 9:
-            ui->povMode->setCurrentText(povMode_inputs[line_items[0]]);
-            break;
-         case 10:
-            ui->hostType->setCurrentText(hosttarget_inputs[line_items[0]]);
-            break;
-         case 11:
-            ui->hostSC->setCurrentText(scNums.key(line_items[0].toInt()));
-            ui->hostBDY->setValue(line_items[1].toInt());
-            ui->hostFrame->setCurrentText(frame_inputs[line_items[2]]);
-            break;
-         case 12:
-            ui->targetType->setCurrentText(hosttarget_inputs[line_items[0]]);
-            break;
-         case 13:
-            ui->targetSC->setCurrentText(scNums.key(line_items[0].toInt()));
-            ui->targetBDY->setValue(line_items[1].toInt());
-            ui->targetFrame->setCurrentText(frame_inputs[line_items[2]]);
-            break;
-         case 14:
-            ui->boresightaxis->setCurrentText(axis_inputs[line_items[0]]);
-            break;
-         case 15:
-            ui->upaxis->setCurrentText(axis_inputs[line_items[0]]);
-            break;
-         case 16:
-            ui->povrange->setText(line_items[0]);
-            break;
-         case 17:
-            ui->povangle->setText(line_items[0]);
-            break;
-         case 18:
-            ui->povinhost_x->setText(line_items[0]);
-            ui->povinhost_y->setText(line_items[1]);
-            ui->povinhost_z->setText(line_items[2]);
-            break;
-         case 19:
-            ui->povview->setCurrentText(view_inputs[line_items[0]]);
-            break;
-         case 20: // CAM Header
-            break;
-         case 21:
-            ui->camtitle->setText(line_string);
-            break;
-         case 22:
-            ui->camwidth->setText(line_items[0]);
-            ui->camheight->setText(line_items[1]);
-            break;
-         case 23:
-            ui->mousescale->setText(line_items[0]);
-            break;
-         case 24:
-            ui->displaygamma->setValue(line_items[0].toDouble());
-            break;
-         case 25: // CAM Show Header
-            break;
-         case 26:
-            ui->showNAxis->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_naxis_name->setText(line_string);
-            break;
-         case 27:
-            ui->showLAxis->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_laxis_name->setText(line_string);
-            break;
-         case 28:
-            ui->showFAxis->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_faxis_name->setText(line_string);
-            break;
-         case 29:
-            ui->showBAxis->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_baxis_name->setText(line_string);
-            break;
-         case 30:
-            ui->showNGrid->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_ngrid_name->setText(line_string);
-            break;
-         case 31:
-            ui->showLGrid->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_lgrid_name->setText(line_string);
-            break;
-         case 32:
-            ui->showFGrid->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_fgrid_name->setText(line_string);
-            break;
-         case 33:
-            ui->showBGrid->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_bgrid_name->setText(line_string);
-            break;
-         case 34:
-            ui->showGalGrid->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_galgrid_name->setText(line_string);
-            break;
-         case 35:
-            ui->showFOV->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_fov_name->setText(line_string);
-            break;
-         case 36:
-            ui->showProxOps->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_proxops_name->setText(line_string);
-            break;
-         case 37:
-            ui->showTDRS->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_tdrs_name->setText(line_string);
-            break;
-         case 38:
-            ui->showShadows->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_shdws_name->setText(line_string);
-            break;
-         case 39:
-            ui->showAstro->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_astro_name->setText(line_string);
-            break;
-         case 40:
-            ui->showTruth->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_truth_name->setText(line_string);
-            break;
-         case 41:
-            ui->showFSW->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_fsw_name->setText(line_string);
-            break;
-         case 42:
-            ui->showMilky->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_milky_name->setText(line_string);
-            break;
-         case 43:
-            ui->showFermi->setChecked(QVariant(line_items[0]).toBool());
-            ui->show_fermi_name->setText(line_string);
-            break;
-         case 44: // MAP Header
-            break;
-         case 45:
-            ui->maptitle->setText(line_string);
-            break;
-         case 46:
-            ui->mapwidth->setText(line_items[0]);
-            ui->mapheight->setText(line_items[1]);
-            break;
-         case 47: // MAP Show
-            break;
-         case 48:
-            ui->showClock->setChecked(QVariant(line_items[0]).toBool());
-            ui->showclock_name->setText(line_string);
-            break;
-         case 49:
-            ui->showTlmClock->setChecked(QVariant(line_items[0]).toBool());
-            ui->showtlmclock_name->setText(line_string);
-            break;
-         case 50:
-            ui->showCredits->setChecked(QVariant(line_items[0]).toBool());
-            ui->showcredits_name->setText(line_string);
-            break;
-         case 51:
-            ui->showNight->setChecked(QVariant(line_items[0]).toBool());
-            ui->shownight_name->setText(line_string);
-            break;
-         case 52: // Unit Sphere Header
-            break;
-         case 53:
-            ui->showMajorConst->setChecked(QVariant(line_items[0]).toBool());
-            break;
-         case 54:
-            ui->showZodiac->setChecked(QVariant(line_items[0]).toBool());
-            break;
-         case 55:
-            ui->showMinorConst->setChecked(QVariant(line_items[0]).toBool());
-            break;
-         default:
-            break;
+   const YAML::Node config_yaml = grh_file_yaml["Configuration"];
+   ui->gl_output->setText(config_yaml["Output Interval"].as<QString>());
+   ui->star_catalog->setText(config_yaml["Star Catalog File"].as<QString>());
+   ui->mapWindow->setChecked(config_yaml["Map Exists"].as<bool>());
+   ui->orreyWindow->setChecked(config_yaml["Orrery Exists"].as<bool>());
+   ui->sphereWindow->setChecked(config_yaml["Unit Sphere Exists"].as<bool>());
+   ui->pause->setChecked(config_yaml["Pause on Startup"].as<bool>());
+
+   const YAML::Node pov_yaml = grh_file_yaml["POV"];
+   dsm_gui_lib::setQComboBox(ui->povMode,
+                             povMode_inputs[pov_yaml["Mode"].as<QString>()]);
+
+   const HostTarget host = pov_yaml["Host"].as<HostTarget>();
+   dsm_gui_lib::setQComboBox(ui->hostType, hosttarget_inputs[host.type()]);
+   dsm_gui_lib::setQComboBox(ui->hostSC, scNums.key(host.sc()));
+   ui->hostBDY->setValue(host.body());
+   dsm_gui_lib::setQComboBox(ui->hostFrame, frame_inputs[host.frame()]);
+
+   const HostTarget target = pov_yaml["Target"].as<HostTarget>();
+   dsm_gui_lib::setQComboBox(ui->targetType, hosttarget_inputs[target.type()]);
+   dsm_gui_lib::setQComboBox(ui->targetSC, scNums.key(target.sc()));
+   ui->targetBDY->setValue(target.body());
+   dsm_gui_lib::setQComboBox(ui->targetFrame, frame_inputs[target.frame()]);
+
+   dsm_gui_lib::setQComboBox(
+       ui->boresightaxis,
+       axis_inputs[pov_yaml["Boresight Axis"].as<QString>()]);
+   dsm_gui_lib::setQComboBox(ui->upaxis,
+                             axis_inputs[pov_yaml["Up Axis"].as<QString>()]);
+   ui->povrange->setText(pov_yaml["POV Range"].as<QString>());
+   ui->povangle->setText(pov_yaml["POV Vertical Angle"].as<QString>());
+   QVector3D pov = pov_yaml["POV Host Position"].as<QVector3D>();
+   for (int i = 0; i < 3; i++)
+      ui_pov[i]->setText(QString::number(pov[i]));
+
+   dsm_gui_lib::setQComboBox(ui->povview,
+                             view_inputs[pov_yaml["POV View"].as<QString>()]);
+
+   const YAML::Node cam_yaml = grh_file_yaml["Cam"];
+   ui->camtitle->setText(cam_yaml["Title"].as<QString>());
+   const YAML::Node cam_dim_yaml = cam_yaml["Dimensions"];
+   ui->camwidth->setText(cam_dim_yaml["Width"].as<QString>());
+   ui->camheight->setText(cam_dim_yaml["Height"].as<QString>());
+   ui->mousescale->setText(
+       QString::number(cam_yaml["Mouse Scale Factor"].as<double>()));
+   ui->displaygamma->setValue(cam_yaml["Gamma Exponent"].as<double>());
+
+   const YAML::Node cam_show_yaml = cam_yaml["Cam Show"];
+   foreach (auto field, cam_show_fields) {
+      const YAML::Node node = cam_show_yaml[field];
+      bool is_checked       = false;
+      QString name          = field;
+      if (!node.IsNull()) {
+         is_checked = node["Show"].as<bool>();
+         name       = node["Label"].as<QString>();
       }
+      cam_show_checkboxes[field]->setChecked(is_checked);
+      cam_show_names[field]->setText(name);
+   }
+
+   const YAML::Node map_yaml = grh_file_yaml["Map"];
+   ui->maptitle->setText(map_yaml["Title"].as<QString>());
+   const YAML::Node map_dim_yaml = map_yaml["Dimensions"];
+   ui->mapwidth->setText(map_dim_yaml["Width"].as<QString>());
+   ui->mapheight->setText(map_dim_yaml["Height"].as<QString>());
+
+   const YAML::Node map_show_yaml = map_yaml["Map Show"];
+   foreach (auto field, map_show_fields) {
+      const YAML::Node node = map_show_yaml[field];
+      bool is_checked       = false;
+      QString name          = field;
+      if (!node.IsNull()) {
+         is_checked = node["Show"].as<bool>();
+         name       = node["Label"].as<QString>();
+      }
+      map_show_checkboxes[field]->setChecked(is_checked);
+      map_show_names[field]->setText(name);
+   }
+
+   const YAML::Node const_show_yaml = grh_file_yaml["Constellations Show"];
+   foreach (auto field, const_show_fields) {
+      const YAML::Node node = const_show_yaml[field];
+      bool is_checked       = false;
+      if (!node.IsNull())
+         is_checked = node["Show"].as<bool>();
+      const_show_checkboxes[field]->setChecked(is_checked);
    }
 }
 
@@ -384,9 +282,9 @@ void GRH_Menu::on_boresightaxis_currentTextChanged(const QString &arg1) {
 void GRH_Menu::on_loaddefaultButton_clicked() {
    int response = dsm_gui_lib::warning_message("Overwrite Graphics file?");
    if (response == QMessageBox::Ok) {
-      QFile::remove(inout_path + "Inp_Graphics.txt");
-      QFile::copy(inout_path + "__default__/Inp_Graphics.txt",
-                  inout_path + "Inp_Graphics.txt");
+      QFile::remove(inout_path + "Inp_Graphics.yaml");
+      QFile::copy(inout_path + "__default__/Inp_Graphics.yaml",
+                  inout_path + "Inp_Graphics.yaml");
       receive_data();
       apply_data();
    } else {
@@ -398,9 +296,9 @@ void GRH_Menu::on_savedefaultButton_clicked() {
    int response =
        dsm_gui_lib::warning_message("Overwrite Default Graphics file?");
    if (response == QMessageBox::Ok) {
-      QFile::remove(inout_path + "__default__/Inp_Graphics.txt");
-      QFile::copy(inout_path + "Inp_Graphics.txt",
-                  inout_path + "__default__/Inp_Graphics.txt");
+      QFile::remove(inout_path + "__default__/Inp_Graphics.yaml");
+      QFile::copy(inout_path + "Inp_Graphics.yaml",
+                  inout_path + "__default__/Inp_Graphics.yaml");
       receive_data();
       apply_data();
    } else {
@@ -413,318 +311,81 @@ void GRH_Menu::on_closeButton_clicked() {
 }
 
 void GRH_Menu::on_applyButton_clicked() {
-   QString data_inp;
 
-   grh_update.clear();
+   YAML::Node config_yaml            = grh_file_yaml["Configuration"];
+   config_yaml["Name"]               = "Inp_Graphics.yaml";
+   config_yaml["Output Interval"]    = ui->gl_output->text().toDouble();
+   config_yaml["Star Catalog File"]  = ui->star_catalog->text();
+   config_yaml["Map Exists"]         = ui->mapWindow->isChecked();
+   config_yaml["Orrery Exists"]      = ui->orreyWindow->isChecked();
+   config_yaml["Unit Sphere Exists"] = ui->sphereWindow->isChecked();
+   config_yaml["Pause on Startup"]   = ui->pause->isChecked();
 
-   for (int line_num = 1; line_num <= grh_data.length(); line_num++) {
-      switch (line_num) {
-         case 1:
-            data_inp = "<<<<<<<<<<<<<<<<<<<  42 Graphics Configuration File  "
-                       ">>>>>>>>>>>>>>>>>>>\n";
-            break;
-         case 2:
-            data_inp  = dsm_gui_lib::whitespace(ui->gl_output->text());
-            data_inp += " !  GL Output Interval [sec]\n";
-            break;
-         case 3:
-            data_inp  = dsm_gui_lib::whitespace(ui->star_catalog->text());
-            data_inp += " !  Star Catalog File Name\n";
-            break;
-         case 4:
-            data_inp =
-                dsm_gui_lib::whitespace(dsm_gui_lib::toString(ui->mapWindow));
-            data_inp += " !  Map Window Exists\n";
-            break;
-         case 5:
-            data_inp =
-                dsm_gui_lib::whitespace(dsm_gui_lib::toString(ui->orreyWindow));
-            data_inp += " !  Orrery Window Exists\n";
-            break;
-         case 6:
-            data_inp = dsm_gui_lib::whitespace(
-                dsm_gui_lib::toString(ui->sphereWindow));
-            data_inp += " !  Unit Sphere Window Exists\n";
-            break;
-         case 7:
-            data_inp = "********************************* POV "
-                       "**********************************\n";
-            break;
-         case 8:
-            data_inp =
-                dsm_gui_lib::whitespace(dsm_gui_lib::toString(ui->pause));
-            data_inp += " !  Pause at Startup\n";
-            break;
-         case 9:
-            data_inp = dsm_gui_lib::whitespace(
-                povMode_inputs.key(ui->povMode->currentText()));
-            data_inp +=
-                " !  POV Mode (TRACK_HOST, TRACK_TARGET, FIXED_IN_HOST)\n";
-            break;
-         case 10:
-            data_inp = dsm_gui_lib::whitespace(
-                hosttarget_inputs.key(ui->hostType->currentText()));
-            data_inp += " !  Host Type (WORLD, REFORB, FRM, SC, BODY)\n";
-            break;
-         case 11:
-            data_inp =
-                QString::number(scNums[ui->hostSC->currentText()]) + "  ";
-            data_inp += QString::number(ui->hostBDY->value()) + "  ";
-            data_inp += frame_inputs.key(ui->hostFrame->currentText());
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Initial Host SC, Body, POV Frame\n";
-            break;
-         case 12:
-            data_inp = dsm_gui_lib::whitespace(
-                hosttarget_inputs.key(ui->targetType->currentText()));
-            data_inp += " !  Target Type (WORLD, REFORB, FRM, SC, BODY)\n";
-            break;
-         case 13:
-            data_inp =
-                QString::number(scNums[ui->targetSC->currentText()]) + "  ";
-            data_inp += QString::number(ui->targetBDY->value()) + "  ";
-            data_inp += frame_inputs.key(ui->targetFrame->currentText());
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Initial Host SC, Body, POV Frame\n";
-            break;
-         case 14:
-            data_inp = dsm_gui_lib::whitespace(
-                axis_inputs.key(ui->boresightaxis->currentText()));
-            data_inp += " !  Boresight Axis\n";
-            break;
-         case 15:
-            data_inp = dsm_gui_lib::whitespace(
-                axis_inputs.key(ui->upaxis->currentText()));
-            data_inp += " !  Up Axis\n";
-            break;
-         case 16:
-            data_inp  = dsm_gui_lib::whitespace(ui->povrange->text());
-            data_inp += " !  Initial POV Range from Target [m]\n";
-            break;
-         case 17:
-            data_inp  = dsm_gui_lib::whitespace(ui->povangle->text());
-            data_inp += " !  POV Angle (Vertical) [deg]\n";
-            break;
-         case 18:
-            data_inp  = ui->povinhost_x->text() + "  ";
-            data_inp += ui->povinhost_y->text() + "  ";
-            data_inp += ui->povinhost_z->text();
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  POV Position in Host [m]\n";
-            break;
-         case 19:
-            data_inp = dsm_gui_lib::whitespace(
-                view_inputs.key(ui->povview->currentText()));
-            data_inp += " !  Initial POV View (FRONT, FRONT_RIGHT, etc)\n";
-            break;
-         case 20:
-            data_inp = "********************************* CAM "
-                       "**********************************\n";
-            break;
-         case 21:
-            data_inp =
-                dsm_gui_lib::whitespace("\"" + ui->camtitle->text() + "\"");
-            data_inp += " !  Cam Title [delimited by \"]\n";
-            break;
-         case 22:
-            data_inp  = ui->camwidth->text() + "  ";
-            data_inp += ui->camheight->text();
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Width, Height [pixels]\n";
-            break;
-         case 23:
-            data_inp  = dsm_gui_lib::whitespace(ui->mousescale->text());
-            data_inp += " !  Mouse Scale Factor\n";
-            break;
-         case 24:
-            data_inp  = dsm_gui_lib::whitespace(ui->displaygamma->text());
-            data_inp += " !  Display's Gamma Exponent (1.8-4.0)\n";
-            break;
-         case 25:
-            data_inp = "**************************** CAM Show Menu "
-                       "*****************************\n";
-            break;
-         case 26:
-            data_inp  = dsm_gui_lib::toString(ui->showNAxis) + "  ";
-            data_inp += "\"" + ui->show_naxis_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show N Axes\n";
-            break;
-         case 27:
-            data_inp  = dsm_gui_lib::toString(ui->showLAxis) + "  ";
-            data_inp += "\"" + ui->show_laxis_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show L Axes\n";
-            break;
-         case 28:
-            data_inp  = dsm_gui_lib::toString(ui->showFAxis) + "  ";
-            data_inp += "\"" + ui->show_faxis_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show F Axes\n";
-            break;
-         case 29:
-            data_inp  = dsm_gui_lib::toString(ui->showBAxis) + "  ";
-            data_inp += "\"" + ui->show_baxis_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show B Axes\n";
-            break;
-         case 30:
-            data_inp  = dsm_gui_lib::toString(ui->showNGrid) + "  ";
-            data_inp += "\"" + ui->show_ngrid_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show N Grid\n";
-            break;
-         case 31:
-            data_inp  = dsm_gui_lib::toString(ui->showLGrid) + "  ";
-            data_inp += "\"" + ui->show_lgrid_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show L Grid\n";
-            break;
-         case 32:
-            data_inp  = dsm_gui_lib::toString(ui->showFGrid) + "  ";
-            data_inp += "\"" + ui->show_fgrid_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show F Grid\n";
-            break;
-         case 33:
-            data_inp  = dsm_gui_lib::toString(ui->showBGrid) + "  ";
-            data_inp += "\"" + ui->show_bgrid_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show B Grid\n";
-            break;
-         case 34:
-            data_inp  = dsm_gui_lib::toString(ui->showGalGrid) + "  ";
-            data_inp += "\"" + ui->show_galgrid_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show G Grid\n";
-            break;
-         case 35:
-            data_inp  = dsm_gui_lib::toString(ui->showFOV) + "  ";
-            data_inp += "\"" + ui->show_fov_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show Fields of View\n";
-            break;
-         case 36:
-            data_inp  = dsm_gui_lib::toString(ui->showProxOps) + "  ";
-            data_inp += "\"" + ui->show_proxops_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show Prox Ops\n";
-            break;
-         case 37:
-            data_inp  = dsm_gui_lib::toString(ui->showTDRS) + "  ";
-            data_inp += "\"" + ui->show_tdrs_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show TDRS Satellites\n";
-            break;
-         case 38:
-            data_inp  = dsm_gui_lib::toString(ui->showShadows) + "  ";
-            data_inp += "\"" + ui->show_shdws_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show Shadows\n";
-            break;
-         case 39:
-            data_inp  = dsm_gui_lib::toString(ui->showAstro) + "  ";
-            data_inp += "\"" + ui->show_astro_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show Astro Labels\n";
-            break;
-         case 40:
-            data_inp  = dsm_gui_lib::toString(ui->showTruth) + "  ";
-            data_inp += "\"" + ui->show_truth_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show Truth Vectors\n";
-            break;
-         case 41:
-            data_inp  = dsm_gui_lib::toString(ui->showFSW) + "  ";
-            data_inp += "\"" + ui->show_fsw_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show FSW Vectors\n";
-            break;
-         case 42:
-            data_inp  = dsm_gui_lib::toString(ui->showMilky) + "  ";
-            data_inp += "\"" + ui->show_milky_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show Milky Way\n";
-            break;
-         case 43:
-            data_inp  = dsm_gui_lib::toString(ui->showFermi) + "  ";
-            data_inp += "\"" + ui->show_fermi_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show Fermi Sky\n";
-            break;
-         case 44:
-            data_inp = "********************************* MAP "
-                       "**********************************\n";
-            break;
-         case 45:
-            data_inp =
-                dsm_gui_lib::whitespace("\"" + ui->maptitle->text() + "\"");
-            data_inp += " !  Map Title [delimited by \"]\n";
-            break;
-         case 46:
-            data_inp  = dsm_gui_lib::whitespace(ui->mapwidth->text() + "  " +
-                                                ui->mapheight->text());
-            data_inp += " !  Width, Height [pixels]\n";
-            break;
-         case 47:
-            data_inp = "**************************** MAP Show Menu "
-                       "*****************************\n";
-            break;
-         case 48:
-            data_inp  = dsm_gui_lib::toString(ui->showClock) + "  ";
-            data_inp += "\"" + ui->showclock_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show Clock\n";
-            break;
-         case 49:
-            data_inp  = dsm_gui_lib::toString(ui->showTlmClock) + "  ";
-            data_inp += "\"" + ui->showtlmclock_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show Tlm Clock\n";
-            break;
-         case 50:
-            data_inp  = dsm_gui_lib::toString(ui->showCredits) + "  ";
-            data_inp += "\"" + ui->showcredits_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show Credits\n";
-            break;
-         case 51:
-            data_inp  = dsm_gui_lib::toString(ui->showNight) + "  ";
-            data_inp += "\"" + ui->shownight_name->text() + "\"";
-            data_inp  = dsm_gui_lib::whitespace(data_inp);
-            data_inp += " !  Show Night\n";
-            break;
-         case 52:
-            data_inp = "************************ Unit Sphere Show Menu "
-                       "*************************\n";
-            break;
-         case 53:
-            data_inp = dsm_gui_lib::whitespace(
-                dsm_gui_lib::toString(ui->showMajorConst));
-            data_inp += " !  Show Major Constellations\n";
-            break;
-         case 54:
-            data_inp =
-                dsm_gui_lib::whitespace(dsm_gui_lib::toString(ui->showZodiac));
-            data_inp += " !  Show Zodiac Constellations\n";
-            break;
-         case 55:
-            data_inp = dsm_gui_lib::whitespace(
-                dsm_gui_lib::toString(ui->showMinorConst));
-            data_inp += " !  Show Minor Constellations\n";
-            break;
-         default:
-            break;
-      }
-      grh_update.append(data_inp);
-      data_inp.clear();
+   YAML::Node pov_yaml = grh_file_yaml["POV"];
+   pov_yaml["Mode"]    = povMode_inputs.key(ui->povMode->currentText());
+   HostTarget host;
+   host.setType(hosttarget_inputs.key(ui->hostType->currentText()));
+   host.setSC(scNums[ui->hostSC->currentText()], ui->hostBDY->value());
+   host.setFrame(frame_inputs.key(ui->hostFrame->currentText()));
+   pov_yaml["Host"] = host;
+
+   HostTarget target;
+   target.setType(hosttarget_inputs.key(ui->targetType->currentText()));
+   target.setSC(scNums[ui->hostSC->currentText()], ui->targetBDY->value());
+   target.setFrame(frame_inputs.key(ui->targetFrame->currentText()));
+   pov_yaml["Target"] = target;
+
+   pov_yaml["Boresight Axis"] =
+       axis_inputs.key(ui->boresightaxis->currentText());
+   pov_yaml["Up Axis"]            = axis_inputs.key(ui->upaxis->currentText());
+   pov_yaml["POV Range"]          = ui->povrange->text().toDouble();
+   pov_yaml["POV Vertical Angle"] = ui->povangle->text().toDouble();
+   QVector3D pos;
+   for (int i = 0; i < 3; i++)
+      pos[i] = ui_pov[i]->text().toDouble();
+   pov_yaml["POV Host Position"] = pos;
+   pov_yaml["POV View"]          = view_inputs.key(ui->povview->currentText());
+
+   YAML::Node cam_yaml            = grh_file_yaml["Cam"];
+   cam_yaml["Title"]              = ui->camtitle->text();
+   YAML::Node cam_dim_yaml        = cam_yaml["Dimensions"];
+   cam_dim_yaml["Width"]          = ui->camwidth->text().toInt();
+   cam_dim_yaml["Height"]         = ui->camheight->text().toInt();
+   cam_yaml["Mouse Scale Factor"] = ui->mousescale->text().toDouble();
+   cam_yaml["Gamma Exponent"]     = ui->displaygamma->value();
+
+   YAML::Node cam_show_yaml = cam_yaml["Cam Show"];
+   foreach (auto field, cam_show_fields) {
+      YAML::Node node = cam_show_yaml[field];
+      node["Show"]    = cam_show_checkboxes[field]->isChecked();
+      node["Label"]   = cam_show_names[field]->text();
    }
-   write_data();
+
+   YAML::Node map_yaml     = grh_file_yaml["Map"];
+   map_yaml["Title"]       = ui->camtitle->text();
+   YAML::Node map_dim_yaml = map_yaml["Dimensions"];
+   map_dim_yaml["Width"]   = ui->mapwidth->text().toInt();
+   map_dim_yaml["Height"]  = ui->mapheight->text().toInt();
+
+   YAML::Node map_show_yaml = map_yaml["Map Show"];
+   foreach (auto field, map_show_fields) {
+      YAML::Node node = map_show_yaml[field];
+      node["Show"]    = map_show_checkboxes[field]->isChecked();
+      node["Label"]   = map_show_names[field]->text();
+   }
+
+   YAML::Node const_show_yaml = grh_file_yaml["Constellations Show"];
+   foreach (auto field, const_show_fields) {
+      YAML::Node node = const_show_yaml[field];
+      node["Show"]    = const_show_checkboxes[field]->isChecked();
+   }
+
+   dsm_gui_lib::write_data(graphics_path, grh_file_yaml);
 }
 
 void GRH_Menu::on_hostSC_currentTextChanged(const QString &arg1) {
    QStringList scFileNames =
-       QDir(inout_path).entryList({"SC_" + arg1 + ".txt"});
+       QDir(inout_path).entryList({"SC_" + arg1 + ".yaml"});
    if (scFileNames.isEmpty())
       return;
 
@@ -736,7 +397,7 @@ void GRH_Menu::on_hostSC_currentTextChanged(const QString &arg1) {
 
 void GRH_Menu::on_targetSC_currentTextChanged(const QString &arg1) {
    QStringList scFileNames =
-       QDir(inout_path).entryList({"SC_" + arg1 + ".txt"});
+       QDir(inout_path).entryList({"SC_" + arg1 + ".yaml"});
    if (scFileNames.isEmpty())
       return;
 

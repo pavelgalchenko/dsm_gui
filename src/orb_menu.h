@@ -9,6 +9,63 @@
 #include <QMessageBox>
 #include <QRadioButton>
 
+class Formation {
+   public:
+   enum valid_frames { N = 0, L };
+
+   protected:
+   enum valid_frames fixed_frame = N;
+   EulerAngles euler_angles      = EulerAngles();
+   enum valid_frames expr_frame  = N;
+   QVector3D position            = {0, 0, 0};
+
+   const QMap<QString, enum valid_frames> valid_frame_strs = {{"N", N},
+                                                              {"L", L}};
+
+   public:
+   Formation(const QString f_frame = "N", const QVector3D ang = {0, 0, 0},
+             const int seq = 123, const QString e_frame = "N",
+             const QVector3D pos = {0, 0, 0}) {
+      euler_angles = EulerAngles(ang, seq);
+      fixed_frame  = valid_frame_strs.value(f_frame);
+      expr_frame   = valid_frame_strs.value(e_frame);
+      euler_angles = ang;
+      position     = pos;
+   }
+   void setPosition(const QVector3D pos) {
+      position = pos;
+   }
+   void setFFrame(const QString f_frame) {
+      fixed_frame = valid_frame_strs.value(f_frame);
+   }
+   void setEFrame(const QString e_frame) {
+      expr_frame = valid_frame_strs.value(e_frame);
+   }
+   void setEulerAngles(const EulerAngles &ang) {
+      euler_angles = ang;
+   }
+   void setEulerAngles(const QVector3D ang, const int seq) {
+      euler_angles = EulerAngles(ang, seq);
+   }
+   QVector3D getPosition() const {
+      return position;
+   }
+   double getPosition(int i) const {
+      if (i < 0 || i >= 3)
+         return 0;
+      return position[i];
+   }
+   QString getFFrame() const {
+      return valid_frame_strs.key(fixed_frame);
+   }
+   QString getEFrame() const {
+      return valid_frame_strs.key(expr_frame);
+   }
+   EulerAngles getEulerAngles() const {
+      return euler_angles;
+   }
+};
+
 namespace Ui {
 class ORB_Menu;
 }
@@ -27,9 +84,7 @@ class ORB_Menu : public QDialog {
    void set_validators();
    void receive_orbpath(QString);
    void receive_data(QString file_path);
-   void apply_data();
    void clear_data();
-   void write_data(QString file_path);
 
    void string2radiobool(QString boolString, QButtonGroup *buttonGroup);
    void setQComboBox(QComboBox *comboBox, QString string);
@@ -66,6 +121,16 @@ class ORB_Menu : public QDialog {
 
    private:
    Ui::ORB_Menu *ui;
+   enum orb_types { ORB_ZERO = 0, ORB_FLIGHT, ORB_CENTRAL, ORB_THREE_BODY };
+   enum cent_init_types { CENT_KEP = 0, CENT_RV, CENT_FILE };
+   enum tbp_init_types { TBP_MODES = 0, TBP_XYZ, TBP_FILE };
+
+   // do unique ptrs so they only last as long as the ORB_Menu object
+   std::unique_ptr<QDoubleValidator> double_valid;
+   std::unique_ptr<QDoubleValidator> zero_pinf_valid;
+   std::unique_ptr<QDoubleValidator> ninf_pinf_valid;
+   std::unique_ptr<QRegularExpressionValidator> no_quotes_valid;
+   std::unique_ptr<QRegularExpressionValidator> no_quotes_spaces_valid;
 
    int global_orb_index  = -1;
    int global_orb_ignore = 0;
@@ -82,10 +147,15 @@ class ORB_Menu : public QDialog {
 
    QHash<QString, QString> orbFileHash;
 
-   const QHash<QString, QString> orbTypeInputs = {{"ZERO", "Zero"},
-                                                  {"FLIGHT", "Flight"},
-                                                  {"CENTRAL", "Central"},
-                                                  {"THREE_BODY", "Three Body"}};
+   const QHash<QString, QString> orbTypeInputs      = {{"ZERO", "Zero"},
+                                                       {"FLIGHT", "Flight"},
+                                                       {"CENTRAL", "Central"},
+                                                       {"THREE_BODY", "Three Body"}};
+   const QHash<QString, enum orb_types> orbTypeHash = {
+       {"ZERO", ORB_ZERO},
+       {"FLIGHT", ORB_FLIGHT},
+       {"CENTRAL", ORB_CENTRAL},
+       {"THREE_BODY", ORB_THREE_BODY}};
 
    const QHash<QString, QString> orbTBodyLSysInputs = {
        {"EARTHMOON", "Earth/Moon"},
@@ -94,6 +164,8 @@ class ORB_Menu : public QDialog {
 
    const QHash<QString, QString> orbCentICTypeInputs = {
        {"KEP", "Keplerian"}, {"RV", "Position/Velocity"}, {"FILE", "File"}};
+   const QHash<QString, enum cent_init_types> orbCentICTypeHash = {
+       {"KEP", CENT_KEP}, {"RV", CENT_RV}, {"FILE", CENT_FILE}};
 
    const QHash<QString, QString> orbTBodyPropInputs = {
        {"LAGDOF_MODES", "Modes"},
@@ -102,6 +174,8 @@ class ORB_Menu : public QDialog {
 
    const QHash<QString, QString> orbTBodyICTypeInputs = {
        {"MODES", "Modes"}, {"XYZ", "Position/Velocity"}, {"FILE", "File"}};
+   const QHash<QString, enum tbp_init_types> orbTBodyICTypeHash = {
+       {"MODES", TBP_MODES}, {"XYZ", TBP_XYZ}, {"FILE", TBP_FILE}};
 
    const QHash<QString, QString> orbFileTypeInputs = {
        {"TLE", "TLE"}, {"TRV", "TRV"}, {"SPLINE", "Spline"}};
@@ -109,5 +183,29 @@ class ORB_Menu : public QDialog {
    const QStringList orbFrameInputs      = {"N", "L"};
    const QStringList lagrangePointInputs = {"L1", "L2", "L3", "L4", "L5"};
 };
+
+// Configure YAML conversions
+namespace YAML {
+// Formation
+template <> struct convert<Formation> {
+   static Node encode(const Formation &rhs) {
+      Node node(NodeType::Map);
+      node["Fixed Frame"]      = rhs.getFFrame();
+      node["Euler Angles"]     = rhs.getEulerAngles();
+      node["Expression Frame"] = rhs.getEFrame();
+      node["Position"]         = rhs.getPosition();
+      return node;
+   }
+   static bool decode(const Node &node, Formation &rhs) {
+      if (!node.IsMap())
+         return false;
+      rhs.setFFrame(node["Fixed Frame"].as<QString>());
+      rhs.setEFrame(node["Expression Frame"].as<QString>());
+      rhs.setPosition(node["Position"].as<QVector3D>());
+      rhs.setEulerAngles(node["Euler Angles"].as<EulerAngles>());
+      return true;
+   }
+};
+}; // namespace YAML
 
 #endif // ORB_MENU_H

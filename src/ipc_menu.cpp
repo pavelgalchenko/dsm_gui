@@ -34,129 +34,35 @@ void IPC_Menu::set_validators() {
 
 void IPC_Menu::receive_ipcpath(QString path) {
    inout_path = path;
-   file_path  = path + "Inp_IPC.txt";
-   receive_data();
+   file_path  = path + "Inp_IPC.yaml";
    apply_data();
 }
 
-void IPC_Menu::receive_data() {
-   ipc_data.clear();
-   ipc_string.clear();
-   ipc_update.clear();
-   static QRegularExpression rx1("(.*?)!");
-   static QRegularExpression rx2("\"(.*?)\"");
-
-   QFile file(file_path);
-   if (!file.open(QIODevice::ReadOnly)) {
-      QMessageBox::information(0, "error", file.errorString());
-   }
-
-   QTextStream in(&file);
-   while (!in.atEnd()) {
-      QString line                   = in.readLine();
-      QRegularExpressionMatch match1 = rx1.match(line);
-      ipc_data.append(match1.captured(1));
-
-      QRegularExpressionMatch match2 = rx2.match(line);
-      ipc_string.append(match2.captured(1));
-
-      line.append("\n");
-   }
-   file.close();
-}
-
-void IPC_Menu::write_data() {
-   QFile::remove(file_path);
-   QFile file(file_path);
-   if (!file.open(QFile::WriteOnly)) {
-      QMessageBox::information(0, "error", file.errorString());
-   } else {
-      QTextStream in(&file);
-      for (int i = 0; i < ipc_update.size(); i++) {
-         in << ipc_update.at(i);
-      }
-   }
-   file.close();
-   ipc_update.clear();
-}
-
 void IPC_Menu::apply_data() {
+   ipc_list_hash.clear();
+   ui->ipclist->clear();
+
+   YAML::Node ipc_file_yaml = YAML::LoadFile(file_path.toStdString());
+   YAML::Node ipcs          = ipc_file_yaml["IPCs"];
+
    const QString ipcName = "IPC ";
-   QStringList line_items;
-   QString line_string;
-   QListWidgetItem *newIPC;
-   int num_ipc = 0;
-
-   int current_index = 2;
-
-   QStringList tmpData;
-
-   line_items = ipc_data[1].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-   num_ipc    = line_items[0].toInt();
-
-   for (int i = 0; i < num_ipc; i++) {
-      newIPC = new QListWidgetItem();
-      newIPC->setData(IPC_Menu::Name, ipcName + QString::number(i));
-      for (int j = 0; j < ipcNLines; j++) {
-         line_items =
-             ipc_data[current_index].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-         line_string = ipc_string[current_index];
-         switch (j) {
-            case 1:
-               tmpData.append(line_items[0]);
-               newIPC->setData(IPC_Menu::Mode, tmpData);
-               break;
-            case 2:
-               tmpData.append(line_items[0]);
-               newIPC->setData(IPC_Menu::ACID, tmpData);
-               break;
-            case 3:
-               tmpData.append(line_string);
-               newIPC->setData(IPC_Menu::FileName, tmpData);
-               break;
-            case 4:
-               tmpData.append(line_items[0]);
-               newIPC->setData(IPC_Menu::Role, tmpData);
-               break;
-            case 5:
-               tmpData.append(line_items[0]);
-               tmpData.append(line_items[1]);
-               newIPC->setData(IPC_Menu::Server, tmpData);
-               break;
-            case 6:
-               tmpData.append(line_items[0]);
-               newIPC->setData(IPC_Menu::Blocking, tmpData);
-               break;
-            case 7:
-               tmpData.append(line_items[0]);
-               newIPC->setData(IPC_Menu::Echo, tmpData);
-               break;
-            case 8:
-               newIPC->setData(IPC_Menu::nTX, line_items[0]);
-               tmpData.clear();
-               for (int k = 0; k < line_items[0].toInt(); k++) {
-                  current_index++;
-                  tmpData.append(ipc_string[current_index]);
-               }
-               newIPC->setData(IPC_Menu::Prefixes, tmpData);
-               break;
-            default:
-               break;
-         }
-         current_index++;
-         tmpData.clear();
-      }
-      ui->ipclist->addItem(newIPC);
+   for (YAML::iterator it = ipcs.begin(); it != ipcs.end(); ++it) {
+      IPC new_ipc    = (*it).as<IPC>();
+      const size_t i = std::distance(ipcs.begin(), it);
+      QListWidgetItem *newIPC =
+          new QListWidgetItem(ipcName + QString::number(i), ui->ipclist);
+      ipc_list_hash.insert(newIPC, new_ipc);
    }
 }
 
 void IPC_Menu::on_ipc_remove_clicked() {
-   int removeitem = ui->ipclist->currentRow();
-
+   const int removeitem = ui->ipclist->currentRow();
    if (removeitem == -1)
       return;
    else {
-      delete ui->ipclist->takeItem(removeitem);
+      QListWidgetItem *cur_item = ui->ipclist->currentItem();
+      ipc_list_hash.remove(cur_item);
+      ui->ipclist->takeItem(removeitem);
       ui->ipclist->setCurrentRow(-1);
       clear_fields();
    }
@@ -164,20 +70,14 @@ void IPC_Menu::on_ipc_remove_clicked() {
    if (ui->ipclist->count() != 0) {
       QList<QListWidgetItem *> itemList =
           ui->ipclist->findItems("*", Qt::MatchWildcard);
-      for (int i = 0; i < ui->ipclist->count(); i++) {
-         itemList[i]->setData(IPC_Menu::Name, "IPC " + QString::number(i));
+      const int count = ui->ipclist->count();
+      for (int i = 0; i < count; i++) {
+         itemList[i]->setText("IPC " + QString::number(i));
       }
    }
 }
 
 void IPC_Menu::on_ipc_add_clicked() {
-   QListWidgetItem *newIPC = new QListWidgetItem;
-   QStringList line_items;
-
-   QStringList newData;
-   QStringList newStrings;
-   QStringList tmpData;
-   QString line_string;
 
    QString newName      = "IPC ";
    QStringList curNames = dsm_gui_lib::getTextFromList(ui->ipclist);
@@ -193,75 +93,9 @@ void IPC_Menu::on_ipc_add_clicked() {
          return; // Nothing happens if too many
    }
 
-   newData.append("");
-   newData.append("OFF                            ");
-   newData.append("0                              ");
-   newData.append("");
-   newData.append("CLIENT                         ");
-   newData.append("localhost  10001               ");
-   newData.append("TRUE                           ");
-   newData.append("FALSE                          ");
-   newData.append("1                              ");
-   newData.append("");
-
-   newStrings.append("");
-   newStrings.append("");
-   newStrings.append("");
-   newStrings.append("State0" + QString::number(ipcNum) + ".42");
-   newStrings.append("");
-   newStrings.append("");
-   newStrings.append("");
-   newStrings.append("");
-   newStrings.append("");
-   newStrings.append("SC[0].AC");
-
-   for (int j = 0; j < ipcNLines; j++) {
-      line_items = newData[j].split(QRegExp("\\s"), Qt::SkipEmptyParts);
-      switch (j) {
-         case 0:
-            newIPC->setData(IPC_Menu::Name, newName);
-            break;
-         case 1:
-            tmpData.append(line_items[0]);
-            newIPC->setData(IPC_Menu::Mode, tmpData);
-            break;
-         case 2:
-            tmpData.append(line_items[0]);
-            newIPC->setData(IPC_Menu::ACID, tmpData);
-            break;
-         case 3:
-            tmpData.append(line_string);
-            newIPC->setData(IPC_Menu::FileName, newStrings[j]);
-            break;
-         case 4:
-            tmpData.append(line_items[0]);
-            newIPC->setData(IPC_Menu::Role, tmpData);
-            break;
-         case 5:
-            tmpData.append(line_items[0]);
-            tmpData.append(line_items[1]);
-            newIPC->setData(IPC_Menu::Server, tmpData);
-            break;
-         case 6:
-            tmpData.append(line_items[0]);
-            newIPC->setData(IPC_Menu::Blocking, tmpData);
-            break;
-         case 7:
-            tmpData.append(line_items[0]);
-            newIPC->setData(IPC_Menu::Echo, tmpData);
-            break;
-         case 8:
-            newIPC->setData(IPC_Menu::nTX, line_items[0]);
-            tmpData.clear();
-            tmpData.append(newStrings[j + 1]);
-            newIPC->setData(IPC_Menu::Prefixes, tmpData);
-            break;
-         default:
-            break;
-      }
-      tmpData.clear();
-   }
-   ui->ipclist->addItem(newIPC);
+   QListWidgetItem *newIPC = new QListWidgetItem(newName, ui->ipclist);
+   IPC new_ipc             = IPC();
+   ipc_list_hash.insert(newIPC, new_ipc);
 
    ui->ipclist->setCurrentRow(-1);
    clear_fields();
@@ -292,62 +126,34 @@ void IPC_Menu::on_ipc_duplicate_clicked() {
    QListWidgetItem *newItem = curItem->clone();
    newItem->setText(newName);
    ui->ipclist->addItem(newItem);
+
+   IPC new_ipc = ipc_list_hash[curItem];
+   ipc_list_hash.insert(newItem, new_ipc);
 }
 
 void IPC_Menu::on_ipclist_itemClicked(QListWidgetItem *item) {
-   QStringList tmpData = {};
+   const IPC ipc       = ipc_list_hash[item];
+   const Socket socket = ipc.socket();
+   const Host host     = socket.host();
 
-   for (int i = 0; i < ipcNLines; i++) {
-      switch (i) {
-         case 0:
-            tmpData = item->data(IPC_Menu::Mode).toStringList();
-            ui->ipcmode->setCurrentText(ipcmodeinputs[tmpData[0]]);
-            break;
-         case 1:
-            tmpData = item->data(IPC_Menu::ACID).toStringList();
-            ui->acs_id->setText(tmpData[0]);
-            break;
-         case 2:
-            tmpData = item->data(IPC_Menu::FileName).toStringList();
-            ui->filename->setText(tmpData[0]);
-            break;
-         case 3:
-            tmpData = item->data(IPC_Menu::Role).toStringList();
-            ui->socketrole->setCurrentText(socketrole_inputs[tmpData[0]]);
-            break;
-         case 4:
-            tmpData = item->data(IPC_Menu::Server).toStringList();
-            ui->servername->setText(tmpData[0]);
-            ui->portnum->setText(tmpData[1]);
-            break;
-         case 5:
-            tmpData = item->data(IPC_Menu::Blocking).toStringList();
-            ui->blocking->setChecked(QVariant(tmpData[0]).toBool());
-            break;
-         case 6:
-            tmpData = item->data(IPC_Menu::Echo).toStringList();
-            ui->echo->setChecked(QVariant(tmpData[0]).toBool());
-            break;
-         case 7:
-            tmpData = item->data(IPC_Menu::nTX).toStringList();
-            ui->prefixnum->display(tmpData[0]);
-            tmpData = item->data(IPC_Menu::Prefixes).toStringList();
-            ui->prefixlist->clear();
-            ui->prefixlist->addItems(tmpData);
-            break;
-         default:
-            break;
-      }
-   }
+   dsm_gui_lib::setQComboBox(ui->ipcmode, ipcmodeinputs[ipc.mode()]);
+   ui->acs_id->setText(QString::number(ipc.ac_id()));
+   ui->filename->setText(ipc.file_name());
+   dsm_gui_lib::setQComboBox(ui->socketrole, socketrole_inputs[socket.role()]);
+   ui->servername->setText(host.name());
+   ui->portnum->setText(QString::number(host.port()));
+   ui->blocking->setChecked(socket.blocking());
+   ui->echo->setChecked(ipc.echo());
+   ui->prefixlist->clear();
+   ui->prefixlist->addItems(ipc.prefixes());
 }
 
 void IPC_Menu::on_loaddefaultButton_clicked() {
    int response = dsm_gui_lib::warning_message("Overwrite IPC file?");
    if (response == QMessageBox::Ok) {
-      QFile::remove(inout_path + "Inp_IPC.txt");
-      QFile::copy(inout_path + "__default__/Inp_IPC.txt",
-                  inout_path + "Inp_IPC.txt");
-      receive_data();
+      QFile::remove(inout_path + "Inp_IPC.yaml");
+      QFile::copy(inout_path + "__default__/Inp_IPC.yaml",
+                  inout_path + "Inp_IPC.yaml");
       apply_data();
       ui->ipclist->setCurrentRow(-1);
    } else {
@@ -358,10 +164,9 @@ void IPC_Menu::on_loaddefaultButton_clicked() {
 void IPC_Menu::on_savedefaultButton_clicked() {
    int response = dsm_gui_lib::warning_message("Overwrite Default IPC file?");
    if (response == QMessageBox::Ok) {
-      QFile::remove(inout_path + "__default__/Inp_IPC.txt");
-      QFile::copy(inout_path + "Inp_IPC.txt",
-                  inout_path + "__default__/Inp_IPC.txt");
-      receive_data();
+      QFile::remove(inout_path + "__default__/Inp_IPC.yaml");
+      QFile::copy(inout_path + "Inp_IPC.yaml",
+                  inout_path + "__default__/Inp_IPC.yaml");
       apply_data();
       ui->ipclist->setCurrentRow(-1);
    } else {
@@ -374,98 +179,11 @@ void IPC_Menu::on_closeButton_clicked() {
 }
 
 void IPC_Menu::on_applyButton_clicked() {
-   QString data_inp;
-   QString prefix_name;
-   QStringList tmpData = {};
-   QListWidgetItem *item;
-
-   int ipc_num = ui->ipclist->count();
-   int nPrefixes;
-
-   ipc_update.append("<<<<<<<<<<<<<<< 42: InterProcess Comm Configuration File "
-                     ">>>>>>>>>>>>>>>\n");
-
-   data_inp = QString::number(ipc_num);
-   ipc_update.append(dsm_gui_lib::whitespace(data_inp) +
-                     " !  Number of Sockets\n");
-
-   for (int i = 0; i < ipc_num; i++) {
-      item = ui->ipclist->item(i);
-
-      for (int j = 0; j < ipcNLines; j++) {
-         switch (j) {
-            case 0:
-               data_inp = "********************************  IPC " +
-                          QString::number(i) +
-                          "  *******************************\n";
-               break;
-            case 1:
-               tmpData  = item->data(IPC_Menu::Mode).toStringList();
-               data_inp = tmpData[0];
-               data_inp =
-                   dsm_gui_lib::whitespace(data_inp) +
-                   " !  IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)\n";
-               break;
-            case 2:
-               tmpData  = item->data(IPC_Menu::ACID).toStringList();
-               data_inp = tmpData[0];
-               data_inp = dsm_gui_lib::whitespace(data_inp) +
-                          " !  AC.ID for ACS mode\n";
-               break;
-            case 3:
-               tmpData  = item->data(IPC_Menu::FileName).toStringList();
-               data_inp = "\"" + tmpData[0] + "\"";
-               data_inp = dsm_gui_lib::whitespace(data_inp) +
-                          " !  File name for WRITE or READ\n";
-               break;
-            case 4:
-               tmpData  = item->data(IPC_Menu::Role).toStringList();
-               data_inp = tmpData[0];
-               data_inp = dsm_gui_lib::whitespace(data_inp) +
-                          " !  Socket Role (SERVER,CLIENT,GMSEC_CLIENT)\n";
-               break;
-            case 5:
-               tmpData  = item->data(IPC_Menu::Server).toStringList();
-               data_inp = tmpData.join("  ");
-               data_inp = dsm_gui_lib::whitespace(data_inp) +
-                          " !  Server Host Name, Port\n";
-               break;
-            case 6:
-               tmpData  = item->data(IPC_Menu::Blocking).toStringList();
-               data_inp = tmpData[0];
-               data_inp = dsm_gui_lib::whitespace(data_inp) +
-                          " !  Allow Blocking (i.e. wait on RX)\n";
-               break;
-            case 7:
-               tmpData  = item->data(IPC_Menu::Echo).toStringList();
-               data_inp = tmpData[0];
-               data_inp =
-                   dsm_gui_lib::whitespace(data_inp) + " !  Echo to stdout\n";
-               break;
-            case 8:
-               tmpData   = item->data(IPC_Menu::nTX).toStringList();
-               nPrefixes = tmpData[0].toInt();
-               data_inp  = tmpData[0];
-               data_inp  = dsm_gui_lib::whitespace(data_inp) +
-                          " !  Number of TX prefixes\n";
-               if (nPrefixes > 0) {
-                  tmpData = item->data(IPC_Menu::Prefixes).toStringList();
-                  for (int k = 0; k < nPrefixes; k++) {
-                     prefix_name  = "\"" + tmpData[k] + "\"";
-                     data_inp    += dsm_gui_lib::whitespace(prefix_name) +
-                                 " !  Prefix " + QString::number(k) + "\n";
-                  }
-               }
-               break;
-            default:
-               break;
-         }
-         ipc_update.append(data_inp);
-         data_inp.clear();
-      }
-   }
-
-   write_data();
+   QList<IPC> ipc_list =
+       dsm_gui_lib::getOrderedListFromHash(ui->ipclist, ipc_list_hash);
+   YAML::Node ipc_yaml(YAML::NodeType::Map);
+   ipc_yaml["IPCs"] = ipc_list;
+   dsm_gui_lib::write_data(file_path, ipc_yaml);
 }
 
 void IPC_Menu::on_prefixlist_currentRowChanged(int currentRow) {
@@ -551,75 +269,77 @@ void IPC_Menu::clear_fields() {
 }
 
 void IPC_Menu::on_ipcmode_currentTextChanged(const QString &arg1) {
-   int index                = ui->ipclist->currentRow();
    QListWidgetItem *curItem = ui->ipclist->currentItem();
 
-   if (index == -1)
+   if (curItem == NULL)
       return;
-   curItem->setData(IPC_Menu::Mode, ipcmodeinputs.key(arg1));
+   IPC *ipc = &ipc_list_hash[curItem];
+   ipc->setMode(ipcmodeinputs.key(arg1));
 }
 
 void IPC_Menu::on_acs_id_textChanged(const QString &arg1) {
-   int index                = ui->ipclist->currentRow();
    QListWidgetItem *curItem = ui->ipclist->currentItem();
 
-   if (index == -1)
+   if (curItem == NULL)
       return;
-   curItem->setData(IPC_Menu::ACID, arg1);
+   IPC *ipc = &ipc_list_hash[curItem];
+
+   ipc->setACID(arg1.toInt());
 }
 
 void IPC_Menu::on_filename_textChanged(const QString &arg1) {
-   int index                = ui->ipclist->currentRow();
    QListWidgetItem *curItem = ui->ipclist->currentItem();
 
-   if (index == -1)
+   if (curItem == NULL)
       return;
-   curItem->setData(IPC_Menu::FileName, arg1);
+   IPC *ipc = &ipc_list_hash[curItem];
+   ipc->setFileName(arg1);
 }
 
 void IPC_Menu::on_socketrole_currentTextChanged(const QString &arg1) {
-   int index                = ui->ipclist->currentRow();
    QListWidgetItem *curItem = ui->ipclist->currentItem();
 
-   if (index == -1)
+   if (curItem == NULL)
       return;
-   curItem->setData(IPC_Menu::Role, socketrole_inputs.key(arg1));
+   IPC *ipc = &ipc_list_hash[curItem];
+   ipc->setSocketRole(socketrole_inputs.key(arg1));
 }
 
 void IPC_Menu::on_blocking_toggled(bool checked) {
-   int index                = ui->ipclist->currentRow();
    QListWidgetItem *curItem = ui->ipclist->currentItem();
 
-   if (index == -1)
+   if (curItem == NULL)
       return;
-   curItem->setData(IPC_Menu::Blocking, QVariant(checked).toString().toUpper());
+   IPC *ipc = &ipc_list_hash[curItem];
+   ipc->setSocketBlocking(checked);
 }
 
 void IPC_Menu::on_echo_toggled(bool checked) {
-   int index                = ui->ipclist->currentRow();
    QListWidgetItem *curItem = ui->ipclist->currentItem();
 
-   if (index == -1)
+   if (curItem == NULL)
       return;
-   curItem->setData(IPC_Menu::Echo, QVariant(checked).toString().toUpper());
+   IPC *ipc = &ipc_list_hash[curItem];
+   ipc->setEcho(checked);
 }
 
 void IPC_Menu::server_changed() {
-   int index                = ui->ipclist->currentRow();
    QListWidgetItem *curItem = ui->ipclist->currentItem();
-   QStringList serverPort;
 
-   if (index == -1)
+   if (curItem == NULL)
       return;
-   serverPort.append(ui->servername->text());
-   serverPort.append(ui->portnum->text());
-   curItem->setData(IPC_Menu::Server, serverPort);
+   IPC *ipc = &ipc_list_hash[curItem];
+   Host new_host(ui->servername->text(), ui->portnum->text().toInt());
+   ipc->setSocketHost(new_host);
 }
 
 void IPC_Menu::update_prefixes(QListWidgetItem *item) {
+   if (item == NULL)
+      return;
+   IPC *ipc = &ipc_list_hash[item];
+
    QStringList prefixes = dsm_gui_lib::getTextFromList(ui->prefixlist);
-   int prefix_num       = ui->prefixlist->count();
-   item->setData(IPC_Menu::Prefixes, prefixes);
-   item->setData(IPC_Menu::nTX, QString::number(prefix_num));
+   int prefix_num       = prefixes.count();
+   ipc->setPrefixes(prefixes);
    ui->prefixnum->display(prefix_num);
 }

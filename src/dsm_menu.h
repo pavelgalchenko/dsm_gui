@@ -45,6 +45,7 @@ class DSM_Menu : public QDialog {
    };
 
    private slots:
+   void set_connections();
    void set_validators();
    void receive_dsmpath(QString);
    void receive_data();
@@ -178,6 +179,10 @@ class DSM_Menu : public QDialog {
 
    private:
    Ui::DSM_Menu *ui;
+
+   // do unique ptrs so they only last as long as the DSM_menu object
+   std::unique_ptr<QDoubleValidator> zero_pinf_valid;
+   std::unique_ptr<QDoubleValidator> ninf_pinf_valid;
 
    QString inoutPath;
    QString filePath;

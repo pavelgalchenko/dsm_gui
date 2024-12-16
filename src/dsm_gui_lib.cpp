@@ -56,54 +56,21 @@ QStringList dsm_gui_lib::getTextFromList(QListWidget *list) {
 
 int dsm_gui_lib::get_sc_nitems(const QString inout_path, const QString sc_name,
                                const scSectionType type) {
-   QString scFileName = "SC_" + sc_name + ".txt";
+   const QString scFileName = inout_path + "SC_" + sc_name + ".yaml";
+   const YAML::Node sc_yaml = YAML::LoadFile(scFileName.toStdString());
 
-   QFile scFile(inout_path + scFileName);
-   if (!scFile.open(QIODevice::ReadOnly))
-      QMessageBox::information(0, "error", scFile.errorString());
-   QTextStream in(&scFile);
+   const QString searchStr = scSectionIdentifier(type);
 
-   QString searchStr = scSectionIdentifier(type);
-   int skipLines     = scSectionLineToNum(type);
-   int nItems        = 0;
-
-   while (!in.atEnd()) {
-      QString line = in.readLine();
-      if (line.contains(searchStr, Qt::CaseSensitive)) {
-         for (int i = 0; i < skipLines; i++)
-            line = in.readLine();
-         QStringList line_items =
-             line.remove("\"").split(QRegExp("\\s"), Qt::SkipEmptyParts);
-         nItems = line_items[0].toInt();
-         break;
-      }
-   }
-   scFile.close();
+   const YAML::Node query_node = sc_yaml[searchStr];
+   const int nItems            = query_node.size();
 
    return std::max(nItems, 0);
 }
 
-void dsm_gui_lib::set_mult_validators(QLineEdit *ui_elem[], int array_length,
-                                      double lower, double upper,
-                                      int decimals) {
-   for (int i = 0; i < array_length; i++) {
-      ui_elem[i]->setValidator(new QDoubleValidator(lower, upper, decimals));
-   }
-}
-
-void dsm_gui_lib::set_mult_name_validators(QLineEdit *ui_elem[],
-                                           int array_length,
-                                           QValidator *validator) {
-   for (int i = 0; i < array_length; i++) {
-      ui_elem[i]->setValidator(validator);
-   }
-}
-
-void dsm_gui_lib::set_mult_cbox_validators(QComboBox *ui_elem[],
-                                           int array_length,
+void dsm_gui_lib::set_mult_cbox_validators(QList<QComboBox *> ui_elem,
                                            const QStringList string_list) {
-   for (int i = 0; i < array_length; i++) {
-      ui_elem[i]->addItems(string_list);
+   for (auto elem : ui_elem) {
+      elem->addItems(string_list);
    }
 }
 
@@ -148,21 +115,39 @@ bool dsm_gui_lib::fileExists(QString path) {
    }
 }
 
-QVector<QString> dsm_gui_lib::create_QVec2(QString arg1, QString arg2) {
-   QVector<QString> tmp_data_vector = {arg1, arg2};
+QVector2D dsm_gui_lib::create_QVec2(QString arg1, QString arg2) {
+   QVector2D tmp_data_vector(arg1.toDouble(), arg2.toDouble());
    return tmp_data_vector;
 }
 
-QVector<QString> dsm_gui_lib::create_QVec3(QString arg1, QString arg2,
-                                           QString arg3) {
-   QVector<QString> tmp_data_vector = {arg1, arg2, arg3};
+QVector3D dsm_gui_lib::create_QVec3(QString arg1, QString arg2, QString arg3) {
+   QVector3D tmp_data_vector(arg1.toDouble(), arg2.toDouble(), arg3.toDouble());
    return tmp_data_vector;
 }
 
-QVector<QString> dsm_gui_lib::create_QVec4(QString arg1, QString arg2,
-                                           QString arg3, QString arg4) {
-   QVector<QString> tmp_data_vector = {arg1, arg2, arg3, arg4};
+QVector4D dsm_gui_lib::create_QVec4(QString arg1, QString arg2, QString arg3,
+                                    QString arg4) {
+   QVector4D tmp_data_vector(arg1.toDouble(), arg2.toDouble(), arg3.toDouble(),
+                             arg4.toDouble());
    return tmp_data_vector;
+}
+
+void dsm_gui_lib::write_data(const QString file_path, YAML::Node yaml) {
+   QFile::remove(file_path);
+   QFile file(file_path);
+   if (!file.open(QFile::WriteOnly)) {
+      QMessageBox::information(0, "error", file.errorString());
+   } else {
+      QTextStream in(&file);
+      YAML::Emitter out;
+      out.SetIndent(2);
+      out.SetMapFormat(YAML::EMITTER_MANIP::Block);
+      out << yaml;
+      in << "%YAML 1.2\n---\n";
+      in << out.c_str();
+   }
+
+   file.close();
 }
 
 QString dsm_gui_lib::generate_comment(QString str_search, QString cur_line,

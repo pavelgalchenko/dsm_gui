@@ -51,7 +51,7 @@ void MainWindow::on_new_mission_clicked() {
    QStringList newDefaultFiles = QDir(":/data/__default__/").entryList();
 
    for (const QString &neededFile : newDefaultFiles) {
-      if (QString::compare(neededFile, "__SCDEFAULT__.yaml")) {
+      if (QString::compare(neededFile, "SC_DEFAULT.yaml")) {
          QFile::copy(":/data/__default__/" + neededFile, path + neededFile);
          QFile::copy(":/data/__default__/" + neededFile,
                      path + "__default__/" + neededFile);
@@ -79,7 +79,7 @@ void MainWindow::on_new_mission_clicked() {
    ui->SPC_Menu->setEnabled(true);
    ui->ORB_Menu->setEnabled(true);
    ui->SIM_Menu->setEnabled(true);
-   ui->DSM_Menu->setEnabled(true);
+   // ui->DSM_Menu->setEnabled(true);
 }
 
 void MainWindow::on_load_mission_clicked() {
@@ -181,7 +181,7 @@ void MainWindow::on_load_mission_clicked() {
             return;
          }
          QFile::copy(defaultPath + neededFile, path + neededFile);
-         if (neededFile.compare("Inp_Sim.txt") == 0)
+         if (neededFile.compare("Inp_Sim.yaml") == 0)
             missingSim = true;
       }
    }
@@ -332,7 +332,7 @@ void MainWindow::enable_sub_menus() {
    ui->NOS_Menu->setEnabled(true);
    ui->RGN_Menu->setEnabled(true);
    ui->IPC_Menu->setEnabled(true);
-   ui->DSM_Menu->setEnabled(true);
+   // ui->DSM_Menu->setEnabled(true); // TODO: get DSM Menu done
 }
 
 void MainWindow::disable_sub_menus() {
