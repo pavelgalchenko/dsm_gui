@@ -13,7 +13,9 @@ QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.15
 
 CONDA_DIR=$$system(echo $CONDA_PREFIX)
 equals(CONDA_DIR,"") {
-    message(No Conda)
+    message("No Conda, using pkgconfig")
+    CONFIG += link_pkgconfig
+    PKGCONFIG += yaml-cpp
 } else {
     INCLUDEPATH += $$CONDA_DIR/include
     LIBS += -L$$CONDA_DIR/lib -lyaml-cpp
